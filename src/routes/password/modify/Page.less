@@ -1,0 +1,37 @@
+@import '../../../components/variables.less';
+
+@form-width: 375px;
+@form-height: 250px;
+
+.root {
+  position: relative;
+  background: @background-color;
+  height: ~'calc(100vh - @{header-height})';
+  min-height: @form-height + 80px;
+
+  > form {
+    position: absolute;
+    width: @form-width;
+    height: @form-height;
+    top: 50%;
+    left: 50%;
+    margin-left: -@form-width / 2;
+    margin-top: -40px - @form-height / 2;
+
+    > h1 {
+      text-align: center;
+      color: @brand-primary;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 40px;
+    }
+
+    > input {
+      margin-bottom: 10px;
+    }
+
+    > button {
+      margin-top: 20px;
+    }
+  }
+}

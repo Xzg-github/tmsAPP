@@ -1,0 +1,17 @@
+@import '../../../components/variables.less';
+
+.root {
+  position: relative;
+  padding-top: @padding-vertical;
+
+  > *:first-child {
+    margin: 0 @padding-horizontal;
+  }
+
+  :global(.ant-table-wrapper) {
+    margin-top: @padding-vertical;
+    margin-bottom: @padding-vertical;
+  }
+}
+
+

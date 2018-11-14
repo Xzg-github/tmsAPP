@@ -1,0 +1,14 @@
+@import '../../../components/variables.less';
+
+@all-spacing: 7 * @padding-vertical + @header-height;
+
+.root {
+  > * {
+    margin: @padding-vertical 0;
+  }
+
+  :global(.ant-table-body) {
+    max-height: calc(~'100vh - @{all-spacing} - 2 * @{input-height-sm} - 2px');
+    overflow: auto;
+  }
+}

@@ -1,0 +1,56 @@
+@import '../../../components/variables';
+
+.root {
+  height: 100%;
+  padding-top: 10px;
+  position: relative;
+  .superTag {
+    margin: 0 10px;
+  }
+  .toPage{
+    position: absolute;
+    top:37px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
+}
+
+.pageRoot {
+  padding: @padding-vertical @padding-horizontal;
+
+  > div {
+    padding: 10px;
+    background-color: white;
+    border-radius: 4px;
+    //box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+
+    > * {
+      margin-top: @padding-vertical;
+      //margin-bottom: @padding-vertical;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &[role='line'] {
+        border: 0;
+        height: 1px;
+        background-color: #e6e6e6;
+      }
+
+      &[role='container'] {
+        width: 100%;
+        overflow: auto;
+
+        > table {
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}
+
+.tableContent {
+  margin-top: 10px;
+}

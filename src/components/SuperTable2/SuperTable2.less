@@ -1,0 +1,36 @@
+@import '../variables.less';
+
+.root {
+  border-spacing: 0;
+  cursor: default;
+
+  :global(.ant-checkbox-input) {
+    z-index: -1;
+  }
+
+  :global(.ant-select-search__field) {
+    z-index: 0;
+  }
+
+  th [role='add'] {
+    color: @primary-color;
+    margin-left: 4px;
+    cursor: pointer;
+  }
+}
+
+.select {
+  background-color: @table-row-hover-bg;
+}
+
+.center {
+  text-align: center !important;
+}
+
+.left {
+  text-align: left !important;
+}
+
+.right {
+  text-align: right !important;
+}

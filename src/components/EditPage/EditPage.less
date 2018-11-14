@@ -1,0 +1,21 @@
+@import '../variables.less';
+
+.root {
+  position: relative;
+
+  > *:not(:last-child) {
+    margin-bottom: @padding-vertical;
+  }
+
+  [role='title'] > * {
+    margin-right: 5px;
+  }
+
+  [role='operation'] {
+    text-align: center;
+
+    > *:not(:last-child) {
+      margin-right: 20px;
+    }
+  }
+}

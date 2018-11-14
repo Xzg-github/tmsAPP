@@ -1,0 +1,73 @@
+@import '../../../components/variables';
+
+.root {
+  padding: @padding-vertical @padding-horizontal;
+  width: 100%;
+  height: 100%;
+
+  .searchWrap {
+    width: 100%;
+    height: 62px;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    border: 1px solid #e9e9e9;
+  }
+
+  .workplace {
+    width: 100%;
+    height: 100%;
+
+    .tableWrap {
+      width: calc(~"100% - 860px");
+      height: 100%;
+      background-color: #ffffff;
+      border-radius: 5px;
+      border: 1px solid #e9e9e9;
+      padding: 10px;
+      display: inline-block;
+      overflow: auto;
+      & > div:first-child {
+        margin-bottom: 10px;
+      }
+    }
+
+    .publicAuthority {
+      display: inline-block;
+      width: 400px;
+      height: 100%;
+      background-color: #ffffff;
+      margin-left: 10px;
+      border-radius: 5px;
+    }
+
+    .tenantAuthority {
+      display: inline-block;
+      width: 400px;
+      height: 100%;
+      background-color: #ffffff;
+      border-radius: 5px;
+    }
+
+    .buttons {
+      height: 100%;
+      width: 30px;
+      margin: 0 10px;
+      display: inline-block;
+      vertical-align: top;
+      img {
+        width: 30px;
+      }
+      .arrow {
+        margin-top: 10px;
+        transform:rotate(180deg);
+        -ms-transform:rotate(180deg); /* Internet Explorer */
+        -moz-transform:rotate(180deg); /* Firefox */
+        -webkit-transform:rotate(180deg); /* Safari 和 Chrome */
+        -o-transform:rotate(180deg); /* Opera */
+      }
+    }
+
+  }
+}
+

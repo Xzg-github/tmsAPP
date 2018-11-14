@@ -1,0 +1,31 @@
+import express from 'express';
+import apiDataSet from './dataset';
+import apiModeOutputDesign from './modeOutputDesign';
+import apiPublicAuthority from './publicAuthority';
+import apiAccountManager from './accountManager';
+import apiTenantAuthorityDistribution from './tenantAuthorityDistribution';
+import apiRoleAuthorityDistribution from './roleAuthorityDistribution';
+import apiDatalib from './datalib';
+import apiTenantapi from './tenantapi';
+import apiModeinput from './modeinput';
+import apiEmailAccept from './emailAccept';
+import apiCustomersArchives from './customersArchives';
+import apiSuppliersArchives from './suppliersArchives';
+import apiModeOutput from './modeOutput';
+
+let api = express.Router();
+api.use('/dataset', apiDataSet);
+api.use('/mode_output_design', apiModeOutputDesign);
+api.use('/public_authority', apiPublicAuthority);
+api.use('/account_manager', apiAccountManager);
+api.use('/tenant_authority_distribution', apiTenantAuthorityDistribution);
+api.use('/role_authority_distribution', apiRoleAuthorityDistribution);
+api.use('/datalib', apiDatalib);
+api.use('/tenantapi', apiTenantapi);
+api.use('/modeinput', apiModeinput);
+api.use('/emailAccept', apiEmailAccept);
+api.use('/customersArchives', apiCustomersArchives);
+api.use('/suppliersArchives', apiSuppliersArchives);
+api.use('/mode_output', apiModeOutput);
+
+export default api;

@@ -1,0 +1,6 @@
+{
+  "name": "ModeImport",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./ModeImport.js"
+}

@@ -1,0 +1,41 @@
+@import '../variables.less';
+
+.root {
+  :global {
+    .ant-tabs-bar {
+      margin-bottom: 0;
+      border-color: @brand-primary;
+    }
+
+    .ant-tabs-nav-container {
+      font-size: @font-size-base;
+      line-height: 16px;
+      height: 27px !important;
+    }
+
+    .ant-tabs-tab {
+      background: @background-color !important;
+
+      .anticon-close {
+        opacity: 1 !important;
+        color: #333 !important;
+        transform: none !important;
+        top: 12px !important;
+
+        &::before {
+          padding-top: 1px;
+          transform: scale(0.9);
+        }
+
+        &:hover {
+          background: #d5d5d8;
+          border-radius: 50% !important;
+        }
+      }
+    }
+
+    .ant-tabs-tab-active {
+      border-color: @brand-primary !important;
+    }
+  }
+}

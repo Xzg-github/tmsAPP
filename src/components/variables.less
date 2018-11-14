@@ -1,0 +1,48 @@
+
+@default-font-size: 14px;
+@font-size-base: ceil((@default-font-size * 0.85));
+@default-line-color:#d7d7d7;
+@padding-horizontal: 10px;
+@padding-vertical: 10px;
+@background-color: white;
+@box-shadow-color: rgba(0, 0, 0, 0.15);
+@brand-primary: #2196f3;
+@font-family-base: '微软雅黑', '宋体', sans-serif;
+
+// antd变量
+@primary-color: @brand-primary;
+@primary-1: tint(@primary-color, 90%);
+@primary-5: tint(@primary-color, 20%);
+@border-radius-base: 4px;
+@border-radius-sm: 2px;
+@table-header-bg: #f0f0f0;
+@table-padding-vertical: @padding-vertical;
+@table-row-hover-bg: @primary-1;
+@input-height-base: 28px;
+@input-height-lg: 32px;
+@input-height-sm: 22px;
+
+// layout外观
+@layout-font-size: @default-font-size;
+@layout-font-family: @font-family-base;
+
+// 页眉外观(header)
+@header-height: 40px;
+@header-font-size: @default-font-size + 2;
+@header-color: #fff;
+@header-color-bg: @brand-primary;
+@header-hover-bg: fade(darken(@header-color-bg, 15%), 50%);
+@header-active-bg: @header-hover-bg;
+
+// 侧边栏外观(sidebar)
+@sidebar-width: 160px;
+@sidebar-min-width: 43px;
+@sidebar-color: black;
+@sidebar-border-color: #d7d7d7;
+@sidebar-color-bg: #f7f4f9;
+@sidebar-hover-bg: #e4e4e4;
+@sidebar-active-bg: @sidebar-hover-bg;
+
+// Form
+@form-group-margin-bottom:       0;
+@legend-color:                   black;

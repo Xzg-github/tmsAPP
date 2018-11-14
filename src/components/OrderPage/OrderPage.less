@@ -1,0 +1,17 @@
+@import '../variables';
+
+.root {
+  position: relative;
+  margin: @padding-vertical @padding-horizontal;
+  overflow: hidden !important;
+
+  > :global(.pld-card) {
+    margin: 0;
+  }
+
+  [role='toolbar'],
+  :global(.ant-table-wrapper),
+  > *:first-child {
+    margin-bottom: @padding-vertical;
+  }
+}

@@ -1,0 +1,19 @@
+@import '../../../../components/variables.less';
+
+.root {
+  position: relative;
+  margin: @padding-vertical @padding-horizontal;
+  overflow: hidden !important;
+
+  > :global(.pld-card) {
+    margin: 0;
+  }
+  .cardFirst{
+    margin-bottom: @padding-vertical;
+  }
+  [role='toolbar'],
+  :global(.ant-table-wrapper),
+  > *:first-child {
+    margin-bottom: @padding-vertical;
+  }
+}

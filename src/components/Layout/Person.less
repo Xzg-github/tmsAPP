@@ -1,0 +1,26 @@
+
+.root :global(.ant-modal-body) {
+  > * {
+    display: inline-block;
+    vertical-align: top;
+
+    > * {
+      padding-top: 3px;
+      padding-bottom: 3px;
+    }
+  }
+
+  > :first-child {
+    text-align: right;
+    margin-right: 10px;
+    color: #333;
+  }
+
+  > :last-child {
+    color: #666;
+  }
+
+  [data-no='true'] {
+    color: #999;
+  }
+}

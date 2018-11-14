@@ -1,0 +1,75 @@
+@import '../variables.less';
+
+.root {
+  height: @header-height;
+  color: @header-color;
+  background-color: @header-color-bg;
+  background-image: url('/navigation.png');
+  font-size: @header-font-size;
+  line-height: @header-height;
+
+  > * {
+    display: inline-block;
+    text-align: center;
+    vertical-align: top;
+  }
+
+  > :last-child {
+    float: right;
+    margin-right: 15px;
+  }
+
+  [data-role='block'] {
+    display: inline-block;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: @header-color;
+
+    &:hover,
+    &[data-active] {
+      background-color: @header-hover-bg;
+    }
+  }
+
+  [role='logo'] {
+    font-size: 1.3em;
+    width: @sidebar-width;
+  }
+
+  [role='avatar'] {
+    cursor: pointer;
+    padding-left: 4px;
+    padding-right: 5px;
+  }
+
+  [role='message'] {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  :global {
+    .ant-avatar {
+      vertical-align: top;
+      margin-top: 4px;
+    }
+
+    .ant-badge-dot {
+      top: -2px;
+      right: -7px;
+      box-shadow: none;
+    }
+  }
+}
+
+.menu {
+  :global {
+    .ant-dropdown-menu-item {
+      padding: 8px 20px;
+    }
+
+    .ant-dropdown-menu-item-group-title {
+      padding: 6px 20px;
+      color: #333;
+    }
+  }
+}

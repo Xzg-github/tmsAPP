@@ -1,0 +1,122 @@
+
+@img-width: 520px;
+@img-height: 358px;
+@width: @img-width + 350px + 50px;
+@height: max(@img-height, 290px);
+
+.root {
+  height: 100%;
+  min-width: 768px;
+  min-height: 640px;
+  max-height: 1080px;
+  overflow: hidden;
+  background: url('/login_background.png') no-repeat;
+
+  .bigBox{
+    max-width: 1024px;
+    height: 560px;
+    background: #fff;
+    position: relative;
+    top:50%;
+    margin-top: -280px;
+    left:50%;
+    margin-left: -512px;
+    border-radius: 10px;
+    box-shadow: 4px 4px 0px #4981f0;
+
+    .bubble_one {
+      width: 223px;
+      height: 191px;
+      position: absolute;
+      top: -120px;
+      left: -110px;
+      z-index: 1;
+    }
+    .bubble_two {
+      width: 84px;
+      height: 92px;
+      position: absolute;
+      bottom:-50px;
+      right: 0px;
+      z-index: 10;
+    }
+    .bubble_three{
+      width: 49px;
+      height:49px;
+      position: absolute;;
+      bottom:-60px;
+      right: 80px;
+      z-index: 10;
+    }
+
+    .login {
+      width:100%;
+      height:100%;
+      border-radius: 10px;
+      position: absolute;
+      z-index: 2;
+      background-color: #fff;
+      box-shadow: 2px 2px 0px #5d9ff5;
+
+      .l_side{
+        float:left;
+
+        .logo{
+          margin-left: 54px;
+          margin-top:42px;
+          margin-bottom: 50px;
+        }
+        .customerService{
+          width: 520px;
+          height: 358px;
+          display: block;
+          margin-left: 40px;
+        }
+      }
+     .r_side{
+       float: left;
+       margin-left: 50px;
+       margin-top: 100px;
+
+       > form {
+         display: inline-block;
+         vertical-align: top;
+         width: 350px;
+         height: 290px;
+         background: white;
+         border-radius: 4px;
+
+         > input{
+           margin-top: 10px;
+         }
+
+         [role='forget'] {
+           float: right;
+         }
+
+         button {
+           margin-top: 60px;
+         }
+       }
+
+       [role='title'] {
+         color:#2196F3;
+         font-size: 30px;
+         font-weight: normal;
+         letter-spacing: 2px;
+         margin: 40px 0;
+       }
+
+     }
+      > p{
+        width: 472px;
+        position: absolute;
+        bottom: -40px;
+        left: 50%;
+        font-size: 14px;
+        margin-left: -210px;
+        color: #fff;
+      }
+    }
+  }
+ }

@@ -1,0 +1,45 @@
+@import '../variables';
+
+@spacing: 2 * @padding-vertical + @header-height + 95px;
+
+.root {
+  > *:first-child {
+    float: left;
+    width: 300px;
+
+    > *:first-child {
+      margin: 10px;
+    }
+
+    > *:last-child {
+      > *:first-child {
+        margin: 10px;
+
+        > *:first-child {
+          width: 230px;
+        }
+
+        > a {
+          margin-left: 10px;
+        }
+      }
+
+      > *:last-child {
+        margin: 10px;
+        height: calc(~'100vh - @{spacing}');
+
+        :global(.ant-tree) > li:first-child {
+          padding-top: 0;
+        }
+      }
+    }
+  }
+
+  > *:last-child {
+    overflow: hidden;
+
+    > *:first-child {
+      margin-bottom: @padding-vertical;
+    }
+  }
+}

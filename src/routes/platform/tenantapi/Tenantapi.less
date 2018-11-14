@@ -1,0 +1,28 @@
+@import '../../../components/variables.less';
+.root {
+  padding-bottom: 100%;
+
+  > * {
+    &[role="search"] {
+      padding-bottom: 1px;
+
+      > :first-child > :last-child > :last-child > :last-child {
+        display: none;
+
+      }
+    }
+
+    &[role="card"] {
+      > {
+        &[role="buttons"] {
+          padding-top: 5px;
+          padding-bottom: 5px;
+        }
+      }
+    }
+  }
+}
+
+
+
+

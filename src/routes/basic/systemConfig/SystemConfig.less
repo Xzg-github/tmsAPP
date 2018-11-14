@@ -1,0 +1,19 @@
+@import '../../../components/variables';
+
+.root {
+  > div {
+    > div {
+      > div {
+        margin: @padding-vertical 0;
+      }
+    }
+  }
+
+  :global(.ant-checkbox-group) {
+    margin-left: 8px;
+  }
+
+  [role='toolbar'] {
+    text-align: center;
+  }
+}

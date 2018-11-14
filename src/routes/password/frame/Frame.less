@@ -1,0 +1,43 @@
+@import '../../../components/variables.less';
+
+@footer-height: 50px;
+@margin-vertical: 20px;
+@margin-horizontal: 30px;
+@section-padding: @header-height + @footer-height + @margin-vertical * 2;
+
+.root {
+  min-width: 500px;
+
+  > header {
+    position: relative;
+    height: @header-height;
+    background: @primary-color;
+    padding-left: @margin-horizontal + 20px;
+
+    > img {
+      margin-top: 4px;
+      height: 32px;
+    }
+
+    > a {
+      position: absolute;
+      color: white;
+      right: @margin-horizontal + 20px;
+      bottom: 4px;
+    }
+  }
+
+  > section {
+    background: white;
+    height: calc(~'100vh - @{section-padding}');
+    margin: @margin-vertical @margin-horizontal;
+  }
+
+  > footer {
+    height: @footer-height;
+    line-height: @footer-height;
+    background: white;
+    text-align: center;
+    font-size: 14px;
+  }
+}

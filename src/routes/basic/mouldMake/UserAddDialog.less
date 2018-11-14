@@ -1,0 +1,32 @@
+@import '../../../components/variables';
+
+.root {
+  [role='table'] {
+    margin-top: 10px;
+  }
+  [role='bar'] {
+    margin-bottom: 5px;
+  }
+
+
+  .toTitle {
+    padding-left: 0 !important;
+    border-bottom: none !important;
+  }
+  .title {
+    &:before {
+      display: inline-block;
+      content: '|';
+      color: #2196f3;
+      font-size: 12px;
+      font-weight: 400;
+      width: 3px;
+      height: 15px;
+      background-color: #2196f3;
+      margin-right: 3px;
+      line-height: 1.5;
+      margin-left: -4px;
+    }
+  }
+
+}
