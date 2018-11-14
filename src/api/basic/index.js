@@ -20,6 +20,7 @@ import apiTenant from './tenant';
 import formExpand from './formExpand';
 import systemConfig from './systemConfig';
 import apicommon from './common';
+import apiCarType from './carType';
 
 const api = express.Router();
 api.use('/user', apiUser);
@@ -43,4 +44,5 @@ api.use("/common", apicommon);
 api.use('/tenant', apiTenant);
 api.use('/formExpand', formExpand);
 api.use('/systemConfig', systemConfig);
+api.use('/car_type', apiCarType);
 export default api;

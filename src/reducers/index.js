@@ -1,10 +1,30 @@
 import { combineReducers } from 'redux';
 import {createReducer} from '../action-reducer/reducer';
+import {mapReducer} from '../action-reducer/combine';
 import basic from './basic';
 import config from './config';
 import password from './password';
 import platform from './platform';
 import message from './message';
+
+/*
+* 功能：创建标准reducer结构
+* 参数： key: 模块标识，一般使用对应模块侧边栏key的驼峰名
+*       isTabPage： 主页面是否为需要tab页签页面扩展，默认true，会创建一个路径加edit的reducer
+* */
+const create = (key, isTabPage=true) => {
+  const prefix = [key];
+  if (isTabPage) {
+    const edit = createReducer(prefix.concat('edit'));
+    const toEdit = ({activeKey}, {payload={}}) => {
+      const key = payload.currentKey || activeKey;
+      return key !== 'index' ? {keys: [key], reducer: edit} : {};
+    };
+    return createReducer(prefix, mapReducer(toEdit));
+  }else {
+    return createReducer(prefix);
+  }
+};
 
 const rootReducer = combineReducers({
   layout: createReducer(['layout']),
@@ -15,6 +35,54 @@ const rootReducer = combineReducers({
   password,
   platform,
   message,
+
+  //运输订单
+  input: create('input'),
+  import: create('import'),
+  pending: create('pending'),
+  complete: create('complete'),
+  all: create('all'),
+
+  //车辆调度
+  todo: create('todo'),
+  done: create('done'),
+  carManager: create('carManager'),
+
+  //监理任务
+  waiting: create('waiting'),
+  finish: create('finish'),
+  supervisorManager: create('supervisorManager'),
+
+  //计费与对帐
+  receiveMake: create('receiveMake'),
+  receiveChange: create('receiveChange'),
+  receiveBill: create('receiveBill'),
+  receiveMonthlyBill: create('receiveMonthlyBill'),
+  receiveApply: create('receiveApply'),
+  payMake: create('payMake'),
+  payChange: create('payChange'),
+  payBill: create('payBill'),
+  payMonthlyBill: create('payMonthlyBill'),
+  audit: create('audit'),
+  extraApply: create('extraApply'),
+  append: create('append'),
+
+  //档案管理
+  customerContact: create('customerContact'),
+  customerFactory: create('customerFactory'),
+  customerTax: create('customerTax'),
+  customerCost: create('customerCost'),
+  supplierContact: create('supplierContact'),
+  supplierCar: create('supplierCar'),
+  supplierDriver: create('supplierDriver'),
+  supplierSupervisor: create('supplierSupervisor'),
+  supplierCost: create('supplierCost'),
+  insideFactory: create('insideFactory'),
+  insideCar: create('insideCar'),
+  insideDriver: create('insideDriver'),
+  insideSupervisor: create('insideSupervisor'),
+  customerPrice: create('customerPrice'),
+  supplierPrice: create('supplierPrice'),
 });
 
 export default rootReducer;

@@ -16,6 +16,7 @@ import defaultOutput from './defaultOutput';
 import SMSmail from './SMSmail';
 import excelConfigLib from './excelConfigLib';
 import tenant from './tenant';
+import carType from './carType';
 
 const basicReducer = combineReducers({
   user,
@@ -34,6 +35,7 @@ const basicReducer = combineReducers({
   SMSmail,
   excelConfigLib,
   tenant,
+  carType,
   messageSetting: createReducer(['basic', 'messageSetting']),
   formExpand: createReducer(['basic', 'formExpand']),
   systemConfig: createReducer(['basic', 'systemConfig'])

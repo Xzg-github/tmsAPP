@@ -27,6 +27,34 @@ const createRoute = (path, load) => {
   return {path, children: [], action: createAction(load)};
 };
 
+const loadOrder = (resolve, context, params) => {
+  require.ensure([], (require) => {
+    const route = require('./order').default;
+    dispatch(context, params, route, resolve);
+  }, 'order');
+};
+
+const loadDispatch = (resolve, context, params) => {
+  require.ensure([], (require) => {
+    const route = require('./dispatch').default;
+    dispatch(context, params, route, resolve);
+  }, 'dispatch');
+};
+
+const loadSupervisor = (resolve, context, params) => {
+  require.ensure([], (require) => {
+    const route = require('./supervisor').default;
+    dispatch(context, params, route, resolve);
+  }, 'supervisor');
+};
+
+const loadBill = (resolve, context, params) => {
+  require.ensure([], (require) => {
+    const route = require('./bill').default;
+    dispatch(context, params, route, resolve);
+  }, 'bill');
+};
+
 const loadConfig = (resolve, context, params) => {
   require.ensure([], (require) => {
     const route = require('./config').default;
@@ -63,6 +91,10 @@ export default {
   children: [
     require('./login').default,
     require('./home').default,
+    createRoute('/order', loadOrder),
+    createRoute('/dispatch', loadDispatch),
+    createRoute('/supervisor', loadSupervisor),
+    createRoute('/bill', loadBill),
     createRoute('/config', loadConfig),
     createRoute('/basic', loadBasic),
     createRoute('/platform', loadPlatform),

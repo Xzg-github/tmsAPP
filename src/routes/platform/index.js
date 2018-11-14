@@ -18,6 +18,7 @@ const children = [
   require('./tenantapi').default,
 
   require('./sysDictionary').default,
+  require('./carType').default,
   require('./currencyFile').default,
   require('./area').default,
 

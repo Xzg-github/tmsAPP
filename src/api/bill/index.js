@@ -1,0 +1,29 @@
+import express from 'express';
+import receiveMake from './receiveMake';
+import receiveChange from './receiveChange';
+import receiveBill from './receiveBill';
+import receiveMonthlyBill from './receiveMonthlyBill';
+import receiveApply from './receiveApply';
+import payMake from './payMake';
+import payChange from './payChange';
+import payBill from './payBill';
+import payMonthlyBill from './payMonthlyBill';
+import audit from './audit';
+import extraApply from './extraApply';
+import append from './append';
+
+let api = express.Router();
+api.use('/receive_make', receiveMake);
+api.use('/receive_change', receiveChange);
+api.use('/receive_bill', receiveBill);
+api.use('/receive_monthly_bill', receiveMonthlyBill);
+api.use('/receive_apply', receiveApply);
+api.use('/pay_make', payMake);
+api.use('/pay_change', payChange);
+api.use('/pay_bill', payBill);
+api.use('/pay_monthly_bill', payMonthlyBill);
+api.use('/audit', audit);
+api.use('/extra_apply', extraApply);
+api.use('/append', append);
+
+export default api;
