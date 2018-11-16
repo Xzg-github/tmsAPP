@@ -5,7 +5,7 @@ import {host} from '../../globalConfig';
 let api = express.Router();
 
 const localTest = false;
-const service = 'archiver_service';
+const service = 'archiver-service';
 
 const URL_LIST = `${host}/${service}/search/car_mode`;
 const URL_DEL = `${host}/${service}/car_mode`;

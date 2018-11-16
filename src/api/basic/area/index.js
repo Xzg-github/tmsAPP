@@ -4,7 +4,7 @@ import {host} from '../../globalConfig';
 
 let api = express.Router();
 
-const service = 'archiver_service';
+const service = 'archiver-service';
 
 const URL_TREE = `${host}/${service}/archiver/district/tree`;
 const URL_TREE_LIST = `${host}/${service}/archiver/districts`;
