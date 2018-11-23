@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import {createReducer} from '../../action-reducer/reducer';
 import dataSet from './dataset';
 import modeOutputDesign from './modeOutputDesign';
 import publicAuthority from './publicAuthority';
@@ -11,6 +10,8 @@ import tenantapi from './tenantapi';
 import emailAccept from './emailAccept';
 import customersArchives from './customersArchives';
 import suppliersArchives from './suppliersArchives';
+import customerFactory from './customerFactory';
+import insideFactory from './insideFactory';
 
 const configReducer = combineReducers({
   dataSet,
@@ -24,6 +25,8 @@ const configReducer = combineReducers({
   emailAccept,
   customersArchives,
   suppliersArchives,
+  customerFactory,
+  insideFactory
 });
 
 
