@@ -39,7 +39,7 @@ function buildSearchForPost(searchData, isFilter,isExcelReport) {
   if (searchData instanceof Array) {
     search.filter = searchData;
   } else {
-    search = isExcelReport ? searchData : buildFilter(0, 65535, convert(searchData));
+    search = isExcelReport ? convert(searchData) : buildFilter(0, 65535, convert(searchData));
   }
   if (isFilter != true) {
     search = search.filter;
