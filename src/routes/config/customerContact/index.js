@@ -1,12 +1,13 @@
 import React from 'react';
+import RootContainer from './RootContainer';
 
-export default {
-  path: '/customer_contact',
+const path = '/customer_contact';
 
-  action() {
-    return {
-      wrap: true,
-      component: <div>联系人档案</div>
-    };
+const action = () => {
+  return {
+    wrap: true,
+    component: <RootContainer />
   }
-}
+};
+
+export default {path, action};

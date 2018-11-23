@@ -13,39 +13,50 @@ api.get('/config', async (req, res) => {
 
 //获取tableItems
 api.post('/list', async (req, res) => {
-  const url = `${service}/supplier_contact/list/search`;
+  const url = `${service}/supplier_tax/list/search`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 //新增 编辑
 api.post('/add', async (req, res) => {
-  const url = `${service}/supplier_contact`;
+  const url = `${service}/supplier_tax`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 //启用与禁用
 api.put('/enable/:enabledType', async (req, res) => {
-  const url = `${service}/supplier_contact/batch/${req.params.enabledType}`;
+  const url = `${service}/supplier_tax/batch/${req.params.enabledType}`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
 //删除
 api.delete('/delete', async (req, res) => {
-  const url = `${service}/supplier_contact/batch`;
+  const url = `${service}/supplier_tax/batch`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
 });
 
-//获取所有客户档案下拉
+//获取所有供应商档案下拉
 api.post('/allCustomer', async (req, res) => {
   const url = `${service}/supplier/drop_list`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
-//获取已启用客户档案
+//获取已启用供应商档案
 api.post('/customer', async (req, res) => {
   const url = `${service}/supplier/drop_list/enabled_type_enabled`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
+//获取所有费用项下拉
+api.post('/allItems', async (req, res) => {
+  const url = `${service}/charge_item/drop_list`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+//获取已激活费用项下拉
+api.post('/Items', async (req, res) => {
+  const url = `${service}/charge_item/drop_list/enabled_type_enabled`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
 
 export default api;
