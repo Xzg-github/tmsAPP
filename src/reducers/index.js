@@ -83,6 +83,7 @@ const rootReducer = combineReducers({
   insideSupervisor: create('insideSupervisor'),
   customerPrice: create('customerPrice'),
   supplierPrice: create('supplierPrice'),
+  supplierTax: create('supplierTax'),
 });
 
 export default rootReducer;

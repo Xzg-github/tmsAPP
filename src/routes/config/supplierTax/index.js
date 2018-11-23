@@ -1,7 +1,7 @@
 import React from 'react';
 import RootContainer from './RootContainer';
 
-const path = '/inside_factory';
+const path = '/supplier_tax';
 
 const action = () => {
   return {
