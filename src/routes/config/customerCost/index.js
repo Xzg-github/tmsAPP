@@ -1,4 +1,5 @@
 import React from 'react';
+import Container from './CustomerCostContainer';
 
 export default {
   path: '/customer_cost',
@@ -6,7 +7,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <div>习惯费用项</div>
+      component: <Container />
     };
   }
 }
