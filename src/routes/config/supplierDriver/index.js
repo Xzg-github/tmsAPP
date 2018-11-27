@@ -1,12 +1,13 @@
 import React from 'react';
+import Container from './Container';
 
-export default {
-  path: '/supplier_driver',
+const path = '/supplierDriver';
 
-  action() {
-    return {
-      wrap: true,
-      component: <div>司机档案</div>
-    };
+const action = () => {
+  return {
+    wrap: true,
+    component: <Container />
   }
-}
+};
+
+export default {path, action};
