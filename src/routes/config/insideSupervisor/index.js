@@ -1,12 +1,13 @@
 import React from 'react';
+import Container from './Container'
 
 export default {
-  path: '/inside_supervisor',
+  path: '/insideSupervisor',
 
   action() {
     return {
       wrap: true,
-      component: <div>自有监理档案</div>
+      component: <Container />
     };
   }
 }
