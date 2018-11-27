@@ -8,7 +8,6 @@ let api = express.Router();
 const URL_LIST = `${service}/often_output_template/list/search`;
 const URL_SAVE = `${service}/often_output_template/batch/`;
 const URL_REPORT = `${service1}/report/drop_list`;
-const URL_CAR_TYPE = `${host}/archiver_service/car_mode/drop_list`;
 
 // 获取界面信息
 api.get('/config', async (req, res) => {

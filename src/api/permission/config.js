@@ -90,6 +90,7 @@ const supplier_mgr = [
   {key: 'supplierDriver'},         // 司机档案
   {key: 'supplierSupervisor'},         // 监理档案
   {key: 'supplier_cost'},         // 习惯费用项
+  {key: 'supplier_tax'},           //供应商税率
 ];
 
 // 内部档案子菜单

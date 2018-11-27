@@ -27,6 +27,7 @@ import insideDriver from './insideDriver';
 import insideSupervisor from './insideSupervisor';
 import customerPrice from './customerPrice';
 import supplierPrice from './supplierPrice';
+import supplierTax from './supplierTax';
 
 let api = express.Router();
 api.use('/dataset', apiDataSet);
@@ -57,5 +58,6 @@ api.use('/insideDriver', insideDriver);
 api.use('/insideSupervisor', insideSupervisor);
 api.use('/customer_price', customerPrice);
 api.use('/supplier_price', supplierPrice);
+api.use('/supplier_tax', supplierTax);
 
 export default api;

@@ -26,6 +26,7 @@
     "jsonwebtoken": "^7.2.1",
     "node-fetch": "^1.6.3",
     "normalize.css": "^5.0.0",
+    "npm": "^6.4.1",
     "pretty-error": "^2.0.2",
     "query-string": "^4.2.3",
     "react": "^15.4.1",

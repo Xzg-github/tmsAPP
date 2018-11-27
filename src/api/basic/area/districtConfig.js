@@ -12,7 +12,7 @@ const tableCols =[
 ];
 
 const controls = [
-  {key: 'parentDistrictGuid', title: '上级',type:'readonly'},
+  {key: 'parentDistrictGuid', title: '上级',type:'search', required:true},
   {key: 'districtName', title: '行政区名称', type: 'text', required:true},
   {key: 'districtCode', title: '行政区编码', type: 'text'},
   {key: 'districtInternationalCode', title: '国际代码', type: 'text'}

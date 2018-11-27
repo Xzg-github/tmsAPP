@@ -7,7 +7,6 @@ const service = 'auth-center-provider';
 const service1 = `${host}/archiver-service`;
 const service3= `${host}/tenant_service`;
 
-const URL_SERVICE_PRODUCT = `${host}/production_service/productType/service/select_current_product_type`; // 服务类型
 const URL_ALL_DATA = `${host}/${service}/tenant_rule_types`;
 const URL_SEARCH = `${host}/${service}/data_roles/search`;
 const URL_ADD = `${host}/${service}/data_role`;
