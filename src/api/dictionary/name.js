@@ -198,6 +198,7 @@ const name = {
   CONSIGNEE_CONSIGNOR_TYPE: 'consignee_consignor_type', //收发货人类型
   BUSINESS_TYPE: 'business_type',  //业务类型
   TAX_RATE_WAY: 'tax_rate_way',     //计税方式
+  ZERO_ONE: 'zero_one_type', //是否（0/1）
 };
 
 export default name;
