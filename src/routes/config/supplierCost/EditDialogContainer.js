@@ -6,10 +6,10 @@ import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
 import showPopup from "../../../standard-business/showPopup";
 
-const URL_CUSTOMER_OPTIONS = '/api/config/customer_factory/customer';
+const URL_SUPPLIER_OPTIONS = '/api/config/supplier_contact/customer';
 const URL_CHANGE_OPTIONS = '/api/config/customer_cost/charge_name_drop_list';
-const URL_ADD = '/api/config/customer_cost/add';
-const URL_EDIT = '/api/config/customer_cost/edit';
+const URL_ADD = '/api/config/supplier_cost/add';
+const URL_EDIT = '/api/config/supplier_cost/edit';
 
 const STATE_PATH = ['temp'];
 const action = new Action(STATE_PATH);
@@ -18,12 +18,12 @@ const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
 };
 
-const formSearchActionCreator = (key, title) => async (dispatch, getState) => {
+const formSearchActionCreator = (key, title) => async (dispatch) => {
   let data, options, body;
   switch (key) {
-    case 'customerId': {
+    case 'supplierId': {
       body = {maxNumber: 20, filter:title};
-      data = await fetchJson(URL_CUSTOMER_OPTIONS, postOption(body));
+      data = await fetchJson(URL_SUPPLIER_OPTIONS, postOption(body));
       options = data.result;
       break;
     }
@@ -42,7 +42,7 @@ const formSearchActionCreator = (key, title) => async (dispatch, getState) => {
   dispatch(action.update({options}, 'controls', {key: 'key', value: key}));
 };
 
-const changeActionCreator = (keyName, keyValue) => async (dispatch, getState) => {
+const changeActionCreator = (keyName, keyValue) => async (dispatch) => {
   dispatch(action.assign({[keyName]: keyValue}, 'value'));
 };
 
@@ -95,3 +95,4 @@ export default (config, data, isEdit) => {
   const Container = connect(mapStateToProps, actionCreators)(EditDialog);
   return showPopup(Container, {});
 };
+

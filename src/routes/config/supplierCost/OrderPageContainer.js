@@ -8,11 +8,11 @@ import {buildOrderPageState} from '../../../common/orderAdapter';
 import {search,search2} from '../../../common/search';
 import showEditDialog from './EditDialogContainer';
 
-const STATE_PATH = ['customerCost'];
-const URL_CONFIG = '/api/config/customer_cost/config';
-const URL_LIST = '/api/config/customer_cost/list';
-const URL_CUSTOMER_OPTIONS = '/api/config/customer_factory/allCustomer';
-const URL_DEL = '/api/config/customer_cost/del';
+const STATE_PATH = ['supplierCost'];
+const URL_CONFIG = '/api/config/supplier_cost/config';
+const URL_LIST = '/api/config/supplier_cost/list';
+const URL_SUPPLIER_OPTIONS = '/api/config/supplier_contact/allCustomer';
+const URL_DEL = '/api/config/supplier_cost/del';
 
 const action = new Action(STATE_PATH);
 
@@ -24,7 +24,7 @@ export const buildClearingUnitState = async () => {
     return;
   }
   config = data.result;
-  config.index.buttons = dealActions(config.index.buttons, 'customer_cost');
+  config.index.buttons = dealActions(config.index.buttons, 'supplier_cost');
   res = await search(URL_LIST, 0, config.index.pageSize, {});
   if(res.returnCode !== 0){
     showError(res.returnMsg);
@@ -38,6 +38,7 @@ export const buildClearingUnitState = async () => {
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
 };
+
 
 //刷新表格
 const updateTable = async (dispatch, getState) => {
@@ -63,7 +64,6 @@ const editAction = async (dispatch, getState) => {
     helper.showError('请勾选一条记录编辑');
   }
 };
-
 
 const findCheckedIndex1 = (items) => {
   const index = items.reduce((result = [], item, index) => {
@@ -121,9 +121,9 @@ const formSearchActionCreator = (key, title) => async (dispatch, getState) => {
   const {filters} = getSelfState(getState());
   let data, options, body;
   switch (key) {
-    case 'customerId': {
+    case 'supplierId': {
       body = {maxNumber: 20, filter:title};
-      data = await fetchJson(URL_CUSTOMER_OPTIONS, helper.postOption(body));
+      data = await fetchJson(URL_SUPPLIER_OPTIONS, helper.postOption(body));
       break;
     }
     default:
