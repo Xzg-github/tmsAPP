@@ -10,8 +10,8 @@ import {fetchDictionary, setDictionary} from '../../../common/dictionary';
 import {dealActions} from '../../../common/check';
 
 const STATE_PATH = ['customerTax'];
-const URL_CONFIG = '/api/config/customer_Tax/config';
-const URL_LIST = '/api/config/customer_Tax/list';
+const URL_CONFIG = '/api/config/customer_tax/config';
+const URL_LIST = '/api/config/customer_tax/list';
 const action = new Action(STATE_PATH);
 
 const getSelfState = (rootState) => {
