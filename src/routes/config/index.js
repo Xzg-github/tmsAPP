@@ -12,6 +12,7 @@ const children = [
   require('./customerFactory').default,
   require('./customerTax').default,
   require('./customerCost').default,
+  require('./customerService').default,
 
   require('./suppliersArchives').default,
   require('./supplierContact').default,

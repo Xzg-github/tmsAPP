@@ -77,6 +77,7 @@ const institution_mgr = [
 const customer_mgr = [
   {key: 'customersArchives'},         // 客户档案
   {key: 'customer_contact'},         // 联系人档案
+  {key: 'customer_service'},         // 客服分配
   {key: 'customer_factory'},         // 收发货档案
   {key: 'customer_tax'},         // 税率档案
   {key: 'customer_cost'},         // 习惯费用项
