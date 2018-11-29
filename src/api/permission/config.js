@@ -77,6 +77,7 @@ const institution_mgr = [
 const customer_mgr = [
   {key: 'customersArchives'},         // 客户档案
   {key: 'customer_contact'},         // 联系人档案
+  {key: 'customer_service'},         // 客服分配
   {key: 'customer_factory'},         // 收发货档案
   {key: 'customer_tax'},         // 税率档案
   {key: 'customer_cost'},         // 习惯费用项
@@ -87,8 +88,8 @@ const supplier_mgr = [
   {key: 'suppliersArchives'},         // 供应商档案
   {key: 'supplier_contact'},         // 联系人档案
   {key: 'supplier_car'},         // 车辆档案
-  {key: 'supplier_driver'},         // 司机档案
-  {key: 'supplier_supervisor'},         // 监理档案
+  {key: 'supplierDriver'},         // 司机档案
+  {key: 'supplierSupervisor'},         // 监理档案
   {key: 'supplier_cost'},         // 习惯费用项
   {key: 'supplier_tax'},           //供应商税率
 ];
@@ -97,8 +98,8 @@ const supplier_mgr = [
 const inside_mgr = [
   {key: 'inside_factory'},                // 收发货档案
   {key: 'inside_car'},                // 自有车档案
-  {key: 'inside_driver'},                // 自有司机档案
-  {key: 'inside_supervisor'},                // 自有监理档案
+  {key: 'insideDriver'},                // 自有司机档案
+  {key: 'insideSupervisor'},                // 自有监理档案
   {key: 'rate'},                // 汇率档案
   {key: 'charge_item'},       // 费用项档案
 ];

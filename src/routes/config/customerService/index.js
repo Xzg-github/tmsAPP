@@ -1,8 +1,8 @@
 import React from 'react';
-import Container from './Container'
+import Container from './CustomerServiceContainer';
 
 export default {
-  path: '/insideSupervisor',
+  path: '/customer_service',
 
   action() {
     return {
