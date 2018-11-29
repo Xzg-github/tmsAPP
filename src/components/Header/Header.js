@@ -3,113 +3,73 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import {Icon, Avatar, Badge, Dropdown, Menu} from 'antd';
 import Link from '../Link';
 import s from './Header.less';
+import Vertical from './Vertical';
+
 const MenuItemGroup = Menu.ItemGroup;
 const MenuItem = Menu.Item;
 const MenuDivider = Menu.Divider;
 
-const getUsername = () => {
-  const username = 'username=';
-  const cookie = document.cookie;
-  const begin = cookie.indexOf(username) + username.length;
-  const end = cookie.indexOf(';', begin);
-  return unescape(cookie.substring(begin, end < 0 ? cookie.length : end));
-};
-
 const ITEM_TYPE = {
   key: PropTypes.string.isRequired,
   href: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  icon: PropTypes.string.isRequired
 };
 
 /**
- * selectKey: 选中的key；首页的key固定为home, 设置导航的key固定为setting
- * selectUrl：selectKey对应的url，优先级高于settingUrl或items中的href
- * settingUrl: 设置的URL，如果不存在或为空，则隐藏设置
- * homeUrl: 首页(或称工作台)的URL，默认为'/'
- * items：除去首页和设置后的一级导航信息
+ * selectKey: 选中的key
+ * url：优先级高于setting或message中的href
+ * setting: 如果不存在或为空，则隐藏设置
+ * message: 如果不存在或为空，则隐藏消息
+ * messageCount：未读消息的条数
+ * username: 用户名
  * onMenuClick: 函数原型func(key)
  */
 class Header extends React.Component {
   static propTypes = {
-    selectKey: PropTypes.string.isRequired,
-    selectUrl: PropTypes.string,
-    messageUrl: PropTypes.string,
-    homeUrl: PropTypes.string,
-    items: PropTypes.arrayOf(PropTypes.shape(ITEM_TYPE)),
-    onMenuClick: PropTypes.func,
-    messageCount: PropTypes.number
+    selectKey: PropTypes.string,
+    url: PropTypes.object,
+    setting: PropTypes.shape(ITEM_TYPE),
+    message: PropTypes.shape(ITEM_TYPE),
+    messageCount: PropTypes.number,
+    username: PropTypes.string,
+    onMenuClick: PropTypes.func
   };
 
-  constructor(props) {
-    super(props);
-    if (props.selectUrl) {
-      this.state = {[props.selectKey]: props.selectUrl, username: getUsername()};
-    } else {
-      this.state = {username: getUsername()};
-    }
-  }
-
-  componentWillReceiveProps(props) {
-    if (props.selectUrl) {
-      this.setState({[props.selectKey]: props.selectUrl});
-    }
-  }
-
-  onVisibleChange = (visible) => {
-    this.setState({visible});
-  };
+  static Vertical = Vertical;
 
   onMenuItemClick = ({key}) => {
     const {onMenuClick} = this.props;
-    this.setState({visible: false});
     onMenuClick && onMenuClick(key);
   };
 
-  getLinkProps = (key, url, props={}) => {
-    return {
-      ...props,
-      to: url,
-      'data-role': 'block',
-      'data-active': this.props.selectKey === key ? 'true' : null
-    };
+  isSelect = (item) => {
+    return this.props.selectKey === item.key ? 'true' : null;
   };
 
-  toLogo = (homeUrl) => {
-    const props = this.getLinkProps('home', homeUrl || '/', {role: 'logo'});
-    return <Link {...props}>TMS</Link>;
+  getUrl = (item) => {
+    return this.props.url[item.key] || item.href;
   };
 
-  toItem = ({key, href, title}, index) => {
-    const props = this.getLinkProps(key, this.state[key] || href, {key: index});
-    return <Link {...props}>{title}</Link>;
-  };
-
-  toMiddle = (items) => {
-    return (
-      <span>
-        {items.map(this.toItem)}
-      </span>
-    );
-  };
-
-  toIcon = (type) => {
+  icon = (item) => {
     const style = {fontSize: 18, verticalAlign: 'middle'};
-    return <Icon type={type} style={style} />;
+    return <Icon type={item.icon} style={style} />;
   };
 
-  toSetting = (settingUrl) => {
-    if (settingUrl) {
-      const props = this.getLinkProps('setting', this.state['setting'] || settingUrl);
-      return <Link {...props}>{this.toIcon('pld-setting')}</Link>;
-    } else {
-      return null;
-    }
+  setting = (item) => {
+    const props = {
+      'data-role': 'setting',
+      'data-active': this.isSelect(item),
+      to: this.getUrl(item),
+      title: item.title
+    };
+    return <Link {...props}>{this.icon(item)}</Link>;
   };
 
-  toMenu = () => {
+  menu = () => {
     return (
       <Menu className={s.menu} onClick={this.onMenuItemClick}>
-        <MenuItemGroup title={this.state.username} />
+        <MenuItemGroup title={this.props.username} />
         <MenuDivider />
         <MenuItem key='person'>个人信息</MenuItem>
         <MenuItem key='mode'>导入模板</MenuItem>
@@ -119,60 +79,38 @@ class Header extends React.Component {
     );
   };
 
-  toAvatar = () => {
-    const props = {
-      placement: 'bottomRight',
-      overlay: this.toMenu(),
-      trigger: ['click'],
-      onVisibleChange: this.onVisibleChange
-    };
+  message = (item) => {
+    const count = this.props.messageCount;
     return (
-      <Dropdown {...props}>
-        <span role='avatar' data-role='block' data-active={this.state.visible ? true : null}>
+      <Link data-role='message' data-active={this.isSelect(item)} to={this.getUrl(item)}>
+        <Badge count={count} overflowCount={99} title={`您有${count}条未读消息`}>
+          {this.icon(item)}
+        </Badge>
+      </Link>
+    );
+  };
+
+  avatar = () => {
+    return (
+      <Dropdown placement='bottomRight' overlay={this.menu()}>
+        <span data-role='avatar' style={{cursor: 'pointer'}}>
           <Avatar icon="user" />
         </span>
       </Dropdown>
     );
   };
 
-  toMessage = (messageUrl, count=0) => {
-    if (messageUrl) {
-      const props = this.getLinkProps('message', this.state['message'] || messageUrl);
-      const msgProps = {
-        overflowCount: 99,
-        title: `您有${count}条未读消息`,
-        count
-      };
-      return (
-        <Link {...props}>
-          <span role='message'>
-            {/* <Badge dot>{this.toIcon('pld-message')}</Badge> */}
-            <Badge {...msgProps}>{this.toIcon('pld-message')}</Badge>
-          </span>
-        </Link>
-      );
-    } else {
-      return null;
-    }
-  };
-
-  toTail = (settingUrl,messageUrl,messageCount) => {
-    return (
-      <span>
-        {this.toSetting(settingUrl)}
-        {this.toMessage(messageUrl,messageCount)}
-        {this.toAvatar()}
-      </span>
-    );
-  };
-
   render() {
-    const {items, homeUrl, settingUrl,messageUrl,messageCount} = this.props;
+    const {setting, message, messageCount} = this.props;
     return (
       <header className={s.root}>
-        {this.toLogo(homeUrl)}
-        {this.toMiddle(items)}
-        {this.toTail(settingUrl,messageUrl,messageCount)}
+        <Icon type='pld-logo'/>
+        <span>TMS运输管理系统</span>
+        <span>
+          {setting ? this.setting(setting) : null}
+          {message ? this.message(message, messageCount) : null}
+          {this.avatar()}
+        </span>
       </header>
     );
   }

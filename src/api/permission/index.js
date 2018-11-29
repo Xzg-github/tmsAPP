@@ -3,7 +3,7 @@ import {NAV_ITEMS, SIDEBARS} from './config';
 import {fetchJsonByNode, postOption} from '../../common/common';
 import {host, privilege} from '../globalConfig';
 const service = `${host}/auth-center`;
-let api = express.Router();
+const api = express.Router();
 
 const TYPE_PAGE = 2;
 const TYPE_ACTION = 3;
@@ -36,16 +36,16 @@ function findValidKey(items) {
 }
 
 const getNavItems = (navigation, sidebars, privilege) => {
-  return navigation.filter(({unique}) => !!privilege[unique]).map(({key, unique}) => {
+  return navigation.filter(({unique}) => !!privilege[unique]).map(({key, unique, icon}) => {
     const last = findValidKey(sidebars[unique]);
     const href = last ? `/${key}/${last}` : '/';
     const title = privilege[unique];
-    return {key, title, href};
+    return {key, title, href, icon};
   });
 };
 
-const getSidebarItem = (prefix, privilege) => ({key, unique, icon, children}) => {
-  let item = {key, icon, title: privilege[unique], href: `/${prefix}/${key}`};
+const getSidebarItem = (prefix, privilege) => ({key, unique, children}) => {
+  const item = {key, title: privilege[unique], href: `/${prefix}/${key}`};
   if (children) {
     item.isFolder = true;
     item.children = getSidebar(children, prefix, privilege);
