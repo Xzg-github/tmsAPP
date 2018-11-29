@@ -4,10 +4,11 @@ import {postOption, validValue, fetchJson, showError} from '../../../common/comm
 import {toFormValue, toTableValue} from '../../../common/check';
 import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
-import {updateTree, initActionCreator} from './AreaContainer';
+import {updateTree} from './AreaContainer';
 
 const URL_DISTRICT_SAVE = '/api/basic/area/district';
 const URL_DISTRICT_DROP_LIST = `/api/basic/area/district_drop_list`;
+const URL_DISTRICT_INFO = '/api/basic/area/district_info';
 
 const PARENT_STATE_PATH = ['basic', 'area', 'district'];
 const STATE_PATH = ['basic', 'area', 'district', 'edit'];
@@ -25,9 +26,9 @@ const buildEditState = (config, data={}, isEdit=false, editIndex=-1) => {
     isEdit,
     editIndex,
     title: isEdit ? edit : add,
-    controls: isEdit && data.baseInfo.parentDistrictGuid && data.baseInfo.parentDistrictGuid.value
+    controls: isEdit && Number(data.baseInfo.districtType) === 1
       ? controls.map(item => item.key === 'parentDistrictGuid'
-      ? {...item, type:'search', required: true} : item) : controls,
+      ? {...item, type:'readonly', required: false} : item) : controls,
     ...otherConfig,
     value: isEdit ? data.baseInfo : data,
     tableItems: isEdit ? data.list : [],
@@ -108,8 +109,22 @@ const okActionCreator = (props) => async (dispatch, getState) => {
     dispatch(action.assign({valid: true}));
     return;
   }
+  //获取新记录级别信息
+  let districtType = 1;
+  if (value.parentDistrictGuid && value.parentDistrictGuid.value) {
+    const data = await fetchJson(`${URL_DISTRICT_INFO}/${value.parentDistrictGuid.value}`);
+    if(data.returnCode !== 0) {
+      showError(data.returnMsg);
+      return;
+    }
+    districtType = Number(data.result.districtType) + 1;
+  }
+  if (districtType > 6) {
+    return showError(`上级不能为叶子节点，请重新填写`);
+  }
+
   let validItems = filterEmpty(tableItems);
-  const body = {baseInfo:toFormValue(value), list:toTableValue(validItems)};
+  const body = {baseInfo:{...toFormValue(value), districtType}, list:toTableValue(validItems)};
   const {returnCode, returnMsg, result} = await fetchJson(URL_DISTRICT_SAVE, postOption(body, isEdit ? 'put': 'post'));
   if (returnCode !== 0) {
     showError(returnMsg);
@@ -118,11 +133,9 @@ const okActionCreator = (props) => async (dispatch, getState) => {
   isEdit ? dispatch(actionParent.update(result, 'tableItems', editIndex)) : dispatch(actionParent.add(result, 'tableItems', 0));
   props.onClose();
   dispatch(CLOSE_ACTION);
-  if (isEdit && nodeGuid !== value.parentDistrictGuid.value) {
-    return initActionCreator()(dispatch, getState);
-  }else {
-    return updateTree(isEdit, result, dispatch, getState);
-  }
+  // if (!(!nodeGuid || (isEdit && nodeGuid === value.parentDistrictGuid.value))) {
+    return updateTree(dispatch, getState);
+  // }
 };
 
 const cancelActionCreator = (props) => (dispatch) => {

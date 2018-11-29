@@ -1,5 +1,5 @@
 import SetColDialog from '../components/SetColDialog/SetColDialog';
-import {fetchJson, postOption, showError, convert, download} from './common';
+import {fetchJson, postOption, showError, convert, download, deepCopy} from './common';
 import showPopup from '../standard-business/showPopup';
 import ExportJsonExcel from 'js-export-excel';
 import {buildFilter} from './search';
@@ -36,7 +36,7 @@ const exportExcelFunc = async (newCols, items, byFront=true) => {
   const hasDictionaryData = newCols.filter(col=>col.options && col.options.length);
   const checkItems = items.filter(o=>o.checked);
   const srcData = checkItems.length == 0 ? items : checkItems;
-  const data = srcData.map(o=>{
+  const data = deepCopy(srcData).map(o=>{
     for(let v in o) {
       if(typeof o[v] == 'object'){
         o[v] = o[v].title;

@@ -129,14 +129,10 @@ const delAction = async (dispatch, getState) => {
     return;
   }
   const item = tableItems[index];
-  const {returnCode, returnMsg, result} = await fetchJson(`${URL_DEL}/${item.guid}`, 'delete');
+  const {returnCode, returnMsg} = await fetchJson(`${URL_DEL}/${item.id}`, 'delete');
   if (returnCode === 0) {
-    if (result.active) {
-      dispatch(action.update(result, 'tableItems', index));
-    } else {
-      dispatch(action.del('tableItems', index));
-    }
-    showSuccessMsg('删除成功');
+    showSuccessMsg('操作成功');
+    return updateTable(dispatch, getState);
   }else {
     showError(returnMsg);
   }
@@ -150,10 +146,10 @@ const activeAction = async (dispatch, getState) => {
     return;
   }
   const item = tableItems[index];
-  const {returnCode, returnMsg, result} = await fetchJson(`${URL_ACTIVE}/${item.guid}`, 'put');
+  const {returnCode, returnMsg} = await fetchJson(`${URL_ACTIVE}/${item.id}`, 'put');
   if (returnCode === 0) {
-    dispatch(action.update(result, 'tableItems', index));
-    showSuccessMsg('激活成功');
+    showSuccessMsg('操作成功');
+    return updateTable(dispatch, getState);
   }else {
     showError(returnMsg);
   }

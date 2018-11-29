@@ -193,7 +193,12 @@ const name = {
   PAYMENT_TYPE: 'payment_type', //支付方式
 
   SALE_ORDER_TYPE: 'sale_order_type', //订单类别
-  PACKAGE_UNIT: 'package_unit', //erp-包装单位
+  PACKAGE_UNIT: 'package_unit', //erp-包装单位,
+
+  CONSIGNEE_CONSIGNOR_TYPE: 'consignee_consignor_type', //收发货人类型
+  BUSINESS_TYPE: 'business_type',  //业务类型
+  TAX_RATE_WAY: 'tax_rate_way',     //计税方式
+  ZERO_ONE: 'zero_one_type', //是否（0/1）
 };
 
 export default name;

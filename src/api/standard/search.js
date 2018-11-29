@@ -58,6 +58,14 @@ handlers['lo_company_all'] = (req, filter) => {
   return fetchJsonByNode(req, url, option);
 };
 
+// 组织机构
+handlers['institution'] = (req, filter) => {
+  const url = `${host}/tenant-service/institution/drop_list`;
+  const option = postOption({institutionName:filter,active:'active_activated'});
+  return fetchJsonByNode(req, url, option);
+};
+
+
 export const search = async (req, type, filter='') => {
   const handler = handlers[type];
   return handler ? await handler(req, filter) : {returnCode: 404, returnMsg: `类型[${type}]不存在`};

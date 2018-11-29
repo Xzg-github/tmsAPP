@@ -3,7 +3,7 @@ import {postOption, fetchJsonByNode} from '../../../common/common';
 import {host} from '../../globalConfig';
 
 let api = express.Router();
-const service = 'archiver_service';
+const service = 'archiver-service';
 const URL_LIST = `${host}/${service}/archiver/tableNumber/getTableNumberAll`;
 const URL_ADD_KEEP = `${host}/${service}/archiver/tableNumber/addTableNumber`;
 const URL_EDIT_KEEP = `${host}/${service}/archiver/tableNumber/updateTableNumber`;

@@ -1,4 +1,6 @@
 import React from 'react';
+import RootContainer from './RootContainer'
+
 
 export default {
   path: '/inside_car',
@@ -6,7 +8,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <div>自有车档案</div>
+      component: <RootContainer/>
     };
   }
 }

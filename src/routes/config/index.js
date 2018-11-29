@@ -12,6 +12,7 @@ const children = [
   require('./customerFactory').default,
   require('./customerTax').default,
   require('./customerCost').default,
+  require('./customerService').default,
 
   require('./suppliersArchives').default,
   require('./supplierContact').default,
@@ -19,6 +20,7 @@ const children = [
   require('./supplierDriver').default,
   require('./supplierSupervisor').default,
   require('./supplierCost').default,
+  require('./supplierTax').default,
 
   require('./insideFactory').default,
   require('./insideCar').default,
