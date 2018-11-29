@@ -3,14 +3,9 @@ import CarDialog from './CarDialog';
 import {Action} from '../../../action-reducer/action';
 import showPopup from '../../../standard-business/showPopup';
 import helper, {showError} from '../../../common/common';
-import {getPathValue} from '../../../action-reducer/helper';
-import showAddDialog from '../supplierDriver/addDialog/AddDialogContainer';
-import {fetchDictionary, setDictionary2} from '../../../common/dictionary';
 
-const action = new Action(['config','supplierCar','edit']);
+const action = new Action(['temp'], false);
 const URL_UPDATE = '/api/config/supplier_car/updateList';
-const URL_CONFIG = '/api/config/supplierDriver/config';
-const DRIVER = '/api/config/supplier_car/search/driver'; //司机下拉
 
 const buildState = (config, title,value={},isSupplier) => {
   value.isOwner = isSupplier ? 0 : 1;//如果为供应商车辆时，固定值为0,综合为1
@@ -25,7 +20,7 @@ const buildState = (config, title,value={},isSupplier) => {
 
 
 const getSelfState = (state) => {
-  return getPathValue(state, ['config','supplierCar','edit']);
+  return state.temp || {};
 };
 
 
@@ -81,7 +76,6 @@ const searchActionCreator = (key,keyValue,keyControls) => async(dispatch,getStat
   }else {
     json = await helper.fuzzySearchEx(keyValue,keyControls);
   }
-
   if (!json.returnCode) {
     const index = controls.findIndex(item => item.key == key);
     dispatch(action.update({options:json.result}, 'controls', index));
@@ -103,21 +97,6 @@ const exitValidActionCreator = () => {
   return action.assign({valid: false});
 };
 
-const onAddActionCreator = (key) => async(dispatch,getState) => {
-  const {edit}  = await helper.fetchJson(URL_CONFIG);
-  const {value} = getSelfState(getState());
-
-  if(key === 'driverId'){
-    let obj = {};
-    if(value.supplierId){
-      obj.supplierId = value.supplierId
-    }
-    await showAddDialog(obj, edit)
-  }
-
-};
-
-
 
 const mapStateToProps = (state) => {
   return getSelfState(state);
@@ -127,17 +106,13 @@ const actionCreators = {
   onClick: clickActionCreator,
   onSearch:searchActionCreator,
   onChange:changeActionCreator,
-  onExitValid:exitValidActionCreator,
-  onAdd:onAddActionCreator
+  onExitValid:exitValidActionCreator
 };
 
-const URL_CONFIG_CAR = '/api/config/supplier_car/config';
-export default async(value = {},title='新增',isSupplier = true) => {
-  const {edit,dictionary} = helper.getJsonResult(await helper.fetchJson(URL_CONFIG_CAR));
-  const dictionaryOptions = helper.getJsonResult(await fetchDictionary(dictionary));
-  setDictionary2(dictionaryOptions,edit.controls );
+
+export default async(config,value = {},title='新增',isSupplier = true) => {
   const Container = connect(mapStateToProps, actionCreators)(CarDialog);
-  global.store.dispatch(action.create(buildState(edit, title,value,isSupplier)));
+  global.store.dispatch(action.create(buildState(config, title,value,isSupplier)));
   await showPopup(Container,{}, true);
 
   const state = getSelfState(global.store.getState());

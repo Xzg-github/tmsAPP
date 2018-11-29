@@ -6,7 +6,7 @@ import helper from '../../../common/common';
 import {buildOrderPageState} from '../../../common/state';
 import {search, search2} from '../../../common/search';
 import {fetchDictionary, setDictionary2} from '../../../common/dictionary';
-import showDiaLog from '../supplierCar/CarContainer';
+import showDiaLog from './CarContainer';
 import {showImportDialog} from '../../../common/modeImport';
 import { exportExcelFunc, commonExport } from '../../../common/exportExcelSetting';
 import {toFormValue,hasSign} from '../../../common/check';
