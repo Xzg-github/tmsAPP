@@ -107,7 +107,7 @@ const createContainer = (statePath, afterEditActionCreator) => {
   };
 
   const formSearchActionCreator = (key, title) => async (dispatch, getState) => {
-    const {controls} = getSelfState(getState());
+    const {controls, value} = getSelfState(getState());
     let data, options, body;
     switch (key) {
       case 'customerId': {
@@ -118,6 +118,26 @@ const createContainer = (statePath, afterEditActionCreator) => {
       case 'chargingPlaceId': {
         body = {maxNumber: 10, placeName: title};
         data = await fetchJson(URL_CHARGE_PLACE_OPTIONS, postOption(body));
+        break;
+      }
+      case 'province' : {
+        body = {maxNumber: 300, parentDistrictGuid: value['country'].value};
+        data = await fetchJson(URL_DISTRICT_OPTIONS, postOption(body));
+        break;
+      }
+      case 'city': {
+        body = {maxNumber: 300, parentDistrictGuid: value['province'].value};
+        data = await fetchJson(URL_DISTRICT_OPTIONS, postOption(body));
+        break;
+      }
+      case 'district': {
+        body = {maxNumber: 300, parentDistrictGuid: value['city'].value};
+        data = await fetchJson(URL_DISTRICT_OPTIONS, postOption(body));
+        break;
+      }
+      case 'street': {
+        body = {maxNumber: 300, parentDistrictGuid: value['district'].value};
+        data = await fetchJson(URL_DISTRICT_OPTIONS, postOption(body));
         break;
       }
       default:

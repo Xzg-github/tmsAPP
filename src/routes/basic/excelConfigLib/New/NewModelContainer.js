@@ -1,87 +1,107 @@
 import { connect } from 'react-redux';
 import { Action } from '../../../../action-reducer/action';
-import { showError, fetchJson} from '../../../../common/common';
-import { getSelfState } from '../helper';
-import { ConfirmDialog, cancelConfirmActionCreator } from '../helper2';
+import { showError, fetchJson, postOption, showSuccessMsg, validValue} from '../../../../common/common';
 import NewModel from './NewModel';
-import helper from './helper';
-import { NEW_URL_UPLOAD_EXCEL as URL_UPLOAD_EXCEL } from '../uploadUrl';
+import {getPathValue} from '../../../../action-reducer/helper';
+import {updateTable} from '../OrderPageContainer';
 
-const URL_LIST = '/api/basic/excelConfigLib/list';
-const STATE_PATH = ['basic', 'excelConfigLib', 'edit'];
 const URL_INSERT_EXCEL = '/api/basic/excelConfigLib/insertExcelModel';
 const URL_EDIT = '/api/basic/excelConfigLib/edit';
-const URL_GENERATE = '/api/basic/excelConfigLib/generateExcelModel';
 const URL_EXCEL = '/api/basic/excelConfigLib/uploadExcelModel';
 const URL_OPTIONS = '/api/basic/excelConfigLib/options';
+const URL_MODEL_TYPE = '/api/basic/excelConfigLib/tenantModelType';
+const URL_MODEL_TYPE_ADD = '/api/basic/excelConfigLib/add';
+const URL_UPLOAD_EXCEL = '/api/proxy/integration_service/excelModel/importExcelContent';
+
+const STATE_PATH = ['basic','excelConfigLib','edit'];
+const PARENT_STATE_PATH = ['basic','excelConfigLib'];
 const action = new Action(STATE_PATH);
-// 取消
-const onCancelActionCreator = () => (dispatch, getState) => {
-  helper.onCancelAction(dispatch, getState, action);
-};
-// 值变化
-const onChangeActionCreator = (value, type) => (dispatch, getState) => {
-  if (type) {
-    const { tableItems } = getSelfState(getState(), ['bill', 'excelConfigLib']);
-    const { modelCode } = getSelfState(getState(), STATE_PATH);
-    if (modelCode) {
-      const current = tableItems.find(item => item.modelCode === modelCode);
-      if (current.modelName === value.modelName) {
-        return;
-      }
-      const current1 = tableItems.find(item => item.modelCode !== modelCode || item.modelName.trim() === value.modelName.trim());
-      if (current1 !== undefined) {
-        showError('模板名已存在，请更改模板名');
-      }
-    } else {
-      const name = tableItems.find(item => item.modelName.trim() === value.modelName.trim());
-      if (name !== undefined) {
-        showError('模板名已存在，请更改模板名');
-        return;
-      }
-    }
-  }
-  dispatch(action.assign(value));
+
+const getSelfState = (rootState) => {
+  const parent = getPathValue(rootState, PARENT_STATE_PATH);
+  return parent[parent.activeKey];
 };
 
-const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
-  const {controls, value} = getSelfState(getState(), STATE_PATH);
-  let res;
+const getParentState = (rootState) => {
+  return getPathValue(rootState, PARENT_STATE_PATH);
+};
+
+// 关闭编辑页
+const cancelAction = (dispatch, getState) => {
+  const { activeKey, tabs } = getParentState(getState());
+  const newTabs = tabs.filter(tab => tab.key !== activeKey);
+  // 如果tab刚好是最后一个，则直接减一，
+  if (activeKey !== 'index') {
+    dispatch(action.assignParent({ tabs: newTabs, [activeKey]: undefined,activeKey: 'index'}));
+  } else {
+    dispatch(action.assign({}));
+  }
+};
+
+//下拉选择
+const formSearchActionCreator = (key, val) => async (dispatch, getState) => {
+  const {controls, value} = getSelfState(getState());
+  let res = {};
   switch(key) {
-    case 'uniqueTitle':
+    case 'modelCode':                     //模板类型
     {
-      res = await fetchJson(`${URL_OPTIONS}/${value.apiStandardLibraryId}`);
+      const data = await fetchJson(URL_MODEL_TYPE);
+      res.result = data.result.map(obj=>({value: obj.id, title: obj.apiName}));
+      break;
+    }
+    case 'uniqueTitle':                       //唯一字段
+    {
+      if(!value.modelCode){
+        showError('请先选择模板类型');
+        return
+      }
+      const id = typeof value.modelCode === 'object' ? value.modelCode.value : value.apiStandardLibraryId ? value.apiStandardLibraryId : '';
+      res = await fetchJson(`${URL_OPTIONS}/${id}`);
       break;
     }
     default:
       return;
   }
-  if(res.returnCode !== 0) return;
   let options = res.result;
-  const index = controls.findIndex(item => item.key == key);
+  const index = controls.findIndex(item => item.key === key);
   dispatch(action.update({options}, 'controls', index));
 };
 
+//生成表格内容
+const generateSubTableItems = (subs) => {
+  const values = [];
+  Object.keys(subs).map(key => {
+    subs[key]['fieldCode'] = key;
+    values.push(subs[key]);
+  });
+  return values;
+};
+
+//值改变
 const changeActionCreator = (key, values) => async(dispatch, getState) => {
-  const { tableItems } = getSelfState(getState(), ['bill', 'excelConfigLib']);
-  const { modelCode } = getSelfState(getState(), STATE_PATH);
-  if (modelCode) {
-    const current = tableItems.find(item => item.modelCode === modelCode);
-    if (current.modelName === values.modelName) {
-      return;
+  const { CURRNT_TABLE_CODE, controls1,value } = getSelfState(getState());
+  if(key==='modelCode'){
+    const {result, returnCode} = await fetchJson(`${URL_MODEL_TYPE_ADD}/${values.value}`);
+    if (returnCode !== 0) return;
+    const {field, table} = result.content;
+    const newTabs = Object.keys(field).map((key, index) => ({key, title: `Sheet ${index + 1}`}));  //根据field属性个数生成Tab切换
+    const state = {};
+    for(let obj of Object.keys(field)){                           //根据field属性个数生成切换的内容
+      state[obj] = {
+        mapperList: generateSubTableItems(field[obj]).map( item => {    //字段名称的值默认填入列标题空格中
+          return Object.assign({columnTitle: item.fieldTitle}, item);
+        }),
+      }
     }
-    const current1 = tableItems.find(item => item.modelCode !== modelCode || item.modelName === values.modelName);
-    if (current1 !== undefined) {
-      showError('模板名已存在，请更改模板名');
-    }
-  } else {
-    const name = tableItems.find(item => item.modelName === values.modelName);
-    if (name !== undefined) {
-      showError('模板名已存在，请更改模板名');
-      return;
-    }
+    dispatch(action.assign({state, controls1, content: result.content, CURRNT_TABLE_CODE, tabs: newTabs}));
   }
-  dispatch(action.assign({[key]: values}, 'value'));
+  if (controls1.map(item=>item.key).includes(key)) {
+    value[CURRNT_TABLE_CODE] = value[CURRNT_TABLE_CODE] || {};
+    dispatch(action.assign({[key]: values}, ['state', CURRNT_TABLE_CODE]));
+  }else {
+    dispatch(action.assign({[key]: values}, 'value'));
+  }
+
 };
 
 // 上传模板
@@ -89,131 +109,175 @@ const uploadActionCreator = (dispatch, getState) => {
   dispatch(action.assign({ visible1: true }));
 };
 
-// 取消
+// 弹出框关闭
 const onCancel1ActionCreator = () => (dispatch, getState) => {
   dispatch(action.assign({ visible1: false }));
 };
-// 保存
-const saveActionCreator = async (dispatch, getState) => {
-  helper.saveAction(dispatch, getState, action, STATE_PATH, URL_INSERT_EXCEL, URL_LIST, URL_EDIT);
+
+//保存
+const saveAction = async (dispatch, getState) => {
+  const {edit, value, modelCode, controls, controls1, state, CURRNT_TABLE_CODE} = getSelfState(getState());
+  if (!validValue(controls, value)) {
+    dispatch(action.assign({valid: true}));
+    return;
+  }
+  if (!validValue(controls1, state[CURRNT_TABLE_CODE])) {
+    dispatch(action.assign({valid: true}));
+    return;
+  }
+
+  const fieldList = [];
+  for(let i in state){
+    let data = {};
+    data[i] = state[i];
+    fieldList.push(data)
+  }
+  const postData = {
+    id: edit ? value.id : '',
+    apiStandardLibraryId: typeof value.modelCode === 'object' ? value.modelCode.value : value.apiStandardLibraryId,
+    modelName: value.modelName,
+    tenantId: value.tenantId,
+    uniqueIndex: value.uniqueTitle ? value.uniqueTitle.value : '',
+    uniqueTitle: value.uniqueTitle ? value.uniqueTitle.title : '',
+    sheetList: fieldList,
+  };
+  const res = await fetchJson(edit? URL_EDIT : URL_INSERT_EXCEL, postOption(postData, 'post'));
+  if (res.returnCode !== 0) {
+    showError(res.returnMsg);
+    return;
+  }
+  showSuccessMsg(res.returnMsg);
+  const { activeKey, tabs } = getParentState(getState());
+  const newTabs = tabs.filter(tab => tab.key !== activeKey);
+  dispatch(action.assignParent({ tabs: newTabs, [activeKey]: undefined,activeKey: 'index'}));
+  return updateTable(dispatch, getState);
 };
-// 生成模板
-const generateActionCreator = async (dispatch, getState) => {
-  helper.generateAction(dispatch, getState, action, STATE_PATH, URL_GENERATE, URL_LIST);
+
+const onUploadAction = async (dispatch, getState, action, STATE_PATH, URL_EXCEL, URL_UPLOAD_EXCEL, file) => {
+  const { value } = getSelfState(getState());
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('id', value.id);
+  let xhr;
+  if (window.XMLHttpRequest) { // code for all new browsers
+    xhr = new XMLHttpRequest();
+  } else if (window.ActiveXObject) { // code for IE5 and IE6
+    xhr = new window.ActiveXObject('Microsoft.XMLHTTP');
+  }
+  if (xhr !== null) {
+    // const xhr = new XMLHttpRequest();
+    xhr.onload = (event) => {
+      const { returnCode, returnMsg } = JSON.parse(xhr.responseText); // 服务器返回
+      if (returnCode !== 0) {
+        returnMsg && showError(returnMsg);
+        return;
+      }
+      returnMsg && showSuccessMsg(returnMsg);
+      dispatch(action.update({ checked: false }, 'tableItems', -1));
+    };
+    xhr.onabort = (event) => {
+      showError('上传失败');
+    };
+    xhr.open('post', URL_UPLOAD_EXCEL, true);  // true表示异步
+    xhr.withCredentials = true;
+    xhr.send(formData);
+  } else {
+    showError('Your browser does not support XMLHTTP.');
+  }
 };
 // 上传
 const onUploadActionCreator = (file) => async (dispatch, getState) => {
-  helper.onUploadAction(dispatch, getState, action, STATE_PATH, URL_EXCEL, URL_UPLOAD_EXCEL, file);
+  onUploadAction(dispatch, getState, action, STATE_PATH, URL_EXCEL, URL_UPLOAD_EXCEL, file);
 };
 
-// 删除
-const deleteActionCreator = (dispatch, getState) => {
-  const { tableItems1, tableItems, currentKey, delSubs = {} } = getSelfState(getState(), STATE_PATH);
-  const uncheckedItems = tableItems1.filter(item => item.checked !== true);
-  const checkedItems = tableItems1.filter(item => item.checked === true);
-  const tableCode = tableItems[currentKey].tableCode;
-  const hasProperty = delSubs.hasOwnProperty(tableCode);
-  delSubs[tableCode] = hasProperty ? delSubs[tableCode].concat(checkedItems) : checkedItems;
-  tableItems[currentKey].mapperList = uncheckedItems;
-  dispatch(action.update({ checked: false }), 'tableItems1', -1);
-  dispatch(action.assign({ tableItems, delSubs, tableItems1: uncheckedItems, confirmType: '' }));
+// 删除单元行
+const delAction = (dispatch, getState) => {
+  const {state, CURRNT_TABLE_CODE} = getSelfState(getState());
+  const newItems = state[CURRNT_TABLE_CODE].mapperList.filter(item => !item.checked);
+  dispatch(action.assign({mapperList: newItems}, ['state', CURRNT_TABLE_CODE]));
 };
-// 加载
-const loadActionCreator = (dispatch, getState) => {
-  const { tableItems1, tableItems, currentKey, content, delSubs = {} } = getSelfState(getState(), STATE_PATH);
-  const tableCode = tableItems[currentKey].tableCode;
+
+// 加入
+const loadActionCreator = async (dispatch, getState) => {
+  const {state, content, delSubs = {}, CURRNT_TABLE_CODE, value } = getSelfState(getState());
   if (!content) {
-    showError('无可加载项');
+    showError('无可加入项,请选择模板类型！');
     return;
   }
-  const subs = content.field[tableCode];
+  const subs = content.field[CURRNT_TABLE_CODE];
   const plus = [];
-  let count = 0;
-
-  const items = tableItems1.concat(Object.values(delSubs[tableCode] || {}))
-  const codes = items.reduce((list, item) => {
-    list.push(item.fieldCode);
-    return list;
-  }, []);
-
+  const codes = state[CURRNT_TABLE_CODE].mapperList.map(item => item.fieldCode);
   for (const key of Object.keys(subs)) {
-    if (count === 20) {
-      break;
-    }
+    subs[key].fieldCode = key;
     if (codes.indexOf(key) === -1) {
-      plus.push(subs[key]);
-      count = count + 1;
+      plus.push({
+        ...subs[key],
+        require: 'false',
+        excelModelConfigSheetId: state[CURRNT_TABLE_CODE].id,
+        fieldCode: key,
+        id: '',
+        columnTitle: '',
+        tenantId: state[CURRNT_TABLE_CODE].mapperList.tenantId
+      });
     }
   }
 
-  tableItems[currentKey].mapperList = tableItems1.concat(plus);
-  dispatch(action.assign({ tableItems1: tableItems1.concat(plus), tableItems }, content));
+  state[CURRNT_TABLE_CODE].mapperList =  state[CURRNT_TABLE_CODE].mapperList.concat(plus);
+  dispatch(action.assign({ items:  state[CURRNT_TABLE_CODE].mapperList.concat(plus)}));
 };
-const clickEvents = {
+
+const toolbarActions = {
   upload: uploadActionCreator,
-  save: saveActionCreator,
-  generate: generateActionCreator,
-  delete: deleteActionCreator,
+  save: saveAction,
+  delete: delAction,
   load: loadActionCreator,
+  cancel: cancelAction
 };
 
-const onClickActionCreator = (key) => async (dispatch, getState) => {
-  if (key === 'delete') {
-    const { tableItems1 } = getSelfState(getState(), STATE_PATH);
-    const checkItems = tableItems1.filter(item => item.checked === true);
-    if (checkItems.length === 0) {
-      showError('请选择删除项');
-      return;
-    }
-    ConfirmDialog.onCancel = () => {
-      cancelConfirmActionCreator(dispatch, getState, action);
-    };
-    ConfirmDialog.onOk = () => {
-      clickEvents[key](dispatch, getState);
-    };
-    ConfirmDialog.content = '是否确认删除';
-    dispatch(action.assign({ confirmType: key, ConfirmDialog }));
+const clickActionCreator = (key) => {
+  if (toolbarActions.hasOwnProperty(key)) {
+    return toolbarActions[key];
   } else {
-    clickEvents[key](dispatch, getState);
+    console.log('unknown key:', key);
+    return {type: 'unknown'};
   }
 };
-// 主表格内容值变化
-const contentChangeActionCreator = (rowIndex, keyName, value) => {
-  return action.update({ [keyName]: value }, 'tableItems', rowIndex);
-};
-// 子表格内容值
-const contentChangeActionCreator1 = (rowIndex, keyName, value) => {
-  return action.update({ [keyName]: value }, 'tableItems1', rowIndex);
-};
-// 单元格点击事件
-const onCellClickActionCreator = (record, event) => (dispatch, getState) => {
-  const { tableItems, tableItems1, currentKey } = getSelfState(getState(), STATE_PATH);
-  tableItems[currentKey].mapperList = tableItems1;
 
-  const nTableItems1 = tableItems[record.key].mapperList;
-  dispatch(action.assign({ tableItems1: nTableItems1, currentKey: record.key, tableItems }));
+// 主表格内容值变化
+const contentChangeActionCreator = (rowIndex, keyName, value) => async (dispatch, getState) => {
+  const {state, CURRNT_TABLE_CODE} = getSelfState(getState());
+  dispatch(action.update({ [keyName]: value }, ['state', CURRNT_TABLE_CODE, 'mapperList'], rowIndex));
 };
+
 // 表格勾选事件
-const onCheckActionCreator = (rowIndex, key, checked) => {
-  return action.update({ checked }, 'tableItems1', rowIndex);
+const onCheckActionCreator = (rowIndex, key, checked) => async (dispatch, getState) => {
+  const {state, CURRNT_TABLE_CODE} = getSelfState(getState());
+  dispatch(action.update({ checked }, ['state', CURRNT_TABLE_CODE, 'mapperList'], rowIndex));
+};
+
+const exitValidActionCreator = () => {
+  return action.assign({valid: false});
+};
+
+//Tab切换
+const tabChangeActionCreator = (CURRNT_TABLE_CODE) => async (dispatch, getState) => {
+  dispatch(action.assign({CURRNT_TABLE_CODE}));
 };
 
 const mapStateToProps = (state) => {
-  return getSelfState(state, STATE_PATH) || {};
+  return getSelfState(state,PARENT_STATE_PATH);
 };
 
 const actionCreators = {
-  onCancel: onCancelActionCreator,
   onCancel1: onCancel1ActionCreator,
-  onCellClick: onCellClickActionCreator,
   onContentChange: contentChangeActionCreator,
-  onModelChange: onChangeActionCreator,
-  onContentChange1: contentChangeActionCreator1,
+  onExitValid: exitValidActionCreator,
   onCheck: onCheckActionCreator,
-  onClick: onClickActionCreator,
+  onClick: clickActionCreator,
   onUpload: onUploadActionCreator,
   onChange: changeActionCreator,
   onSearch: formSearchActionCreator,
+  onTabChange: tabChangeActionCreator
 };
 
 const Container = connect(mapStateToProps, actionCreators)(NewModel);

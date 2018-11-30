@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import OrderPage from '../../../components/OrderPage';
 import {EnhanceLoading} from '../../../components/Enhance';
+import {getPathValue} from '../../../action-reducer/helper';
 import {Action} from '../../../action-reducer/action';
 import helper from '../../../common/common';
 import {buildOrderPageState} from '../../../common/state';
@@ -11,7 +12,7 @@ import {showImportDialog} from '../../../common/modeImport';
 import { exportExcelFunc, commonExport } from '../../../common/exportExcelSetting';
 import {toFormValue,hasSign} from '../../../common/check';
 
-const action = new Action(['supplierCar']);
+const action = new Action(['config','supplierCar']);
 const URL_CONFIG = '/api/config/supplier_car/config';
 const URL_ATTR = '/api/config/supplier_car/attr';//拓展字段
 const URL_LIST = '/api/config/supplier_car/list'; //查询列表
@@ -19,7 +20,7 @@ const URL_STATE = '/api/config/supplier_car/state'; //是否激活
 const URL_DELETE = '/api/config/supplier_car/delete'; //删除
 
 const getSelfState = (state) => {
-  return state.supplierCar || {};
+  return getPathValue(state, ['config','supplierCar']);
 };
 
 //刷新页面
@@ -72,7 +73,7 @@ const searchActionCreator = () => async (dispatch, getState) => {
 
 const addActionCreator = () => async (dispatch, getState) => {
   const state = getSelfState(getState());
-  if(await showDiaLog(state.edit,{},'新增')){
+  if(await showDiaLog({},'新增')){
     refresh(dispatch, state);
   }
 };
@@ -82,7 +83,7 @@ const editActionCreator = () => async (dispatch, getState) => {
   const items = state.tableItems.filter(item => item.checked);
   if (items.length !== 1) {
     helper.showError('请勾选一条记录');
-  }else if(await showDiaLog(state.edit,items[0],'编辑')){
+  }else if(await showDiaLog(items[0],'编辑')){
     refresh(dispatch, state);
   }
 };
@@ -228,7 +229,7 @@ const formSearchActionCreator = (key,keyValue,keyControls) => async(dispatch,get
 const doubleClickActionCreator = (rowIndex) => async(dispatch, getState) => {
   const state = getSelfState(getState());
   if (!hasSign('supplier_car', 'supplier_car_edit')) return;
-  if(await showDiaLog(state.edit,state.tableItems[rowIndex],'编辑')){
+  if(await showDiaLog(state.tableItems[rowIndex],'编辑')){
     refresh(dispatch, state);
   }
 };
