@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles'
-import s from './UploadFile.less';
+/*import withStyles from 'isomorphic-style-loader/lib/withStyles'
+import s from './UploadFile.less';*/
 import { Upload, Button, Icon } from 'antd';
-import {ModalWithDrag} from '../../../../../components';
+import {ModalWithDrag} from '../../../../components';
 
 class UploadFile extends React.Component {
   static propTypes = {
@@ -41,7 +41,7 @@ class UploadFile extends React.Component {
     const download = document.getElementById('uploadsheet');
     download.click();
     a.remove();
-  }
+  };
 
   handleUpload = () => {
     const { fileList } = this.state;
@@ -99,4 +99,4 @@ class UploadFile extends React.Component {
 
 }
 
-export default withStyles(s)(UploadFile);
+export default UploadFile;
