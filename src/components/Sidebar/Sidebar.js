@@ -1,10 +1,11 @@
 import React, { PropTypes } from 'react';
 import Link from '../Link';
-import {Menu, Icon} from 'antd';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Sidebar.less';
-const SubMenu = Menu.SubMenu;
-const MenuItem = Menu.Item;
+import {Icon} from 'antd';
+
+const ITEM_HEIGHT = 40;
+
 /** 侧边栏二级条目的类型
  * key: 唯一标识一个条目
  * title：条目的标题
@@ -19,7 +20,6 @@ const ChildType = {
 /** 侧边栏一级条目的类型
  * key: 唯一标识一个条目
  * title：条目的标题
- * icon：条目左边图标url，大小为20*20px
  * isFolder：为true表明有下级菜单，此时href被忽略，children存放下级菜单的信息
  * href: isFolder为false时，为跳转页面的url，否则被忽略
  * children：isFolder为true时，存放下级菜单的信息，否则被忽略
@@ -27,79 +27,112 @@ const ChildType = {
 const ItemType = {
   key: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  icon: PropTypes.string,
   isFolder: PropTypes.bool,
   href: PropTypes.string,
   children: PropTypes.arrayOf(PropTypes.shape(ChildType))
 };
 
 /**
+ * title: 侧边栏的标题
+ * mode: 显示模式，默认为expand(展开)
  * activeKey：指定被选中的一级条目的key，不能是二级条目的key
  * items：存放所有侧边栏条目的信息
+ * openKeys: 展开条目的key
  * style: 样式
+ * onOpenChange: 展开条目信息改变时触发，原型为func(openKeys)
+ * onModeChange: 模式改变时触发，原型为func(mode)
  */
 class Sidebar extends React.Component {
   static propTypes = {
-    activeKey: PropTypes.string.isRequired,
-    items: PropTypes.arrayOf(PropTypes.shape(ItemType)).isRequired,
-    style: PropTypes.object
+    title: PropTypes.string,
+    mode: PropTypes.oneOf(['collapse', 'expand']),
+    activeKey: PropTypes.string,
+    items: PropTypes.arrayOf(PropTypes.shape(ItemType)),
+    openKeys: PropTypes.array,
+    style: PropTypes.object,
+    onOpenChange: PropTypes.func,
+    onModeChange: PropTypes.func
   };
 
-  onOpenChange = (openKeys) => {
-    const {onOpenChange} = this.props;
-    if (onOpenChange) {
-      onOpenChange(openKeys);
-    }
+  onModeChange = () => {
+    const mode = this.props.mode || 'expand';
+    this.props.onModeChange(mode === 'expand' ? 'collapse' : 'expand');
   };
 
-  toIcon = (type) => {
-    if (type) {
-      return <Icon type={type} style={{fontSize: 16, verticalAlign: -2}} />
+  isSelect = (item) => {
+    return this.props.activeKey === item.key;
+  };
+
+  isOpen = (item) => {
+    return this.props.openKeys.includes(item.key);
+  };
+
+  getHeight = (item) => {
+    if (item.isFolder && this.isOpen(item)) {
+      return (item.children.length + 1) * ITEM_HEIGHT;
     } else {
-      return null;
+      return ITEM_HEIGHT;
     }
   };
 
-  toItem = ({key, title, isFolder, children, href, icon, unreadTotal}) => {
-    if (isFolder) {
-      const t = <div>{this.toIcon(icon)}{title}</div>;
-      return (
-        <SubMenu key={key} title={t}>
-          {this.toItems(children)}
-        </SubMenu>
-      );
+  linkProps = (item) => {
+    if (item.isFolder) {
+      return {
+        title: item.title,
+        onClick: () => {
+          if (this.isOpen(item)) {
+            this.props.onOpenChange(this.props.openKeys.filter(key => item.key !== key));
+          } else {
+            this.props.onOpenChange([...this.props.openKeys, item.key]);
+          }
+        }
+      }
     } else {
-      return (
-        <MenuItem key={key}>
-          <Link to={href} title={title} className={s.unreadTotalLink}>
-            {this.toIcon(icon)}
-            {title}
-            {unreadTotal && unreadTotal>0 && <span className={s.unreadTotal}>{unreadTotal}</span>}
-          </Link>
-        </MenuItem>
-      );
+      return {
+        title: item.title,
+        to: item.href,
+        'data-select': this.isSelect(item)
+      };
     }
   };
 
-  toItems = (items) => {
-    return items.map(this.toItem);
+  renderChild = (item, index) => {
+    return (
+      <li key={index}>
+        <Link {...this.linkProps(item)} data-role='child-item'>
+          <span>{item.title}</span>
+        </Link>
+      </li>
+    );
   };
 
-  getProps = () => {
-    const {style, activeKey, openKeys=[]} = this.props;
-    return {
-      style, openKeys,
-      selectedKeys: [activeKey],
-      mode: 'inline',
-      onOpenChange: this.onOpenChange
-    }
+  renderItem = (item, index) => {
+    return (
+      <li key={index} style={{height: this.getHeight(item)}}>
+        <Link {...this.linkProps(item)} data-role='parent-item'>
+          <span>{item.isFolder ? <Icon type='caret-right' data-open={this.isOpen(item)} /> : null}</span>
+          <span>{item.title}</span>
+        </Link>
+        {item.isFolder ? <ul>{item.children.map(this.renderChild)}</ul> : null}
+      </li>
+    );
   };
 
   render() {
     return (
-      <Menu {...this.getProps()}>
-        {this.toItems(this.props.items)}
-      </Menu>
+      <div className={s.root} data-mode={this.props.mode || 'expand'}>
+        <div>
+          <span> </span>
+          <span>{this.props.title}</span>
+        </div>
+        <ul>{this.props.items.map(this.renderItem)}</ul>
+        <div data-role='shousuo' onClick={this.onModeChange}>
+          <div>
+            <i />
+            <div><Icon type='pld-shousuo' /></div>
+          </div>
+        </div>
+      </div>
     );
   }
 }
