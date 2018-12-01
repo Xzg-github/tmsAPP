@@ -62,9 +62,9 @@ api.get('/search/car_mode',async(req,res) => {
 });
 
 //司机下拉
-api.get('/search/driver',async(req,res) => {
-  const url = `${service}/driver_info/drop_list/${req.query.filter}`;
-  res.send(await fetchJsonByNode(req, url,postOption(null)));
+api.post('/search/driver',async(req,res) => {
+  const url = `${service}/driver_info/drop_list`;
+  res.send(await fetchJsonByNode(req, url,postOption(req.body)));
 });
 
 

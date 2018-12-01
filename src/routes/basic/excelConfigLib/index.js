@@ -1,6 +1,3 @@
-/**
- * Created by vincentzheng on 2017/8/2.
- */
 import React from 'react';
 import ExcelConfigLibContainer from './ExcelConfigLibContainer';
 

@@ -1,6 +1,6 @@
 import RouterHelper from '../RouteHelper';
 
-const title = '';
+const title = '消息';
 const prefix = '/message';
 
 let children = [

@@ -12,6 +12,7 @@ import customersArchives from './customersArchives';
 import suppliersArchives from './suppliersArchives';
 import customerFactory from './customerFactory';
 import insideFactory from './insideFactory';
+import supplierCar from './supplierCar';
 
 const configReducer = combineReducers({
   dataSet,
@@ -26,7 +27,8 @@ const configReducer = combineReducers({
   customersArchives,
   suppliersArchives,
   customerFactory,
-  insideFactory
+  insideFactory,
+  supplierCar
 });
 
 

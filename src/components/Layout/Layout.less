@@ -5,66 +5,23 @@
   max-height: 100%;
   overflow: hidden;
 
-  > div {
-    min-height: e('calc(100vh - @{header-height})');
-    height: e('calc(100vh - @{header-height})');
+  > :last-child {
+    height: ~'calc(100vh - @{header-height})';
+    position: relative;
 
-    > aside {
-      float: left;
-      height: inherit;
-      background-color: @background-color;
-      width: 4px;
-      position: relative;
-      transition: all 0.3s;
-
-      > :first-child {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 14px;
-        z-index: 2;
-        background: #ececec;
-        line-height: 100vh;
-        cursor: pointer;
-        transition: all 0.3s;
-        color: black;
-
-        > * {
-          transition: all 0.3s;
-          padding-left: 1px;
-        }
-
-        &:hover {
-          color: @primary-color;
-        }
-      }
-
-      > :last-child {
-        overflow-x: hidden;
-        overflow-y: auto;
-        height: inherit;
-
-        > * {
-          border-right: 1px solid @background-color;
-        }
-      }
-
-      &[data-expand='true'] {
-        width: @sidebar-width;
-
-        > :first-child {
-          background: white;
-
-          > * {
-            transform: rotate(180deg);
-          }
-        }
-      }
+    > :first-child {
+      position: absolute;
     }
 
-    > section {
-      overflow: auto;
+    > :nth-child(2) {
       height: inherit;
+      float: left;
+      margin-left: @header-height;
+    }
+
+    > :last-child {
+      height: inherit;
+      overflow: auto;
     }
   }
 }

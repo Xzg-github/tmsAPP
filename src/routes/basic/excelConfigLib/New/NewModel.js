@@ -1,36 +1,27 @@
 import React, { PropTypes } from 'react';
-import {Row, Col} from 'antd';
 import ReactDOM from 'react-dom';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './NewModel.less';
 import {getObject} from '../../../../common/common';
-import {SuperToolbar, Card, SuperForm, ModalWithDrag} from '../../../../components';
-import SuperTable from '../components/SuperTable/SuperTable';
-import UploadFile from '../components/UploadFile/UploadFile';
+import {SuperToolbar, Card, SuperForm, Title, SuperTab2, SuperTable2} from '../../../../components';
+import UploadFile from '../UploadFile/UploadFile';
 import ConfirmDialog from '../../../../components/ConfirmDialog';
 
 const TOOLBAR_EVENTS = ['onClick']; // 工具栏点击事件
 
 const props = {
   tableCols: PropTypes.array,
-  tableItems: PropTypes.array,
   buttons: PropTypes.array,
-  filters: PropTypes.array,
-  tableCols1: PropTypes.array,
-  tableItems1: PropTypes.array,
+  buttons1: PropTypes.array,
   onCancel: PropTypes.func,
   visible: PropTypes.bool,
-  buttons1: PropTypes.array,
-  buttons2: PropTypes.array,
   confirmType: PropTypes.string,
   controls: PropTypes.array,
+  controls1: PropTypes.array,
   value: PropTypes.object,
   valid: PropTypes.bool,
   onChange: PropTypes.func,
   onSearch: PropTypes.func,
   onExitValid: PropTypes.func,
 };
-
 
 class NewModel extends React.Component {
   static propTypes = props;
@@ -53,81 +44,55 @@ class NewModel extends React.Component {
     return ReactDOM.findDOMNode(this);
   };
 
-  // getInputValue = (key) => {
-  //   return this.props[key];
-  // };
-  //
-  // toInput = ({ key, title, type, disabled = false }) => {
-  //   return (
-  //     <div key={key}>
-  //       <labe>{title}</labe>
-  //       <Input
-  //         type={type}
-  //         disabled={disabled}
-  //         data-id={key}
-  //         value={this.getInputValue(key)}
-  //         onChange={(e) => { this.handleChange(0, e); }}
-  //         onBlur={(e) => { this.handleChange(1, e); }}
-  //       />
-  //     </div>
-  //   )
-  // };
-  //
-  // handleChange = (type, e) => {
-  //   const { value } = e.target;
-  //   const key = e.currentTarget.dataset.id;
-  //   this.props.onModelChange({ [key]: value }, type);
-  // };
-  // toForm = () => {   // 表单
-  //   const { controls = [] } = this.props;
-  //   console.log(controls)
-  //   return (
-  //     controls.map(this.toInput)
-  //   );
-  // };
-
   toForm = () => {
     const {controls, value, onChange, onSearch, onExitValid, valid} = this.props;
     const props = {
-      controls,
+      controls: controls,
       value,
-      size: 'small',
       onChange,
       onSearch,
       onExitValid,
       valid
     };
-    return <div role="form"><SuperForm {...props} bsSize='small' colNum={3}/></div>;
+    return <div style ={{paddingLeft:'6px',marginTop: '5px',marginBottom: '10px'}}><SuperForm {...props} /></div>;
+  };
+  toForm1 = () => {
+    const {controls1, state, onChange, onSearch, onExitValid, valid, CURRNT_TABLE_CODE} = this.props;
+    const props = {
+      controls: controls1,
+      value: state[CURRNT_TABLE_CODE],
+      onChange,
+      onSearch,
+      onExitValid,
+      valid
+    };
+    return <div style ={{paddingLeft:'6px',marginTop: '8px',marginBottom: '5px'}}><SuperForm {...props} /></div>;
   };
 
   toTable = (cols, items, callback) => { // 列表
     const option = { index: true, checkbox: true };
     const props = { cols, items, option, callback };
-    return <div role="lta"><SuperTable {...props} /></div>;
-  };
-
-  toRightTable = (cols, items, callback) => { // 列表
-    const option = { index: true, checkbox: true };
-    const props = { cols, items, option, callback };
-    return <div role="rta"><SuperTable {...props} /></div>;
+    return <div style ={{paddingLeft:'6px',marginTop: '5px'}}><SuperTable2 {...props} /></div>;
   };
 
   toSuperToolbar = (buttons) => {
-    const option = { bsSize: 'small' };
-    const props = { buttons, option, callback: getObject(this.props, TOOLBAR_EVENTS) };
-    return <div role="st"><SuperToolbar {...props} /></div>;
+    const props = { buttons, callback: getObject(this.props, TOOLBAR_EVENTS) };
+    return <div  style ={{paddingLeft:'6px',marginTop: '10px'}}><SuperToolbar {...props} /></div>;
   };
 
-  toSuperToolbar1 = (buttons) => {
-    const option = { bsSize: 'small' };
-    const props = { buttons, option, callback: getObject(this.props, TOOLBAR_EVENTS) };
-    return <div role="st1"><SuperToolbar {...props} /></div>;
+  toToolbar = (buttons) => {
+    const props = { buttons, size: 'default', callback: getObject(this.props, TOOLBAR_EVENTS) };
+    return <div style = {{marginTop: '30px', marginBottom: '30px', textAlign: 'center'}}><SuperToolbar {...props} /></div>;
   };
 
-  toTopToolbar = (buttons) => {
-    const option = { bsSize: 'small' };
-    const props = { buttons, option, callback: getObject(this.props, TOOLBAR_EVENTS) };
-    return <div role="tb"><SuperToolbar {...props} /></div>;
+  toTab = () => {
+    const {CURRNT_TABLE_CODE, onTabChange, tabs} = this.props;
+    const props = {
+      tabs: tabs,
+      activeKey: CURRNT_TABLE_CODE,
+      onTabChange
+    };
+    return <SuperTab2 {...props}/>;
   };
 
   toUploadFile = (data) => {
@@ -149,35 +114,26 @@ class NewModel extends React.Component {
   };
 
   render() {
-    const { tableCols, tableItems, tableCols1, tableItems1, onCancel, visible, buttons, buttons1, buttons2 } = this.props;
-    const events = getObject(this.props, ['onCellClick', 'onContentChange']);
-    const { onContentChange1: onContentChange, onCheck } = getObject(this.props, ['onContentChange1', 'onCheck']);
+    const { tableCols, buttons, buttons1, state, CURRNT_TABLE_CODE} = this.props;
+    const { onContentChange: onContentChange, onCheck } = getObject(this.props, ['onContentChange', 'onCheck']);
     const events1 = { onContentChange, onCheck };
     return (
-      <ModalWithDrag
-        title="新增"
-        width={'95%'}
-        style={{ minWidth: '1250px' }}
-        visible={visible}
-        onCancel={onCancel}
-        footer={null}
-      >
-        <div className={s.root}>
-          <Card>
-            {this.toForm()}
-            {this.toSuperToolbar(buttons)}
-            {this.toSuperToolbar1(buttons2)}
-            <Row >
-              <Col span={11}> {this.toTable(tableCols, tableItems, events)}</Col>
-              <Col span={1}> </Col>
-              <Col span={11}>{this.toTopToolbar(buttons1)}{this.toRightTable(tableCols1, tableItems1, events1)}</Col>
-            </Row>
-          </Card>
-          {this.toUploadFile(this.props)}
-        </div>
+      <div>
+        <Card>
+          <Title title= '基本信息' />
+          {this.toForm()}
+          <Title title= 'Excel模板信息' />
+          {this.toTab()}
+          {this.toForm1()}
+          {this.toSuperToolbar(buttons)}
+          {this.toTable(tableCols, state[CURRNT_TABLE_CODE].mapperList, events1)}
+          {this.toToolbar(buttons1)}
+        </Card>
+        {this.toUploadFile(this.props)}
         {this.state.showConfirm && this.toConfirmDialog()}
-      </ModalWithDrag>
+      </div>
     )
   }
 }
-export default withStyles(s)(NewModel);
+/*export default withStyles(s)(NewModel);*/
+export default NewModel;
