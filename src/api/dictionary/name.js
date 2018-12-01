@@ -199,6 +199,7 @@ const name = {
   BUSINESS_TYPE: 'business_type',  //业务类型
   TAX_RATE_WAY: 'tax_rate_way',     //计税方式
   ZERO_ONE: 'zero_one_type', //是否（0/1）
+  TRANSPORT_TYPE: 'transport_type', //运输方式
 };
 
 export default name;

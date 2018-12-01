@@ -1,4 +1,5 @@
 import {fetchJson, postOption, getObject, showError} from './common';
+import name from '../api/dictionary/name';
 
 const DICTIONARY_URL = '/api/dictionary';
 
@@ -111,9 +112,18 @@ const getStatus = async (key) => {
   }
 };
 
+/*
+* 功能：批量获取全部/src/api/dictionary/name文件中定义的字典
+* */
+const fetchAllDictionary = async () => {
+  const names = Object.keys(name).map(key => name[key]);
+  return fetchDictionary(names);
+};
+
 export {
   fetchDictionary,
   fetchDictionary2,
+  fetchAllDictionary,
   setDictionary,
   setDictionary2,
   getDictionaryNames,
