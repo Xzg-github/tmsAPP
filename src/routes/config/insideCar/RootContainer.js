@@ -46,7 +46,7 @@ const initActionCreator = () => async (dispatch) => {
     const payload = buildOrderPageState(list, config);
     payload.status = 'page';
     payload.edit = config.edit;
-    payload.searchData = {...payload.searchData ,supplierId:-1};
+    payload.searchData = {};
     payload.searchDataBak = payload.searchData;
     setDictionary2(dictionary, payload.tableCols, payload.edit.controls,payload.tableCols,payload.filters);
     dispatch(action.assign(payload));

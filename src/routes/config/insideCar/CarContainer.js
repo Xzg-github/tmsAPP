@@ -9,7 +9,6 @@ const URL_UPDATE = '/api/config/supplier_car/updateList';
 
 const buildState = (config, title,value={},isSupplier) => {
   value.isOwner = isSupplier ? 0 : 1;//如果为供应商车辆时，固定值为0,综合为1
-  !isSupplier && (value.supplierId = -1);//如果为综合时，固定值为-1
   return {
     ...config,
     title: title,
@@ -67,7 +66,7 @@ const searchActionCreator = (key,keyValue,keyControls) => async(dispatch,getStat
     if(!value.supplierId)
       return showError('请先选择供应商');
 
-    id = typeof (value.supplierId) === 'number' ? value.supplierId : value.supplierId.value;
+    id =  value.supplierId.value;
     const body = {
       supplierId:id,
       name:keyValue
@@ -89,6 +88,7 @@ const changeActionCreator = (key, keyValue) => (dispatch,getState) => {
   const {value} = getSelfState(getState());
   if(key === 'supplierId'){
     dispatch(action.assign({['driverId']: ''}, 'value'));
+    dispatch(action.update({options:[]}, 'controls', 4));
   }
   dispatch(action.assign({[key]: keyValue}, 'value'));
 };

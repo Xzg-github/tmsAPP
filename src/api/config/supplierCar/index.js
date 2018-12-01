@@ -4,7 +4,7 @@ import {host} from '../../globalConfig';
 
 let api = express.Router();
 const maxSearchCount = 20;
-const service = `${host}/archiver-service`;
+const service = `${host}/archiver-service-yule`;
 
 // 获取界面信息
 api.get('/config', async (req, res) => {
@@ -66,6 +66,29 @@ api.post('/search/driver',async(req,res) => {
   const url = `${service}/driver_info/drop_list`;
   res.send(await fetchJsonByNode(req, url,postOption(req.body)));
 });
+
+
+//供应商托车行下拉
+api.get('/search/trailer',async(req,res) => {
+  const url = `${service}/supplier/drop_list/select_by_type/supplier_type_trailer`;
+  const body = {
+    maxNumber:20,
+    supplierName:req.query.filter
+  };
+  res.send(await fetchJsonByNode(req, url,postOption(body)));
+});
+
+
+//供应商托车行下拉
+api.get('/search/owner',async(req,res) => {
+  const url = `${service}/supplier/drop_list/select_by_type/supplier_type_car_owner`;
+  const body = {
+    maxNumber:20,
+    supplierName:req.query.filter
+  };
+  res.send(await fetchJsonByNode(req, url,postOption(body)));
+});
+
 
 
 export default api;

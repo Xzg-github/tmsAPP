@@ -2,8 +2,10 @@ import {pageSize, pageSizeType, description, searchConfig} from '../../globalCon
 
 const CAR_MODE = '/api/config/supplier_car/search/car_mode'; //车型下拉
 const DRIVER = '/api/config/supplier_car/search/driver'; //司机下拉
+const SUPPLIER = '/api/config/supplier_car/search/owner'; //供应商车主下拉
 
 const filters = [
+  {key: 'supplierId', title: '车主',type:'search',required:true,searchUrl:SUPPLIER},
   {key: 'carModeId', title: '车型', type: 'search',searchUrl:CAR_MODE},
   {key: 'carNumber', title: '车牌号', type: 'text'},
   {key: 'companyHeader', title: '车辆抬头公司',type: 'text'},
@@ -23,6 +25,7 @@ const buttons = [
 ];
 
 const tableCols = [
+  {key: 'supplierId', title: '车主',searchType:'supplier'},
   {key: 'enabledType', title: '状态', dictionary: 'enabled_type'},
   {key: 'carModeId', title: '车型'},
   {key: 'carNumber', title: '车牌号'},
@@ -51,6 +54,7 @@ const tableCols = [
 ];
 
 const controls = [
+  {key: 'supplierId', title: '车主',type:'search',required:true,searchUrl:SUPPLIER},
   {key: 'isOwner', title: '是否自有',type:'readonly',dictionary:'zero_one_type',required:true},
   {key: 'carModeId', title: '车型',type:'search',required:true,searchUrl:CAR_MODE},
   {key: 'carNumber', title: '车牌号',type:'text',required:true},
