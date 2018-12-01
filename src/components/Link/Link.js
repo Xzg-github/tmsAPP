@@ -10,7 +10,7 @@ function isModifiedEvent(event) {
 }
 
 function jump(url) {
-  if (history.location.pathname != url) {
+  if (history.location.pathname !== url) {
     history.push(url);
   } else {
     history.replace(url);
@@ -19,7 +19,7 @@ function jump(url) {
 
 class Link extends React.Component {
   static propTypes = {
-    to: PropTypes.string.isRequired,
+    to: PropTypes.string,
     disabled: PropTypes.bool,
     children: PropTypes.node,
     onClick: PropTypes.func,
@@ -39,7 +39,10 @@ class Link extends React.Component {
     }
 
     event.preventDefault();
-    jump(this.props.to);
+
+    if (this.props.to) {
+      jump(this.props.to);
+    }
   };
 
   render() {

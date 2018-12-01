@@ -9,7 +9,6 @@ import showPopup from '../../../standard-business/showPopup';
 
 const URL_DISTRICT_INFO = '/api/basic/area/district_info';
 
-const PARENT_STATE_PATH = ['basic', 'area'];
 const STATE_PATH = ['basic', 'area', 'district'];
 const action = new Action(STATE_PATH);
 
@@ -23,10 +22,6 @@ export const buildDistrictState = (config, editConfig, tableItems=[]) => {
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
-};
-
-const getParentState = (rootState) => {
-  return getPathValue(rootState, PARENT_STATE_PATH);
 };
 
 const checkedOne = (tableItems) => {
@@ -44,17 +39,7 @@ const checkActionCreator = (isAll, checked, rowIndex) => {
 
 const addAction = (dispatch, getState) => {
   const {editConfig} = getSelfState(getState());
-  const {select, tree} = getParentState(getState());
-  const districtType = getPathValue(tree, [select, 'value', 'districtType']);
-  const newType = Number(districtType) + 1;
-  if(newType > 6) {
-    showError('叶子节点不允许新增');
-    return;
-  }
-  const value = getPathValue(tree, [select, 'value', 'guid']);
-  const title = getPathValue(tree, [select, 'title']);
-  const data = {parentDistrictGuid: value === 'root' ? '' : {value, title}, districtType: newType};
-  const payload = buildEditState(editConfig, data, false);
+  const payload = buildEditState(editConfig, {}, false);
   dispatch(action.assign(payload, 'edit'));
   showPopup(DistrictEditContainer, {inset: false});
 };

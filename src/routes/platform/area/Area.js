@@ -1,13 +1,10 @@
 import React, {PropTypes} from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Area.less';
-import {SuperTab2, SuperTable, SuperTab, SuperTree, Card, Search} from '../../../components/index';
+import {SuperTab2, SuperTable, SuperTab, Card, Search} from '../../../components/index';
 import DistrictContainer from './DistrictContainer';
-import SiteContainer from './SiteContainer';
-import ContactContainer from './ContactContainer';
-import {getObject} from '../../../common/common';
-import {Input} from 'antd';
-const InputSearch = Input.Search;
+import {Tree} from 'antd';
+const TreeNode = Tree.TreeNode;
 
 class Area extends React.Component {
   static propTypes = {
@@ -17,22 +14,12 @@ class Area extends React.Component {
     expand: PropTypes.object,
     select: PropTypes.string,
     inputValue: PropTypes.string,
-    searchValue: PropTypes.string,
-    onTreeSearch: PropTypes.func
+    searchValue: PropTypes.string
   };
 
   onInputChange = (e) => {
     const {onInputChange} = this.props;
     onInputChange && onInputChange(e.target.value);
-  };
-
-  getSearchProps = () => {
-    return {
-      value: this.props.inputValue || '',
-      placeholder: this.props.placeholder,
-      onChange: this.onInputChange,
-      onSearch: this.props.onTreeSearch
-    }
   };
 
   getSearchProps2 = () => {
@@ -70,15 +57,41 @@ class Area extends React.Component {
     };
   };
 
+  renderTreeNodes = (data = []) => {
+    return data.map((item) => {
+      if (item.children) {
+        return (
+          <TreeNode title={item.title} key={item.key} dataRef={item}>
+            {this.renderTreeNodes(item.children)}
+          </TreeNode>
+        );
+      }
+      return <TreeNode {...item} dataRef={item} />;
+    });
+  };
+
+  toTree = () => {
+    const {select, expand, onExpand, onSelect, onLoadData} = this.props;
+    const props = {
+      loadData: onLoadData,
+      selectedKeys: [select],
+      expandedKeys: Object.keys(expand).filter(key => expand[key]),
+      autoExpandParent: false,
+      onExpand,
+      onSelect
+    };
+    return (
+      <Card noPadding>
+        <Tree {...props}>
+          {this.renderTreeNodes(this.props.treeData)}
+        </Tree>
+      </Card>
+    );
+  };
+
   toTabContent = () => {
     const {indexActiveKey = 'tree'} = this.props;
-    const props = getObject(this.props, ['tree', 'expand', 'select', 'searchValue', 'onExpand', 'onSelect']);
-    return indexActiveKey === 'tree' ? (
-      <Card noPadding>
-        <div><InputSearch {...this.getSearchProps()} /></div>
-        <SuperTree {...props} />
-      </Card>
-    ) : (
+    return indexActiveKey === 'tree' ? this.toTree() : (
       <Card noPadding>
         <Search {...this.getSearchProps2()} />
         <SuperTable {...this.getIndexTableProps()} />
@@ -99,10 +112,6 @@ class Area extends React.Component {
     switch (activeKey) {
       case 'district':
         return <DistrictContainer />;
-      case 'site':
-        return <SiteContainer /> ;
-      case 'contact':
-        return <ContactContainer /> ;
     }
   };
 
