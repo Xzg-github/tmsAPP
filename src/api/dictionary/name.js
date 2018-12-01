@@ -194,6 +194,11 @@ const name = {
 
   SALE_ORDER_TYPE: 'sale_order_type', //订单类别
   PACKAGE_UNIT: 'package_unit', //erp-包装单位
+
+
+  BUSINESS_TYPE: 'business_type',  // 运输类型
+  TRANSPORT_TYPE: 'transport_type', //运输方式
+
 };
 
 export default name;

@@ -10,7 +10,9 @@ const options = [
   {title: '无', value: 'noSort'}
 ];
 
-const showColsSetting = (cols, okFunc, code) => {
+const KEYS = ['checked', 'index', 'title', 'sorter', 'hide', 'filter'];
+
+const showColsSetting = (cols, okFunc, code, keys=KEYS) => {
   const onOk = async (newCols) => {
     okFunc(newCols);
     let hideKeys=[], sortKeys=[], filterKeys=[], keysIndex=[];
@@ -34,13 +36,16 @@ const showColsSetting = (cols, okFunc, code) => {
       {key: 'checked', title: '', type: 'checkbox'},
       {key: 'index', title: '序号', type: 'index'},
       {key:'title', title: '字段名', type: 'readonly'},
-      {key:'sorter', title: '排序', type: 'select', options},
-      {key:'hide', title: '隐藏', type: 'switch'},
-      {key:'filter', title: '过滤', type: 'switch'}
+      {key:'sorter', title: '排序', type: 'select', options, sign: "sorter"},
+      {key:'hide', title: '隐藏', type: 'switch', sign: "hide"},
+      {key:'filter', title: '过滤', type: 'switch', sign: "filter"}
     ],
     cols,
     onOk
   };
+  if (Array.isArray(keys)){
+    props.tableCols = props.tableCols.filter(col => !col.sign || keys.includes(col.sign));
+  }
   return showPopup(SetColDialog, props);
 };
 

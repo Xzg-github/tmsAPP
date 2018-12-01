@@ -1,4 +1,5 @@
 import express from 'express';
+import receiveSettlement from './receiveSettlement';
 import receiveMake from './receiveMake';
 import receiveChange from './receiveChange';
 import receiveBill from './receiveBill';
@@ -13,6 +14,7 @@ import extraApply from './extraApply';
 import append from './append';
 
 let api = express.Router();
+api.use('/receiveSettlement', receiveSettlement);
 api.use('/receive_make', receiveMake);
 api.use('/receive_change', receiveChange);
 api.use('/receive_bill', receiveBill);
