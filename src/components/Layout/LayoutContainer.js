@@ -71,10 +71,14 @@ const initActionCreator = () => async (dispatch) => {
   if (returnCode === 0) {
     const tableColsSetting = await getTableColsConfig();
     const payload = Object.assign(result, {tableColsSetting, status: 'page'});
-    payload.messageUrl && (payload.messageCount = await getUreadCount());
+    payload.messageCount = await getUreadCount();
     dispatch(action.create(payload));
     // 获取到权限后，再次引发路由，以保证没有该页面的权限时显示404的页面
-    jump(window.location.pathname + window.location.search);
+    if (window.location.pathname === '/') {
+      jump(payload.navigation[0].href);
+    } else {
+      jump(window.location.pathname + window.location.search);
+    }
     connectWsServer();
   } else {
     if (returnCode !== 9998) {

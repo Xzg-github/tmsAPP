@@ -17,7 +17,7 @@ const getUsername = () => {
 
 class Layout extends React.Component {
   static propTypes = {
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node,
     nav1: PropTypes.string,
     nav2: PropTypes.string,
     settingUrl: PropTypes.string,
