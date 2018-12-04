@@ -10,6 +10,7 @@ import getWsClient from '../../standard-business/wsClient';
 import {notification} from 'antd';
 import showPerson from './Person';
 import showMode from './Mode';
+import showPassword from '../../routes/password/modify/ModifyContainer';
 
 const action = new Action(['layout']);
 const PRIVILEGE_URL = '/api/permission/privilege';
@@ -70,10 +71,14 @@ const initActionCreator = () => async (dispatch) => {
   if (returnCode === 0) {
     const tableColsSetting = await getTableColsConfig();
     const payload = Object.assign(result, {tableColsSetting, status: 'page'});
-    payload.messageUrl && (payload.messageCount = await getUreadCount());
+    payload.messageCount = await getUreadCount();
     dispatch(action.create(payload));
     // 获取到权限后，再次引发路由，以保证没有该页面的权限时显示404的页面
-    jump(window.location.pathname + window.location.search);
+    if (window.location.pathname === '/') {
+      jump(payload.navigation[0].href);
+    } else {
+      jump(window.location.pathname + window.location.search);
+    }
     connectWsServer();
   } else {
     if (returnCode !== 9998) {
@@ -120,7 +125,7 @@ const menuClickActionCreator = (key) => async () => {
     await helper.fetchJson(REVOKE_URL, 'put');
     window.location.href = '/login';
   } else if (key === 'modify') {
-    jump('/password/modify');
+    showPassword()
   } else if (key === 'person') {
     showPerson();
   } else if (key === 'mode') {

@@ -33,7 +33,7 @@ const initActionCreator = () => async (dispatch) => {
     dispatch(action.assign({status: 'loading'}));
     const config = helper.getJsonResult(await helper.fetchJson(URL_CONFIG));
     const dictionary = helper.getJsonResult(await fetchDictionary(config.dictionary));
-    const list = helper.getJsonResult(await search(URL_LIST, 0, config.pageSize, {supplierId:-1}));
+    const list = helper.getJsonResult(await search(URL_LIST, 0, config.pageSize, {}));
 
     const {tableCols,edit} = config;
     //拓展字段
@@ -214,10 +214,10 @@ const checkActionCreator = (isAll, checked, rowIndex) => {
 };
 
 const formSearchActionCreator = (key,keyValue,keyControls) => async(dispatch,getState) => {
-  const {filters,value} = getSelfState(getState());
+  const {filters} = getSelfState(getState());
   const json = await helper.fuzzySearchEx(keyValue,keyControls);
   if (!json.returnCode) {
-    const index = filters.findIndex(item => item.key == key);
+    const index = filters.findIndex(item => item.key === key);
     dispatch(action.update({options:json.result}, 'filters', index));
   }else {
     helper.showError(json.returnMsg)
