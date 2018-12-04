@@ -34,7 +34,7 @@ class EditPage extends React.Component {
   }
 
   toTabContent = () => {
-    const {activeKey, order} = this.props;
+    const {activeKey} = this.props;
     switch (activeKey) {
       case 'pay': {
         return (<div>
@@ -43,8 +43,7 @@ class EditPage extends React.Component {
         </div>)
       }
       case 'order': {
-        // console.log(order[order])
-        return <div>调用运单信息界面</div>
+        return <h1>调用运单信息界面</h1>
       }
     }
   }

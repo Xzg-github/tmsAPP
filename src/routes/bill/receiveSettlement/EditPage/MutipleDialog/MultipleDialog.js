@@ -11,8 +11,7 @@ class MultipleDialog extends React.Component {
 
   onOk = () => {
     const {onOk, afterClose} = this.props;
-    onOk && onOk();
-    afterClose();
+    onOk && onOk(afterClose);
   }
 
   toToolbar = () => {

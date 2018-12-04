@@ -25,22 +25,22 @@ const insertCurrency = (arr, currency) => {
 
 const calTotalByCompany = (items=[]) => {
   return items.reduce((result, item) => {
-    const currency = item.currencyTypeCode;
-    const company = item.balanceCompanyGuid.title;
-    const index = result.label.findIndex(item => item.company === company);
+    const {currency, netAmount=0, taxAmount=0} = item;
+    const company = item.customerId.title;
+    const index = result.label.findIndex(o => o.company === company);
     if (index > -1) {
       if (typeof result.net[index][currency] !== 'undefined') {
-        result.net[index][currency] += item.netAmount;
-        result.tax[index][currency] += Number(item.netAmount + item.taxAmount);
+        result.net[index][currency] += netAmount;
+        result.tax[index][currency] += Number(netAmount + taxAmount);
       } else {
         insertCurrency(result.label[index].currency, currency);
-        result.net[index][currency] = item.netAmount;
-        result.tax[index][currency] = Number(item.netAmount + item.taxAmount);
+        result.net[index][currency] = netAmount;
+        result.tax[index][currency] = Number(netAmount + taxAmount);
       }
     } else {
       result.label.push({company, currency: [currency]});
-      result.net.push({[currency]: item.netAmount});
-      result.tax.push({[currency]: item.netAmount + item.taxAmount});
+      result.net.push({[currency]: netAmount});
+      result.tax.push({[currency]: netAmount + taxAmount});
     }
     return result;
   }, {label: [], net: [], tax: []});

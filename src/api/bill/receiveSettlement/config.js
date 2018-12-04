@@ -198,7 +198,7 @@ const payColsEdit = [
   {key: 'price', title: '单价', type: 'number'},
   {key: 'chargeNum', title: '数量', type: 'number'},
   {key: 'amount', title: '金额', type: 'number'},
-  {key: 'currencyTypeCode', title: '币种', type: 'select', dictionary: 'currency'},
+  {key: 'currency', title: '币种', type: 'select', dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率', type: 'number'},
   {key: 'tax', title: '税率', type: 'number'},
   {key: 'taxType', title: '计税方式', type: 'select', dictionary: name.TAX_TYPE},
@@ -263,6 +263,7 @@ const config = {
     name.STATUS_TYPE,
     name.TRANSPORT_TYPE,
     name.CHARGE_ORIGIN,
+    name.CHARGE_UNIT,
     name.ZERO_ONE_TYPE,
     name.TAX_TYPE,
     name.YES_OR_NO

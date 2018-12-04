@@ -1,17 +1,16 @@
 import { connect } from 'react-redux';
 import OrderPage from './OrderPage';
-import helper,{postOption, fetchJson, showError, showSuccessMsg, convert, deepCopy} from '../../../../common/common';
-import {search2} from '../../../../common/search';
+import helper,{postOption, fetchJson, showError, showSuccessMsg, convert, getJsonResult} from '../../../../common/common';
 import {Action} from '../../../../action-reducer/action';
 import {getPathValue} from '../../../../action-reducer/helper';
 import {showImportDialog} from '../../../../common/modeImport';
 import { exportExcelFunc, commonExport } from '../../../../common/exportExcelSetting';
 import {showColsSetting} from '../../../../common/tableColsSetting';
 import {showConfirmDialog} from '../../../../common/showCofirmDialog';
+import {getNewTableData} from '../RootContainer';
 
 const STATE_PATH = ['receiveSettlement'];
 const action = new Action(STATE_PATH);
-const URL_LIST = '/api/bill/receiveSettlement/list';
 const URL_CUSTOMER = '/api/bill/receiveSettlement/customerId';
 const URL_CUSTOMER_SERVICE = '/api/bill/receiveSettlement/customerServiceId';
 const URL_CARMODE = '/api/bill/receiveSettlement/carModeId';
@@ -26,7 +25,7 @@ const getSelfState = (rootState) => {
 
 const formSearchActionCreator = (key, filter) => async (dispatch,getState) => {
   const {filters} = getSelfState(getState());
-  let result, options, params = {maxNumber: 10, filter} ;
+  let result, options, params = {maxNumber: 20, filter} ;
   switch (key) {
     case 'customerId': {
       result = await fetchJson(URL_CUSTOMER, postOption(params));
@@ -58,14 +57,21 @@ const changeActionCreator = (key, value) => async (dispatch, getState) =>  {
 };
 
 const afterEdit = async (dispatch, getState) => {
-  const {currentPage, pageSize, searchDataBak={}, tabKey} = getSelfState(getState());
-  return search2(dispatch, action, URL_LIST, currentPage, pageSize, {...convert(searchDataBak), incomeTag: tabKey});
+  const {currentPage, pageSize, searchDataBak={}, tabKey, tabs2} = getSelfState(getState());
+  const params = {filter: convert(searchDataBak), currentPage, pageSize, tabKey, tabs2};
+  const payload = await getNewTableData(params, {isRefresh: true});
+  dispatch(action.assign({...payload}));
 };
 
 const searchActionCreator = async (dispatch, getState) => {
-  const {pageSize, searchData, tabKey} = getSelfState(getState());
-  const newState = {searchDataBak: searchData, currentPage: 1, isRefresh: true};
-  return search2(dispatch, action, URL_LIST, 1, pageSize, {...searchData, incomeTag: tabKey}, newState);
+  const {currentPage, pageSize, searchData, tabKey, tabs2} = getSelfState(getState());
+  const params = {filter: convert(searchData), currentPage, pageSize, tabKey, tabs2};
+  const payload = await getNewTableData(params, {
+    isRefresh: true,
+    searchDataBak: searchData,
+    currentPage: 1
+  });
+  dispatch(action.assign({...payload}));
 };
 
 const resetActionCreator = action.assign({searchData: {}});
@@ -200,14 +206,18 @@ const checkActionCreator = (isAll, checked, rowIndex) => {
   return action.update({checked}, 'tableItems', rowIndex);
 };
 
-const pageNumberActionCreator = (currentPage) => (dispatch, getState) => {
-  const {pageSize, searchDataBak={}, tabKey} = getSelfState(getState());
-  return search2(dispatch, action, URL_LIST, currentPage, pageSize, {...convert(searchDataBak), incomeTag: tabKey}, {currentPage});
+const pageNumberActionCreator = (currentPage) => async (dispatch, getState) => {
+  const {pageSize, searchDataBak={}, tabKey, tabs2} = getSelfState(getState());
+  const params = {filter: convert(searchDataBak), currentPage, pageSize, tabKey, tabs2};
+  const payload = await getNewTableData(params, {currentPage});
+  dispatch(action.assign({...payload}));
 };
 
 const pageSizeActionCreator = (pageSize, currentPage) => async (dispatch, getState) => {
-  const {searchDataBak={}, tabKey} = getSelfState(getState());
-  return search2(dispatch, action, URL_LIST, currentPage, pageSize, {...convert(searchDataBak), incomeTag: tabKey}, {pageSize, currentPage});
+  const {searchDataBak={}, tabKey, tabs2} = getSelfState(getState());
+  const params = {filter: convert(searchDataBak), currentPage, pageSize, tabKey, tabs2};
+  const payload = await getNewTableData(params, {pageSize, currentPage});
+  dispatch(action.assign({...payload}));
 };
 
 // 排序和过滤
@@ -216,13 +226,14 @@ const tableChangeActionCreator = (sortInfo, filterInfo) => (dispatch) => {
 };
 
 const tabChangeActionCreator = (key) =>  async (dispatch, getState) => {
-  const {tableItems, maxRecords, currentPage, pageSize, isRefresh, tabs2Data={}, tabKey} = getSelfState(getState());
+  const {tableItems, maxRecords, currentPage, pageSize, isRefresh, tabs2Data={}, tabKey, tabs2} = getSelfState(getState());
   tabs2Data[tabKey] = { tableItems, maxRecords, currentPage, pageSize };
   dispatch(action.assign({tabKey: key, tabs2Data}));
   const {tabs2Data: newTabs2Data={}, tabKey: newTabKey, searchDataBak} = getSelfState(getState());
   if (isRefresh || !newTabs2Data[newTabKey]) {
-    const newState = {currentPage: 1, isRefresh: false};
-    search2(dispatch, action, URL_LIST, 1, pageSize, {...convert(searchDataBak), incomeTag: newTabKey}, newState);
+    const params = {filter: convert(searchDataBak), currentPage, pageSize, tabKey: newTabKey, tabs2};
+    const payload = await getNewTableData(params, {isRefresh: false, currentPage: 1});
+    dispatch(action.assign({...payload}));
   } else {
     dispatch(action.assign({...newTabs2Data[newTabKey]}));
   }

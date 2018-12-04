@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import {EnhanceLoading} from '../../../../../components/Enhance';
 import MultipleDialog from './MultipleDialog';
-import helper, {showError, getJsonResult, validArray}from '../../../../../common/common';
+import helper, {postOption, showError, getJsonResult, validArray, deepCopy, convert}from '../../../../../common/common';
 import {Action} from '../../../../../action-reducer/action';
 import {getPathValue} from '../../../../../action-reducer/helper';
 import {showColsSetting} from '../../../../../common/tableColsSetting';
@@ -10,11 +10,9 @@ import showPopup from '../../../../../standard-business/showPopup';
 const STATE_PATH = ['temp'];
 const action = new Action(STATE_PATH, false);
 
-// const URL_SEARCH = '/api/order/settle/search';
-// const URL_SAVE = '/api/bill/receive/details';
-// const URL_BLANCE = '/api/bill/receive/customer/balance/drop_list';
-// const URL_CUSTOMER_BASE_INFO = `/api/bill/receive/customer/base_info`;
-// const URL_PLACE_DROP_LIST = '/api/basic/area/place_drop_list';
+const URL_CURRENCY = `/api/bill/receiveSettlement/currencyTypeCode`;
+const URL_CUSTOMER = '/api/bill/receiveSettlement/customerId';
+const URL_CHARGE_NAME = '/api/bill/receiveSettlement/chargeItemId'
 
 
 const getSelfState = (rootState) => {
@@ -22,7 +20,7 @@ const getSelfState = (rootState) => {
 };
 
 const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, getState) =>{
-  const {dialogType} = getSelfState(getState());
+  // const {dialogType} = getSelfState(getState());
   let payload = {[keyName]: keyValue}, index = rowIndex;
   switch (keyName) {
     case 'price':
@@ -30,48 +28,43 @@ const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, ge
       payload['amount'] = '';
       break;
     }
-    case 'balanceCompanyGuid': {
-      if (!keyValue.value) return;
-      const result = getJsonResult(await helper.fetchJson(`${URL_CUSTOMER_BASE_INFO}/${keyValue.value}`));
-      index = dialogType === 3 ? -1 : rowIndex;
-      payload['currencyTypeCode'] = result;
-      break;
-    }
-    default: {
-      dispatch(action.update(payload, 'items', index));
-    }
+    default: break;
   }
+  dispatch(action.update(payload, 'items', index));
 };
 
 const searchActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, getState) => {
-  let options, params = {maxNumber: 20, placeName: keyValue};
+  let options, params = {maxNumber: 20, filter: keyValue};
   switch (keyName) {
-    case 'departure':
-    case 'destination': {
-      const result = getJsonResult(await helper.fetchJson(URL_PLACE_DROP_LIST, postOption(params)));
-      options = result;
+    case 'supplierId':
+    case 'customerId': {
+      options = getJsonResult(await helper.fetchJson(URL_CUSTOMER, postOption(params)));
+      break;
+    }
+    case 'chargeItemId': {
+      options = getJsonResult(await helper.fetchJson(URL_CHARGE_NAME, postOption(params)));
       break;
     }
   }
-  dispatch(action.update({options}, 'cols', rowIndex));
+  dispatch(action.update({options}, 'cols', {key: 'key', value: keyName}));
 };
 
 const addActionCreator = () => async (dispatch, getState) => {
-  const {defaultBalanceCompany, items} = getSelfState(getState());
-  const currencyTypeCode = getJsonResult(await helper.fetchJson(`${URL_CUSTOMER_BASE_INFO}/${defaultBalanceCompany.value}`));
+  const {customerId, items} = getSelfState(getState());
+  const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}`));
   items.push({
     checked: false,
-    currencyTypeCode,
-    balanceCompanyGuid: defaultBalanceCompany
+    currency,
+    customerId
   });
-  dispatch(action.assign({items}));
+  dispatch(action.assign({items: deepCopy(items)}));
 };
 
 const copyActionCreator = () => async (dispatch, getState) => {
   let {items} = getSelfState(getState());
   const checkList = items.filter(o => o.checked);
   if (checkList.length === 0) return showError("请选择一条数据！");
-  const newItems = items.concat(checkList.map(o => {
+  const newItems = items.concat(deepCopy(checkList).map(o => {
     o.checked = false;
     delete o.id;
     return o;
@@ -85,16 +78,12 @@ const delActionCreator = () => async (dispatch, getState) =>{
   dispatch(action.assign({items: newItems}));
 };
 
-
-
-
-
 const getActionCreator = () => async (dispatch, getState) => {
-  const {defaultBalanceCompany} = getSelfState(getState());
-  const currencyTypeCode = getJsonResult(await helper.fetchJson(`${URL_CUSTOMER_BASE_INFO}/${defaultBalanceCompany.value}`));
+  const {customerId} = getSelfState(getState());
   return alert('获取费用项！');
 
-  // const chargeList = await showGetChargeDialog(defaultBalanceCompany.value, true);
+  // const currencyTypeCode = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${customerId.value}`));
+  // const chargeList = await showGetChargeDialog(customerId.value, true);
   // if (Array.isArray(chargeList) && chargeList.length > 0) {
   //   const info = result.filter(item => item.taskUnitCode === activeKey).pop() || {};
   //   const [...newItems] = tasks[activeKey];
@@ -107,7 +96,7 @@ const getActionCreator = () => async (dispatch, getState) => {
   //       taskUnitCode:{title:info.taskUnitName,value:info.taskUnitCode},
   //       businessCode:{value:info.businessCode,title:info.businessName},
   //       serviceCode:{value:info.serviceCode,title:info.serviceName},
-  //       balanceCompanyGuid: defaultBalanceCompany,
+  //       balanceCompanyGuid: customerId,
   //       chargeGuid: {value: item.value, title: item.title}
   //     });
   //   });
@@ -118,10 +107,11 @@ const getActionCreator = () => async (dispatch, getState) => {
 //配置字段按钮
 const configActionCreator = () => async (dispatch, getState) => {
   const {cols} = getSelfState(getState());
+  const configCols = cols.filter(o => !(o.key === 'checked' || o.key === 'index'));
   const okFunc = (newCols) => {
     dispatch(action.assign({cols: newCols}));
   };
-  showColsSetting(cols, okFunc, 'bill_receiveSettlement_mutipleDialog', ['hide']);
+  showColsSetting(configCols, okFunc, 'receiveSettlement_receiveColsEdit', ['hide']);
 };
 
 const buttons = {
@@ -141,13 +131,14 @@ const clickActionCreator = (key) => {
   }
 };
 
-const okActionCreator = () => async (dispatch, getState) => {
+const okActionCreator = (afterClose) => async (dispatch, getState) => {
   const {cols, items} = getSelfState(getState());
   if(!validArray(cols, items)) {
     dispatch(action.assign({valid: true}));
     return showError('请填写必填项！');
   }
-  dispatch(action.assign({okResult: items}));
+  dispatch(action.assign({okResult: items.map(o => convert(o))}));
+  afterClose();
 };
 
 const checkActionCreator = (rowIndex, keyName, checked) => action.update({checked}, 'items', rowIndex);
@@ -162,7 +153,7 @@ const actionCreators = {
   onClick: clickActionCreator,
   onChange: changeActionCreator,
   onSearch: searchActionCreator,
-  onOk: okActionCreator,
+  onOk: okActionCreator
 };
 
 const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(MultipleDialog));
