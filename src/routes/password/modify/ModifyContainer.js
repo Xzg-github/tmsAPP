@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import PasswordDialog from './PasswordDialog';
+import ModifyDialog from './ModifyDialog';
 import {Action} from '../../../action-reducer/action';
 import showPopup from '../../../standard-business/showPopup';
 import helper from '../../../common/common';
@@ -98,7 +98,7 @@ const actionCreators = {
 
 
 export default async() => {
-  const Container = connect(mapStateToProps, actionCreators)(PasswordDialog);
+  const Container = connect(mapStateToProps, actionCreators)(ModifyDialog);
   global.store.dispatch(action.create(buildState()));
   await showPopup(Container,{}, true);
 
