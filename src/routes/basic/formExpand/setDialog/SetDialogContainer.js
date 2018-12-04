@@ -65,7 +65,7 @@ const okActionCreator = () => async (dispatch, getState) => {
 
 const addActionCreator = async (dispatch, getState) => {
   const {item, tableItems=[], editItemConfig} = getSelfState(getState());
-  let {returnCode, result, returnMsg} = await helper.fetchJson(`/api/config/goodsPropertyGroup/allProperties/${item.tablePropertyCode}`);
+  let {returnCode, result, returnMsg} = await helper.fetchJson(`/api/basic/formExpand/allProperties/${item.tablePropertyCode}`);
   if (returnCode !== 0) return helper.showError(returnMsg);
   result = result.map(item => ({key: item.propertyKey, title: item.propertyName, type: item.componentType}));
   const existKeys = tableItems.map(item => item.itemKey);

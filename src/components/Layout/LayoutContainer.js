@@ -10,6 +10,7 @@ import getWsClient from '../../standard-business/wsClient';
 import {notification} from 'antd';
 import showPerson from './Person';
 import showMode from './Mode';
+import showPassword from '../../routes/password/modify/ModifyContainer';
 
 const action = new Action(['layout']);
 const PRIVILEGE_URL = '/api/permission/privilege';
@@ -124,7 +125,7 @@ const menuClickActionCreator = (key) => async () => {
     await helper.fetchJson(REVOKE_URL, 'put');
     window.location.href = '/login';
   } else if (key === 'modify') {
-    jump('/password/modify');
+    showPassword()
   } else if (key === 'person') {
     showPerson();
   } else if (key === 'mode') {

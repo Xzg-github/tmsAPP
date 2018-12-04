@@ -19,7 +19,6 @@ const name = {
   VGM_WEIGH: 'vgm_weighing_method',//VGM过磅方式
   GENERIC_WEIGH: 'weighing_method',//普通过磅方式
   WEIGH: 'weighing_method',//普通过磅方式
-  ORDER_TYPE: 'ORDER_TYPE',//订单分类
   CUSTOMS_TYPE: 'customs_type',//报关方式
   QUARANTINE_MODE: 'quarantine_mode',//检疫方式
   SEAMLESS: 'seamless_customs_clearance',//无缝清关
@@ -199,6 +198,7 @@ const name = {
   BUSINESS_TYPE: 'business_type',  //业务类型
   TAX_RATE_WAY: 'tax_rate_way',     //计税方式
   ZERO_ONE: 'zero_one_type', //是否（0/1）
+  TRANSPORT_TYPE: 'transport_type', //运输方式
 };
 
 export default name;
