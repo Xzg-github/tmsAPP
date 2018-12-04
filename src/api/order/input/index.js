@@ -2,7 +2,7 @@ import express from 'express';
 import {postOption, fetchJsonByNode} from '../../../common/common';
 import {host} from '../../globalConfig';
 
-const service = `${host}/tms-service-zmm`;
+const service = `${host}/tms-service`;
 let api = express.Router();
 
 // 获取运单界面配置

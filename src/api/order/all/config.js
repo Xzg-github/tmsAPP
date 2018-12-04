@@ -58,57 +58,22 @@ const menu = [
 ];
 
 const config = {
-  tabs: [{key: 'index', title: '待办任务', close: false}],
-  subTabs: [
-    {key: 'completing', title:'待完善', status: 'status_waiting_perfect'},
-    {key: 'sending', title:'待派发', status: 'status_waiting_send'},
-  ],
+  tabs: [{key: 'index', title: '运输汇总', close: false}],
   filters,
   tableCols,
+  pageSize,
+  currentPage: 1,
   pageSizeType,
   paginationConfig,
   searchConfig,
-  urlExport: '/tms-service-zmm/transport_order/pending_task_list/search', //后端查询导出api配置
-  isTotal: true, //页签是否需要统计符合条件的记录数
+  urlExport: '/tms-service-zmm/transport_order/finish_list/search', //后端查询导出api配置
   searchData: {},//默认搜索条件值-若有需同步配置searchDataBak
   searchDataBak: {},//初始搜索条件值-若有则与searchData相同
   activeKey: 'index',
-  subActiveKey: 'completing',
-  isRefresh: { //切换到tab页是否需要刷新列表标识
-    completing: false,
-    sending: true
-  },
-  pageSize: { //各tab页签列表显示记录条数
-    completing: pageSize,
-    sending: pageSize
-  },
-  currentPage: { //各tab页签列表显示的当前页数
-    completing: 1,
-    sending: 1
-  },
-  maxRecords: { //各tab页签符合条件的记录数
-    completing: 0,
-    sending: 0
-  },
-  tableItems: { //各tab页签列表数据
-    completing: [],
-    sending: []
-  },
-  fixedFilters: {//各tab页签列表搜索时的固定搜索条件
-    completing: {orderType: 'status_waiting_perfect'},
-    sending: {orderType: 'status_waiting_send'}
-  },
-  buttons: { //各tab页签操作按钮
-    completing:[
-      {key: 'edit', title: '运单完善', bsStyle: 'primary'},
-      {key: 'del', title: '删除', confirm: '删除！是否确认删除所有勾选运单？'},
+  fixedFilters: {},
+  buttons: [
       {key: 'export', title: '导出', menu},
-    ],
-    sending: [
-      {key: 'send', title: '任务派发', bsStyle: 'primary', confirm: '是否确认派发所有勾选运单？'},
-      {key: 'export', title: '导出', menu},
-    ],
-  }
+    ]
 };
 
 export default config;

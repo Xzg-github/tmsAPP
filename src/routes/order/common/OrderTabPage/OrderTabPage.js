@@ -39,7 +39,7 @@ class OrderTabPage extends React.Component {
   };
 
   onHandleClick = (key) => {
-    const {subActiveKey, onClick, onClickReset, onClickSearch, onConfig} = this.props;
+    const {subActiveKey, onClick, onClickReset, onClickSearch, onConfig, onWebExport, onAllExport} = this.props;
     switch (key) {
       case 'reset': {
         onClickReset();
@@ -51,6 +51,14 @@ class OrderTabPage extends React.Component {
       }
       case 'config': {
         onConfig();
+        break;
+      }
+      case 'webExport': {
+        onWebExport();
+        break;
+      }
+      case 'allExport': {
+        onAllExport();
         break;
       }
       default:

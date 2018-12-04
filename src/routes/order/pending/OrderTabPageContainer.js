@@ -10,7 +10,8 @@ const action = new Action(STATE_PATH);
 const buildOrderTabPageState = async () => {
   const urlConfig = '/api/order/pending/config';
   const urlList = '/api/order/pending/list';
-  return buildOrderTabPageCommonState(urlConfig, urlList);
+  const statusNames = ['transport_order', 'order_type'];
+  return buildOrderTabPageCommonState(urlConfig, urlList, statusNames);
 };
 
 const getSelfState = (rootState) => {

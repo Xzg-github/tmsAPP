@@ -3,7 +3,8 @@ import OrderTabPage from './OrderTabPage';
 import helper, {showError} from '../../../../common/common';
 import {search} from '../../../../common/search';
 import {showColsSetting} from '../../../../common/tableColsSetting';
-import {fetchAllDictionary, setDictionary2} from "../../../../common/dictionary";
+import {fetchAllDictionary, setDictionary2, getStatus} from "../../../../common/dictionary";
+import {exportExcelFunc, commonExport} from '../../../../common/exportExcelSetting';
 
 //实现搜索公共业务
 const mySearch = async (dispatch, action, selfState, currentPage, pageSize, filter, newState={}) => {
@@ -86,6 +87,19 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
     showColsSetting(tableCols, okFunc, helper.getRouteKey());
   };
 
+  //页面导出
+  const webExportActionCreator = () => (dispatch, getState) => {
+    const {tableCols, tableItems, subActiveKey} = getSelfState(getState());
+    return exportExcelFunc(tableCols, tableItems[subActiveKey]);
+  };
+
+  //查询导出
+  const allExportActionCreator = () => (dispatch, getState) => {
+    const {tableCols, searchData, fixedFilters, subActiveKey, urlExport} = getSelfState(getState());
+    const realSearchData = {...searchData, ...fixedFilters[subActiveKey]};
+    return commonExport(tableCols, urlExport, realSearchData, true, false, 'post', false);
+  };
+
   //前端表格排序和过滤
   const tableChangeActionCreator = (subActiveKey, sortInfo, filterInfo) => (dispatch, getState) => {
     const selfState = getSelfState(getState());
@@ -115,6 +129,8 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
     onClickReset: resetActionCreator,     //点击重置按钮
     onClickSearch: searchActionCreator,   //点击搜索按钮
     onConfig: configActionCreator,        //点击配置字段按钮
+    onWebExport: webExportActionCreator, //点击页面导出按钮
+    onAllExport: allExportActionCreator, //点击查询导出按钮
     onChange: changeActionCreator,        //过滤条件输入改变
     onCheck: checkActionCreator,          //表格勾选响应
     onTableChange: tableChangeActionCreator,  //表格组件过滤条件或排序条件改变响应
@@ -136,13 +152,17 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
 * 功能：构造带页签列表页面的公共初始化状态
  * 参数：urlConfig - [必需] 获取界面配置的url
  *       urlList - [必需] 获取列表数据的url
+ *       statusNames - [可选] 需要获取的来自状态字典的表单状态下拉的表单类型值数组
 * 返回：成功返回初始化状态，失败返回空
 * */
-const buildOrderTabPageCommonState = async (urlConfig, urlList) => {
+const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[]) => {
   try {
     //获取并完善config
     const config = helper.getJsonResult(await helper.fetchJson(urlConfig));
     const dic = helper.getJsonResult(await fetchAllDictionary());
+    for (let item of statusNames) {
+      dic[item] = helper.getJsonResult(await getStatus(item));
+    }
     setDictionary2(dic, config.filters, config.tableCols);
     const {subActiveKey, subTabs, isTotal, pageSize={}, fixedFilters={}, searchDataBak={}} = config;
     //获取列表数据

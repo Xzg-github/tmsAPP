@@ -60,6 +60,9 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       if (helper.getRouteKey() !== 'input') {
         buttons = buttons.filter(item => item.key !== 'new');
       }
+      if (helper.getRouteKey() === 'complete') {
+        buttons = buttons.filter(item => item.key === 'save');
+      }
       return {
         ...config,
         ...data,
@@ -348,7 +351,8 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     if (!baseInfo.customerId) return helper.showError('请先填写客户');
     const body = getSaveData(selfState);
     const method = baseInfo.id ? 'put' : 'post';
-    const {returnCode, returnMsg, result} = await helper.fetchJson(`/api/order/input`, helper.postOption(body, method));
+    const url = helper.getRouteKey() === 'input' ? '/api/order/input' : '/api/order/complete/change';
+    const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));
     if (returnCode !== 0) return helper.showError(returnMsg);
     helper.showSuccessMsg('保存成功');
     if (!baseInfo.id) { //新增保存处理
