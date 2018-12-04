@@ -88,7 +88,7 @@ class OrderInfoPage extends React.Component {
       onClick
     };
     const tableProps = {
-      cols: config.cols,
+      cols: readonly ? config.cols.filter(item => item.key !== 'checkbox').map(col => col.key === 'index' ? col : ({...col, type: undefined})) : config.cols,
       items: this.props[activeKey],
       valid: valid[activeKey],
       callback: {

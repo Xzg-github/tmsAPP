@@ -18,14 +18,6 @@ import helper from "../../../../common/common";
  */
 const createOrderInfoPageContainer = (action, getSelfState) => {
 
-  const getRouteKey = () => {
-    const url = window.location.href;
-    const index = url.lastIndexOf('/');
-    if (index !== -1) {
-      return url.substring(index+1);
-    }
-  };
-
   const getCurrentDate = () => {
     const date = new Date;
     const d = date.getDate();
@@ -59,13 +51,19 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
         const {addressList=[], goodsList=[], ...baseInfo} = getJsonResult(await fetchJson(url));
         data = {
           baseInfo,
-          addressList: addressList,
+          addressList: addressList.map(item => item.consigneeConsignorId ? {...item, consigneeConsignorId: {value: item.consigneeConsignorId, title: item.consigneeConsignorName}} : item),
           goodsList: goodsList
         };
+        config.formSections.baseInfo.controls = config.formSections.baseInfo.controls.map(item => item.key === 'customerId' ? {...item, type: 'readonly'} : item);
+      }
+      let buttons = [...config.buttons];
+      if (helper.getRouteKey() !== 'input') {
+        buttons = buttons.filter(item => item.key !== 'new');
       }
       return {
         ...config,
         ...data,
+        buttons,
         readonly,
         closeFunc,
         valid:{},
@@ -205,8 +203,8 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     if (['consigneeConsignorId', 'pickupDeliveryType'].includes(changeKey)) {
       obj.departure = '';
       obj.destination = '';
-      const consignorList = list.filter(item => item.pickupDeliveryType === '0' || item.pickupDeliveryType === '2');
-      const consigneeList = list.filter(item => item.pickupDeliveryType === '1' || item.pickupDeliveryType === '2');
+      const consignorList = list.filter(item => (item.pickupDeliveryType !== '' && item.pickupDeliveryType !== undefined) && (Number(item.pickupDeliveryType) === 0 || Number(item.pickupDeliveryType) === 2));
+      const consigneeList = list.filter(item => (item.pickupDeliveryType !== '' && item.pickupDeliveryType !== undefined) && (Number(item.pickupDeliveryType) === 1 || Number(item.pickupDeliveryType) === 2));
       let firstConsignorId = '', lastConsigneeId = '', data;
       const url = '/api/order/input/customer_factory_info';
       if (consignorList.length) {
@@ -300,16 +298,6 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
           dispatch(action.update({options}, ['addressTable', 'cols'], {key: 'key', value: keyName}));
         }
       }
-    }else if (tableKey === 'goodsList') {
-      const options = [];
-      const ids = [];
-      addressList.map(item => {
-        if (item.consigneeConsignorId && !ids.includes(item.consigneeConsignorId.value)){
-          options.push(item.consigneeConsignorId);
-          ids.push(item.consigneeConsignorId.value);
-        }
-      });
-      dispatch(action.update({options}, ['goodsTable', 'cols'], {key: 'key', value: keyName}));
     }
   };
 
@@ -319,6 +307,19 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
 
   const tabChangeActionCreator = (activeKey) => (dispatch, getState) => {
     dispatch(action.assign({activeKey}));
+    if (activeKey === 'goodsList') {
+      const {addressList} = getSelfState(getState());
+      const options = [];
+      const ids = [];
+      addressList.map(item => {
+        if (item.consigneeConsignorId && !ids.includes(item.consigneeConsignorId.value)){
+          options.push(item.consigneeConsignorId);
+          ids.push(item.consigneeConsignorId.value);
+        }
+      });
+      dispatch(action.update({options}, ['goodsTable', 'cols'], {key: 'key', value: 'consignorId'}));
+      dispatch(action.update({options}, ['goodsTable', 'cols'], {key: 'key', value: 'consigneeId'}));
+    }
   };
 
   const exitValidActionCreator = (key) => {
@@ -329,8 +330,13 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   const getSaveData = ({baseInfo, addressList, goodsList}) => {
     return {
       ...helper.convert(baseInfo),
-      contactName: baseInfo.contactName ? baseInfo.contactName.title : '',
-      addressList: addressList.map(item => ({...helper.convert(item), contactName: item.contactName ? item.contactName.title : ''})),
+      contactName: baseInfo.contactName && typeof baseInfo.contactName === 'object' ? baseInfo.contactName.title : baseInfo.contactName,
+      addressList: addressList.map((item, index) => ({
+        ...helper.convert(item),
+        consigneeConsignorName: item.consigneeConsignorId ? item.consigneeConsignorId.title : '',
+        contactName: item.contactName && typeof item.contactName === 'object' ? item.contactName.title : item.contactName,
+        sequence: index
+      })),
       goodsList: goodsList.map(item => helper.convert(item))
     };
   };
@@ -383,7 +389,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     const {returnCode, returnMsg} = await helper.fetchJson(`/api/order/input/commit`, helper.postOption(body, method));
     if (returnCode !== 0) return helper.showError(returnMsg);
     helper.showSuccessMsg('提交成功');
-    if (getRouteKey() === 'input') {
+    if (helper.getRouteKey() === 'input') {
       newActionCreator(dispatch);
     }
     closeFunc && closeFunc();
@@ -399,8 +405,8 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     const {addressList, goodsList} = getSelfState(getState());
     const usedIds = [];
     goodsList.map(item => {
-      item.consignorId && usedIds.push(item.consignorId.value);
-      item.consigneeId && usedIds.push(item.consigneeId.value);
+      item.consignorId && usedIds.push(item.consignorId);
+      item.consigneeId && usedIds.push(item.consigneeId);
     });
     if (!addressList.filter(item => item.checked === true && item.consigneeConsignorId).every(item => !usedIds.includes(item.consigneeConsignorId.value))) {
      return helper.showError('勾选记录中有收发货人已被货物明细中使用，无法删除');

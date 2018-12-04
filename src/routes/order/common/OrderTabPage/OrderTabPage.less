@@ -1,0 +1,16 @@
+@import '../../../../components/variables';
+
+.root {
+  position: relative;
+
+  :global(.ant-table-wrapper) {
+    margin-top: @padding-vertical;
+    margin-bottom: @padding-vertical;
+  }
+
+  > div:nth-child(2) {
+    > div:first-child {
+      margin-bottom: @padding-vertical;
+    }
+  }
+}

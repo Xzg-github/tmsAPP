@@ -55,8 +55,8 @@ const addressCols = [
 const goodsCols = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
-  {key: 'consignorId', title: '发货人', type:'search', props: {searchWhenClick: true}, required: true},
-  {key: 'consigneeId', title: '收货人', type:'search', props: {searchWhenClick: true}, required: true},
+  {key: 'consignorId', title: '发货人', type:'select', required: true},
+  {key: 'consigneeId', title: '收货人', type:'select', required: true},
   {key: 'commodityName', title: '商品名称', type:'text', required: true},
   {key: 'goodsNumber', title: '数量', type:'number',},
   {key: 'volume', title: '体积', type:'number', props: {real: true, precision: 4}},
