@@ -91,7 +91,7 @@ const createContainer = (statePath, afterEditActionCreator) => {
         return await dealDistrictFunc('city', payload);
       }
       case 'city': {
-        const payload = {[keyName]: keyValue, district:undefined, street:undefined};
+        const payload = {[keyName]: keyValue, district:undefined, street:undefined, chargingPlaceId: keyValue};
         return await dealDistrictFunc('district', payload);
       }
       case 'district': {
