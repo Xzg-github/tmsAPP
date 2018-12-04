@@ -12,7 +12,7 @@ class Frame extends React.Component {
     return (
       <div className={s.root}>
         <header>
-          <img src='/logo.png' alt='logo'/>
+          <i />
           <a href='/login'>返回登录页</a>
         </header>
         <section className={contentClass}>{children}</section>

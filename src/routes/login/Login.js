@@ -1,25 +1,75 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Login.less';
-import Form from 'antd/lib/form';
-import Input from 'antd/lib/input';
-import Icon from 'antd/lib/icon';
-import Checkbox from 'antd/lib/checkbox';
-import Button from 'antd/lib/button';
+import {Carousel, Checkbox, Input, Icon, Button} from 'antd';
 import helper from '../../common/common';
 
 const URL_LOGIN = '/api/login';
+const BANNER_ITEMS = [
+  {h1: '运输环节全透明', h2: ['实时追踪', '卓越服务'], img: '/login_imgs/banner1.png'},
+  {h1: '运营数据极准确', h2: ['丰富数据', '洞见利润'], img: '/login_imgs/banner2.png'},
+  {h1: '快速响应易操作', h2: ['规则驱动', '轻松上手'], img: '/login_imgs/banner3.png'}
+];
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {loading: false, account: '', password: '', disabled: true};
+    this.state = {account: '', password: '', loading: false};
     this.onLogin = this.onLogin.bind(this);
   }
 
-  componentDidMount() {
-    this.setState({disabled: false});
-  }
+  toIcon = (type) => {
+    return <Icon type={type} style={{fontSize: 14}} />;
+  };
+
+  userProps = () => {
+    return {
+      prefix: this.toIcon('user'),
+      size: 'large',
+      value: this.state.account,
+      placeholder: '邮箱/手机号',
+      name: 'account',
+      onChange: (e) => this.setState({account: e.target.value})
+    };
+  };
+
+  pwdProps = () => {
+    return {
+      type: 'password',
+      prefix: this.toIcon('lock'),
+      size: 'large',
+      value: this.state.password,
+      placeholder: '密码',
+      name: 'password',
+      onChange: (e) => this.setState({password: e.target.value})
+    };
+  };
+
+  buttonProps = () => {
+    return {
+      type: 'primary',
+      style: {width: '100%'},
+      size: 'large',
+      htmlType: 'submit',
+      loading: this.state.loading,
+      disabled: !this.state.account || !this.state.password
+    };
+  };
+
+  renderBanner = (item, index) => {
+    return (
+      <div key={index}>
+        <h1>{item.h1}</h1>
+        <h2>
+          <span>{item.h2[0]}</span>
+          <span>{item.h2[1]}</span>
+        </h2>
+        <div>
+          <img alt='banner' src={item.img} />
+        </div>
+      </div>
+    );
+  };
 
   async onLogin(e) {
     e.preventDefault();
@@ -39,70 +89,37 @@ class Login extends React.Component {
     this.setState({loading: false});
   };
 
-  onChange = (e) => {
-    const {name, value} = e.target;
-    this.setState({[name]: value});
-  };
-
-  toIcon = (type) => {
-    return <Icon type={type} style={{fontSize: 14}} />;
-  };
-
-  toInput = (key, type, extra={}) => {
-    const props = {
-      ...extra,
-      prefix: this.toIcon(type),
-      size: 'large',
-      value: this.state[key],
-      onChange: this.onChange,
-      name: key
-    };
-    return <Input {...props} />;
-  };
-
-  toOkButton = () => {
-    const props = {
-      type: 'primary',
-      style: {width: '100%',fontSize:'16px',fontWeight:'bold'},
-      size: 'large',
-      htmlType: 'submit',
-      loading: this.state.loading,
-      disabled: this.state.disabled
-    };
-    return <Button {...props}>登录</Button>;
-  };
-
   render() {
     return (
       <div className={s.root}>
-        <div className={s.bigBox}>
-          <img src='/bubble_one.png' className={s.bubble_one} />
-          <img src='/bubble_two.png' className={s.bubble_two} />
-          <img src='/bubble_three.png' className={s.bubble_three} />
-            <div className={s.login}>
-              <div className={s.l_side}>
-                <img src="/logo.jpg" className={s.logo}/>
-                <img src="/customerService.jpg" className={s.customerService} />
-              </div>
-              <div className={s.r_side}>
-                <h1 role='title'>智慧运输管理平台</h1>
-                  <Form onSubmit={this.onLogin}>
-                    <Form.Item>
-                      {this.toInput('account', 'user', {placeholder: '邮箱/手机号'})}
-                    </Form.Item>
-                    <Form.Item>
-                      {this.toInput('password', 'lock', {type: 'password', placeholder: '密码'})}
-                    </Form.Item>
-                    <Form.Item>
-                      <Checkbox defaultChecked>记住密码</Checkbox>
-                      <a role='forget' href='/password/find'>忘记密码</a>
-                      {this.toOkButton()}
-                    </Form.Item>
-                  </Form>
-              </div>
-              <p>Copyright ©2005 - 2013 深圳市云恋科技有限公司   <a href="http://www.miitbeian.gov.cn" style={{color: '#fff'}} target= "_blank">粤ICP备17104734号-1</a></p>
+        <header>
+          <img src='/login_imgs/logo.png' alt='logo'/>
+        </header>
+        <section>
+          <Carousel autoplay>
+            {BANNER_ITEMS.map(this.renderBanner)}
+          </Carousel>
+          <form onSubmit={this.onLogin}>
+            <h1>TMS运输管理系统</h1>
+            <div>
+              <Input {...this.userProps()} />
             </div>
-        </div>
+            <div>
+              <Input {...this.pwdProps()} />
+            </div>
+            <div>
+              <Checkbox defaultChecked>记住密码</Checkbox>
+              <a href='/password/find'>忘记密码</a>
+            </div>
+            <div>
+              <Button {...this.buttonProps()}>登录</Button>
+            </div>
+          </form>
+        </section>
+        <footer>
+          <span>Copyright ©2005 - 2013 深圳市云恋科技有限公司</span>
+          <a href='http://www.miitbeian.gov.cn' target='_blank'>粤ICP备17104734号-1</a>
+        </footer>
       </div>
     );
   }
