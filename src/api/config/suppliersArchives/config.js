@@ -75,7 +75,7 @@ const baseInfo = [
 ];
 
 const cooperationInfo = [
-  {key: 'companyType', title: '供应商类型', type: 'select', dictionary: name.COMPANY_TYPE},
+  {key: 'companyType', title: '供应商类型', type: 'select', dictionary: name.SUPPLIER_TYPE,required:true},
   {key: 'companyLevel', title: '供应商级别', type: 'select', dictionary: name.COMPANY_LEVEL, required: true},
   {key: 'isContract', title: '是否签订合同', type: 'radioGroup', dictionary: name.YES_OR_NO},
   {key: 'contractStartTime', title: '合同生效日期', type: 'date', rule: {type: '<', key: 'contractEndTime'}},
@@ -108,7 +108,7 @@ const config = {
   index,
   names: [
     name.BALANCE_WAY, name.YES_OR_NO,name.CUSTOMER_TYPE, name.TAX_TYPE,
-    name.ENABLED_TYPE, name.COMPANY_TYPE, name.COMPANY_LEVEL
+    name.ENABLED_TYPE, name.COMPANY_TYPE, name.COMPANY_LEVEL,name.SUPPLIER_TYPE
   ]
 };
 
