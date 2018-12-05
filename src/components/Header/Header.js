@@ -51,8 +51,8 @@ class Header extends React.Component {
     return this.props.url[item.key] || item.href;
   };
 
-  icon = (item) => {
-    const style = {fontSize: 18, verticalAlign: 'middle'};
+  icon = (item, verticalAlign='middle') => {
+    const style = {fontSize: 18, verticalAlign};
     return <Icon type={item.icon} style={style} />;
   };
 
@@ -63,7 +63,7 @@ class Header extends React.Component {
       to: this.getUrl(item),
       title: item.title
     };
-    return <Link {...props}>{this.icon(item)}</Link>;
+    return <Link {...props}>{this.icon(item, '-2px')}</Link>;
   };
 
   menu = () => {
@@ -80,7 +80,7 @@ class Header extends React.Component {
   };
 
   message = (item) => {
-    const count = this.props.messageCount;
+    const count = this.props.messageCount || 0;
     return (
       <Link data-role='message' data-active={this.isSelect(item)} to={this.getUrl(item)}>
         <Badge count={count} overflowCount={99} title={`您有${count}条未读消息`}>

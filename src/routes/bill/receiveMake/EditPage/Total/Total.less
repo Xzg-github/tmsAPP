@@ -1,0 +1,48 @@
+@import '../../../../../components/variables.less';
+
+.root {
+  border: 1px solid #d7d7d7;
+  padding-bottom: 4px !important;
+
+  > div {
+    background-color: #f0f0f0;
+    margin: -@padding-vertical -@padding-horizontal 0;
+    padding: 4px 0 4px 12px;
+
+    :global(.ant-select) {
+      margin-right: 17px;
+    }
+
+    [data-role='money'] {
+      color: @brand-primary;
+      padding-left: 2px;
+      padding-right: 10px;
+    }
+  }
+
+  > table {
+    [data-role='head'] {
+      padding-right: 11px;
+
+      &::before {
+        display: inline-block;
+        content: '';
+        width: 4px;
+        height: 4px;
+        border-radius: 2px;
+        background-color: @brand-primary;
+        margin-right: 5px;
+        vertical-align: 2px;
+      }
+    }
+
+    [data-role='company'] {
+      padding-left: 4px;
+    }
+
+    [data-role='money'] {
+      color: @brand-primary;
+      padding-right: 4px;
+    }
+  }
+}

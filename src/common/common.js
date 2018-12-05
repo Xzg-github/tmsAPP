@@ -436,6 +436,15 @@ const minMax = (value, min, max) => {
   }
 };
 
+//获取当前打开的路由最后的一段字符串
+const getRouteKey = () => {
+  const url = window.location.href;
+  const index = url.lastIndexOf('/');
+  if (index !== -1) {
+    return url.substring(index+1);
+  }
+};
+
 const helper = {
   postOption,
   fetchJson,
@@ -467,7 +476,8 @@ const helper = {
   omit,
   download,
   minMax,
-  getButtons
+  getButtons,
+  getRouteKey
 };
 
 export {
@@ -498,7 +508,7 @@ export {
   myToFixed,
   formatTime,
   deepCopy,
-  download
+  download,
 };
 
 export default helper;

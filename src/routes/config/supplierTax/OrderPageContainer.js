@@ -110,7 +110,7 @@ const disableAction = async (dispatch, getState) => {
 
 //导入按钮
 const importActionCreator = () => {
-  return showImportDialog('customer_tax_import');
+  return showImportDialog('supplier_tax_import');
 };
 
 //导出
