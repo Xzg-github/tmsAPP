@@ -44,19 +44,18 @@ const getNewTableData = async (params, payload) => {
 };
 
 const buildOrderPageState = async (config, other={}) => {
-  const searchData = other.home ? {queryGroup: 'todo'} : {};
   const {tabKey, tabs2} = config;
   const params = {
     tabKey,
     tabs2,
     currentPage: 1,
     pageSize: config.pageSize,
-    filter: searchData
+    filter: {}
   };
   const newState = {
     currentPage: 1,
-    searchData,
-    searchDataBak: searchData,
+    searchData: {},
+    searchDataBak: {},
     isRefresh: true
   };
   const payload = await getNewTableData(params, newState);
@@ -86,7 +85,7 @@ const uniqueArrHanlder = (tableCols=[], customConfig=[]) => {
   }, []);
 };
 
-const initActionCreator = (home) => async (dispatch) => {
+const initActionCreator = () => async (dispatch) => {
   try {
     dispatch(action.assign({status: 'loading'}));
     const {activeKey, tabs, index, editConfig, names} = getJsonResult(await fetchJson(URL_CONFIG));
@@ -98,7 +97,7 @@ const initActionCreator = (home) => async (dispatch) => {
     editConfig.receiveColsEdit = uniqueArrHanlder(editConfig.receiveColsEdit, receive_customConfig.controls);
     editConfig.payColsEdit = uniqueArrHanlder(editConfig.payColsEdit, pay_customConfig.controls);
 
-    const payload = await buildOrderPageState(index, {home, tabs, activeKey, editConfig, status: 'page'});
+    const payload = await buildOrderPageState(index, {tabs, activeKey, editConfig, status: 'page'});
 
     // 获取币种、状态，设置字典
     const currencyList = getJsonResult(await fetchJson(URL_CURRENCY, postOption({currencyTypeCode: '', maxNumber: 65536})));
@@ -123,7 +122,7 @@ const initActionCreator = (home) => async (dispatch) => {
     dispatch(action.create(payload));
   } catch (e) {
     showError(e.message);
-    dispatch(action.assign({status: home ? 'retryForHome' : 'retry'}));
+    dispatch(action.assign({status: 'retry'}));
   }
 };
 
