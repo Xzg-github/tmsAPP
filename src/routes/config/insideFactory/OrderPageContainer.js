@@ -131,7 +131,7 @@ const configActionCreator = (dispatch, getState) => {
 
 //导入按钮
 const importActionCreator = () => {
-  return showImportDialog('customer_consignee_consignor_import');
+  return showImportDialog('consignee_consignor_import');
 };
 
 //导出
