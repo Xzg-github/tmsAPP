@@ -8,18 +8,16 @@
   background: url('/login_imgs/background.png');
 
   > header {
-    position: absolute;
-    top: 20px;
-    left: 50px;
+    padding-top: 20px;
+    padding-left: 50px;
   }
 
   > section {
     width: 1000px;
     height: 560px;
-    margin: 0 auto;
+    margin: ~'calc((100vh - 653px) / 2)' auto 0;
     background: white;
     box-shadow: 0 4px 15px 1px rgba(71, 91, 239, 0.2);
-    transform: translateY(~'calc(50vh - 280px)');
     overflow: hidden;
 
     > :global(.ant-carousel) {
@@ -128,7 +126,7 @@
 @media screen and (max-height: 700px) {
   .root {
     > section {
-      transform: translateY(75px);
+      margin-top: 20px;
     }
   }
 }

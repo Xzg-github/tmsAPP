@@ -20,10 +20,15 @@ api.put('/modify', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
-// 发送找回密码的邮件
-api.put('/mail', async (req, res) => {
-  const url = `${host}/auth-center-provider/account/findPasswordByEmail`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
+// 发送验证码
+api.post('/send_code', async (req, res) => {
+  const url = `${host}/auth-center-provider/password/resetting/sendSecurityCode/${req.body.type}?recipient=${req.body.account}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
+// 验证验证码
+api.post('/verify_code', async (req, res) => {
+  res.send({returnCode: 0, returnMsg: '后端还没完成该功能'});
 });
 
 // 重置密码
