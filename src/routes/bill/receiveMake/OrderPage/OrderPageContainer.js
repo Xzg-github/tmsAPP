@@ -9,15 +9,15 @@ import {showColsSetting} from '../../../../common/tableColsSetting';
 import {showConfirmDialog} from '../../../../common/showCofirmDialog';
 import {getNewTableData} from '../RootContainer';
 
-const STATE_PATH = ['receiveSettlement'];
+const STATE_PATH = ['receiveMake'];
 const action = new Action(STATE_PATH);
-const URL_CUSTOMER = '/api/bill/receiveSettlement/customerId';
-const URL_CUSTOMER_SERVICE = '/api/bill/receiveSettlement/customerServiceId';
-const URL_CARMODE = '/api/bill/receiveSettlement/carModeId';
-const URL_DEPARTURE_DESTINATION = '/api/bill/receiveSettlement/departureDestination';
-const URL_AUDIT_BATCH = '/api/bill/receiveSettlement/auditBatch';
-const URL_PREPARING = '/api/bill/receiveSettlement/audit/preparing';
-const URL_CREATE_BILL = '/api/bill/receiveSettlement/createBill';
+const URL_CUSTOMER = '/api/bill/receiveMake/customerId';
+const URL_CUSTOMER_SERVICE = '/api/bill/receiveMake/customerServiceId';
+const URL_CARMODE = '/api/bill/receiveMake/carModeId';
+const URL_DEPARTURE_DESTINATION = '/api/bill/receiveMake/departureDestination';
+const URL_AUDIT_BATCH = '/api/bill/receiveMake/auditBatch';
+const URL_PREPARING = '/api/bill/receiveMake/audit/preparing';
+const URL_CREATE_BILL = '/api/bill/receiveMake/createBill';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -175,7 +175,7 @@ const configActionCreator = async (dispatch, getState) => {
   const okFunc = (newCols) => {
     dispatch(action.assign({tableCols: newCols}));
   };
-  showColsSetting(tableCols, okFunc, 'receiveSettlement');
+  showColsSetting(tableCols, okFunc, 'receiveMake');
 };
 
 const toolbarActions = {

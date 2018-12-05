@@ -10,16 +10,16 @@ import {afterEdit} from '../OrderPage/OrderPageContainer';
 import execWithLoading from '../../../../standard-business/execWithLoading'
 
 
-const STATE_PATH = ['receiveSettlement'];
+const STATE_PATH = ['receiveMake'];
 const action = new Action(STATE_PATH);
-const URL_DETAIL = '/api/bill/receiveSettlement/detail';
-const URL_TOTAL = '/api/bill/receiveSettlement/total';
-const URL_BATCH_ADD = '/api/bill/receiveSettlement/batchAdd';
-const URL_BATCH_EDIT = '/api/bill/receiveSettlement/batchEdit';
-const URL_BATCH_DELETE = '/api/bill/receiveSettlement/batchDelete';
-const URL_BATCH_AUDIT = '/api/bill/receiveSettlement/batchAudit';
-const URL_STRIKEBALANCE = '/api/bill/receiveSettlement/strickeBalance';
-const URL_AUTO_BILLING = '/api/bill/receiveSettlement/autoBilling';
+const URL_DETAIL = '/api/bill/receiveMake/detail';
+const URL_TOTAL = '/api/bill/receiveMake/total';
+const URL_BATCH_ADD = '/api/bill/receiveMake/batchAdd';
+const URL_BATCH_EDIT = '/api/bill/receiveMake/batchEdit';
+const URL_BATCH_DELETE = '/api/bill/receiveMake/batchDelete';
+const URL_BATCH_AUDIT = '/api/bill/receiveMake/batchAudit';
+const URL_STRIKEBALANCE = '/api/bill/receiveMake/strickeBalance';
+const URL_AUTO_BILLING = '/api/bill/receiveMake/autoBilling';
 
 
 const getSelfState = (rootState) => {
@@ -176,7 +176,7 @@ const configKeyReceiveActionCreator = () => async (dispatch, getState) => {
   const okFunc = (newCols) => {
     dispatch(action.assign({receiveCols: newCols}, KEY));
   };
-  showColsSetting(receiveCols, okFunc, 'receiveSettlement_receiveCols');
+  showColsSetting(receiveCols, okFunc, 'receiveMake_receiveCols');
 };
 
 const convertActionCreator = () => async (dispatch, getState) => {
@@ -201,7 +201,7 @@ const configKeyPayActionCreator = () => async (dispatch, getState) => {
   const okFunc = (newCols) => {
     dispatch(action.assign({payCols: newCols}, KEY));
   };
-  showColsSetting(payCols, okFunc, 'receiveSettlement_payCols');
+  showColsSetting(payCols, okFunc, 'receiveMake_payCols');
 };
 
 const buttons = {
@@ -277,7 +277,7 @@ const buildEditPageState = async (config, itemData, isReadonly) => {
 };
 
 const assignPrivilege = (payload) => {
-  const actions = helper.getActions('receiveSettlement', true);
+  const actions = helper.getActions('receiveMake', true);
   if (actions.length > 0) {
     payload.receiveButtons = payload.receiveButtons.filter(({key}) => actions.includes(key));
   }

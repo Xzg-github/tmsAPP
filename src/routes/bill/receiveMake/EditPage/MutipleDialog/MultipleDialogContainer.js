@@ -10,9 +10,9 @@ import showPopup from '../../../../../standard-business/showPopup';
 const STATE_PATH = ['temp'];
 const action = new Action(STATE_PATH, false);
 
-const URL_CURRENCY = `/api/bill/receiveSettlement/currencyTypeCode`;
-const URL_CUSTOMER = '/api/bill/receiveSettlement/customerId';
-const URL_CHARGE_NAME = '/api/bill/receiveSettlement/chargeItemId'
+const URL_CURRENCY = `/api/bill/receiveMake/currencyTypeCode`;
+const URL_CUSTOMER = '/api/bill/receiveMake/customerId';
+const URL_CHARGE_NAME = '/api/bill/receiveMake/chargeItemId'
 
 
 const getSelfState = (rootState) => {
@@ -111,7 +111,7 @@ const configActionCreator = () => async (dispatch, getState) => {
   const okFunc = (newCols) => {
     dispatch(action.assign({cols: newCols}));
   };
-  showColsSetting(configCols, okFunc, 'receiveSettlement_receiveColsEdit', ['hide']);
+  showColsSetting(configCols, okFunc, 'receiveMake_receiveColsEdit', ['hide']);
 };
 
 const buttons = {

@@ -5,7 +5,6 @@ const title = '计费与对帐';
 const prefix = '/bill';
 
 const children = [
-  require('./receiveSettlement').default,
   require('./receiveMake').default,
   require('./receiveChange').default,
   require('./receiveBill').default,

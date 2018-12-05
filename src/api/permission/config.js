@@ -42,7 +42,6 @@ const supervisor = [
 
 // 应收管理子菜单
 const receive_mgr = [
-  {key: 'receive_settlement'},           // 应收结算
   {key: 'receive_make'},                // 应收费用制作
   {key: 'receive_change'},              // 应收改单
   {key: 'receive_bill'},                // 应收票结帐单

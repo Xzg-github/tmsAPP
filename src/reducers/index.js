@@ -54,7 +54,6 @@ const rootReducer = combineReducers({
   supervisorManager: create('supervisorManager'),
 
   //计费与对帐
-  receiveSettlement: create('receiveSettlement'),
   receiveMake: create('receiveMake'),
   receiveChange: create('receiveChange'),
   receiveBill: create('receiveBill'),
