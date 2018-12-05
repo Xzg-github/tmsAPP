@@ -5,6 +5,7 @@ const filters = [
   {key: 'orderNumber', title: '运单号', type: 'text'},
   {key: 'customerDelegateCode', title: '委托号', type: 'text'},
   {key: 'customerId', title: '客户', type: 'search'},
+  {key: 'supplierId', title: '供应商', type: 'search'},
   {key: 'businessType', title: '运输类型', type: 'select', dictionary: name.BUSINESS_TYPE},
   {key: 'customerServiceId', title: '客服人员', type: 'search'},
   {key: 'transportType', title: '运输方式', type: 'select', dictionary: name.TRANSPORT_TYPE},
@@ -14,7 +15,10 @@ const filters = [
   {key: 'planPickupTimeFrom', title: '要求装货时间', type: 'date'},
   {key: 'planPickupTimeTo', title: '至', type: 'date'},
   {key: 'insertTimeFrom', title: '创建时间', type: 'date'},
-  {key: 'insertTimeTo', title: '至', type: 'date'}
+  {key: 'insertTimeTo', title: '至', type: 'date'},
+  {key: 'carInfoId', title: '车牌', type: 'search'},
+  {key: 'driverId', title: '司机', type: 'search'},
+  {key: 'supervisorId', title: '监理', type: 'search'}
 ];
 
 const btns = [
@@ -41,13 +45,14 @@ const tableCols = [
   {key: 'customerId', title: '客户'},
   {key: 'customerDelegateCode', title: '委托号'},
   {key: 'customerDelegateTime', title: '委托日期'},
-  {key: 'receivableAmount', title: '总应收金额（含税）'},
+  {key: 'supplierId', title: '供应商'},
+  {key: 'carNumber', title: '车牌号'},
+  {key: 'driverName', title: '司机名称'},
+  {key: 'supervisorName', title: '监理名称'},
   {key: 'payAmount', title: '总应付金额（含税）'},
-  {key: 'receivableTaxAmount', title: '应收税额'},
   {key: 'payTaxAmount', title: '应付税额'},
-  {key: 'profitAmount', title: '利润'},
-  {key: 'receivableCheckUserId', title: '应收整审人员'},
-  {key: 'receivableCheckTime', title: '应收整审时间'},
+  {key: 'payCheckUserId', title: '应付整审人员'},
+  {key: 'payCheckTime', title: '应付整审时间'},
   {key: 'salespersonId', title: '销售人员'},
   {key: 'businessType', title: '运输类型', dictionary: name.BUSINESS_TYPE},
   {key: 'customerServiceId', title: '客服人员'},

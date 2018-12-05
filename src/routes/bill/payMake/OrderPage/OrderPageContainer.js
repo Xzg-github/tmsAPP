@@ -9,15 +9,15 @@ import {showColsSetting} from '../../../../common/tableColsSetting';
 import {showConfirmDialog} from '../../../../common/showCofirmDialog';
 import {getNewTableData} from '../RootContainer';
 
-const STATE_PATH = ['receiveMake'];
+const STATE_PATH = ['payMake'];
 const action = new Action(STATE_PATH);
-const URL_CUSTOMER = '/api/bill/receiveMake/customerId';
-const URL_CUSTOMER_SERVICE = '/api/bill/receiveMake/customerServiceId';
-const URL_CARMODE = '/api/bill/receiveMake/carModeId';
-const URL_DEPARTURE_DESTINATION = '/api/bill/receiveMake/departureDestination';
-const URL_AUDIT_BATCH = '/api/bill/receiveMake/auditBatch';
-const URL_PREPARING = '/api/bill/receiveMake/audit/preparing';
-const URL_CREATE_BILL = '/api/bill/receiveMake/createBill';
+const URL_CUSTOMER = '/api/bill/payMake/customerId';
+const URL_CUSTOMER_SERVICE = '/api/bill/payMake/customerServiceId';
+const URL_CARMODE = '/api/bill/payMake/carModeId';
+const URL_DEPARTURE_DESTINATION = '/api/bill/payMake/departureDestination';
+const URL_AUDIT_BATCH = '/api/bill/payMake/auditBatch';
+const URL_PREPARING = '/api/bill/payMake/audit/preparing';
+const URL_CREATE_BILL = '/api/bill/payMake/createBill';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -155,7 +155,7 @@ const changeOrderActionCreator = async (dispatch, getState) => {
   alert(`跳转到改单界面！\n参数：${{value: item.guid, title: item.balanceNumber}}`);
 };
 
-const importActionCreator = async (dispatch, getState) => showImportDialog('income_import');
+const importActionCreator = async (dispatch, getState) => showImportDialog('cost_import');
 
 // 查询导出
 const exportSearchActionCreator = (dispatch, getState) => {
@@ -175,7 +175,7 @@ const configActionCreator = async (dispatch, getState) => {
   const okFunc = (newCols) => {
     dispatch(action.assign({tableCols: newCols}));
   };
-  showColsSetting(tableCols, okFunc, 'receiveMake');
+  showColsSetting(tableCols, okFunc, 'payMake');
 };
 
 const toolbarActions = {

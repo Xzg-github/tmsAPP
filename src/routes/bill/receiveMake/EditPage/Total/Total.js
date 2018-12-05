@@ -56,12 +56,13 @@ class Total extends React.Component {
   }
 
   totalHead = () => {
-    const {currencyList, onCurrencyChange, totalKeys, activeCurrency, totalValues} = this.props;
+    const {currencyList, onCurrencyChange, totalKeys, activeCurrency, totalValues, isReadonly} = this.props;
     const selectProps = {
       options: currencyList,
       value: activeCurrency,
       onChange: onCurrencyChange,
       allowClear: false,
+      disabled: isReadonly,
       type: 'select',
       size: 'small',
       style: { width: 60 }

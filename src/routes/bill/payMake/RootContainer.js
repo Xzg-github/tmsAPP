@@ -9,13 +9,14 @@ import {search} from '../../../common/search';
 import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
 import {getStatus} from  "../../../common/commonGetStatus";
+import execWithLoading from '../../../standard-business/execWithLoading'
 
-const STATE_PATH = ['receiveMake'];
+const STATE_PATH = ['payMake'];
 const action = new Action(STATE_PATH);
-const URL_CONFIG = '/api/bill/receiveMake/config';
-const URL_LIST = '/api/bill/receiveMake/list';
-const CUSTOM_CONFIG = '/api/bill/receiveMake/custom_config';
-const URL_CURRENCY = '/api/bill/receiveMake/currency';
+const URL_CONFIG = '/api/bill/payMake/config';
+const URL_LIST = '/api/bill/payMake/list';
+const CUSTOM_CONFIG = '/api/bill/payMake/custom_config';
+const URL_CURRENCY = '/api/bill/payMake/currency';
 
 
 const getSelfState = (rootState) => {
@@ -24,16 +25,19 @@ const getSelfState = (rootState) => {
 
 const getNewTableData = async (params, payload) => {
   const {tabKey, tabs2, currentPage, pageSize, filter} = params;
-  const itemFrom = (currentPage - 1) * pageSize;
-  const itemTo = itemFrom + pageSize;
-  const options = {incomeTag: tabKey, ...filter};
-  const list = getJsonResult(await search(URL_LIST, itemFrom, itemTo, options, false));
-  const newTabs2 = deepCopy(tabs2).map(tab => {
-    const item = list.tags.find(o => o.tag == tab.key);
-    if (item) {
-      tab.title = `${tab.title.split(' ')[0]} (${item.count})`;
-    }
-    return tab;
+  let list, newTabs2;
+  await execWithLoading(async () => {
+    const itemFrom = (currentPage - 1) * pageSize;
+    const itemTo = itemFrom + pageSize;
+    const options = {costTag: tabKey, ...filter};
+    list = getJsonResult(await search(URL_LIST, itemFrom, itemTo, options, false));
+    newTabs2 = deepCopy(tabs2).map(tab => {
+      const item = list.tags.find(o => o.tag == tab.key);
+      if (item) {
+        tab.title = `${tab.title.split(' ')[0]} (${item.count})`;
+      }
+      return tab;
+    });
   });
   return {
     ...payload,
@@ -68,7 +72,7 @@ const buildOrderPageState = async (config, other={}) => {
 };
 
 const assignPrivilege = (payload) => {
-  const actions = helper.getActions('receiveMake', true);
+  const actions = helper.getActions('payMake', true);
   if (actions.length > 0) {
     payload.buttons = payload.buttons.filter(({key}) => actions.includes(key));
   }
@@ -113,10 +117,10 @@ const initActionCreator = () => async (dispatch) => {
     setDictionary(payload.editConfig.payColsEdit, dictionarys);
 
     // 初始化配置字段表格配置
-    payload.tableCols = initTableCols('receiveMake', payload.tableCols);
-    payload.editConfig.receiveCols = initTableCols('receiveMake_receiveCols', payload.editConfig.receiveCols);
-    payload.editConfig.payCols = initTableCols('receiveMake_payCols', payload.editConfig.payCols);
-    payload.editConfig.receiveColsEdit = initTableCols('receiveMake_receiveColsEdit', payload.editConfig.receiveColsEdit);
+    payload.tableCols = initTableCols('payMake', payload.tableCols);
+    payload.editConfig.receiveCols = initTableCols('payMake_receiveCols', payload.editConfig.receiveCols);
+    payload.editConfig.payCols = initTableCols('payMake_payCols', payload.editConfig.payCols);
+    payload.editConfig.receiveColsEdit = initTableCols('payMake_receiveColsEdit', payload.editConfig.receiveColsEdit);
 
     assignPrivilege(payload);
     dispatch(action.create(payload));

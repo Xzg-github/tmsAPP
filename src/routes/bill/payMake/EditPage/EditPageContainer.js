@@ -5,21 +5,21 @@ import {Action} from '../../../../action-reducer/action';
 import {getPathValue} from '../../../../action-reducer/helper';
 import {EnhanceLoading} from '../../../../components/Enhance';
 import {showColsSetting} from '../../../../common/tableColsSetting';
-import showMutipleDialog from './MutipleDialog/MultipleDialogContainer';
+import showMutipleDialog from '../../receiveMake/EditPage/MutipleDialog/MultipleDialogContainer';
 import {afterEdit} from '../OrderPage/OrderPageContainer';
 import execWithLoading from '../../../../standard-business/execWithLoading'
 
 
-const STATE_PATH = ['receiveMake'];
+const STATE_PATH = ['payMake'];
 const action = new Action(STATE_PATH);
-const URL_DETAIL = '/api/bill/receiveMake/detail';
-const URL_TOTAL = '/api/bill/receiveMake/total';
-const URL_BATCH_ADD = '/api/bill/receiveMake/batchAdd';
-const URL_BATCH_EDIT = '/api/bill/receiveMake/batchEdit';
-const URL_BATCH_DELETE = '/api/bill/receiveMake/batchDelete';
-const URL_BATCH_AUDIT = '/api/bill/receiveMake/batchAudit';
-const URL_STRIKEBALANCE = '/api/bill/receiveMake/strickeBalance';
-const URL_AUTO_BILLING = '/api/bill/receiveMake/autoBilling';
+const URL_DETAIL = '/api/bill/payMake/detail';
+const URL_TOTAL = '/api/bill/payMake/total';
+const URL_BATCH_ADD = '/api/bill/payMake/batchAdd';
+const URL_BATCH_EDIT = '/api/bill/payMake/batchEdit';
+const URL_BATCH_DELETE = '/api/bill/payMake/batchDelete';
+const URL_BATCH_AUDIT = '/api/bill/payMake/batchAudit';
+const URL_STRIKEBALANCE = '/api/bill/payMake/strickeBalance';
+const URL_AUTO_BILLING = '/api/bill/payMake/autoBilling';
 
 
 const getSelfState = (rootState) => {
@@ -179,7 +179,7 @@ const configKeyReceiveActionCreator = () => async (dispatch, getState) => {
   const okFunc = (newCols) => {
     dispatch(action.assign({receiveCols: newCols}, KEY));
   };
-  showColsSetting(receiveCols, okFunc, 'receiveMake_receiveCols');
+  showColsSetting(receiveCols, okFunc, 'payMake_receiveCols');
 };
 
 const convertActionCreator = () => async (dispatch, getState) => {
@@ -207,7 +207,7 @@ const configKeyPayActionCreator = () => async (dispatch, getState) => {
   const okFunc = (newCols) => {
     dispatch(action.assign({payCols: newCols}, KEY));
   };
-  showColsSetting(payCols, okFunc, 'receiveMake_payCols');
+  showColsSetting(payCols, okFunc, 'payMake_payCols');
 };
 
 const buttons = {
@@ -280,7 +280,7 @@ const buildEditPageState = async (config, itemData, isReadonly) => {
 };
 
 const assignPrivilege = (payload) => {
-  const actions = helper.getActions('receiveMake', true);
+  const actions = helper.getActions('payMake', true);
   if (actions.length > 0) {
     payload.receiveButtons = payload.receiveButtons.filter(({key}) => actions.includes(key));
   }
