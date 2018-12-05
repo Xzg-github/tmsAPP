@@ -68,7 +68,7 @@ const config = {
   pageSizeType,
   paginationConfig,
   searchConfig,
-  urlExport: '/tms-service-zmm/transport_order/pending_task_list/search', //后端查询导出api配置
+  urlExport: '/tms-service/transport_order/pending_task_list/search', //后端查询导出api配置
   isTotal: true, //页签是否需要统计符合条件的记录数
   searchData: {},//默认搜索条件值-若有需同步配置searchDataBak
   searchDataBak: {},//初始搜索条件值-若有则与searchData相同
