@@ -41,5 +41,10 @@ api.get('/info/:id', async (req, res) => {
   res.send(await fetchJsonByNode(req, url));
 });
 
+// 根据表单编码获取所有可配置表单
+api.get('/allProperties/:tableCode', async (req, res) => {
+  const url = `${service}/property/library/${req.params.tableCode}`;
+  res.send(await fetchJsonByNode(req, url));
+});
 
 export default api;

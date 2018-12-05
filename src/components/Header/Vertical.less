@@ -27,16 +27,24 @@
       text-align: center;
       font-size: 16px;
       padding-top: 1px;
+      color: #d3eafd;
     }
 
     > :last-child {
       line-height: @height;
     }
 
-    &:hover,
+    &:hover > :first-child {
+      color: white;
+    }
+
     &[data-select='true'] {
       background: white;
       color: @primary-color;
+
+      > :first-child {
+        color: @primary-color;
+      }
     }
   }
 

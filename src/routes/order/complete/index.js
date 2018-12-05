@@ -1,4 +1,5 @@
 import React from 'react';
+import Container from './CompleteContainer';
 
 export default {
   path: '/complete',
@@ -6,7 +7,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <div>已办任务</div>
+      component: <Container />
     };
   }
 }

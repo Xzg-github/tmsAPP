@@ -1,4 +1,5 @@
 import React from 'react';
+import Container from './InputContainer';
 
 export default {
   path: '/input',
@@ -6,7 +7,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <div>运输订单</div>
+      component: <Container />
     };
   }
 }

@@ -17,6 +17,7 @@ const buttons = [
 const tableCols = [
   {key: 'active', title: '状态', dictionary: name.ACTIVE},
   {key: 'customerId', title: '所属客户'},
+  {key: 'businessType', title: '运输类型', dictionary: 'business_type'},
   {key: 'userId', title: '客服人员'}
 ];
 
@@ -32,6 +33,7 @@ const index = {
 
 const controls = [
   {key: 'customerId', title: '所属客户', type: 'search', required: true},
+  {key: 'businessType', title: '运输类型', type:'select', dictionary: 'business_type', required: true},
   {key: 'userId', title: '客服人员', type: 'search', required: true},
 ];
 
@@ -46,7 +48,7 @@ const edit = {
 const config = {
   edit,
   index,
-  names: [name.ACTIVE]
+  names: [name.ACTIVE, 'business_type']
 };
 
 export default config;
