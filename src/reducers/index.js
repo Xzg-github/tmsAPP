@@ -37,7 +37,7 @@ const rootReducer = combineReducers({
   message,
 
   //运输订单
-  input: create('input'),
+  input: create('input', false),
   import: create('import'),
   pending: create('pending'),
   complete: create('complete'),
@@ -68,23 +68,21 @@ const rootReducer = combineReducers({
   append: create('append'),
 
   //档案管理
-  customerContact: create('customerContact'),
-  customerFactory: create('customerFactory'),
-  customerTax: create('customerTax'),
+  customerContact: create('customerContact', false),
+  customerTax: create('customerTax', false),
   customerCost: create('customerCost', false),
   customerService: create('customerService', false),
-  supplierContact: create('supplierContact'),
-  supplierCar: create('supplierCar'),
+  supplierContact: create('supplierContact', false),
+  supplierCar: create('supplierCar', false),
   supplierDriver: create('supplierDriver', false),
   supplierSupervisor: create('supplierSupervisor', false),
   supplierCost: create('supplierCost', false),
-  insideFactory: create('insideFactory'),
-  insideCar: create('insideCar'),
+  insideCar: create('insideCar', false),
   insideDriver: create('insideDriver', false),
   insideSupervisor: create('insideSupervisor', false),
   customerPrice: create('customerPrice'),
   supplierPrice: create('supplierPrice'),
-  supplierTax: create('supplierTax'),
+  supplierTax: create('supplierTax', false),
 });
 
 export default rootReducer;
