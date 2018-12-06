@@ -192,6 +192,11 @@ const name = {
   PAYMENT_TYPE: 'payment_type', //支付方式
 
   SALE_ORDER_TYPE: 'sale_order_type', //订单类别
+
+
+  BUSINESS_TYPE: 'business_type',  // 运输类型
+  TRANSPORT_TYPE: 'transport_type', //运输方式
+
   PACKAGE_UNIT: 'package_unit', //erp-包装单位,
 
   CONSIGNEE_CONSIGNOR_TYPE: 'consignee_consignor_type', //收发货人类型
