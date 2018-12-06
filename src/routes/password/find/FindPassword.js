@@ -8,7 +8,6 @@ import GVerify from './gVerify';
 
 const Step = Steps.Step;
 const URL_SEND_CODE = '/api/password/send_code';
-const URL_VERIFY_CODE = '/api/password/verify_code';
 const URL_RESET = '/api/password/reset';
 
 function isEmail(str){
@@ -168,15 +167,7 @@ class FindPassword extends React.Component {
     if (!this.state.codeId) {
       helper.showError(this.state.time === 0 ? '请先发送验证码' : '请重新发送验证码');
     } else {
-      execWithLoading(async () => {
-        const option = helper.postOption({code: this.state.code});
-        const json = await helper.fetchJson(URL_VERIFY_CODE, option);
-        if (json.returnCode !== 0) {
-          helper.showError(json.returnMsg);
-        } else {
-          this.setState({step: 2});
-        }
-      });
+      this.setState({step: 2});
     }
   };
 
@@ -189,12 +180,22 @@ class FindPassword extends React.Component {
       helper.showError('两次输入的密码不一致');
     } else {
       execWithLoading(async () => {
-        const body = {};
+        const mode = this.state.mode;
+        const body = {
+          type: mode === 'mobile' ? 'phone' : 'email',
+          id: this.state.codeId,
+          password: password.first,
+          recipient: this.state[mode].account,
+          text: this.state.code
+        };
         const json = await helper.fetchJson(URL_RESET, helper.postOption(body, 'put'));
         if (json.returnCode !== 0) {
           helper.showError(json.returnCode);
         } else {
           helper.showSuccessMsg('密码重置成功');
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 500);
         }
       });
     }
