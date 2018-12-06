@@ -18,7 +18,7 @@ const URL_BATCH_ADD = '/api/bill/receiveMake/batchAdd';
 const URL_BATCH_EDIT = '/api/bill/receiveMake/batchEdit';
 const URL_BATCH_DELETE = '/api/bill/receiveMake/batchDelete';
 const URL_BATCH_AUDIT = '/api/bill/receiveMake/batchAudit';
-const URL_STRIKEBALANCE = '/api/bill/receiveMake/strickeBalance';
+const URL_STRIKEBALANCE = '/api/bill/receiveMake/strikeBalance';
 const URL_AUTO_BILLING = '/api/bill/receiveMake/autoBilling';
 
 
@@ -142,23 +142,21 @@ const auditActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_AUDIT, postOption(ids));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    const items = receiveItems.filter(item => !ids.includes(item.id));
-    dispatch(action.assign({receiveItems: items}, KEY));
+    dispatch(action.assign({receiveItems: result}, KEY));
     await afterEdit(dispatch, getState);
   });
 };
 
 const strikeBlanceActionCreator = () => async (dispatch, getState) => {
-  const {receiveItems} = getSelfState(getState());
+  const {KEY, receiveItems} = getSelfState(getState());
   const index = helper.findOnlyCheckedIndex(receiveItems);
   const item = receiveItems[index];
   if(index === -1 || (item && item.statusType !== 'status_check_completed')) return showError('请勾选一条已审核状态的数据！');
   execWithLoading(async () => {
-    const {returnCode, returnMsg, result} = await fetchJson(`${URL_STRIKEBALANCE}/${item.id}`);
+    const {returnCode, returnMsg, result} = await fetchJson(`${URL_STRIKEBALANCE}/${item.id}`, 'post');
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    const items = receiveItems.filter(item => !ids.includes(item.id));
-    dispatch(action.assign({receiveItems: items}, KEY));
+    dispatch(action.assign({receiveItems: result}, KEY));
     await afterEdit(dispatch, getState);
   });
 };
@@ -270,10 +268,11 @@ const buildEditPageState = async (config, itemData, isReadonly) => {
     totalValues,
     receiveItems: incomeDetails,
     payItems: costDetails,
-    activeKey: 'pay',
+    activeKey: 'costInfo',
+    // orderInfo: {id: itemData.id, readonly: true},
     tabs: [
-      {key: 'pay', title: '应付信息'},
-      {key: 'order', title: itemData.orderNumber}
+      {key: 'costInfo', title: '费用信息'},
+      {key: 'orderInfo', title: '运单信息'}
     ],
     status: 'page'
   };

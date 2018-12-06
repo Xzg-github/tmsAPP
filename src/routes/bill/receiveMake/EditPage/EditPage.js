@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditPage.less';
-import {SuperTable, SuperTab2, Card, SuperToolbar} from '../../../../components';
+import {SuperTable, SuperTab2, Card, SuperTitle} from '../../../../components';
 import Total from './Total/Total';
+import OrderInfoContainer from './OrderInfoPage/OrderInfoPageContainer';
 
 class EditPage extends React.Component {
 
@@ -14,7 +15,9 @@ class EditPage extends React.Component {
   toToolbar = (isPay) => {
     const {isReadonly, payButtons, receiveButtons, onClick} = this.props;
     const buttons = isPay ? payButtons : receiveButtons;
-    return isReadonly ? null : <SuperToolbar {...{buttons, onClick}}/>
+    const title = isPay ? '应收信息' : '应付信息';
+    const props = {title, buttons, onClick, readonly: isReadonly};
+    return <SuperTitle {...props}/>
   }
 
   toTable = (isPay) => {
@@ -36,29 +39,28 @@ class EditPage extends React.Component {
   toTabContent = () => {
     const {activeKey} = this.props;
     switch (activeKey) {
-      case 'pay': {
-        return (<div>
+      case 'costInfo': {
+        return (<Card>
+          {this.toTotal()}
+          {this.toToolbar(false)}
+          {this.toTable(false)}
           {this.toToolbar(true)}
           {this.toTable(true)}
-        </div>)
+        </Card>)
       }
-      case 'order': {
-        return <h1>调用运单信息界面</h1>
+      case 'orderInfo': {
+        return <h1>调用运单信息界面的浏览界面</h1>
+        // return <OrderInfoContainer/>
       }
     }
   }
 
   render() {
     return (
-      <div className={s.root}>
-        {this.toTotal()}
-        <Card data-status={this.props.receiveItems.length > 0 ? null : 'max'} >
-          {this.toToolbar(false)}
-          {this.toTable(false)}
-          {this.toSuperTab()}
-          {this.toTabContent()}
-        </Card>
-      </div>
+      <Card className={s.root}>
+        {this.toSuperTab()}
+        {this.toTabContent()}
+      </Card>
     );
   }
 }

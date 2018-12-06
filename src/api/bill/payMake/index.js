@@ -64,6 +64,54 @@ api.post('/departureDestination', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
+// 获取供应商下拉
+api.post('/supplierId', async (req, res) => {
+  const url = `${archiver_service}/supplier/drop_list/enabled_type_enabled`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+// 获取车牌下拉
+api.post('/carInfoId', async (req, res) => {
+  const url = `${archiver_service}/car_info/list/search`;
+  const params = {
+    itemFrom: 0,
+    itemTo: req.body.maxNumber,
+    filter: {
+      carNumber: req.body.filter
+    }
+  };
+  const data = await fetchJsonByNode(req, url, postOption(params))
+  const list = data.result.data.map(o => ({
+    value: o.id,
+    title: o.carNumber
+  }));
+  res.send({returnCode: 0, returnMsg: 'Success', result: list});
+});
+
+// 获取司机下拉
+api.post('/driverId', async (req, res) => {
+  const url = `${archiver_service}/driver_info/drop_list`;
+  res.send(await fetchJsonByNode(req, url, postOption({name: req.body.filter})));
+});
+
+// 获取监理下拉
+api.post('/supervisorId', async (req, res) => {
+  const url = `${archiver_service}/supervisor_info/list/search`;
+  const params = {
+    itemFrom: 0,
+    itemTo: req.body.maxNumber,
+    filter: {
+      supervisorName: req.body.filter
+    }
+  };
+  const data = await fetchJsonByNode(req, url, postOption(params))
+  const list = data.result.data.map(o => ({
+    value: o.id,
+    title: o.supervisorName
+  }));
+  res.send({returnCode: 0, returnMsg: 'Success', result: list});
+});
+
 // 获取单条记录的详细信息
 api.get('/detail/:id', async (req, res) => {
   const url = `${tms_service}/transport_order/income_and_cost/details/${req.params.id}`;
