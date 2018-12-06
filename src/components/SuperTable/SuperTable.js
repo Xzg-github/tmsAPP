@@ -206,7 +206,9 @@ class SuperTable extends React.Component {
       };
       col.onFilter = (value, record) => {
         const content = !col.link ? record[col.key] : record[col.key].props.children;
-        return content.includes(value);
+        // return content.includes(value);
+        const con = Array.isArray(content) ? content : String(content);
+        return con.includes(value);
       }
     }
     delete col.filter;

@@ -4,7 +4,7 @@ import {host} from '../../globalConfig';
 
 let api = express.Router();
 const maxSearchCount = 20;
-const service = `${host}/archiver-service-yule`;
+const service = `${host}/archiver-service`;
 
 // 获取界面信息
 api.get('/config', async (req, res) => {
