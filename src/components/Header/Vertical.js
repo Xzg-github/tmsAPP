@@ -22,6 +22,8 @@ class Vertical extends React.Component {
     items: PropTypes.arrayOf(PropTypes.shape(ITEM_TYPE))
   };
 
+  state = {id: ''};
+
   isSelect = (item) => {
     return item.key === this.props.selectKey;
   };
@@ -30,9 +32,18 @@ class Vertical extends React.Component {
     return this.props.url[item.key] || item.href;
   };
 
+  onClick = () => {
+    if (this.state.id) {
+      clearTimeout(this.state.id);
+    }
+    this.setState({id: setTimeout(() => {
+      this.setState({id: ''});
+    }, 500)})
+  };
+
   toItem = (item) => {
     return (
-      <Link key={item.key} to={this.getUrl(item)} data-select={this.isSelect(item)}>
+      <Link key={item.key} to={this.getUrl(item)} data-select={this.isSelect(item)} onClick={this.onClick}>
         <span><Icon type={item.icon} /></span>
         <span>{item.title}</span>
       </Link>
@@ -41,7 +52,7 @@ class Vertical extends React.Component {
 
   render() {
     return (
-      <header className={s.root}>
+      <header className={s.root} data-click={!!this.state.id}>
         {this.props.items.map(this.toItem)}
       </header>
     );

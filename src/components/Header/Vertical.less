@@ -51,4 +51,9 @@
   &:hover {
     width: @width + @sidebar-width;
   }
+
+  &[data-click='true'] {
+    width: @width;
+    transition: none;
+  }
 }
