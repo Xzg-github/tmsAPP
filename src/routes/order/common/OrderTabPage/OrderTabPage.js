@@ -127,10 +127,13 @@ class OrderTabPage extends React.Component {
   };
 
   toTab = () => {
-    const {subTabs, subActiveKey, onSubTabChange} = this.props;
+    const {subTabs, isTotal, maxRecords, subActiveKey, onSubTabChange} = this.props;
+    const tabs = isTotal ? subTabs.map(tab => {
+      return {...tab, title: `${tab.title}(${maxRecords[tab.key]})`};
+    }) : subTabs;
     const props = {
       activeKey: subActiveKey,
-      tabs: subTabs,
+      tabs,
       onTabChange: onSubTabChange
     };
     return <SuperTab2 {...props} />;
