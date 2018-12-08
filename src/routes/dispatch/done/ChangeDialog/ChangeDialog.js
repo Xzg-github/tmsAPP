@@ -6,11 +6,12 @@ import s from './ChangeDialog.less';
 class ChangeDialog extends React.Component {
 
   toForm = () => {
-    const {controls, value, valid, onChange, onSearch, onExitValid} = this.props;
+    const {controls, value, valid, hideControls, onChange, onSearch, onExitValid} = this.props;
     const props = {
       controls,
       value,
       valid,
+      hideControls,
       colNum: 2,
       onChange, onSearch, onExitValid
     };

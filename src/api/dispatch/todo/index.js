@@ -54,16 +54,4 @@ api.post('/revoke_driver_or_supplier', async (req, res) => {
   res.send({returnCode: 0});
 });
 
-//获取供应商+自有司机档案下拉
-api.post('/driver_drop_list', async (req, res) => {
-  const url = `${host}/archiver-service/driver_info/select_drop_list_by_name`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-});
-
-//获取供应商+自有车辆档案下拉
-api.post('/car_drop_list', async (req, res) => {
-  const url = `${host}/archiver-service/car_info/select_drop_list_by_car_number`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-});
-
 export default api;

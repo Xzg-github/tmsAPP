@@ -49,13 +49,13 @@ const searchActionCreator = (key, filter) => async (dispatch) => {
       break;
     }
     case 'carInfoId': {
-      url = `/api/dispatch/todo/car_drop_list`;
-      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, filter}));
+      url = `/api/dispatch/done/car_drop_list`;
+      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, carNumber: filter}));
       break;
     }
     case 'driverId': {
-      url = `/api/dispatch/todo/driver_drop_list`;
-      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, filter}));
+      url = `/api/dispatch/done/driver_drop_list`;
+      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, diverName: filter}));
       break;
     }
     default:

@@ -39,20 +39,77 @@ const okActionCreator = () => async (dispatch, getState) => {
 };
 
 const searchActionCreator = (key, filter) => async (dispatch, getState) => {
+  const {value} = getSelfState(getState());
+  const ownerCarTag = Number(value.ownerCarTag);
+  let data, url, body, options=[];
   switch (key) {
     case 'newCarInfoId': {
+      url = '/api/dispatch/done/car_drop_list';
+      body = ownerCarTag === 1 ?
+        {maxNumber: 10, carNumber: filter, enabledType: 'enabled_type_enabled', isOwner: 1} :
+        {maxNumber: 10, carNumber: filter, enabledType: 'enabled_type_enabled', supplierId: value.supplierId.value};
+      data = await helper.fetchJson(url, helper.postOption(body));
       break;
     }
     case 'newDriverId': {
+      url = '/api/dispatch/done/driver_drop_list';
+      body = ownerCarTag === 1 ?
+        {maxNumber: 10, diverName: filter, enabledType: 'enabled_type_enabled', isOwner: 1} :
+        {maxNumber: 10, diverName: filter, enabledType: 'enabled_type_enabled', supplierId: value.supplierId.value};
+      data = await helper.fetchJson(url, helper.postOption(body));
       break;
     }
     default:
       return;
   }
+  if (data.returnCode === 0) {
+    options = data.result;
+  }
+  dispatch(action.update({options}, 'controls', {key:'key', value: key}));
 };
 
 const changeActionCreator = (key, value) => async (dispatch, getState) => {
-  dispatch(action.assign({[key]: value}, 'value'));
+  const selfState = getSelfState(getState());
+  const ownerCarTag = Number(selfState.value.ownerCarTag);
+  let data, url, obj;
+  obj = {[key]: value};
+  switch (key) {
+    case 'newCarInfoId': {
+      obj.newDriverId = '';
+      obj.newDriverMobilePhone = '';
+      obj.newSupplierId = '';
+      if (value) {
+        url = `/api/dispatch/done/car_info/${value.value}`;
+        data = await helper.fetchJson(url);
+        if (data.returnCode === 0) {
+          obj.newDriverId = data.result.driverId;
+          if (ownerCarTag === 1) {
+            obj.newSupplierId = data.result.supplierId;
+          }else {
+            obj.newSupplierId = selfState.value.supplierId;
+          }
+          url = `/api/dispatch/done/driver_info/${obj.newDriverId.value}`;
+          data = await helper.fetchJson(url);
+          if (data.returnCode === 0) {
+            obj.newDriverMobilePhone = data.result.driverMobilePhone;
+          }
+        }
+      }
+      break;
+    }
+    case 'newDriverId': {
+      obj.newDriverMobilePhone = '';
+      if (value) {
+        url = `/api/dispatch/done/driver_info/${value.value}`;
+        data = await helper.fetchJson(url);
+        if (data.returnCode === 0) {
+          obj.newDriverMobilePhone = data.result.driverMobilePhone;
+        }
+      }
+      break;
+    }
+  }
+  dispatch(action.assign(obj, 'value'));
 };
 
 const exitValidActionCreator = () => (dispatch) => {
@@ -78,15 +135,17 @@ const buildDialogState = async (data) => {
     cancel: '取消',
     controls: [
       {key: 'supplierId', title: '供应商', type: 'readonly'},
+      {key: 'newSupplierId', title: '新供应商', type: 'readonly'},
       {key: 'ownerCarTag', title: '是否自有车', type: 'readonly', dictionary: 'zero_one_type'},
       {key: 'carNumber', title: '车牌号码', type: 'readonly'},
       {key: 'newCarInfoId', title: '新车牌', type: 'search', required: true},
       {key: 'driverName', title: '司机', type: 'readonly'},
-      {key: 'newDriverId', title: '新司机', type: 'search', required: true},
+      {key: 'newDriverId', title: '新司机', type: 'search', props:{searchWhenClick: true}, required: true},
       {key: 'driverMobilePhone', title: '司机电话', type: 'readonly'},
       {key: 'newDriverMobilePhone', title: '新司机电话', type: 'readonly'},
       {key: 'trackingInformation', title: '变更原因', type: 'textArea', span: 2},
-    ]
+    ],
+    hideControls: Number(data.ownerCarTag) === 1 ? [] : ['newSupplierId']
   };
   const dic = await fetchDictionary2(config.controls);
   setDictionary2(dic.result, config.controls);

@@ -15,7 +15,7 @@ api.get('/config', async (req, res) => {
 api.post('/list', async (req, res) => {
   // const url = `${service}/transport_order/dispatch/task_list/search`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: {data:[{id: '001'}], returnTotalItem: 1}});
+  res.send({returnCode: 0, result: {data:[{id: '001', supplierId:{title:'xc', value:'404b6a57-cda2-4b28-8b68-43ddd73a43ba'}, ownerCarTag: 0}], returnTotalItem: 1}});
 });
 
 //撤消派单
@@ -30,6 +30,30 @@ api.post('/change', async (req, res) => {
   // const url = `${service}/transport_order/dispatch//batch`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
   res.send({returnCode: 0});
+});
+
+//车牌下拉
+api.post('/car_drop_list', async (req, res) => {
+  const url = `${host}/archiver-service/car_info/drop_list`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+//司机下拉
+api.post('/driver_drop_list', async (req, res) => {
+  const url = `${host}/archiver-service/driver_info/drop_list`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+// 根据车牌ID获取车辆记录详细信息
+api.get('/car_info/:id', async (req, res) => {
+  const url = `${host}/archiver-service/car_info/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
+// 根据司机ID获取司机记录详细信息
+api.get('/driver_info/:id', async (req, res) => {
+  const url = `${host}/archiver-service/driver_info/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
 });
 
 export default api;
