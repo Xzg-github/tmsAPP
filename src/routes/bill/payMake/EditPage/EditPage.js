@@ -37,10 +37,8 @@ class EditPage extends React.Component {
     return (
       <Card>
         {this.toTotal()}
-        {this.toToolbar(false)}
-        {this.toTable(false)}
-        {this.toToolbar(true)}
-        {this.toTable(true)}
+        {this.toToolbar()}
+        {this.toTable()}
       </Card>
     )
   }
