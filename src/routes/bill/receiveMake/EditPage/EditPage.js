@@ -36,21 +36,26 @@ class EditPage extends React.Component {
     return <SuperTab2 {...{tabs, activeKey, onTabChange}} />
   }
 
+  toCostInfo = () => {
+    return (
+      <Card>
+        {this.toTotal()}
+        {this.toToolbar(false)}
+        {this.toTable(false)}
+        {this.toToolbar(true)}
+        {this.toTable(true)}
+      </Card>
+    )
+  }
+
   toTabContent = () => {
     const {activeKey} = this.props;
     switch (activeKey) {
-      case 'costInfo': {
-        return (<Card>
-          {this.toTotal()}
-          {this.toToolbar(false)}
-          {this.toTable(false)}
-          {this.toToolbar(true)}
-          {this.toTable(true)}
-        </Card>)
+      case 'index': {
+        return this.toCostInfo()
       }
       case 'orderInfo': {
-        return <h1>调用运单信息界面的浏览界面</h1>
-        // return <OrderInfoContainer/>
+        return <OrderInfoContainer/>
       }
     }
   }

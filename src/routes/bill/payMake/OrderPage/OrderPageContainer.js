@@ -102,7 +102,7 @@ const showEditPage = (dispatch, getState, item, isReadonly=false) => {
   const key = item['orderNumber'];
   if (helper.isTabExist(tabs, key)) return dispatch(action.assign({activeKey: key}));
   dispatch(action.add({key, title: key}, 'tabs'));
-  dispatch(action.assign({[key]: {isReadonly, editConfig, itemData: item, KEY: key}, activeKey: key}));
+  dispatch(action.assign({[key]: {isReadonly, editConfig, itemData: item}, activeKey: key}));
 };
 
 const editActionCreator = async (dispatch, getState) => {

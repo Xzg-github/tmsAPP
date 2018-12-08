@@ -26,6 +26,26 @@ const create = (key, isTabPage=true) => {
   }
 };
 
+/*
+* 功能：创建编辑页面带运单子页签信息的reduce结构，运单信息容器组件statePath=[key, 'edit', 'orderInfo']
+* */
+const createBillReducer = (key) => {
+  const prefix = [key];
+  const editPrefix = [key, 'edit'];
+  const toKeyReducer = ({activeKey}) => {
+    const orderInfoPrefix = editPrefix.concat('orderInfo');
+    const recucerName = activeKey === 'index' ? editPrefix : orderInfoPrefix;
+    return {keys: [activeKey], reducer: createReducer(recucerName)};
+  };
+  const edit = createReducer(editPrefix, mapReducer(toKeyReducer));
+  const toEdit = ({activeKey}, {payload={}}) => {
+    const key = payload.currentKey || activeKey;
+    return key !== 'index' ? {keys: [key], reducer: edit} : {};
+  };
+  return createReducer(prefix, mapReducer(toEdit));
+};
+
+
 const rootReducer = combineReducers({
   layout: createReducer(['layout']),
   home: createReducer(['home']),
@@ -54,12 +74,12 @@ const rootReducer = combineReducers({
   supervisorManager: create('supervisorManager'),
 
   //计费与对帐
-  receiveMake: create('receiveMake'),
+  receiveMake: createBillReducer('receiveMake'),
   receiveChange: create('receiveChange'),
   receiveBill: create('receiveBill'),
   receiveMonthlyBill: create('receiveMonthlyBill'),
   receiveApply: create('receiveApply'),
-  payMake: create('payMake'),
+  payMake: createBillReducer('payMake'),
   payChange: create('payChange'),
   payBill: create('payBill'),
   payMonthlyBill: create('payMonthlyBill'),

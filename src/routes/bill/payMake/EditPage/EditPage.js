@@ -3,7 +3,9 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditPage.less';
 import {SuperTable, SuperTab2, Card, SuperTitle} from '../../../../components';
 import Total from '../../receiveMake/EditPage/Total/Total';
-import OrderInfoContainer from '../../receiveMake/EditPage/OrderInfoPage/OrderInfoPageContainer';
+import {createOrderInfo} from '../../receiveMake/EditPage/OrderInfoPage/OrderInfoPageContainer';
+
+const OrderInfoContainer = createOrderInfo('payMake');
 
 class EditPage extends React.Component {
 
@@ -31,19 +33,26 @@ class EditPage extends React.Component {
     return <SuperTab2 {...{tabs, activeKey, onTabChange}} />
   }
 
+  toCostInfo = () => {
+    return (
+      <Card>
+        {this.toTotal()}
+        {this.toToolbar(false)}
+        {this.toTable(false)}
+        {this.toToolbar(true)}
+        {this.toTable(true)}
+      </Card>
+    )
+  }
+
   toTabContent = () => {
     const {activeKey} = this.props;
     switch (activeKey) {
-      case 'costInfo': {
-        return (<Card>
-          {this.toTotal()}
-          {this.toToolbar()}
-          {this.toTable()}
-        </Card>)
+      case 'index': {
+        return this.toCostInfo()
       }
       case 'orderInfo': {
-        return <h1>调用运单信息界面的浏览界面</h1>
-        // return <OrderInfoContainer/>
+        return <OrderInfoContainer/>
       }
     }
   }

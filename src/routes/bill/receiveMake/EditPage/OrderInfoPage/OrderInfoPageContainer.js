@@ -4,13 +4,12 @@ import {Action} from "../../../../../action-reducer/action";
 
 
 const createOrderInfo = (path) => {
-  const STATE_PATH = [path];
+  const STATE_PATH = [path, 'edit', 'orderInfo'];
   const action = new Action(STATE_PATH);
 
   const getSelfState = (rootState) => {
-    const state = getPathValue(rootState, STATE_PATH);
-    const parent = state[state.activeKey];
-    return parent[parent.activeKey];
+    const parent = getPathValue(rootState, [path]);
+    return parent[parent.activeKey]['orderInfo'];
   };
 
   return createOrderInfoPageContainer(action, getSelfState);

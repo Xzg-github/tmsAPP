@@ -10,7 +10,8 @@ import {afterEdit} from '../OrderPage/OrderPageContainer';
 import execWithLoading from '../../../../standard-business/execWithLoading'
 
 
-const STATE_PATH = ['receiveMake'];
+const PARENT_STATE_PATH = ['receiveMake'];
+const STATE_PATH = ['receiveMake', 'edit'];
 const action = new Action(STATE_PATH);
 const URL_DETAIL = '/api/bill/receiveMake/detail';
 const URL_TOTAL = '/api/bill/receiveMake/total';
@@ -23,7 +24,7 @@ const URL_AUTO_BILLING = '/api/bill/receiveMake/autoBilling';
 
 
 const getSelfState = (rootState) => {
-  const parent = getPathValue(rootState, STATE_PATH);
+  const parent = getPathValue(rootState, PARENT_STATE_PATH);
   return parent[parent.activeKey];
 };
 
@@ -37,16 +38,16 @@ const getSelfState = (rootState) => {
 // };
 
 const currencyChangeActionCreator = (value) => async (dispatch, getState) => {
-  const {activeCurrency, id, KEY} = getSelfState(getState());
+  const {activeCurrency, id} = getSelfState(getState());
   if (activeCurrency !== value) {
     const totalValues = getJsonResult(await helper.fetchJson(`${URL_TOTAL}/${id}/${value}`));
-    dispatch(action.assign({activeCurrency: value, totalValues}, KEY));
+    dispatch(action.assign({activeCurrency: value, totalValues}));
   }
 };
 
 const showDialogType = async (state, type=0, isDoubleClick=false, rowIndex=0) => {
   // type: 0: 新增, 1: 复制新增, 2: 编辑, 3: 转应收
-  const {customerId, receiveColsEdit, receiveItems, payColsEdit, payItems, dialogBtnsReceive, dialogBtnsPay, ...other} = state;
+  const {customerId, receiveColsEdit, receiveItems, payColsEdit, payItems, dialogBtnsReceive, dialogBtnsPay} = state;
   let items = type === 3 ? payItems : type === 0 ? [] : receiveItems;
   isDoubleClick && (items[rowIndex]['checked'] = true);
   const checkList = items.filter(o => o.checked).map(son => ({...son, checked: false}));
@@ -67,26 +68,24 @@ const showDialogType = async (state, type=0, isDoubleClick=false, rowIndex=0) =>
 
 const addActionCreator = () => async (dispatch, getState) => {
   const state = deepCopy(getSelfState(getState()));
-  const {KEY, id} = state;
   const resultItems = await showDialogType(state, 0);
   if (!resultItems) return;
   execWithLoading(async () => {
-    const params = {id, incomeDetails: resultItems};
+    const params = {id: state.id, incomeDetails: resultItems};
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_ADD, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}, KEY));
+    dispatch(action.assign({receiveItems: result}));
     await afterEdit(dispatch, getState);
   });
 };
 
 const copyActionCreator = () => async (dispatch, getState) => {
   const state = deepCopy(getSelfState(getState()));
-  const {KEY, id} = state;
   const resultItems = await showDialogType(state, 1);
   if (!resultItems) return;
   execWithLoading(async () => {
-    const params = {id, incomeDetails: resultItems.map(o => {
+    const params = {id: state.id, incomeDetails: resultItems.map(o => {
       delete o.transportOrderId;
       delete o.id;
       return o;
@@ -94,22 +93,21 @@ const copyActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_ADD, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}, KEY));
+    dispatch(action.assign({receiveItems: result}));
     await afterEdit(dispatch, getState);
   });
 };
 
 const editActionCreator = (isDoubleClick, rowIndex) => async (dispatch, getState) => {
   const state = deepCopy(getSelfState(getState()));
-  const {KEY, id} = state;
   const resultItems = await showDialogType(state, 2, isDoubleClick, rowIndex);
   if (!resultItems) return;
   execWithLoading(async () => {
-    const params = {id, incomeDetails: resultItems};
+    const params = {id: state.id, incomeDetails: resultItems};
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_EDIT, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}, KEY));
+    dispatch(action.assign({receiveItems: result}));
     await afterEdit(dispatch, getState);
   });
 };
@@ -119,7 +117,7 @@ const doubleClickActionCreator = (rowIndex) => async (dispatch, getState) => {
 };
 
 const delActionCreator = () => async (dispatch, getState) =>  {
-  const {KEY, receiveItems} = getSelfState(getState());
+  const {receiveItems} = getSelfState(getState());
   const checkList = receiveItems.filter(item => item.checked && item.statusType !== 'status_check_completed');
   if (checkList.length === 0) return showError('请勾选待审核状态的数据！');
   execWithLoading(async () => {
@@ -128,13 +126,13 @@ const delActionCreator = () => async (dispatch, getState) =>  {
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
     const items = receiveItems.filter(item => !ids.includes(item.id));
-    dispatch(action.assign({receiveItems: items}, KEY));
+    dispatch(action.assign({receiveItems: items}));
     await afterEdit(dispatch, getState);
   });
 };
 
 const auditActionCreator = () => async (dispatch, getState) => {
-  const {KEY, receiveItems} = getSelfState(getState());
+  const {receiveItems} = getSelfState(getState());
   const checkList = receiveItems.filter(item => item.checked && item.statusType !== 'status_check_completed');
   if (checkList.length === 0) return showError('请勾选待审核状态的数据！');
   execWithLoading(async () => {
@@ -142,13 +140,13 @@ const auditActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_AUDIT, postOption(ids));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}, KEY));
+    dispatch(action.assign({receiveItems: result}));
     await afterEdit(dispatch, getState);
   });
 };
 
 const strikeBlanceActionCreator = () => async (dispatch, getState) => {
-  const {KEY, receiveItems} = getSelfState(getState());
+  const {receiveItems} = getSelfState(getState());
   const index = helper.findOnlyCheckedIndex(receiveItems);
   const item = receiveItems[index];
   if(index === -1 || (item && item.statusType !== 'status_check_completed')) return showError('请勾选一条已审核状态的数据！');
@@ -156,7 +154,7 @@ const strikeBlanceActionCreator = () => async (dispatch, getState) => {
     const {returnCode, returnMsg, result} = await fetchJson(`${URL_STRIKEBALANCE}/${item.id}`, 'post');
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}, KEY));
+    dispatch(action.assign({receiveItems: result}));
     await afterEdit(dispatch, getState);
   });
 };
@@ -173,20 +171,19 @@ const autoBillingActionCreator = () => async (dispatch, getState) => {
 
 // 配置字段（应收）
 const configKeyReceiveActionCreator = () => async (dispatch, getState) => {
-  const {KEY, receiveCols} = getSelfState(getState());
+  const {receiveCols} = getSelfState(getState());
   const okFunc = (newCols) => {
-    dispatch(action.assign({receiveCols: newCols}, KEY));
+    dispatch(action.assign({receiveCols: newCols}));
   };
   showColsSetting(receiveCols, okFunc, 'receiveMake_receiveCols');
 };
 
 const convertActionCreator = () => async (dispatch, getState) => {
   const state = deepCopy(getSelfState(getState()));
-  const {KEY, id} = state;
   const resultItems = await showDialogType(state, 3);
   if (!resultItems) return;
   execWithLoading(async () => {
-    const params = {id, costDetailIds: resultItems.map(o => {
+    const params = {id: state.id, costDetailIds: resultItems.map(o => {
       delete o.transportOrderId;
       delete o.id;
       return o;
@@ -194,16 +191,16 @@ const convertActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_ADD, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}, KEY));
+    dispatch(action.assign({receiveItems: result}));
     await afterEdit(dispatch, getState);
   });
 };
 
 // 配置字段（应付）
 const configKeyPayActionCreator = () => async (dispatch, getState) => {
-  const {KEY, payCols} = getSelfState(getState());
+  const {payCols} = getSelfState(getState());
   const okFunc = (newCols) => {
-    dispatch(action.assign({payCols: newCols}, KEY));
+    dispatch(action.assign({payCols: newCols}));
   };
   showColsSetting(payCols, okFunc, 'receiveMake_payCols');
 };
@@ -232,7 +229,7 @@ const clickActionCreator = (key) => {
 
 const checkActionCreator = (isPay, isAll, checked, rowIndex) => (dispatch, getState) => {
   const path = isPay ? 'payItems' : 'receiveItems';
-  let {payItems, KEY} = getSelfState(getState());
+  let {payItems} = getSelfState(getState());
   isAll && (rowIndex = -1);
   if (isPay) {
     if ((isAll && payItems.find(o => o.isTransferReceivables == "true_false_type_true")) ||
@@ -240,19 +237,15 @@ const checkActionCreator = (isPay, isAll, checked, rowIndex) => (dispatch, getSt
       return showError("所选数据中有已转应付的数据！");
     }
   }
-  dispatch(action.update({checked}, [KEY, path], rowIndex));
+  dispatch(action.update({checked}, path, rowIndex));
 };
 
-const tabChangeActionCreator = (activeKey) => (dispatch, getState) => {
-  const {KEY} = getSelfState(getState());
-  dispatch(action.assign({activeKey}, KEY));
-};
+const tabChangeActionCreator = (activeKey) => action.assign({activeKey});
 
 // 排序和过滤
 const tableChangeActionCreator = (isPay, sortInfo, filterInfo) => (dispatch, getState) => {
-  const {KEY} = getSelfState(getState());
   const path = isPay ? 'payFilterInfo' : 'receiveFilterInfo';
-  dispatch(action.assign({[path]: {sortInfo, filterInfo}}, KEY));
+  dispatch(action.assign({[path]: {sortInfo, filterInfo}}));
 };
 
 const buildEditPageState = async (config, itemData, isReadonly) => {
@@ -268,10 +261,10 @@ const buildEditPageState = async (config, itemData, isReadonly) => {
     totalValues,
     receiveItems: incomeDetails,
     payItems: costDetails,
-    activeKey: 'costInfo',
-    // orderInfo: {id: itemData.id, readonly: true},
+    activeKey: 'index',
+    orderInfo: {id: itemData.id, readonly: true},
     tabs: [
-      {key: 'costInfo', title: '费用信息'},
+      {key: 'index', title: '费用信息'},
       {key: 'orderInfo', title: '运单信息'}
     ],
     status: 'page'
@@ -287,11 +280,11 @@ const assignPrivilege = (payload) => {
 
 const initActionCreator = () => async (dispatch, getState) => {
   try {
-    const {isReadonly, editConfig, itemData, KEY} = getSelfState(getState());
-    dispatch(action.assign({status: 'loading'}, KEY));
+    const {isReadonly, editConfig, itemData} = getSelfState(getState());
+    dispatch(action.assign({status: 'loading'}));
     const payload = await buildEditPageState(editConfig, itemData, isReadonly);
     assignPrivilege(payload);
-    dispatch(action.assign(payload, KEY));
+    dispatch(action.assign(payload));
   } catch (e) {
     showError(e.message);
     dispatch(action.assign({status: 'retry'}));
