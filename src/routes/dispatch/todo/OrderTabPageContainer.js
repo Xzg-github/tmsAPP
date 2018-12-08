@@ -2,6 +2,7 @@ import createOrderTabPageContainer, {buildOrderTabPageCommonState, updateTable} 
 import {getPathValue} from '../../../action-reducer/helper';
 import {Action} from "../../../action-reducer/action";
 import helper from "../../../common/common";
+import showDriverDialog from './DriverDialog/DriverDialogContainer';
 
 const STATE_PATH = ['todo'];
 const action = new Action(STATE_PATH);
@@ -116,7 +117,12 @@ const revokePlanActionCreator = (tabKey) => async (dispatch, getState) => {
 
 //人工派车
 const dispatchDriverActionCreator = (tabKey) => async (dispatch, getState) => {
-
+  const {tableItems} = getSelfState(getState());
+  const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
+  if (checkedItems.length !== 1) return helper.showError(`请勾选一条记录`);
+  if (true === await showDriverDialog(checkedItems.pop())) {
+    return updateTable(dispatch, action, getSelfState(getState()), ['driver', 'supplier']);
+  }
 };
 
 //人工派供应商

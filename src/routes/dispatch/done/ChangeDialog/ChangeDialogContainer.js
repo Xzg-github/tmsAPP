@@ -158,8 +158,8 @@ const buildDialogState = async (data) => {
 };
 
 /*
-* 功能：选择商品对话框
-* 参数：data: 【必需】当业务需求为不允许重复添加同一商品时，该参数为已存在的商品编码字符串数组，用于校验
+* 功能：变更车辆和司机对话框
+* 参数：data: 【必需】待变更的记录信息
 * 返回值：成功返回true，取消或关闭时返回空
 */
 export default async (data) => {

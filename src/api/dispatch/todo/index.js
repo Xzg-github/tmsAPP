@@ -16,7 +16,7 @@ api.get('/config', async (req, res) => {
 api.post('/list', async (req, res) => {
   // const url = `${service}/transport_order/dispatch/pending_task_list/search`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: {data:[{id: '001'}], returnTotalItem: 1, tags:[{tag:'0', count: 1}, {tag:'1', count: 1}, {tag:'2', count: 1}, {tag:'3', count: 1}]}});
+  res.send({returnCode: 0, result: {data:[{id: '001', carModeId:'A001'}], returnTotalItem: 1, tags:[{tag:'0', count: 1}, {tag:'1', count: 1}, {tag:'2', count: 1}, {tag:'3', count: 1}]}});
 });
 
 //智能派单
@@ -50,6 +50,20 @@ api.post('/confirm_driver_or_supplier', async (req, res) => {
 //撤消派单
 api.post('/revoke_driver_or_supplier', async (req, res) => {
   // const url = `${service}/transport_order/dispatch/plan_cancel/batch`;
+  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+  res.send({returnCode: 0});
+});
+
+//获取人工派车列表数据
+api.post('/driver_list', async (req, res) => {
+  // const url = `${service}/transport_order/dispatch/plan_confirm/batch`;
+  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+  res.send({returnCode: 0, result:{data:[{carNumber:'001'}]}});
+});
+
+//人工派车
+api.post('/dispatch_driver', async (req, res) => {
+  // const url = `${service}/transport_order/dispatch/plan_confirm/batch`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
   res.send({returnCode: 0});
 });
