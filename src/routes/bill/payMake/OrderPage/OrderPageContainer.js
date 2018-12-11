@@ -130,7 +130,7 @@ const auditActionCreator = async (dispatch, getState) => {
   const checkList = tableItems.filter(o=> o.checked);
   if(!checkList.length) return showError('请勾选一条数据！');
   if(checkList.find(o => o.statusType === "status_check_all_completed")) return showError('请取消已审核的记录！');
-  const guids = checkList.map(o => o.guid);
+  const guids = checkList.map(o => o.id);
   const {returnCode, returnMsg, result} = await fetchJson(URL_PREPARING, postOption(guids));
   if(returnCode !==0) return showError(returnMsg);
   const auditsFunc = async () => {
@@ -152,7 +152,7 @@ const createBillActionCreator = (buildType) => async (dispatch, getState) => {
       amount: o.amount,
       customerDelegateCode: o.customerDelegateNumber,
       customerId: o.customerGuid,
-      id: o.guid,
+      id: o.id,
       incomeCode: o.balanceNumber,
       incomeType :0,
       insertTime: o.insertDate,
@@ -172,7 +172,7 @@ const changeOrderActionCreator = async (dispatch, getState) => {
   const index = helper.findOnlyCheckedIndex(tableItems);
   const item = tableItems[index];
   if (index === -1 || item.statusType !== "status_check_all_completed")  return helper.showError("请选择单条已整审信息改单！");
-  alert(`跳转到改单界面！\n参数：${{value: item.guid, title: item.balanceNumber}}`);
+  alert(`跳转到改单界面！\n参数：${{value: item.id, title: item.balanceNumber}}`);
 };
 
 const importActionCreator = async (dispatch, getState) => showImportDialog('cost_import');
@@ -180,7 +180,7 @@ const importActionCreator = async (dispatch, getState) => showImportDialog('cost
 // 查询导出
 const exportSearchActionCreator = (dispatch, getState) => {
   const {tableCols, searchData} = getSelfState(getState());
-  commonExport(tableCols, '/archiver-service/transport_order/income/search', searchData);
+  commonExport(tableCols, '/tms-service/transport_order/cost/search', searchData);
 };
 
 // 页面导出

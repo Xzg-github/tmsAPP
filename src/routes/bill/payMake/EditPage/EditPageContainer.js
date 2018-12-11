@@ -21,6 +21,7 @@ const URL_BATCH_DELETE = '/api/bill/payMake/batchDelete';
 const URL_BATCH_AUDIT = '/api/bill/payMake/batchAudit';
 const URL_STRIKEBALANCE = '/api/bill/payMake/strikeBalance';
 const URL_AUTO_BILLING = '/api/bill/payMake/autoBilling';
+const URL_CURRENCY = `/api/bill/payMake/currencyTypeCode`;
 
 
 const getSelfState = (rootState) => {
@@ -28,18 +29,9 @@ const getSelfState = (rootState) => {
   return parent[parent.activeKey];
 };
 
-// const calTotal = (items) => {
-//   return items.reduce((result, item) => {
-//     const {amount=0, netAmount=0, exchangeRate=1} = item;
-//     result.net += netAmount * exchangeRate;
-//     result.tax += amount * exchangeRate;
-//     return result;
-//   }, {net: 0, tax: 0});
-// };
-
-const currencyChangeActionCreator = (value) => async (dispatch, getState) => {
+const currencyChangeActionCreator = (value, isRefresh=false) => async (dispatch, getState) => {
   const {activeCurrency, id} = getSelfState(getState());
-  if (activeCurrency !== value) {
+  if (activeCurrency !== value || isRefresh) {
     const totalValues = getJsonResult(await helper.fetchJson(`${URL_TOTAL}/${id}/${value}`));
     dispatch(action.assign({activeCurrency: value, totalValues}));
   }
@@ -47,20 +39,21 @@ const currencyChangeActionCreator = (value) => async (dispatch, getState) => {
 
 const showDialogType = async (state, type=0, isDoubleClick=false, rowIndex=0) => {
   // type: 0: 新增, 1: 复制新增, 2: 编辑
-  const {customerId, payColsEdit, payItems, dialogBtnsReceive, dialogBtnsPay} = state;
+  const {supplierId, payColsEdit, payItems, dialogBtnsPay, activeCurrency} = state;
   let items = type === 0 ? [] : payItems;
   isDoubleClick && (items[rowIndex]['checked'] = true);
   const checkList = items.filter(o => o.checked).map(son => ({...son, checked: false}));
   if (type > 0 && !isDoubleClick && checkList.length === 0) return showError('请勾选一条数据！');
   const titleArr = ['批量新增', '批量新增', '批量编辑'];
   const params = {
+    configKey: 'payMake_payColsEdit',
+    activeCurrency,
     dialogType: type,
     title: titleArr[type],
     items: checkList,
-    customerId,
+    supplierId,
     buttons: dialogBtnsPay,
-    // SuperTable2组件里col没有hide属性控制，这里做配置字段的显隐设置
-    cols: payColsEdit.filter(o => !o.hide)
+    cols: payColsEdit
   };
   return await showMutipleDialog(params);
 };
@@ -70,11 +63,12 @@ const addActionCreator = () => async (dispatch, getState) => {
   const resultItems = await showDialogType(state, 0);
   if (!resultItems) return;
   execWithLoading(async () => {
-    const params = {id: state.id, incomeDetails: resultItems};
+    const params = {id: state.id, costDetails: resultItems};
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_ADD, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}));
+    dispatch(action.assign({payItems: result}));
+    currencyChangeActionCreator(state.activeCurrency, true)(dispatch, getState);
     await afterEdit(dispatch, getState);
   });
 };
@@ -84,7 +78,7 @@ const copyActionCreator = () => async (dispatch, getState) => {
   const resultItems = await showDialogType(state, 1);
   if (!resultItems) return;
   execWithLoading(async () => {
-    const params = {id: state.id, incomeDetails: resultItems.map(o => {
+    const params = {id: state.id, costDetails: resultItems.map(o => {
       delete o.transportOrderId;
       delete o.id;
       return o;
@@ -92,7 +86,8 @@ const copyActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_ADD, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}));
+    dispatch(action.assign({payItems: result}));
+    currencyChangeActionCreator(state.activeCurrency, true)(dispatch, getState);
     await afterEdit(dispatch, getState);
   });
 };
@@ -102,11 +97,12 @@ const editActionCreator = (isDoubleClick, rowIndex) => async (dispatch, getState
   const resultItems = await showDialogType(state, 2, isDoubleClick, rowIndex);
   if (!resultItems) return;
   execWithLoading(async () => {
-    const params = {id: state.id, incomeDetails: resultItems};
+    const params = {id: state.id, costDetails: resultItems};
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_EDIT, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}));
+    dispatch(action.assign({payItems: result}));
+    currencyChangeActionCreator(state.activeCurrency, true)(dispatch, getState);
     await afterEdit(dispatch, getState);
   });
 };
@@ -116,56 +112,58 @@ const doubleClickActionCreator = (rowIndex) => async (dispatch, getState) => {
 };
 
 const delActionCreator = () => async (dispatch, getState) =>  {
-  const {receiveItems} = getSelfState(getState());
-  const checkList = receiveItems.filter(item => item.checked && item.statusType !== 'status_check_completed');
+  const {payItems, activeCurrency} = getSelfState(getState());
+  const checkList = payItems.filter(item => item.checked && item.statusType !== 'status_check_completed');
   if (checkList.length === 0) return showError('请勾选待审核状态的数据！');
   execWithLoading(async () => {
     const ids = checkList.map(item => item.id);
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_DELETE, postOption(ids));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    const items = receiveItems.filter(item => !ids.includes(item.id));
-    dispatch(action.assign({receiveItems: items}));
+    const items = payItems.filter(item => !ids.includes(item.id));
+    dispatch(action.assign({payItems: items}));
+    currencyChangeActionCreator(activeCurrency, true)(dispatch, getState);
     await afterEdit(dispatch, getState);
   });
 };
 
 const auditActionCreator = () => async (dispatch, getState) => {
-  const {receiveItems} = getSelfState(getState());
-  const checkList = receiveItems.filter(item => item.checked && item.statusType !== 'status_check_completed');
+  const {payItems} = getSelfState(getState());
+  const checkList = payItems.filter(item => item.checked && item.statusType !== 'status_check_completed');
   if (checkList.length === 0) return showError('请勾选待审核状态的数据！');
   execWithLoading(async () => {
     const ids = checkList.map(item => item.id);
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_AUDIT, postOption(ids));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}));
+    dispatch(action.assign({payItems: result}));
     await afterEdit(dispatch, getState);
   });
 };
 
 const strikeBlanceActionCreator = () => async (dispatch, getState) => {
-  const {receiveItems} = getSelfState(getState());
-  const index = helper.findOnlyCheckedIndex(receiveItems);
-  const item = receiveItems[index];
+  const {payItems} = getSelfState(getState());
+  const index = helper.findOnlyCheckedIndex(payItems);
+  const item = payItems[index];
   if(index === -1 || (item && item.statusType !== 'status_check_completed')) return showError('请勾选一条已审核状态的数据！');
   execWithLoading(async () => {
     const {returnCode, returnMsg, result} = await fetchJson(`${URL_STRIKEBALANCE}/${item.id}`, 'post');
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}));
+    dispatch(action.assign({payItems: result}));
     await afterEdit(dispatch, getState);
   });
 };
 
 const autoBillingActionCreator = () => async (dispatch, getState) => {
   return alert('待定！');
-  // const {id, receiveItems} = getSelfState(getState());
+  // const {id, payItems, activeCurrency} = getSelfState(getState());
   // const {returnCode, returnMsg, result} = await fetchJson(`${URL_AUTO_BILLING}/${id}`,postOption({id: id}));
   // if (returnCode !== 0) return showError(returnMsg);
   // showSuccessMsg(returnMsg);
-  // const billItems = receiveItems.concat(result);
-  // dispatch(action.assign({receiveItems: billItems}));
+  // const billItems = payItems.concat(result);
+  // dispatch(action.assign({payItems: billItems}));
+  // currencyChangeActionCreator(activeCurrency, true)(dispatch, getState);
 };
 
 // 配置字段（应付）
@@ -211,21 +209,16 @@ const tableChangeActionCreator = (sortInfo, filterInfo) => (dispatch, getState) 
 
 const buildEditPageState = async (config, itemData, isReadonly) => {
   const data = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
-  const {costDetails=[], mainCurrencyType='CNY'} = data;
-  const totalValues = getJsonResult(await fetchJson(`${URL_TOTAL}/${itemData.id}/${mainCurrencyType}`));
+  const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}`));
+  const totalValues = getJsonResult(await fetchJson(`${URL_TOTAL}/${itemData.id}/${currency}`));
   return {
     ...config,
     ...itemData,
     payButtons: isReadonly ? [] : config.payButtons,
-    activeCurrency: mainCurrencyType,
+    activeCurrency: currency,
     totalValues,
-    payItems: costDetails,
-    activeKey: 'index',
+    payItems: data,
     orderInfo: {id: itemData.id, readonly: true},
-    tabs: [
-      {key: 'index', title: '费用信息'},
-      {key: 'orderInfo', title: '运单信息'}
-    ],
     status: 'page'
   };
 };

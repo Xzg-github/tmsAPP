@@ -90,15 +90,13 @@ const payButtons = [
 
 // 明细界面应付表格
 const payCols = [
-  {key: 'isTransferReceivables', title: '是否转应收', dictionary: name.YES_OR_NO},
-  {key: 'transportOrderId', title: '运单订单标识'},
   {key: 'supplierId', title: '结算单位'},
   {key: 'chargeItemId', title: '费用名称'},
   {key: 'chargeUnit', title: '计量单位', dictionary: name.CHARGE_UNIT},
   {key: 'price', title: '单价'},
-  {key: 'chargeNum', title: '数量'},
+  {key: 'number', title: '数量'},
   {key: 'amount', title: '金额'},
-  {key: 'currencyTypeCode', title: '币种', dictionary: 'currency'},
+  {key: 'currency', title: '币种', dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率'},
   {key: 'tax', title: '税率'},
   {key: 'taxType', title: '计税方式', dictionary: name.TAX_TYPE},
@@ -146,7 +144,7 @@ const dialogBtnsPay = [
 const payColsEdit = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
-  {key: 'customerId', title: '结算单位', type: 'search', required: true},
+  {key: 'supplierId', title: '结算单位', type: 'search', required: true},
   {key: 'chargeItemId', title: '费用名称', type: 'search', required: true},
   {key: 'chargeUnit', title: '计量单位', type: 'select', required: true, dictionary: name.CHARGE_UNIT},
   {key: 'price', title: '单价', type: 'number', required: true, props: {real: true, precision: 2}},
@@ -177,7 +175,12 @@ const editConfig = {
   payButtons,
   totalKeys,
   payColsEdit,
-  dialogBtnsPay
+  dialogBtnsPay,
+  activeKey: 'index',
+  tabs: [
+    {key: 'index', title: '费用信息'},
+    {key: 'orderInfo', title: '运单信息'}
+  ]
 };
 
 const tabs = [
@@ -196,8 +199,7 @@ const config = {
     name.CHARGE_ORIGIN,
     name.CHARGE_UNIT,
     name.ZERO_ONE_TYPE,
-    name.TAX_TYPE,
-    name.YES_OR_NO
+    name.TAX_TYPE
   ]
 };
 

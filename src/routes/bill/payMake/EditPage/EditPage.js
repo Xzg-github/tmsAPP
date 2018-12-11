@@ -10,8 +10,14 @@ const OrderInfoContainer = createOrderInfo('payMake');
 class EditPage extends React.Component {
 
   toTotal = () => {
-    const {payItems=[]} = this.props;
-    return (payItems.length > 0) && <Total {...this.props}/>
+    const {payItems=[], ...prop} = this.props;
+    const props = {
+      ...prop,
+      items: payItems.map(o => {
+      o.companyTitle = o.supplierId.title;
+      return o;
+    })};
+    return (payItems.length > 0) && <Total {...props}/>
   }
 
   toToolbar = () => {
