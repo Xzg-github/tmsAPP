@@ -51,8 +51,7 @@ class Login extends React.Component {
       style: {width: '100%'},
       size: 'large',
       htmlType: 'submit',
-      loading: this.state.loading,
-      disabled: !this.state.account || !this.state.password
+      loading: this.state.loading
     };
   };
 

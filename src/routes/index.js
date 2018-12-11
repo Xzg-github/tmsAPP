@@ -101,7 +101,6 @@ export default {
     createRoute('/message', loadMessage),
     require('./password/modify').default,
     require('./password/find').default,
-    require('./password/reset').default,
     // Wildcard routes, e.g. { path: '*', ... } (must go last)
     require('./notFound').default
   ],

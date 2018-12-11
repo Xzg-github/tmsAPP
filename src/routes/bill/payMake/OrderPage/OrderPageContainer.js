@@ -12,6 +12,10 @@ import {getNewTableData} from '../RootContainer';
 const STATE_PATH = ['payMake'];
 const action = new Action(STATE_PATH);
 const URL_CUSTOMER = '/api/bill/payMake/customerId';
+const URL_SUPPLIER = '/api/bill/payMake/supplierId';
+const URL_CARINFO = '/api/bill/payMake/carInfoId';
+const URL_DRIVER = '/api/bill/payMake/driverId';
+const URL_SUPERVISOR = '/api/bill/payMake/supervisorId';
 const URL_CUSTOMER_SERVICE = '/api/bill/payMake/customerServiceId';
 const URL_CARMODE = '/api/bill/payMake/carModeId';
 const URL_DEPARTURE_DESTINATION = '/api/bill/payMake/departureDestination';
@@ -29,6 +33,22 @@ const formSearchActionCreator = (key, filter) => async (dispatch,getState) => {
   switch (key) {
     case 'customerId': {
       result = await fetchJson(URL_CUSTOMER, postOption(params));
+      break;
+    }
+    case 'supplierId': {
+      result = await fetchJson(URL_SUPPLIER, postOption(params));
+      break;
+    }
+    case 'carInfoId': {
+      result = await fetchJson(URL_CARINFO, postOption(params));
+      break;
+    }
+    case 'driverId': {
+      result = await fetchJson(URL_DRIVER, postOption(params));
+      break;
+    }
+    case 'supervisorId': {
+      result = await fetchJson(URL_SUPERVISOR, postOption(params));
       break;
     }
     case 'customerServiceId': {
@@ -82,7 +102,7 @@ const showEditPage = (dispatch, getState, item, isReadonly=false) => {
   const key = item['orderNumber'];
   if (helper.isTabExist(tabs, key)) return dispatch(action.assign({activeKey: key}));
   dispatch(action.add({key, title: key}, 'tabs'));
-  dispatch(action.assign({[key]: {isReadonly, editConfig, itemData: item, KEY: key}, activeKey: key}));
+  dispatch(action.assign({[key]: {isReadonly, editConfig, itemData: item}, activeKey: key}));
 };
 
 const editActionCreator = async (dispatch, getState) => {

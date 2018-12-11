@@ -1,5 +1,5 @@
 import React from 'react';
-import Page from './Page';
+import FindPassword from './FindPassword';
 
 export default {
   path: '/password/find',
@@ -7,7 +7,7 @@ export default {
     return {
       single: true,
       title: '找回密码',
-      component: <Page />
+      component: <FindPassword />
     };
   }
 };
