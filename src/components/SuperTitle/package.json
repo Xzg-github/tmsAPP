@@ -1,0 +1,6 @@
+{
+  "name": "SuperTitle",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./SuperTitle.js"
+}

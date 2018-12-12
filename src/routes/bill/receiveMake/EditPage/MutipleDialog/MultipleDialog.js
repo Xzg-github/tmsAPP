@@ -22,7 +22,7 @@ class MultipleDialog extends React.Component {
   toTable = () => {
     const {cols, items, valid, onExitValid, onChange, onSearch, onCheck} = this.props;
     const props = {
-      cols,
+      cols: cols.filter(o => !o.hide),
       items,
       valid,
       maxHeight: "400px",

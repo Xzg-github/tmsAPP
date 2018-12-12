@@ -112,13 +112,12 @@ const receiveButtons = [
 
 // 明细界面应付表格
 const payCols = [
-  {key: 'isTransferReceivables', title: '是否转应收', dictionary: name.YES_OR_NO},
-  {key: 'transportOrderId', title: '运单订单标识'},
+  {key: 'isTransferReceivables', title: '是否转应收', dictionary: name.ZERO_ONE_TYPE},
   {key: 'supplierId', title: '结算单位'},
   {key: 'chargeItemId', title: '费用名称'},
   {key: 'chargeUnit', title: '计量单位', dictionary: name.CHARGE_UNIT},
   {key: 'price', title: '单价'},
-  {key: 'chargeNum', title: '数量'},
+  {key: 'number', title: '数量'},
   {key: 'amount', title: '金额'},
   {key: 'currencyTypeCode', title: '币种', dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率'},
@@ -189,13 +188,13 @@ const receiveColsEdit = [
 const payColsEdit = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
-  {key: 'isTransferReceivables', title: '是否转应收', type: 'select', dictionary: name.YES_OR_NO},
+  {key: 'isTransferReceivables', title: '是否转应收', type: 'select', dictionary: name.ZERO_ONE_TYPE},
   {key: 'transportOrderId', title: '运单订单标识', type: 'search'},
-  {key: 'supplierId', title: '结算单位', type: 'search'},
+  {key: 'customerId', title: '结算单位', type: 'search'},
   {key: 'chargeItemId', title: '费用名称', type: 'search'},
   {key: 'chargeUnit', title: '计量单位', type: 'select', dictionary: name.CHARGE_UNIT},
   {key: 'price', title: '单价', type: 'number'},
-  {key: 'chargeNum', title: '数量', type: 'number'},
+  {key: 'number', title: '数量', type: 'number'},
   {key: 'amount', title: '金额', type: 'number'},
   {key: 'currency', title: '币种', type: 'select', dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率', type: 'number'},
@@ -264,8 +263,7 @@ const config = {
     name.CHARGE_ORIGIN,
     name.CHARGE_UNIT,
     name.ZERO_ONE_TYPE,
-    name.TAX_TYPE,
-    name.YES_OR_NO
+    name.TAX_TYPE
   ]
 };
 

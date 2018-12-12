@@ -82,7 +82,7 @@ const showEditPage = (dispatch, getState, item, isReadonly=false) => {
   const key = item['orderNumber'];
   if (helper.isTabExist(tabs, key)) return dispatch(action.assign({activeKey: key}));
   dispatch(action.add({key, title: key}, 'tabs'));
-  dispatch(action.assign({[key]: {isReadonly, editConfig, itemData: item, KEY: key}, activeKey: key}));
+  dispatch(action.assign({[key]: {isReadonly, editConfig, itemData: item}, activeKey: key}));
 };
 
 const editActionCreator = async (dispatch, getState) => {
@@ -160,7 +160,7 @@ const importActionCreator = async (dispatch, getState) => showImportDialog('inco
 // 查询导出
 const exportSearchActionCreator = (dispatch, getState) => {
   const {tableCols, searchData} = getSelfState(getState());
-  commonExport(tableCols, '/archiver-service/transport_order/income/search', searchData);
+  commonExport(tableCols, '/tms-service/transport_order/income/search', searchData);
 };
 
 // 页面导出

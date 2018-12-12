@@ -28,7 +28,7 @@ const initActionCreator = () => async (dispatch) => {
     const searchData = {};
     const other = { tabs, activeKey: 'index', currentPage: 1, searchData, editConfig: edit, status: 'page'};
     const payload = buildOrderPageState(list, index, other);
-    payload.editConfig.tabs = [{key: 'baseInfo', title: 'Sheet 1'}];
+    payload.editConfig.tabs = [{key: 'baseInfo', title: '基本信息'}];
     payload.editConfig.CURRNT_TABLE_CODE = 'baseInfo';
     dispatch(action.create(payload));
   }catch (e){

@@ -84,7 +84,9 @@ const changeActionCreator = (key, values) => async(dispatch, getState) => {
     const {result, returnCode} = await fetchJson(`${URL_MODEL_TYPE_ADD}/${values.value}`);
     if (returnCode !== 0) return;
     const {field, table} = result.content;
-    const newTabs = Object.keys(field).map((key, index) => ({key, title: `Sheet ${index + 1}`}));  //根据field属性个数生成Tab切换
+    const tableCode = table[0].tableCode.split(','); //以逗号为分割，生成数组，元素为字符串
+    const tableTitle = table[0].tableTitle.split(',');
+    const newTabs = tableCode.map((key, index) => ({key, title: tableTitle[index]}));  //根据field属性个数生成Tab切换
     const state = {};
     for(let obj of Object.keys(field)){                           //根据field属性个数生成切换的内容
       state[obj] = {
@@ -97,6 +99,18 @@ const changeActionCreator = (key, values) => async(dispatch, getState) => {
   }
   if (controls1.map(item=>item.key).includes(key)) {
     value[CURRNT_TABLE_CODE] = value[CURRNT_TABLE_CODE] || {};
+    if(key === 'sheetName'){
+      const {tabs, content} = getSelfState(getState());
+      for(let i = 0; i < tabs.length; i ++){
+        if(CURRNT_TABLE_CODE === tabs[i].key){
+          tabs[i].title = values;   //输入框与对应的Tab组件的Title进行联动
+        }
+        if(!tabs[i].title){
+          tabs[i].title = content.table[0].tableTitle.split(',')[i];  //输入框为空时，Title为之前默认
+        }
+      }
+      dispatch(action.assign(tabs))
+    }
     dispatch(action.assign({[key]: values}, ['state', CURRNT_TABLE_CODE]));
   }else {
     dispatch(action.assign({[key]: values}, 'value'));

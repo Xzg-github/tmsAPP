@@ -108,7 +108,7 @@ const joinDialogTableCols = [
   {key: 'price', title: '单价', type: 'text'},
   {key: 'number', title: '数量', type: 'number', copy: true, props: {real: true, precision: 4}},
   {key: 'amount', title: '费用金额', type: 'text'}
-]
+];
 
 const controls = [
   {key: 'baseInfo', title: '基本信息', data: baseInfo}

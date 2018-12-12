@@ -118,9 +118,8 @@ const initActionCreator = () => async (dispatch) => {
 
     // 初始化配置字段表格配置
     payload.tableCols = initTableCols('payMake', payload.tableCols);
-    payload.editConfig.receiveCols = initTableCols('payMake_receiveCols', payload.editConfig.receiveCols);
     payload.editConfig.payCols = initTableCols('payMake_payCols', payload.editConfig.payCols);
-    payload.editConfig.receiveColsEdit = initTableCols('payMake_receiveColsEdit', payload.editConfig.receiveColsEdit);
+    payload.editConfig.payColsEdit = initTableCols('payMake_payColsEdit', payload.editConfig.payColsEdit);
 
     assignPrivilege(payload);
     dispatch(action.create(payload));

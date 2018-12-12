@@ -76,35 +76,8 @@ const tableCols = [
   {key: 'updateTime', title: '更新时间'}
 ];
 
-// 明细界面应收表格
-const receiveCols = [
-  {key: 'customerId', title: '结算单位'},
-  {key: 'chargeItemId', title: '费用名称'},
-  {key: 'chargeUnit', title: '计量单位', dictionary: name.CHARGE_UNIT},
-  {key: 'price', title: '单价'},
-  {key: 'number', title: '数量'},
-  {key: 'amount', title: '金额'},
-  {key: 'currency', title: '币种', dictionary: 'currency'},
-  {key: 'exchangeRate', title: '汇率'},
-  {key: 'tax', title: '税率'},
-  {key: 'taxType', title: '计税方式', dictionary: name.TAX_TYPE},
-  {key: 'taxAmount', title: '税额'},
-  {key: 'netAmount', title: '净价'},
-  {key: 'remark', title: '备注'},
-  {key: 'isAdditional', title: '是否额外费用', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'statusType', title: '状态', dictionary: name.STATUS_TYPE},
-  {key: 'relationNumber', title: '关联编码'},
-  {key: 'chargeOrigin', title: '费用来源', dictionary: name.CHARGE_ORIGIN},
-  {key: 'sequence', title: '排序'},
-  {key: 'institutionId', title: '费用归属机构'},
-  {key: 'insertUser', title: '创建人'},
-  {key: 'insertDate', title: '创建时间'},
-  {key: 'updateUser', title: '更新人'},
-  {key: 'updateDate', title: '更新时间'}
-];
-
-// 明细界面应收工具条
-const receiveButtons = [
+// 明细界面应付工具条
+const payButtons = [
   {key: 'edit_add', title: '新增', bsStyle: 'primary'},
   {key: 'edit_copy', title: '复制新增'},
   {key: 'edit_edit', title: '编辑'},
@@ -112,20 +85,18 @@ const receiveButtons = [
   {key: 'edit_audit', title: '审核', confirm: '是否确定审核选中的未审核费用？'},
   {key: 'edit_strikeBlance', title: '冲账', confirm: '是否执行冲账？'},
   {key: 'edit_autoBilling', title: '自动计费'},
-  {key: 'edit_configKeys_receive', title: '配置字段'},
+  {key: 'edit_configKeys_pay', title: '配置字段'},
 ];
 
 // 明细界面应付表格
 const payCols = [
-  {key: 'isTransferReceivables', title: '是否转应收', dictionary: name.YES_OR_NO},
-  {key: 'transportOrderId', title: '运单订单标识'},
   {key: 'supplierId', title: '结算单位'},
   {key: 'chargeItemId', title: '费用名称'},
   {key: 'chargeUnit', title: '计量单位', dictionary: name.CHARGE_UNIT},
   {key: 'price', title: '单价'},
-  {key: 'chargeNum', title: '数量'},
+  {key: 'number', title: '数量'},
   {key: 'amount', title: '金额'},
-  {key: 'currencyTypeCode', title: '币种', dictionary: 'currency'},
+  {key: 'currency', title: '币种', dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率'},
   {key: 'tax', title: '税率'},
   {key: 'taxType', title: '计税方式', dictionary: name.TAX_TYPE},
@@ -146,12 +117,6 @@ const payCols = [
   {key: 'updateDate', title: '更新时间'}
 ];
 
-// 明细界面应付工具条
-const payButtons = [
-  {key: 'convert', title: '转应收', bsStyle: 'primary'},
-  {key: 'edit_configKeys_pay', title: '配置字段'},
-];
-
 // 主界面的页签配置
 const tabs2 = [
   {key: '0', title: '待明细审核', keySign: 'audit_detail_waiting'},
@@ -168,7 +133,7 @@ const totalKeys = [
   {key: 'totalPayableNetAmount', title: '应付净额'},
 ];
 
-const dialogBtnsReceive = [
+const dialogBtnsPay = [
   {key: "add", title: "新增", bsStyle: 'primary'},
   {key: "copy", title: "复制"},
   {key: "del", title: "移除", confirm: '是否确定删除所有选中项？'},
@@ -176,10 +141,10 @@ const dialogBtnsReceive = [
   {key: "config", title: "配置字段"},
 ];
 
-const receiveColsEdit = [
+const payColsEdit = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
-  {key: 'customerId', title: '结算单位', type: 'search', required: true},
+  {key: 'supplierId', title: '结算单位', type: 'search', required: true},
   {key: 'chargeItemId', title: '费用名称', type: 'search', required: true},
   {key: 'chargeUnit', title: '计量单位', type: 'select', required: true, dictionary: name.CHARGE_UNIT},
   {key: 'price', title: '单价', type: 'number', required: true, props: {real: true, precision: 2}},
@@ -189,42 +154,6 @@ const receiveColsEdit = [
   {key: 'exchangeRate', title: '汇率', type: 'readonly'},
   {key: 'remark', title: '备注', type: 'text'},
   {key: 'statusType', title: '状态', type: 'readonly', dictionary: name.STATUS_TYPE}
-];
-
-const payColsEdit = [
-  {key: 'checked', title: '', type: 'checkbox'},
-  {key: 'index', title: '序号', type: 'index'},
-  {key: 'isTransferReceivables', title: '是否转应收', type: 'select', dictionary: name.YES_OR_NO},
-  {key: 'transportOrderId', title: '运单订单标识', type: 'search'},
-  {key: 'supplierId', title: '结算单位', type: 'search'},
-  {key: 'chargeItemId', title: '费用名称', type: 'search'},
-  {key: 'chargeUnit', title: '计量单位', type: 'select', dictionary: name.CHARGE_UNIT},
-  {key: 'price', title: '单价', type: 'number'},
-  {key: 'chargeNum', title: '数量', type: 'number'},
-  {key: 'amount', title: '金额', type: 'number'},
-  {key: 'currency', title: '币种', type: 'select', dictionary: 'currency'},
-  {key: 'exchangeRate', title: '汇率', type: 'number'},
-  {key: 'tax', title: '税率', type: 'number'},
-  {key: 'taxType', title: '计税方式', type: 'select', dictionary: name.TAX_TYPE},
-  {key: 'taxAmount', title: '税额', type: 'number'},
-  {key: 'netAmount', title: '净价', type: 'number'},
-  {key: 'remark', title: '备注', type: 'text'},
-  {key: 'isAdditional', title: '是否额外费用', type: 'select', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'statusType', title: '状态', type: 'select', dictionary: name.STATUS_TYPE},
-  {key: 'relationNumber', title: '关联编码', type: 'text'},
-  {key: 'chargeOrigin', title: '费用来源', type: 'select', dictionary: name.CHARGE_ORIGIN},
-  {key: 'isExpense', title: '是否报销', type: 'select', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'isOutputValue', title: '是否产值', type: 'select', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'sequence', title: '排序', type: 'text'},
-  {key: 'institutionId', title: '费用归属机构', type: 'search'},
-  {key: 'insertUser', title: '创建人', type: 'date'},
-  {key: 'insertDate', title: '创建时间', type: 'date'},
-  {key: 'updateUser', title: '更新人', type: 'date'},
-  {key: 'updateDate', title: '更新时间', type: 'date'}
-];
-
-const dialogBtnsPay = [
-  {key: "del", title: "移除", bsStyle: 'primary', confirm: '是否确定删除所有选中项？'}
 ];
 
 // 主界面配置
@@ -244,17 +173,18 @@ const index = {
 const editConfig = {
   payCols,
   payButtons,
-  receiveCols,
-  receiveButtons,
   totalKeys,
-  dialogBtnsReceive,
-  receiveColsEdit,
   payColsEdit,
-  dialogBtnsPay
+  dialogBtnsPay,
+  activeKey: 'index',
+  tabs: [
+    {key: 'index', title: '费用信息'},
+    {key: 'orderInfo', title: '运单信息'}
+  ]
 };
 
 const tabs = [
-  {key: 'index', title: '应收结算列表', close: false}
+  {key: 'index', title: '应付结算列表', close: false}
 ];
 
 const config = {
@@ -269,8 +199,7 @@ const config = {
     name.CHARGE_ORIGIN,
     name.CHARGE_UNIT,
     name.ZERO_ONE_TYPE,
-    name.TAX_TYPE,
-    name.YES_OR_NO
+    name.TAX_TYPE
   ]
 };
 
