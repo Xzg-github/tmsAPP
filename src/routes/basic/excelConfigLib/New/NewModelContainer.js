@@ -99,6 +99,18 @@ const changeActionCreator = (key, values) => async(dispatch, getState) => {
   }
   if (controls1.map(item=>item.key).includes(key)) {
     value[CURRNT_TABLE_CODE] = value[CURRNT_TABLE_CODE] || {};
+    if(key === 'sheetName'){
+      const {tabs, content} = getSelfState(getState());
+      for(let i = 0; i < tabs.length; i ++){
+        if(CURRNT_TABLE_CODE === tabs[i].key){
+          tabs[i].title = values;   //输入框与对应的Tab组件的Title进行联动
+        }
+        if(!tabs[i].title){
+          tabs[i].title = content.table[0].tableTitle.split(',')[i];  //输入框为空时，Title为之前默认
+        }
+      }
+      dispatch(action.assign(tabs))
+    }
     dispatch(action.assign({[key]: values}, ['state', CURRNT_TABLE_CODE]));
   }else {
     dispatch(action.assign({[key]: values}, 'value'));

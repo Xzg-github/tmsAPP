@@ -110,7 +110,7 @@ const editAction = async (dispatch, getState) => {
   const tableCode = content.table[0].tableCode.split(','); //以逗号为分割，生成数组，元素为字符串
   const CURRNT_TABLE_CODE = tableCode[0];
   const tableTitle = content.table[0].tableTitle.split(',');
-  const tabKey = tableCode.map((key, index) => ({key, title: tableTitle[index]}));
+  const tabKey = tableCode.map((key, index) => ({key, title: state[key].sheetName}));
   const add = { ...newConfig,value:result,edit:true, content, CURRNT_TABLE_CODE, tabs: tabKey, state};
   const tab = { key:key, title: '编辑' };
   dispatch(action.assign({[tab.key]: add,activeKey:tab.key, tabs: tabs.concat(tab)}));
@@ -149,7 +149,7 @@ const copyAddAction = async (dispatch, getState) => {
   const tableCode = content.table[0].tableCode.split(','); //以逗号为分割，生成数组，元素为字符串
   const CURRNT_TABLE_CODE = tableCode[0];
   const tableTitle = content.table[0].tableTitle.split(',');
-  const tabKey = tableCode.map((key, index) => ({key, title: tableTitle[index]}));
+  const tabKey = tableCode.map((key, index) => ({key, title: state[key].sheetName}));
   const add = { ...newConfig,value:result,edit:false, content, CURRNT_TABLE_CODE, tabs: tabKey, state};
   const tab = { key:key, title: '复新增辑' };
   dispatch(action.assign({[tab.key]: add,activeKey:tab.key, tabs: tabs.concat(tab)}));
