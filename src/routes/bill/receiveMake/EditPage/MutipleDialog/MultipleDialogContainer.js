@@ -10,9 +10,9 @@ import showPopup from '../../../../../standard-business/showPopup';
 const STATE_PATH = ['temp'];
 const action = new Action(STATE_PATH, false);
 
-const URL_CURRENCY = `/api/bill/receiveMake/currencyTypeCode`;
 const URL_CUSTOMER = '/api/bill/receiveMake/customerId';
-const URL_CHARGE_NAME = '/api/bill/receiveMake/chargeItemId'
+const URL_CHARGE_NAME = '/api/bill/receiveMake/chargeItemId';
+const URL_SUPPLIER = '/api/bill/payMake/supplierId';
 
 
 const getSelfState = (rootState) => {
@@ -20,7 +20,6 @@ const getSelfState = (rootState) => {
 };
 
 const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, getState) =>{
-  // const {dialogType} = getSelfState(getState());
   let payload = {[keyName]: keyValue}, index = rowIndex;
   switch (keyName) {
     case 'price':
@@ -36,7 +35,10 @@ const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, ge
 const searchActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, getState) => {
   let options, params = {maxNumber: 20, filter: keyValue};
   switch (keyName) {
-    case 'supplierId':
+    case 'supplierId': {
+      options = getJsonResult(await helper.fetchJson(URL_SUPPLIER, postOption(params)));
+      break;
+    }
     case 'customerId': {
       options = getJsonResult(await helper.fetchJson(URL_CUSTOMER, postOption(params)));
       break;
@@ -50,12 +52,12 @@ const searchActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, ge
 };
 
 const addActionCreator = () => async (dispatch, getState) => {
-  const {customerId, items} = getSelfState(getState());
-  const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}`));
+  const {customerId, supplierId, items, activeCurrency} = getSelfState(getState());
   items.push({
     checked: false,
-    currency,
-    customerId
+    currency: activeCurrency,
+    customerId,
+    supplierId
   });
   dispatch(action.assign({items: deepCopy(items)}));
 };
@@ -79,17 +81,16 @@ const delActionCreator = () => async (dispatch, getState) =>{
 };
 
 const getActionCreator = () => async (dispatch, getState) => {
-  const {customerId} = getSelfState(getState());
+  const {customerId, activeCurrency} = getSelfState(getState());
   return alert('获取费用项！');
 
-  // const currencyTypeCode = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${customerId.value}`));
   // const chargeList = await showGetChargeDialog(customerId.value, true);
   // if (Array.isArray(chargeList) && chargeList.length > 0) {
   //   const info = result.filter(item => item.taskUnitCode === activeKey).pop() || {};
   //   const [...newItems] = tasks[activeKey];
   //   chargeList.map(item => {
   //     newItems.push({
-  //       currencyTypeCode,
+  //       currencyTypeCode: activeCurrency,
   //       taskUnitName:info.taskUnitName,
   //       businessName:info.businessName,
   //       serviceName:info.serviceName,
@@ -106,12 +107,11 @@ const getActionCreator = () => async (dispatch, getState) => {
 
 //配置字段按钮
 const configActionCreator = () => async (dispatch, getState) => {
-  const {cols} = getSelfState(getState());
-  const configCols = cols.filter(o => !(o.key === 'checked' || o.key === 'index'));
+  const {cols, configKey} = getSelfState(getState());
   const okFunc = (newCols) => {
     dispatch(action.assign({cols: newCols}));
   };
-  showColsSetting(configCols, okFunc, 'receiveMake_receiveColsEdit', ['hide']);
+  showColsSetting(cols, okFunc, configKey, ['hide']);
 };
 
 const buttons = {

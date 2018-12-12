@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditPage.less';
-import {SuperTable, SuperTab2, Card, SuperTitle} from '../../../../components';
+import {SuperTable, SuperTab2, Card, SuperToolbar} from '../../../../components';
 import Total from '../../receiveMake/EditPage/Total/Total';
 import {createOrderInfo} from '../../receiveMake/EditPage/OrderInfoPage/OrderInfoPageContainer';
 
@@ -10,14 +10,20 @@ const OrderInfoContainer = createOrderInfo('payMake');
 class EditPage extends React.Component {
 
   toTotal = () => {
-    const {payItems=[]} = this.props;
-    return (payItems.length > 0) && <Total {...this.props}/>
+    const {payItems=[], ...prop} = this.props;
+    const props = {
+      ...prop,
+      items: payItems.map(o => {
+      o.companyTitle = o.supplierId.title;
+      return o;
+    })};
+    return (payItems.length > 0) && <Total {...props}/>
   }
 
   toToolbar = () => {
-    const {isReadonly, payButtons, onClick} = this.props;
-    const props = {title: '应付信息', buttons: payButtons, onClick, readonly: isReadonly};
-    return <SuperTitle {...props}/>
+    const {payButtons, onClick, isReadonly} = this.props;
+    const props = {buttons: payButtons, onClick};
+    return isReadonly ? null : <SuperToolbar {...props}/>;
   }
 
   toTable = () => {

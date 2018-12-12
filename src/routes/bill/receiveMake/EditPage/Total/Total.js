@@ -3,6 +3,15 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Total.less';
 import {Card, Control} from '../../../../../components';
 
+// const calTotal = (items) => {
+//   return items.reduce((result, item) => {
+//     const {amount=0, netAmount=0, exchangeRate=1} = item;
+//     result.net += netAmount * exchangeRate;
+//     result.tax += amount * exchangeRate;
+//     return result;
+//   }, {net: 0, tax: 0});
+// };
+
 const insertCurrency = (arr, currency) => {
   switch (currency) {
     case 'CNY': {
@@ -26,7 +35,7 @@ const insertCurrency = (arr, currency) => {
 const calTotalByCompany = (items=[]) => {
   return items.reduce((result, item) => {
     const {currency, netAmount=0, taxAmount=0} = item;
-    const company = item.customerId.title;
+    const company = item.companyTitle;
     const index = result.label.findIndex(o => o.company === company);
     if (index > -1) {
       if (typeof result.net[index][currency] !== 'undefined') {
@@ -101,7 +110,7 @@ class Total extends React.Component {
   };
 
   render () {
-    const {label, net, tax} = calTotalByCompany(this.props.receiveItems);
+    const {label, net, tax} = calTotalByCompany(this.props.items);
     return (
       <Card className={s.root} role='total'>
         {this.totalHead()}

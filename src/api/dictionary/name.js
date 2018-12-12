@@ -193,10 +193,6 @@ const name = {
 
   SALE_ORDER_TYPE: 'sale_order_type', //订单类别
 
-
-  BUSINESS_TYPE: 'business_type',  // 运输类型
-  TRANSPORT_TYPE: 'transport_type', //运输方式
-
   PACKAGE_UNIT: 'package_unit', //erp-包装单位,
 
   CONSIGNEE_CONSIGNOR_TYPE: 'consignee_consignor_type', //收发货人类型
@@ -204,6 +200,7 @@ const name = {
   TAX_RATE_WAY: 'tax_rate_way',     //计税方式
   ZERO_ONE: 'zero_one_type', //是否（0/1）
   TRANSPORT_TYPE: 'transport_type', //运输方式
+  RESPONSIBLE_PARTY: 'responsible_party', //责任方
 };
 
 export default name;

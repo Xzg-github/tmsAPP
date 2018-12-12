@@ -87,4 +87,10 @@ api.post('/import', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
+//设置财务人员
+api.post('/finance', async (req, res) => {
+  const url = `${archiver_service}/supplier/base/financial_staff`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
 export default api;

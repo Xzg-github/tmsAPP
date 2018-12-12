@@ -2,7 +2,7 @@ import express from 'express';
 import {fetchJsonByNode, postOption} from '../../../common/common';
 import {host} from '../../globalConfig';
 import  {search} from "../../helper";
-const tms_service = `${host}/tms-service-he`;
+const tms_service = `${host}/tms-service`;
 const archiver_service = `${host}/archiver-service`;
 const charge_service = `${host}/charge_service`;
 const tenant_service = `${host}/tenant_service`;
@@ -24,7 +24,7 @@ api.get('/custom_config/:code', async (req, res) => {
 
 // 获取列表
 api.post('/list', async (req, res) => {
-  const url = `${tms_service}/transport_order/income/search`;
+  const url = `${tms_service}/transport_order/cost/search`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
@@ -114,21 +114,14 @@ api.post('/supervisorId', async (req, res) => {
 
 // 获取单条记录的详细信息
 api.get('/detail/:id', async (req, res) => {
-  const url = `${tms_service}/transport_order/income_and_cost/details/${req.params.id}`;
+  const url = `${tms_service}/transport_order/cost/details/${req.params.id}`;
   res.send(await fetchJsonByNode(req, url));
 });
 
 // 获取汇总信息
-api.get('/total/:guid/:currency', async (req, res) => {
-  const url = `${tms_service}/income/count/amount/${req.params.guid}/${req.params.currency}`;
-  // res.send(await fetchJsonByNode(req, url));
-  res.send({returnCode: 0, result: {
-    profit: 0,
-    totalPayableAmount: 0,
-    totalPayableNetAmount: 0,
-    totalReceivableAmount: 0,
-    totalReceivableNetAmount: 0
-  }});
+api.get('/total/:id/:currency', async (req, res) => {
+  const url = `${tms_service}/transport_order/cost/count/amount/${req.params.id}/${req.params.currency}`;
+  res.send(await fetchJsonByNode(req, url));
 });
 
 // 获取费用名称下拉
@@ -139,14 +132,14 @@ api.post('/chargeItemId', async (req, res) => {
 
 // 整审（批量）
 api.post('/auditBatch', async (req, res) => {
-  const url = `${tms_service}/income/check/batch`;
+  const url = `${tms_service}/cost/check/batch`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
   res.send({returnCode: 0, result: 'Success', returnMsg: '整审成功！'});
 });
 
 // 整审（批量）检查
 api.post('/audit/preparing', async (req, res) => {
-  const url = `${tms_service}/income/check/preparing`;
+  const url = `${tms_service}/cost/check/preparing`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
   res.send({returnCode: 0, result: '该结算单未产生费用，是否继续审核？', returnMsg: 'Success'});
 });
@@ -160,37 +153,37 @@ api.post('/createBill', async (req, res) => {
 
 // 应付明细批量新增
 api.post('/batchAdd', async (req, res) => {
-  const url = `${tms_service}/transport_order/income/details/batch`;
+  const url = `${tms_service}/transport_order/cost/details/batch`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 // 应付明细批量编辑
 api.post('/batchEdit', async (req, res) => {
-  const url = `${tms_service}/transport_order/income/details/batch`;
+  const url = `${tms_service}/transport_order/cost/details/batch`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
 // 应付明细表格批量删除
 api.post('/batchDelete', async (req, res) => {
-  const url = `${tms_service}/transport_order/income/details/batch`;
+  const url = `${tms_service}/transport_order/cost/details/batch`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
 });
 
 // 应付明细表格批量审核
 api.post('/batchAudit', async (req, res) => {
-  const url = `${tms_service}/transport_order/income/details/check/batch`;
+  const url = `${tms_service}/transport_order/cost/details/check/batch`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
 // 应付明细表格冲账
 api.post('/strikeBalance/:id', async (req, res) => {
-  const url = `${tms_service}/transport_order/income/detail/cancel/${req.params.id}`;
+  const url = `${tms_service}/transport_order/cost/detail/cancel/${req.params.id}`;
   res.send(await fetchJsonByNode(req, url, 'put'));
 });
 
 // 应付明细表格自动计费
-api.post('/autoBilling/:guid', async (req, res) => {
-  const url = `${tms_service}/income/income_details/auto/${req.params.guid}`;
+api.post('/autoBilling/:id', async (req, res) => {
+  const url = `${tms_service}/cost/income_details/auto/${req.params.id}`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
   res.send({returnCode: 0, result: 'Success', returnMsg: '自动计费成功！'});
 });

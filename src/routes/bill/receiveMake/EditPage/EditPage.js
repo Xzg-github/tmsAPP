@@ -8,8 +8,14 @@ import OrderInfoContainer from './OrderInfoPage/OrderInfoPageContainer';
 class EditPage extends React.Component {
 
   toTotal = () => {
-    const {receiveItems=[]} = this.props;
-    return (receiveItems.length > 0) && <Total {...this.props}/>
+    const {receiveItems=[], ...prop} = this.props;
+    const props = {
+      ...prop,
+      items: receiveItems.map(o => {
+      o.companyTitle = o.customerId.title;
+      return o;
+    })};
+    return (receiveItems.length > 0) && <Total {...props}/>
   }
 
   toToolbar = (isPay) => {
