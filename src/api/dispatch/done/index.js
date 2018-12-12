@@ -13,23 +13,20 @@ api.get('/config', async (req, res) => {
 
 //获取列表数据
 api.post('/list', async (req, res) => {
-  // const url = `${service}/transport_order/dispatch/task_list/search`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: {data:[{id: '001', supplierId:{title:'xc', value:'404b6a57-cda2-4b28-8b68-43ddd73a43ba'}, ownerCarTag: 0}], returnTotalItem: 1}});
+  const url = `${service}/transport_order/dispatch/task_list/search`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 //撤消派单
 api.post('/revoke', async (req, res) => {
-  // const url = `${service}/transport_order/dispatch//batch`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0});
+  const url = `${service}/transport_order/dispatch/cancel_order`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 //变更车辆和司机
 api.post('/change', async (req, res) => {
-  // const url = `${service}/transport_order/dispatch//batch`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0});
+  const url = `${service}/transport_order/dispatch/car_info/update`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 //车牌下拉

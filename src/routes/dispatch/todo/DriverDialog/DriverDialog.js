@@ -44,6 +44,7 @@ class DriverDialog extends React.Component {
       radio: true,
       isolation: true,
       isPaging: true,
+      maxHeight: '450px',
       callback: {
         onRadio
       }

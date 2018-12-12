@@ -13,6 +13,9 @@ const mySearch = async (dispatch, action, selfState, currentPage, pageSize, filt
   const to = from + pageSize;
   const {returnCode, returnMsg, result} = await search(urlList, from, to, {...filter, ...fixedFilters[subActiveKey]}, false);
   if (returnCode === 0) {
+    if (!result.tags && result.tabTotal) { //转成统一结构
+      result.tags = Object.keys(result.tabTotal).map(item => ({tag: item, count: result.tabTotal[item]}));
+    }
     const payload = {
       ...newState,
       currentPage: {...selfState.currentPage, [subActiveKey]: currentPage},
@@ -173,6 +176,9 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[]) 
       ...searchDataBak
     };
     const data = helper.getJsonResult(await helper.fetchJson(urlList, helper.postOption(body)));
+    if (!data.tags && data.tabTotal) { //转成统一结构
+      data.tags = Object.keys(data.tabTotal).map(item => ({tag: item, count: data.tabTotal[item]}));
+    }
     const maxRecords = isTotal && data.tags ? subTabs.reduce((obj, tab) => {
       const {count = 0} = data.tags.filter(item => item.tag === tab.status).pop() || {};
       obj[tab.key] = count;

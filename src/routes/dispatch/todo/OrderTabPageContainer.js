@@ -3,6 +3,8 @@ import {getPathValue} from '../../../action-reducer/helper';
 import {Action} from "../../../action-reducer/action";
 import helper from "../../../common/common";
 import showDriverDialog from './DriverDialog/DriverDialogContainer';
+import showSupplierDialog from './SupplierDialog/SupplierDialogContainer';
+import showConfirmSupplierDialog from './ConfirmSupplierDialog/ConfirmSupplierDialogContainer';
 
 const STATE_PATH = ['todo'];
 const action = new Action(STATE_PATH);
@@ -127,18 +129,34 @@ const dispatchDriverActionCreator = (tabKey) => async (dispatch, getState) => {
 
 //人工派供应商
 const dispatchSupplierActionCreator = (tabKey) => async (dispatch, getState) => {
-
+  const {tableItems} = getSelfState(getState());
+  const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
+  if (checkedItems.length !== 1) return helper.showError(`请勾选一条记录`);
+  if (true === await showSupplierDialog(checkedItems.pop())) {
+    return updateTable(dispatch, action, getSelfState(getState()), ['driver', 'supplier']);
+  }
 };
 
-//司机or供应商确认
-const confirmDriverOrSupplierActionCreator = (tabKey) => async (dispatch, getState) => {
+//司机确认
+const confirmDriverActionCreator = (tabKey) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const ids = tableItems[tabKey].filter(item => item.checked === true).map(item => item.id);
   if (ids.length < 1) return helper.showError(`请先勾选记录`);
-  const {returnCode, returnMsg} = await helper.fetchJson(`/api/dispatch/todo/confirm_driver_or_supplier`, helper.postOption(ids));
+  const {returnCode, returnMsg} = await helper.fetchJson(`/api/dispatch/todo/confirm_driver`, helper.postOption(ids));
   if (returnCode !== 0) return helper.showError(returnMsg);
   helper.showSuccessMsg('确认成功');
   return updateTable(dispatch, action, getSelfState(getState()));
+};
+
+//供应商确认
+const confirmSupplierActionCreator = (tabKey) => async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
+  if (checkedItems.length !== 1) return helper.showError(`请勾选一条记录`);
+  if (true === await showConfirmSupplierDialog(checkedItems.pop())) {
+    helper.showSuccessMsg('确认成功');
+    return updateTable(dispatch, action, getSelfState(getState()));
+  }
 };
 
 //撤消派单
@@ -158,9 +176,9 @@ const buttons = {
   revokePlan: revokePlanActionCreator,      //撤消计划
   dispatchDriver: dispatchDriverActionCreator, //人工派车
   dispatchSupplier: dispatchSupplierActionCreator, //人工派供应商
-  confirmDriver: confirmDriverOrSupplierActionCreator, //司机确认
+  confirmDriver: confirmDriverActionCreator, //司机确认
   revokeDriver: revokeDriverOrSupplierActionCreator, //撤消派单
-  confirmSupplier: confirmDriverOrSupplierActionCreator, //供应商确认
+  confirmSupplier: confirmSupplierActionCreator, //供应商确认
   revokeSupplier: revokeDriverOrSupplierActionCreator, //撤消派单
 };
 

@@ -76,10 +76,10 @@ const menu = [
 const config = {
   tabs: [{key: 'index', title: '待办任务', close: false}],
   subTabs: [
-    {key: 'auto', title:'待智能派单', status: '0'},
-    {key: 'dispatch', title:'待派单', status: '1'},
-    {key: 'driver', title:'待司机确认', status: '2'},
-    {key: 'supplier', title:'待供应商确认', status: '3'},
+    {key: 'auto', title:'待智能派单', status: 'waitingIntelligenceDelivery'},
+    {key: 'dispatch', title:'待派单', status: 'waitingDelivery'},
+    {key: 'driver', title:'待司机确认', status: 'waitingDriverCheck'},
+    {key: 'supplier', title:'待供应商确认', status: 'waitingSupplierCheck'},
   ],
   filters,
   tableCols,
@@ -123,8 +123,8 @@ const config = {
     supplier: []
   },
   fixedFilters: {//各tab页签列表搜索时的固定搜索条件
-    auto: {orderType: 'status_waiting_delivery', dispatchTag: [0]},
-    dispatch: {orderType: 'status_waiting_delivery', dispatchTag: [1, 2]},
+    auto: {orderType: 'status_waiting_delivery', intelligenceTag: 0},
+    dispatch: {orderType: 'status_waiting_delivery', intelligenceTag: 1},
     driver: {orderType: 'status_waiting_check', ownerCarTag: 1},
     supplier: {orderType: 'status_waiting_check', ownerCarTag: 0},
   },
@@ -146,7 +146,7 @@ const config = {
       {key: 'export', title: '导出', menu},
     ],
     supplier: [
-      {key: 'confirmSupplier', title: '供应商确认', bsStyle: 'primary', confirm: '是否所有勾选运单供应商确认？'},
+      {key: 'confirmSupplier', title: '供应商确认', bsStyle: 'primary'},
       {key: 'revokeSupplier', title: '撤消派单', confirm: '是否所有勾选运单撤消派单？'},
       {key: 'export', title: '导出', menu},
     ],
