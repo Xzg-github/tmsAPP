@@ -116,7 +116,7 @@ const createContainer = (statePath, afterEditActionCreator) => {
         break;
       }
       case 'chargingPlaceId': {
-        body = {maxNumber: 10, placeName: title};
+        body = {maxNumber: 10, districtName: title};
         data = await fetchJson(URL_CHARGE_PLACE_OPTIONS, postOption(body));
         break;
       }

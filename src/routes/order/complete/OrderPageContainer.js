@@ -39,8 +39,8 @@ const searchActionCreator = (key, filter) => async (dispatch) => {
     }
     case 'departure':
     case 'destination': {
-      url = `/api/config/customer_factory/charge_place_options`;
-      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, placeName: filter}));
+      url = `/api/order/input/charge_place_options`;
+      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, districtName: filter}));
       break;
     }
     default:
