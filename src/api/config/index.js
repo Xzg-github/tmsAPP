@@ -29,6 +29,7 @@ import customerPrice from './customerPrice';
 import supplierPrice from './supplierPrice';
 import supplierTax from './supplierTax';
 import customerService from './customerService';
+import carManager from './carManager';
 
 let api = express.Router();
 api.use('/dataset', apiDataSet);
@@ -61,5 +62,6 @@ api.use('/customer_price', customerPrice);
 api.use('/supplier_price', supplierPrice);
 api.use('/supplier_tax', supplierTax);
 api.use('/customer_service', customerService);
+api.use('/car_manager', carManager);
 
 export default api;

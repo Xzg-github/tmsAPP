@@ -66,12 +66,14 @@ const rootReducer = combineReducers({
   //车辆调度
   todo: create('todo'),
   done: create('done'),
-  carManager: create('carManager'),
 
   //监理任务
   waiting: create('waiting'),
   finish: create('finish'),
   supervisorManager: create('supervisorManager'),
+
+  //跟踪管控
+  trackOrder: create('trackOrder'),
 
   //计费与对帐
   receiveMake: createBillReducer('receiveMake'),
@@ -103,6 +105,7 @@ const rootReducer = combineReducers({
   customerPrice: create('customerPrice'),
   supplierPrice: create('supplierPrice'),
   supplierTax: create('supplierTax', false),
+  carManager: create('carManager'),
 });
 
 export default rootReducer;

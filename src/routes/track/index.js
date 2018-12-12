@@ -1,12 +1,11 @@
 import RouterHelper from '../RouteHelper';
 import React from 'react';
 
-const title = '车辆调度';
-const prefix = '/dispatch';
+const title = '跟踪管控';
+const prefix = '/track';
 
 const children = [
-  require('./todo').default,
-  require('./done').default,
+  require('./trackOrder').default,
 ];
 
 export default RouterHelper(prefix, title, children);

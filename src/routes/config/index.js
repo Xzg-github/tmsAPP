@@ -18,6 +18,7 @@ const children = [
   require('./supplierContact').default,
   require('./supplierCar').default,
   require('./supplierDriver').default,
+  require('./carManager').default,
   require('./supplierSupervisor').default,
   require('./supplierCost').default,
   require('./supplierTax').default,
