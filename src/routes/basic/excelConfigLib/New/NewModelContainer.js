@@ -84,7 +84,9 @@ const changeActionCreator = (key, values) => async(dispatch, getState) => {
     const {result, returnCode} = await fetchJson(`${URL_MODEL_TYPE_ADD}/${values.value}`);
     if (returnCode !== 0) return;
     const {field, table} = result.content;
-    const newTabs = Object.keys(field).map((key, index) => ({key, title: `Sheet ${index + 1}`}));  //根据field属性个数生成Tab切换
+    const tableCode = table[0].tableCode.split(','); //以逗号为分割，生成数组，元素为字符串
+    const tableTitle = table[0].tableTitle.split(',');
+    const newTabs = tableCode.map((key, index) => ({key, title: tableTitle[index]}));  //根据field属性个数生成Tab切换
     const state = {};
     for(let obj of Object.keys(field)){                           //根据field属性个数生成切换的内容
       state[obj] = {

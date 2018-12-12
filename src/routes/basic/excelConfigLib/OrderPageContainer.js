@@ -101,13 +101,16 @@ const editAction = async (dispatch, getState) => {
     { key: 'save', title: '保存', bsStyle: 'primary'},
   ];
   const newConfig = key ? readOnlyConfig({...editConfig}, buttons1) : editConfig;
-  const CURRNT_TABLE_CODE = result.content.table[0].tableCode;
   const state = result.sheetList.reduce((result, item) => {
     const key = Object.keys(item)[0];
     result[key] = item[key];
     return result;
   },{});
-  const tabKey = Object.keys(result.content.field).map((key, index) => ({key: key, title: `Sheet ${index + 1}`}))
+  const content = result.content;
+  const tableCode = content.table[0].tableCode.split(','); //以逗号为分割，生成数组，元素为字符串
+  const CURRNT_TABLE_CODE = tableCode[0];
+  const tableTitle = content.table[0].tableTitle.split(',');
+  const tabKey = tableCode.map((key, index) => ({key, title: tableTitle[index]}));
   const add = { ...newConfig,value:result,edit:true, content, CURRNT_TABLE_CODE, tabs: tabKey, state};
   const tab = { key:key, title: '编辑' };
   dispatch(action.assign({[tab.key]: add,activeKey:tab.key, tabs: tabs.concat(tab)}));
@@ -137,13 +140,16 @@ const copyAddAction = async (dispatch, getState) => {
   ];
   const newConfig = key ? readOnlyConfig({...editConfig}, buttons1) : editConfig;
   delete result.id;
-  const CURRNT_TABLE_CODE = result.content.table[0].tableCode;
   const state = result.sheetList.reduce((result, item) => {
     const key = Object.keys(item)[0];
     result[key] = item[key];
     return result;
   },{});
-  const tabKey = Object.keys(result.content.field).map((key, index) => ({key: key, title: `Sheet ${index + 1}`}))
+  const content = result.content;
+  const tableCode = content.table[0].tableCode.split(','); //以逗号为分割，生成数组，元素为字符串
+  const CURRNT_TABLE_CODE = tableCode[0];
+  const tableTitle = content.table[0].tableTitle.split(',');
+  const tabKey = tableCode.map((key, index) => ({key, title: tableTitle[index]}));
   const add = { ...newConfig,value:result,edit:false, content, CURRNT_TABLE_CODE, tabs: tabKey, state};
   const tab = { key:key, title: '复新增辑' };
   dispatch(action.assign({[tab.key]: add,activeKey:tab.key, tabs: tabs.concat(tab)}));
@@ -161,7 +167,7 @@ const delAction = async (dispatch, getState) => {
   const {result, returnCode, returnMsg} = await fetchJson(`${URL_DELETE}/${item.id}`, 'delete');
   if(returnCode === 0){
     dispatch(action.del('tableItems', index));
-    helper.showSuccessMsg('删除成功');
+    showSuccessMsg('删除成功');
   }else{
     showError('returnMsg');
   }
