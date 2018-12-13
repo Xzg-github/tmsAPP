@@ -65,6 +65,19 @@ handlers['institution'] = (req, filter) => {
   return fetchJsonByNode(req, url, option);
 };
 
+// 币种下拉
+handlers['currency'] = (req, filter) => {
+  const url = `${host}/archiver-service/charge/tenant_currency_type/drop_list`;
+  const option = postOption({currencyTypeCode: filter, maxNumber: 65536});
+  return fetchJsonByNode(req, url, option);
+};
+
+// 指定客户联系人
+handlers['cunstomer_contacts'] = (req, filter) => {
+  const url = `${host}/archiver-service/customer_contact/${req.params.id}/drop_list/enabled_type_enabled`;
+  return fetchJsonByNode(req, url);
+};
+
 
 export const search = async (req, type, filter='') => {
   const handler = handlers[type];

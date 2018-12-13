@@ -8,21 +8,15 @@ import helper, {deepCopy, fetchJson, getJsonResult} from '../../../common/common
 import { search } from '../../../common/search';
 import { fetchDictionary, setDictionary } from '../../../common/dictionary';
 import { dealActions } from '../../../common/check';
-import {getStatus} from "../../../common/commonGetStatus";
-import OrderPageContainer from './OrderPageContainer';
-import EditPageContainer from './EditPageContainer';
+import { getStatus } from "../../../common/commonGetStatus";
+import OrderPageContainer from './OrderPage/OrderPageContainer';
+import EditPageContainer from './EditPage/EditPageContainer';
 
-const STATE_PATH = ['bill', 'receiveBill'];
+const STATE_PATH = ['receiveBill'];
 const URL_CONFIG = '/api/bill/receiveBill/config';
 const URL_LIST = '/api/bill/receiveBill/list';
 
 const action = new Action(STATE_PATH);
-
-//控制权限
-const assignPrivilege = (payload) => {
-  const actions = helper.getActions('receiveBill', true);
-
-};
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -37,15 +31,15 @@ const initActionCreator = () => async (dispatch) => {
     const payload = buildOrderPageState(list, index, {tabs, activeKey, editConfig, addConfig, status: 'page'});
 
     //获取状态表单字典 AddDialog运单状态取表单字典transport_order
-    const deepCopyDictionary = deepCopy(dictionary);
     dictionary['status_type'] = getJsonResult(await getStatus('receivable_bill'));
-    deepCopyDictionary['status_type'] = getJsonResult(await getStatus('transport_order'));
+    dictionary['status_type_addDialog'] = getJsonResult(await getStatus('transport_order'));
     setDictionary(payload.tableCols, dictionary);
     setDictionary(payload.filters, dictionary);
     setDictionary(payload.editConfig.tables[0].cols, dictionary);
-    setDictionary(payload.addConfig.filters, deepCopyDictionary);
-    setDictionary(payload.addConfig.tableCols, deepCopyDictionary);
-    payload.buttons = dealActions( payload.buttons, 'returnBill');
+    setDictionary(payload.addConfig.filters, dictionary);
+    setDictionary(payload.addConfig.cols, dictionary);
+
+    payload.buttons = dealActions( payload.buttons, 'receiveBill');
     dispatch(action.create(payload));
   } catch (e) {
     helper.showError(e.message);
