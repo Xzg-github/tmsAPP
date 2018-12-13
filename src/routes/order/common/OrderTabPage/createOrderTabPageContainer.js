@@ -98,7 +98,7 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
 
   //查询导出
   const allExportActionCreator = () => (dispatch, getState) => {
-    const {tableCols, searchData, fixedFilters, subActiveKey, urlExport} = getSelfState(getState());
+    const {tableCols, searchData, subActiveKey, urlExport, fixedFilters={}} = getSelfState(getState());
     const realSearchData = {...searchData, ...fixedFilters[subActiveKey]};
     return commonExport(tableCols, urlExport, realSearchData, true, false, 'post', false);
   };
@@ -167,11 +167,11 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[]) 
       dic[item] = helper.getJsonResult(await getStatus(item));
     }
     setDictionary2(dic, config.filters, config.tableCols);
-    const {subActiveKey, subTabs, isTotal, pageSize={}, fixedFilters={}, searchDataBak={}} = config;
+    const {subActiveKey, subTabs, isTotal, initPageSize, fixedFilters={}, searchDataBak={}, buttons={}} = config;
     //获取列表数据
     const body = {
       itemFrom: 0,
-      itemTo: pageSize[subActiveKey],
+      itemTo: initPageSize,
       ...fixedFilters[subActiveKey],
       ...searchDataBak
     };
@@ -179,19 +179,37 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[]) 
     if (!data.tags && data.tabTotal) { //转成统一结构
       data.tags = Object.keys(data.tabTotal).map(item => ({tag: item, count: data.tabTotal[item]}));
     }
+
+    //初始化maxRecords
     const maxRecords = isTotal && data.tags ? subTabs.reduce((obj, tab) => {
       const {count = 0} = data.tags.filter(item => item.tag === tab.status).pop() || {};
       obj[tab.key] = count;
       return obj;
     }, {}) : {[subActiveKey]: data.returnTotalItem || data.returnTotalItems};
+
+    //初始化tableItmes\pageSize\currentPage\isRefresh\buttons
+    let tableItems = {}, pageSize={}, currentPage={}, isRefresh={}, finalButtons={};
+    subTabs.map(tab => {
+      tableItems[tab.key] = [];
+      pageSize[tab.key] = initPageSize;
+      currentPage[tab.key] = 1;
+      isRefresh[tab.key] = true;
+      finalButtons[tab.key] = buttons[tab.key] || []
+    });
+    tableItems[subActiveKey] = data.data || [];
+    isRefresh[subActiveKey] = false;
     return {
+      searchData:{},
+      searchDataBak: {},
       ...config,
       urlList,
+      pageSize,
+      currentPage,
       maxRecords,
+      isRefresh,
+      tableItems,
+      buttons: finalButtons,
       tableCols: helper.initTableCols(helper.getRouteKey(), config.tableCols),
-      tableItems: {
-        [subActiveKey]: data.data || []
-      },
       sortInfo: {},
       filterInfo: {},
       status: 'page'

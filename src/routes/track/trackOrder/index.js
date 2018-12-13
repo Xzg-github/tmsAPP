@@ -1,4 +1,5 @@
 import React from 'react';
+import Container from './TrackOrderContainer';
 
 export default {
   path: '/track_order',
@@ -6,7 +7,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <div>运单跟踪</div>
+      component: <Container />
     };
   }
 }

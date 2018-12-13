@@ -72,6 +72,7 @@ const menu = [
   {key:'webExport',title:'页面导出'},
   {key:'allExport',title:'查询导出'}
 ];
+const commonButtons = [{key: 'export', title: '导出', menu}];
 
 const config = {
   tabs: [{key: 'index', title: '待办任务', close: false}],
@@ -83,45 +84,18 @@ const config = {
   ],
   filters,
   tableCols,
+  initPageSize: pageSize, //每页显示条数初始值
   pageSizeType,
   paginationConfig,
   searchConfig,
-  urlExport: '/tms-service/transport_order/dispatch/pending_task_list/search', //后端查询导出api配置
-  isTotal: true, //页签是否需要统计符合条件的记录数
-  searchData: {},//默认搜索条件值-若有需同步配置searchDataBak
-  searchDataBak: {},//初始搜索条件值-若有则与searchData相同
   activeKey: 'index',
   subActiveKey: 'auto',
-  isRefresh: { //切换到tab页是否需要刷新列表标识
-    auto: false,
-    dispatch: true,
-    driver: true,
-    supplier: true
-  },
-  pageSize: { //各tab页签列表显示记录条数
-    auto: pageSize,
-    dispatch: pageSize,
-    driver: pageSize,
-    supplier: pageSize
-  },
-  currentPage: { //各tab页签列表显示的当前页数
-    auto: 1,
-    dispatch: 1,
-    driver: 1,
-    supplier: 1
-  },
-  maxRecords: { //各tab页签符合条件的记录数
-    auto: 0,
-    dispatch: 0,
-    driver: 0,
-    supplier: 0
-  },
-  tableItems: { //各tab页签列表数据
-    auto: [],
-    dispatch: [],
-    driver: [],
-    supplier: []
-  },
+  urlExport: '/tms-service/transport_order/dispatch/pending_task_list/search', //后端查询导出api配置
+  isTotal: true, //页签是否需要统计符合条件的记录数
+
+  //以下属性没有时可不写
+  searchData: {},//默认搜索条件值-若有需同步配置searchDataBak
+  searchDataBak: {},//初始搜索条件值-若有则与searchData相同
   fixedFilters: {//各tab页签列表搜索时的固定搜索条件
     auto: {orderType: 'status_waiting_delivery', intelligenceTag: 0},
     dispatch: {orderType: 'status_waiting_delivery', intelligenceTag: 1},
@@ -131,25 +105,21 @@ const config = {
   buttons: { //各tab页签操作按钮
     auto:[
       {key: 'autoDispatch', title: '智能派单', confirm: '是否所有勾选运单智能派单？', bsStyle: 'primary'},
-      {key: 'export', title: '导出', menu},
-    ],
+    ].concat(commonButtons),
     dispatch: [
       {key: 'confirmPlan', title: '确认计划', bsStyle: 'primary', confirm: '是否所有勾选运单确认计划？'},
       {key: 'revokePlan', title: '撤消计划', confirm: '是否所有勾选运单撤消计划？'},
       {key: 'dispatchDriver', title: '人工派车'},
       {key: 'dispatchSupplier', title: '人工派供应商'},
-      {key: 'export', title: '导出', menu},
-    ],
+    ].concat(commonButtons),
     driver: [
       {key: 'confirmDriver', title: '司机确认', bsStyle: 'primary', confirm: '是否所有勾选运单司机确认？'},
       {key: 'revokeDriver', title: '撤消派单', confirm: '是否所有勾选运单撤消派单？'},
-      {key: 'export', title: '导出', menu},
-    ],
+    ].concat(commonButtons),
     supplier: [
       {key: 'confirmSupplier', title: '供应商确认', bsStyle: 'primary'},
       {key: 'revokeSupplier', title: '撤消派单', confirm: '是否所有勾选运单撤消派单？'},
-      {key: 'export', title: '导出', menu},
-    ],
+    ].concat(commonButtons),
   }
 };
 

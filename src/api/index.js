@@ -15,6 +15,7 @@ import apiOrder from './order';
 import apiDispatch from './dispatch';
 import apiBill from './bill';
 import apiSupervisor from './supervisor';
+import apiTrack from './track';
 
 const api = express.Router();
 api.use('/dictionary', apiDictionary);
@@ -33,5 +34,6 @@ api.use('/order', apiOrder);
 api.use('/dispatch', apiDispatch);
 api.use('/bill', apiBill);
 api.use('/supervisor', apiSupervisor);
+api.use('/track', apiTrack);
 api.use('*', (req, res) => {res.send({returnCode: 404, returnMsg: '接口不存在'})});
 export default api;
