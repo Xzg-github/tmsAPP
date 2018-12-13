@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import OrderPage from './OrderPage';
-import helper, {showError} from '../../../../common/common';
-import {search, search2} from '../../../../common/search';
+import helper from '../../../../common/common';
+import {search2} from '../../../../common/search';
 import {showColsSetting} from '../../../../common/tableColsSetting';
 import {fetchAllDictionary, setDictionary2, getStatus} from "../../../../common/dictionary";
 import {exportExcelFunc, commonExport} from '../../../../common/exportExcelSetting';
@@ -23,7 +23,7 @@ const createOrderPageContainer = (action, getSelfState, actionCreatorsEx={}) => 
   const searchActionCreator = () => async (dispatch, getState) => {
     const {pageSize, searchData, urlList} = getSelfState(getState());
     const newState = {searchDataBak: searchData, currentPage: 1, sortInfo:{}, filterInfo:{}};
-    return search2(dispatch, action, urlList, 1, pageSize, searchData, newState);
+    return search2(dispatch, action, urlList, 1, pageSize, searchData, newState, undefined, false);
   };
 
   const resetActionCreator = () => (dispatch) => {
@@ -38,13 +38,13 @@ const createOrderPageContainer = (action, getSelfState, actionCreatorsEx={}) => 
   const pageNumberActionCreator = (currentPage) => (dispatch, getState) => {
     const {pageSize, searchDataBak={}, urlList} = getSelfState(getState());
     const newState = {currentPage, sortInfo:{}, filterInfo:{}};
-    return search2(dispatch, action, urlList, currentPage, pageSize, searchDataBak, newState);
+    return search2(dispatch, action, urlList, currentPage, pageSize, searchDataBak, newState, undefined, false);
   };
 
   const pageSizeActionCreator = (pageSize, currentPage) => async (dispatch, getState) => {
     const {searchDataBak={}, urlList} = getSelfState(getState());
     const newState = {pageSize, currentPage, sortInfo:{}, filterInfo:{}};
-    return search2(dispatch, action, urlList, currentPage, pageSize, searchDataBak, newState);
+    return search2(dispatch, action, urlList, currentPage, pageSize, searchDataBak, newState, undefined, false);
   };
 
   //配置字段按钮
@@ -147,7 +147,7 @@ const buildOrderPageCommonState = async (urlConfig, urlList, statusNames=[]) => 
 const updateTable = (dispatch, action, selfState) => {
   const {currentPage, pageSize, searchDataBak={}, urlList} = selfState;
   const newState = {sortInfo:{}, filterInfo:{}};
-  return search2(dispatch, action, urlList, currentPage, pageSize, searchDataBak, newState);
+  return search2(dispatch, action, urlList, currentPage, pageSize, searchDataBak, newState, undefined, false);
 };
 
 export default createOrderPageContainer;
