@@ -14,31 +14,20 @@ api.get('/config', async (req, res) => {
 
 //获取列表数据
 api.post('/list', async (req, res) => {
-  // const url = `${service}/transport_order/trace_order/list/search`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result:{data:[{id:'001', orderNumber: '001'}], returnTotalItem: 1,
-      tags:[{tag:'statusCustomerOrderCompleted', count: 1},
-        {tag:'statusCsSendCompleted', count: 1},
-        {tag:'statusVehicleCompletedCheck', count: 1},
-        {tag:'statusInTransport', count: 1},
-        {tag:'statusCompleted', count: 1},
-        {tag:'statusSignCompleted', count: 1},
-        {tag:'statusSettlementCompleted', count: 1},
-        {tag:'statusCancelCompleted', count: 1}]}})
+  const url = `${service}/transport_order/trace_order/list/search`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 //运输已开始
 api.post('/started', async (req, res) => {
-  // const url = `${service}/transport_order/transport_start/batch`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0});
+  const url = `${service}/transport_order/transport_start/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 //运输已完成
 api.post('/completed', async (req, res) => {
-  // const url = `${service}//transport_order/transport_end/batch`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0});
+  const url = `${service}/transport_order/transport_end/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 export default api;
