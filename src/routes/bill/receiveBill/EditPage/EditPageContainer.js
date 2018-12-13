@@ -22,7 +22,9 @@ const URL_BATCH_DELETE = '/api/bill/receiveBill/batchDelete';
 const URL_BATCH_AUDIT = '/api/bill/receiveBill/batchAudit';
 const URL_STRIKEBALANCE = '/api/bill/receiveBill/strikeBalance';
 const URL_AUTO_BILLING = '/api/bill/receiveBill/autoBilling';
-const URL_CURRENCY = `/api/bill/receiveBill/currencyTypeCode`;
+const URL_CURRENCY = `/api/bill/receiveMake/currency`;
+const URL_CONTACTS = `/api/bill/receiveBill/cunstomer_contacts`;
+const URL_HEADER_INDO = `/api/bill/receiveBill/consignee_consignor`;
 
 
 const getSelfState = (rootState) => {
@@ -34,9 +36,28 @@ const changeActionCreator = (key, value) => async (dispatch, getState) =>  {
   dispatch(action.assign({[key]: value}, 'value'));
 };
 
-const formSearchActionCreator = (KEY, key, filter, control) => async (dispatch,getState) => {
-  const {controls} = getSelfState(getState());
-  const result = getJsonResult(await fuzzySearchEx(filter, control));
+const formSearchActionCreator = (KEY, key, filter, control) => async (dispatch, getState) => {
+  const {controls, value} = getSelfState(getState());
+  const customerId = value['payCustomerId'].value;
+  let result;
+  if (control.searchType) {
+    result = getJsonResult(await fuzzySearchEx(filter, control));
+  } else {
+    switch (key) {
+      case 'currency': {
+        result = getJsonResult(await fetchJson(URL_CURRENCY, postOption({currencyTypeCode: filter, maxNumber: 65536})));
+        break;
+      }
+      case 'customerContact': {
+        result = getJsonResult(await fetchJson(URL_CONTACTS, postOption({customerId})));
+        break;
+      }
+      case 'customerHeaderInformation': {
+        result = getJsonResult(await fetchJson(URL_HEADER_INDO, postOption({customerId, name: filter})));
+        break;
+      }
+    }
+  }
   const options = result.data ? result.data : result;
   const controlsIndex = controls.findIndex(o => o.key === KEY);
   const index = controls[controlsIndex].data.findIndex(item => item.key === key);
@@ -224,15 +245,12 @@ const checkActionCreator = (KEY, rowIndex, key, checked) => (dispatch, getState)
 
 const buildEditPageState = async (config, itemData, readonly) => {
   const detailData = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
-  const {receivableBillChargeList=[], ...formValue} = detailData;
+  const {receivableBillChargeList: costInfo, ...formValue} = detailData;
   return {
     ...config,
     ...itemData,
     readonly,
-    value: {...formValue, orderNumber: itemData.orderNumber},
-    items: {
-      costInfo: receivableBillChargeList
-    },
+    value: {...formValue, costInfo, orderNumber: itemData.orderNumber},
     status: 'page'
   };
 };

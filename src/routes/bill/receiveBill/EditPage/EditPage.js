@@ -11,7 +11,7 @@ class EditPage extends React.Component {
       const props = {
         controls: item.data,
         value,
-        valid: valid[item.key],
+        valid: item.key === valid,
         readonly,
         onChange,
         onSearch: onSearch.bind(null, item.key),
@@ -26,13 +26,13 @@ class EditPage extends React.Component {
   }
 
   toTable = () => {
-    const {tables, items={}, valid=false, readonly, onExitValid, onCheck, onContentChange, onClick} = this.props;
+    const {tables, value, valid=false, readonly, onExitValid, onCheck, onContentChange, onClick} = this.props;
     return tables.map((item, i) => {
       const props = {
         maxHeight: '500px',
         cols: item.cols,
-        items: items[item.key],
-        valid: valid[item.key],
+        items: value[item.key] || [],
+        valid: item.key === valid,
         callback: {
           onCheck: onCheck.bind(null, item.key),
           onExitValid,

@@ -62,7 +62,7 @@ const index = {
 const baseInfo = [
   {key: 'orderNumber', title: '运单订单', type: 'readonly'},
   {key: 'payCustomerId', title: '付款单位', type: 'search', searchType: 'customer_all', required: true},
-  {key: 'currency', title: '币种', type: 'search', searchType: 'currency', required: true},
+  {key: 'currency', title: '币种', type: 'search', required: true},
   {key: 'customerContact', title: '联系人名称', type: 'search'},
   {key: 'customerContactPhone', title: '联系人电话', type: 'text'},
   {key: 'customerContactFax', title: '联系人传真', type: 'text'},

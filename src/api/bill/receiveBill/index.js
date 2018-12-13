@@ -5,6 +5,7 @@ import {host} from '../../globalConfig';
 let api = express.Router();
 
 const service = `${host}/tms-service-yule`;
+const archiver_service = `${host}/archiver-service`;
 
 //获取页面配置信息
 api.get('/config', async (req, res) => {
@@ -101,6 +102,17 @@ api.delete('/deleteDetail', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
 });
 
+// 获取指定客户联系人
+api.post('/cunstomer_contacts', async(req, res) => {
+  const url = `${archiver_service}/customer_contact/${req.body.customerId}/drop_list/enabled_type_enabled`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+// 获取指定客户抬头信息（收发货人）
+api.post('/consignee_consignor', async(req, res) => {
+  const url = `${archiver_service}/consignee_consignor/drop_list`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
 
 
 export default api;
