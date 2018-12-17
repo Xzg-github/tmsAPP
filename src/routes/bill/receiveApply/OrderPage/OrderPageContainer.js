@@ -113,7 +113,7 @@ const outputActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkList = tableItems.filter(o=> o.checked);
   if(!checkList.length) return showError('请勾选一条数据！');
-  showOutputDialog(checkList, 'receivable_invoice');
+  showOutputDialog(checkList, 'receivable_pay');
 };
 
 // 查询导出
