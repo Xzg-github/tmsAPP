@@ -38,6 +38,7 @@ const initActionCreator = () => async (dispatch) => {
     setDictionary(payload.editConfig.tables[0].cols, dictionary);
     setDictionary(payload.addConfig.filters, dictionary);
     setDictionary(payload.addConfig.cols, dictionary);
+    setDictionary(payload.editConfig.joinDialogTableCols, dictionary);
 
     payload.buttons = dealActions( payload.buttons, 'receiveBill');
     dispatch(action.create(payload));

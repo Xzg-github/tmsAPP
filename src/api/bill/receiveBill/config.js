@@ -126,7 +126,7 @@ const editConfig = {
   footerButtons: [
     {key: 'close', title: '关闭'},
     {key: 'save', title: '保存'},
-    {key: 'send', title: '发送'}
+    {key: 'send', title: '发送', bsStyle: 'primary'}
   ]
 };
 

@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditPage.less';
-import {SuperTable2, Card, SuperForm, SuperTitle} from '../../../../components';
+import {SuperTable2, Card, SuperForm, SuperTitle, SuperToolbar} from '../../../../components';
 
 class EditPage extends React.Component {
 
@@ -13,10 +13,10 @@ class EditPage extends React.Component {
         value,
         valid: item.key === valid,
         readonly,
-        onChange,
+        onChange: onChange.bind(null, item.key),
         onSearch: onSearch.bind(null, item.key),
-        onExitValid,
-        onAdd
+        onExitValid: onExitValid.bind(null, item.key),
+        // onAdd: onAdd.bind(null, item.key)
       };
       return (<div key={i}>
         <SuperTitle title={item.title} style={{marginTop: '10px'}}/>
@@ -35,15 +35,15 @@ class EditPage extends React.Component {
         valid: item.key === valid,
         callback: {
           onCheck: onCheck.bind(null, item.key),
-          onExitValid,
-          onContentChange
+          onExitValid: onExitValid.bind(null, item.key),
+          onContentChange: onContentChange.bind(null, item.key)
         }
       };
       const titleProps = {
         title: item.title,
         buttons: item.btns,
         readonly,
-        onClick
+        onClick: onClick.bind(null, item.key)
       };
       return (<div key={i} style={{marginTop: '10px'}}>
         <SuperTitle {...titleProps}/>
@@ -52,11 +52,22 @@ class EditPage extends React.Component {
     });
   }
 
+  toFooter = () => {
+    const {footerButtons, onClick} = this.props;
+    const props = {
+      buttons: footerButtons,
+      size: 'large',
+      onClick: onClick.bind(null, 'footer')
+    };
+    return <div className={s.footer}><SuperToolbar {...props}/></div>
+  }
+
   render() {
     return (
       <Card className={s.root}>
         {this.toForm()}
         {this.toTable()}
+        {this.toFooter()}
       </Card>
     );
   }

@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import {EnhanceLoading} from '../../../../../components/Enhance';
 import AddDialog from './AddDialog';
-import {postOption, showError, showSuccessMsg, getJsonResult, convert, fuzzySearchEx}from '../../../../../common/common';
+import {postOption, showError, showSuccessMsg, getJsonResult, convert, fuzzySearchEx, fetchJson}from '../../../../../common/common';
 import {Action} from '../../../../../action-reducer/action';
 import {getPathValue} from '../../../../../action-reducer/helper';
 import showPopup from '../../../../../standard-business/showPopup';
@@ -54,23 +54,11 @@ const createBillActionCreator = (buildType) => async (dispatch, getState) => {
     const checkList = items.filter(o=> o.checked);
     if(!checkList.length) return showError('请勾选一条数据！');
     execWithLoading(async () => {
-      // const incomeList = checkList.map(o=>{
-      //   return convert({
-      //     amount: o.amount,
-      //     customerDelegateCode: o.customerDelegateNumber,
-      //     customerId: o.customerGuid,
-      //     id: o.id,
-      //     incomeCode: o.balanceNumber,
-      //     incomeType :0,
-      //     insertTime: o.insertDate,
-      //     logisticsOrderNumber: o.logisticsOrderGuid,
-      //     statusType: o.statusType,
-      //     tenantInstitutionId: o.tenantInstitutionId
-      //   })
-      // });
-      // const { returnCode, result, returnMsg } = await fetchJson(URL_CREATE_BILL, postOption({buildType, incomeList}));
-      // if(returnCode !== 0) return showError(returnMsg);
-      showSuccessMsg('生成账单成功！');
+      const transportOrderIdList = checkList.map(o => convert(o));
+      const params = {opType: buildType, transportOrderIdList};
+      const { returnCode, result, returnMsg } = await fetchJson(URL_CREATE_BILL, postOption(params));
+      if(returnCode !== 0) return showError(returnMsg);
+      showSuccessMsg(returnMsg);
     });
   }
   dispatch(action.assign({visible: false}));
