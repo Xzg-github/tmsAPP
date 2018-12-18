@@ -118,13 +118,13 @@ const controls = [
 ];
 
 const tables = [
-  {key: 'costInfo', title: '费用信息', cols: costInfoCols, btns: costInfoButtons}
+  {key: 'chargeList', title: '费用信息', cols: costInfoCols, btns: costInfoButtons}
 ];
 
 const editConfig = {
   controls, tables, joinDialogTableCols,
   footerButtons: [
-    {key: 'close', title: '关闭'},
+    {key: 'close', title: '关闭', readonlyPage: true},
     {key: 'save', title: '保存'},
     {key: 'send', title: '发送', bsStyle: 'primary'}
   ]

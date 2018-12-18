@@ -7,11 +7,12 @@ import { exportExcelFunc, commonExport } from '../../../../common/exportExcelSet
 import {search2} from '../../../../common/search';
 import showAddDialog from './AddDialog/AddDialogContainer';
 import {showOutputDialog} from '../../../../components/ModeOutput/ModeOutput';
+import execWithLoading from '../../../../standard-business/execWithLoading';
 
 const STATE_PATH = ['receiveBill'];
 const action = new Action(STATE_PATH);
 const URL_LIST = '/api/bill/receiveBill/list';
-const URL_DELETE = '/api/bill/receiveBill/list';
+const URL_DELETE = '/api/bill/receiveBill/delete';
 const URL_AUDIT_BATCH = '/api/bill/receiveBill/auditBatch';
 
 const getSelfState = (rootState) => {
@@ -38,8 +39,11 @@ const searchActionCreator = async (dispatch, getState) => {
 const resetActionCreator = action.assign({searchData: {}});
 
 const addActionCreator = async (dispatch, getState) => {
-  const {addConfig} = getSelfState(getState());
-  await showAddDialog(addConfig);
+  execWithLoading(async () => {
+    const {addConfig} = getSelfState(getState());
+    showAddDialog(addConfig);
+    searchActionCreator(dispatch, getState);
+  });
 };
 
 const setReadonlyTables = (tables=[]) => {
@@ -60,7 +64,13 @@ const showEditPage = (dispatch, getState, item, readonly=false) => {
   const key = item['billNumber'];
   if (helper.isTabExist(tabs, key)) return dispatch(action.assign({activeKey: key}));
   const config = deepCopy(editConfig);
-  readonly && (config.tables = setReadonlyTables(config.tables));
+  if (!readonly && (item.statusType !== 'status_draft')) {
+    return showError('只有草稿状态下才能编辑！');
+  }
+  if (readonly) {
+    config.tables = setReadonlyTables(config.tables);
+    config.footerButtons = config.footerButtons.filter(o => o.readonlyPage);
+  }
   dispatch(action.add({key, title: key}, 'tabs'));
   dispatch(action.assign({[key]: {readonly, config, itemData: item}, activeKey: key}));
 };
@@ -89,11 +99,12 @@ const deleteActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkList = tableItems.filter(o=> o.checked);
   if(checkList.length === 0) return showError('请勾选一条数据！');
-  if(checkList.find(o => o.statusType === "status_draft")) return showError('请选择草稿状态的数据！');
+  if(checkList.find(o => o.statusType !== "status_draft")) return showError('请选择草稿状态的数据！');
   const ids = checkList.map(o => o.id);
   const {returnCode, returnMsg, result} = await fetchJson(URL_DELETE, postOption(ids));
   if(returnCode !==0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
+  await searchActionCreator(dispatch, getState);
 };
 
 // 审核
@@ -106,6 +117,7 @@ const auditActionCreator = async (dispatch, getState) => {
   const {returnCode, returnMsg, result} = await fetchJson(URL_AUDIT_BATCH, postOption(ids));
   if(returnCode !==0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
+  await searchActionCreator(dispatch, getState);
 };
 
 // 输出

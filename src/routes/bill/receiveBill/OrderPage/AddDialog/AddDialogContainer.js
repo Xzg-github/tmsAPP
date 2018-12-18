@@ -54,7 +54,7 @@ const createBillActionCreator = (buildType) => async (dispatch, getState) => {
     const checkList = items.filter(o=> o.checked);
     if(!checkList.length) return showError('请勾选一条数据！');
     execWithLoading(async () => {
-      const transportOrderIdList = checkList.map(o => convert(o));
+      const transportOrderIdList = checkList.map(o => o.id);
       const params = {opType: buildType, transportOrderIdList};
       const { returnCode, result, returnMsg } = await fetchJson(URL_CREATE_BILL, postOption(params));
       if(returnCode !== 0) return showError(returnMsg);

@@ -16,10 +16,10 @@ class EditPage extends React.Component {
         onChange: onChange.bind(null, item.key),
         onSearch: onSearch.bind(null, item.key),
         onExitValid: onExitValid.bind(null, item.key),
-        // onAdd: onAdd.bind(null, item.key)
+        onAdd: onAdd.bind(null, item.key)
       };
       return (<div key={i}>
-        <SuperTitle title={item.title} style={{marginTop: '10px'}}/>
+        <div className={s.superTitle}><SuperTitle title={item.title}/></div>
         <SuperForm {...props}/>
       </div>)
     });
@@ -45,8 +45,8 @@ class EditPage extends React.Component {
         readonly,
         onClick: onClick.bind(null, item.key)
       };
-      return (<div key={i} style={{marginTop: '10px'}}>
-        <SuperTitle {...titleProps}/>
+      return (<div key={i}>
+        <div className={s.superTitle}><SuperTitle {...titleProps}/></div>
         <SuperTable2 {...props}/>
       </div>)
     });

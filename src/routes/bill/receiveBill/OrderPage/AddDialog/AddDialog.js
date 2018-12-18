@@ -27,7 +27,7 @@ class AddDialog extends React.Component {
     const props = {
       cols,
       items,
-      maxHeight: "400px",
+      maxHeight: "300px",
       callback: {onCheck}
     };
     return (<div>

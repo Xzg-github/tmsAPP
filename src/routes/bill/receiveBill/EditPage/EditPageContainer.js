@@ -7,6 +7,7 @@ import {EnhanceLoading} from '../../../../components/Enhance';
 import showJoinDialog from './JoinDialog/JoinDialog';
 import execWithLoading from '../../../../standard-business/execWithLoading';
 import {updateOne} from '../../../../action-reducer/array';
+import {showAddCustomerFactoryDialog} from '../../../config/customerFactory/EditDialogContainer';
 
 const PARENT_STATE_PATH = ['receiveBill'];
 const STATE_PATH = ['receiveBill', 'edit'];
@@ -27,17 +28,24 @@ const getSelfState = (rootState) => {
   return parent[parent.activeKey];
 };
 
-const changeActionCreator = (key, value) => async (dispatch, getState) =>  {
-  dispatch(action.assign({[key]: value}, 'value'));
+const changeActionCreator = (KEY, keyName, keyValue) => async (dispatch, getState) =>  {
+  let payload = {[keyName]: keyValue};
+  if (keyValue && keyName === 'customerHeaderInformation') {
+    payload['customerAddress'] = keyValue.address;
+  } else if (keyValue && keyName === 'customerContact') {
+    payload['customerContactPhone'] = keyValue.contactMobile;
+    payload['customerContactFax'] = keyValue.contactFax;
+  }
+  dispatch(action.assign(payload, 'value'));
 };
 
 const formSearchActionCreator = (KEY, key, filter, control) => async (dispatch, getState) => {
   const {controls, value} = getSelfState(getState());
-  const customerId = value['payCustomerId'].value;
   let result;
   if (control.searchType) {
     result = getJsonResult(await fuzzySearchEx(filter, control));
   } else {
+    const customerId = value['payCustomerId'].value;
     switch (key) {
       case 'currency': {
         result = getJsonResult(await fetchJson(URL_CURRENCY, postOption({currencyTypeCode: filter, maxNumber: 65536})));
@@ -78,22 +86,23 @@ const joinActionCreator = (KEY) => async (dispatch, getState) => {
   };
   const onOk = async (resultItems=[]) => {
     if (!resultItems) return;
-    const params = {incomeDetailIdList: resultItems, id};
-    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_JION, postOption(params));
+    const incomeDetailIdList = resultItems.map(o => Number(o.id));
+    const {returnCode, result, returnMsg} = await helper.fetchJson(`${URL_JION}/${id}`, postOption(incomeDetailIdList));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    const newItems = value[KEY].concat(resultItems);
+    const list = value[KEY] || [];
+    const newItems = list.concat(resultItems);
     dispatch(action.assign({[KEY]: newItems}, 'value'));
   };
   await showJoinDialog(params, onOk);
 };
 
 const removeActionCreator = (KEY) => async (dispatch, getState) =>  {
-  const {value} = getSelfState(getState());
+  const {value, id} = getSelfState(getState());
   const checkList = value[KEY].filter(item => item.checked);
   if (checkList.length === 0) return showError('请勾选一条数据！');
-  const params = {incomeDetailIdList: checkList, id};
-  const {returnCode, result, returnMsg} = await helper.fetchJson(URL_REMOVE, postOption(params));
+  const incomeDetailIdList = checkList.map(o => Number(o.transportOrderIncomeId));
+  const {returnCode, result, returnMsg} = await helper.fetchJson(`${URL_REMOVE}/${id}`, postOption(incomeDetailIdList));
   if (returnCode !== 0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
   const notCheckList = value[KEY].filter(item => !item.checked);
@@ -117,7 +126,7 @@ const closeActionCreator = () => (dispatch, getState) => {
 const saveActionCreator = () => async (dispatch, getState) => {
   execWithLoading(async () => {
     const {value} = getSelfState(getState());
-    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SAVE, postOption(...convert(value)));
+    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SAVE, postOption({...convert(value)}));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
     closeActionCreator()(dispatch, getState);
@@ -127,7 +136,7 @@ const saveActionCreator = () => async (dispatch, getState) => {
 const sendActionCreator = () => async (dispatch, getState) => {
   execWithLoading(async () => {
     const {value} = getSelfState(getState());
-    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SEND, postOption(...convert(value)));
+    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SEND, postOption({...convert(value)}));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
     closeActionCreator()(dispatch, getState);
@@ -153,6 +162,12 @@ const clickActionCreator = (KEY, key) => {
 };
 
 const exitValidActionCreator = (KEY) => action.assign({valid: KEY});
+
+const onAddActionCreator = (KEY) => async (dispatch, getState) => {
+  execWithLoading(async () => {
+    showAddCustomerFactoryDialog();
+  });
+};
 
 const buildEditPageState = async (config, itemData, readonly) => {
   const detailData = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
@@ -188,6 +203,7 @@ const actionCreators = {
   onSearch: formSearchActionCreator,
   onContentChange: onContentChangeActionCreator,
   onExitValid: exitValidActionCreator,
+  onAdd: onAddActionCreator
 };
 
 const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(EditPage));
