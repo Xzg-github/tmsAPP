@@ -43,6 +43,7 @@ const supervisor = [
 // 跟踪管控侧边栏
 const track = [
   {key: 'track_order'},     // 运单跟踪
+  {key: 'file_manager'},     // 文件管理
 ];
 
 // 应收管理子菜单

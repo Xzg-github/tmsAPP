@@ -1,16 +1,16 @@
-import createOrderTabPageContainer, {buildOrderTabPageCommonState, updateTable} from '../common/OrderTabPage/createOrderTabPageContainer';
+import createOrderTabPageContainer, {buildOrderTabPageCommonState, updateTable} from '../../order/common/OrderTabPage/createOrderTabPageContainer';
 import {getPathValue} from '../../../action-reducer/helper';
 import {Action} from "../../../action-reducer/action";
 import helper from "../../../common/common";
-import showDispatchDialog from './dispatchDialog/DispatchDialogContainer';
+import showUploadDialog from './uploadDialog/UploadDialogContainer';
 
-const STATE_PATH = ['pending'];
+const STATE_PATH = ['fileManager'];
 const action = new Action(STATE_PATH);
 
 //根据页面需求覆写和扩展页面状态属性
 const buildOrderTabPageState = async () => {
-  const urlConfig = '/api/order/pending/config';
-  const urlList = '/api/order/pending/list';
+  const urlConfig = '/api/track/file_manager/config';
+  const urlList = '/api/track/file_manager/list';
   const statusNames = ['transport_order', 'order_type'];
   return buildOrderTabPageCommonState(urlConfig, urlList, statusNames);
 };
@@ -43,6 +43,21 @@ const searchActionCreator = (key, filter) => async (dispatch) => {
       data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, districtName: filter}));
       break;
     }
+    case 'supplierId': {
+      url = `/api/config/supplierDriver/all_supplier`;
+      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, filter}));
+      break;
+    }
+    case 'carInfoId': {
+      url = `/api/dispatch/done/car_drop_list`;
+      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, carNumber: filter}));
+      break;
+    }
+    case 'driverId': {
+      url = `/api/dispatch/done/driver_drop_list`;
+      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, diverName: filter}));
+      break;
+    }
     default:
       return;
   }
@@ -52,59 +67,56 @@ const searchActionCreator = (key, filter) => async (dispatch) => {
   }
 };
 
-const showOrderInfoPage = (dispatch, item, selfState, readonly) => {
+const showOrderInfoPage = (dispatch, item, selfState) => {
   const key = item.orderNumber;
   if (helper.isTabExist(selfState.tabs, key)) {
     dispatch(action.assign({activeKey: key}));
   } else {
-    const closeFunc = () => {
-      const newTabs = selfState.tabs.filter(tab => tab.key !== key);
-      dispatch(action.assign({tabs: newTabs, [key]: undefined, activeKey: 'index'}));
-      return updateTable(dispatch, action, selfState, ['sending']);
-    };
     const payload = {
       id: item.id,
-      readonly,
-      closeFunc
+      readonly: true,
     };
     dispatch(action.add({key, title: key}, 'tabs'));
     dispatch(action.assign({[key]: payload, activeKey: key}));
   }
 };
 
-//完善
-const editActionCreator = (tabKey) => async (dispatch, getState) => {
-  const selfState = getSelfState(getState());
-  const items = selfState.tableItems[tabKey].filter(item => item.checked === true);
-  if (items.length !== 1) return helper.showError(`请勾选一条记录`);
-  return showOrderInfoPage(dispatch, items[0], selfState, false);
-};
-
-//删除
-const deleteActionCreator = (tabKey) => async (dispatch, getState) => {
-  const {tableItems} = getSelfState(getState());
-  const ids = tableItems[tabKey].filter(item => item.checked === true).map(item => item.id);
-  if (ids.length < 1) return helper.showError(`请先勾选记录`);
-  const {returnCode, returnMsg} = await helper.fetchJson(`/api/order/pending`, helper.postOption(ids, 'delete'));
-  if (returnCode !== 0) return helper.showError(returnMsg);
-  helper.showSuccessMsg('删除成功');
-  return updateTable(dispatch, action, getSelfState(getState()));
-};
-
-//任务派发
-const sendActionCreator = (tabKey) => async (dispatch, getState) => {
+//上传
+const uploadActionCreator = (tabKey) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
   if (checkedItems.length !== 1) return helper.showError(`请先勾选一条记录`);
-  if (true === await showDispatchDialog(checkedItems[0])) {
+  if (true === await showUploadDialog(checkedItems[0])) {
+    return updateTable(dispatch, action, getSelfState(getState()), ['checking']);
+  }
+};
+
+//编辑
+const editActionCreator = (tabKey) => async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
+  if (checkedItems.length !== 1) return helper.showError(`请先勾选一条记录`);
+  if (true === await showUploadDialog(checkedItems[0], true)) {
     return updateTable(dispatch, action, getSelfState(getState()));
   }
 };
 
+//审核通过
+const checkActionCreator = (tabKey) => async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const ids = tableItems[tabKey].filter(item => item.checked === true).map(item => item.id);
+  if (ids.length < 1) return helper.showError(`请先勾选记录`);
+  const {returnCode, returnMsg} = await helper.fetchJson(`/api/track/file_manager/check`, helper.postOption(ids));
+  if (returnCode !== 0) return helper.showError(returnMsg);
+  helper.showSuccessMsg('操作成功');
+  return updateTable(dispatch, action, getSelfState(getState()), ['checked']);
+};
+
 const buttons = {
+  upload: uploadActionCreator,
   edit: editActionCreator,
-  del: deleteActionCreator,
-  send: sendActionCreator,
+  check: checkActionCreator,
+  check1: checkActionCreator,
 };
 
 const clickActionCreator = (tabKey, key) => {
@@ -116,18 +128,21 @@ const clickActionCreator = (tabKey, key) => {
   }
 };
 
+// 查看
 const doubleClickActionCreator = (tabKey, index) => (dispatch, getState) => {
-  if (tabKey === 'completing') {
-    const selfState = getSelfState(getState());
-    const item = selfState.tableItems[tabKey][index];
-    return showOrderInfoPage(dispatch, item, selfState, false);
-  }
+  const selfState = getSelfState(getState());
+  const item = selfState.tableItems[tabKey][index];
+  return showOrderInfoPage(dispatch, item, selfState);
 };
 
 // 查看
 const linkActionCreator = (tabKey, key, rowIndex, item) => (dispatch, getState) => {
-  const selfState = getSelfState(getState());
-  return showOrderInfoPage(dispatch, item, selfState, true);
+  if (key === 'orderNumber') {
+    const selfState = getSelfState(getState());
+    return showOrderInfoPage(dispatch, item, selfState);
+  }else if (key === 'fileList') {
+
+  }
 };
 
 const actionCreatorsEx = {
