@@ -1,4 +1,4 @@
-import createOrderTabPageContainer, {buildOrderTabPageCommonState, updateTable} from '../common/OrderTabPage/createOrderTabPageContainer';
+import createOrderTabPageContainer, {buildOrderTabPageCommonState, updateTable} from '../../../standard-business/OrderTabPage/createOrderTabPageContainer';
 import {getPathValue} from '../../../action-reducer/helper';
 import {Action} from "../../../action-reducer/action";
 import helper from "../../../common/common";
@@ -17,39 +17,6 @@ const buildOrderTabPageState = async () => {
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
-};
-
-const searchActionCreator = (key, filter) => async (dispatch) => {
-  let data, options, url;
-  switch (key) {
-    case 'customerId': {
-      url = `/api/config/customer_contact/allCustomer`;
-      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, filter}));
-      break;
-    }
-    case 'customerServiceId': {
-      url = `/api/basic/user/name`;
-      data = await helper.fetchJson(url, helper.postOption({filter}));
-      break;
-    }
-    case 'carModeId': {
-      url = `/api/order/input/car_mode_drop_list`;
-      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, carMode: filter}));
-      break;
-    }
-    case 'departure':
-    case 'destination': {
-      url = `/api/order/input/charge_place_options`;
-      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, districtName: filter}));
-      break;
-    }
-    default:
-      return;
-  }
-  if (data.returnCode === 0) {
-    options = data.result instanceof Array? data.result:data.result.data;
-    dispatch(action.update({options}, 'filters', {key: 'key', value: key}));
-  }
 };
 
 const showOrderInfoPage = (dispatch, item, selfState, readonly) => {
@@ -131,7 +98,6 @@ const linkActionCreator = (tabKey, key, rowIndex, item) => (dispatch, getState) 
 };
 
 const actionCreatorsEx = {
-  onSearch: searchActionCreator,
   onClick: clickActionCreator,
   onDoubleClick: doubleClickActionCreator,
   onLink: linkActionCreator
