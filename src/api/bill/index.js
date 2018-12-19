@@ -23,7 +23,7 @@ api.use('/pay_change', payChange);
 api.use('/pay_bill', payBill);
 api.use('/pay_monthly_bill', payMonthlyBill);
 api.use('/audit', audit);
-api.use('/extra_apply', extraApply);
+api.use('/extraApply', extraApply);
 api.use('/append', append);
 
 export default api;
