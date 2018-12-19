@@ -84,16 +84,9 @@ api.post('/chargeItemId', async (req, res) => {
 
 // 整审（批量）
 api.post('/auditBatch', async (req, res) => {
-  const url = `${tms_service}/income/check/batch`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-  res.send({returnCode: 0, result: 'Success', returnMsg: '整审成功！'});
-});
-
-// 整审（批量）检查
-api.post('/audit/preparing', async (req, res) => {
-  const url = `${tms_service}/income/check/preparing`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: '该结算单未产生费用，是否继续审核？', returnMsg: 'Success'});
+  const url = `${tms_service}/transport_order/income/check/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
+  // res.send({returnCode: 0, result: 'Success', returnMsg: '整审成功！'});
 });
 
 // 生成结算单
@@ -139,5 +132,12 @@ api.post('/autoBilling/:id', async (req, res) => {
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
   res.send({returnCode: 0, result: 'Success', returnMsg: '自动计费成功！'});
 });
+
+// 获取费用项
+api.get('/getCost/:id', async (req, res) => {
+  const url = `${archiver_service}/customer_charge_item/custom/charge_items/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
 
 export default api;

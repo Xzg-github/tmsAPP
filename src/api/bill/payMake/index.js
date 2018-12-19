@@ -132,16 +132,8 @@ api.post('/chargeItemId', async (req, res) => {
 
 // 整审（批量）
 api.post('/auditBatch', async (req, res) => {
-  const url = `${tms_service}/cost/check/batch`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-  res.send({returnCode: 0, result: 'Success', returnMsg: '整审成功！'});
-});
-
-// 整审（批量）检查
-api.post('/audit/preparing', async (req, res) => {
-  const url = `${tms_service}/cost/check/preparing`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: '该结算单未产生费用，是否继续审核？', returnMsg: 'Success'});
+  const url = `${tms_service}/transport_order/cost/check/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
 // 生成结算单

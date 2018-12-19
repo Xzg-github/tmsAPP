@@ -4,7 +4,7 @@ import { EnhanceLoading } from '../../../components/Enhance';
 import { Action } from '../../../action-reducer/action';
 import { getPathValue } from '../../../action-reducer/helper';
 import { buildOrderPageState } from '../../../common/state';
-import helper, {deepCopy, fetchJson, getJsonResult} from '../../../common/common';
+import helper, {fetchJson, getJsonResult} from '../../../common/common';
 import { search } from '../../../common/search';
 import { fetchDictionary, setDictionary } from '../../../common/dictionary';
 import { dealActions } from '../../../common/check';
@@ -31,7 +31,7 @@ const initActionCreator = () => async (dispatch) => {
     const payload = buildOrderPageState(list, index, {tabs, activeKey, editConfig, addConfig, status: 'page'});
 
     //获取状态表单字典 AddDialog运单状态取表单字典transport_order
-    dictionary['status_type'] = getJsonResult(await getStatus('receivable_bill'));
+    dictionary['status_type'] = getJsonResult(await getStatus('receivable_invoice'));
     dictionary['status_type_addDialog'] = getJsonResult(await getStatus('transport_order'));
     setDictionary(payload.tableCols, dictionary);
     setDictionary(payload.filters, dictionary);

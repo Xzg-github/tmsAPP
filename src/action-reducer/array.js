@@ -62,4 +62,4 @@ const updateArray = (state, action) => {
   }
 };
 
-export {addArrayItem, delArrayItem, updateArray};
+export {addArrayItem, delArrayItem, updateArray, updateOne};
