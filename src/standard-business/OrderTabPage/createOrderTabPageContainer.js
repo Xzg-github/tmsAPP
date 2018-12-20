@@ -172,8 +172,8 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[]) 
       dic[item] = helper.getJsonResult(await getStatus(item));
     }
     setDictionary2(dic, config.filters, config.tableCols);
-    const {subActiveKey, subTabs, isTotal, initPageSize, fixedFilters={}, searchDataBak={}, buttons={}} = config;
     //获取列表数据
+    const {subActiveKey, subTabs, isTotal, initPageSize, fixedFilters={}, searchDataBak={}, buttons={}} = config;
     const body = {
       itemFrom: 0,
       itemTo: initPageSize,
@@ -199,7 +199,8 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[]) 
       pageSize[tab.key] = initPageSize;
       currentPage[tab.key] = 1;
       isRefresh[tab.key] = true;
-      finalButtons[tab.key] = buttons[tab.key] || []
+      //处理按钮权限(要求按钮权限的资源代码结构为"上级资源代码_按钮key")
+      finalButtons[tab.key] = buttons[tab.key] ? buttons[tab.key].filter(btn => helper.getActions(helper.getRouteKey(), true).includes(btn.key)) : []
     });
     tableItems[subActiveKey] = data.data || [];
     isRefresh[subActiveKey] = false;

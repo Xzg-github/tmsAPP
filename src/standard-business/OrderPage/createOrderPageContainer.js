@@ -122,8 +122,10 @@ const buildOrderPageCommonState = async (urlConfig, urlList, statusNames=[]) => 
       dic[item] = helper.getJsonResult(await getStatus(item));
     }
     setDictionary2(dic, config.filters, config.tableCols);
-    const {pageSize, fixedFilters={}, searchDataBak={}} = config;
+    //处理按钮权限(要求按钮权限的资源代码结构为"上级资源代码_按钮key")
+    config.buttons = config.buttons.filter(btn => helper.getActions(helper.getRouteKey(), true).includes(btn.key));
     //获取列表数据
+    const {pageSize, fixedFilters={}, searchDataBak={}} = config;
     const body = {
       itemFrom: 0,
       itemTo: pageSize,
