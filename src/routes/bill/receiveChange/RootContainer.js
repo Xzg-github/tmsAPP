@@ -1,5 +1,7 @@
 import {connect} from 'react-redux';
 import {EnhanceLoading} from '../../../components/Enhance';
+import OrderPageContainer from './OrderPageContainer';
+import EditPageContainer from './EditPageContainer';
 import helper, {fetchJson, getJsonResult, initTableCols, postOption, showError} from "../../../common/common";
 import {Action} from "../../../action-reducer/action";
 import {search} from "../../../common/search";
@@ -12,9 +14,10 @@ import {createCommonTabPage} from "../../../standard-business/createTabPage";
 const STATE_PATH = ['receiveChange'];
 const action = new Action(STATE_PATH);
 
-const URL_CONFIG = '/api/bill/change_receive/config';
-const URL_LIST = '/api/bill/change_receive/list';
-const URL_CURRENCY = '/api/bill/change_receive/currency';
+const URL_CONFIG = '/api/bill/receive_change/config';
+const CUSTOM_CONFIG = '/api/bill/receive_change/custom_config';
+const URL_LIST = '/api/bill/receive_change/list';
+const URL_CURRENCY = '/api/bill/receive_change/currency';
 
 /**
  * @description 获取改单原因, 来自于系统字典responsible_party下级
@@ -32,7 +35,7 @@ const getRenewalReson = async (partyOptions) => {
  * @param payload
  */
 const assignPrivilege = (payload) => {
-  const actions = helper.getActions('change_receive', true);
+  const actions = helper.getActions('receiveChange', true);
   if (actions.length > 0) {
     payload.buttons = payload.buttons.filter(({key}) => actions.includes(key));
     payload.pageReadonly = !actions.includes('edit');
@@ -40,6 +43,17 @@ const assignPrivilege = (payload) => {
       delete payload.editConfig.footerButtons[2];
     }
   }
+};
+
+const uniqueArrHanlder = (tableCols=[], customConfig=[]) => {
+  const otherCols = customConfig.filter(o => !tableCols.map(k=>k.key).includes(o.key));
+  const cols = tableCols.concat(otherCols);
+  return cols.reduce((newCols, col) => {
+    if(!newCols.map(o=>o.key).includes(col.key)){
+      newCols.push(col);
+    }
+    return newCols
+  }, []);
 };
 
 const getSelfState = (rootState) => {
@@ -50,15 +64,18 @@ const initActionCreator = () => async (dispatch) => {
   try{
     dispatch(action.assign({status: 'loading'}));
     const {index, editConfig, dicNames, tabs, activeKey} = getJsonResult(await fetchJson(URL_CONFIG));
+    // 添加备用字段
+    const customConfig = getJsonResult(await fetchJson(`${CUSTOM_CONFIG}/renewal_detail`));
+    editConfig.tables[0].cols = uniqueArrHanlder(editConfig.tables[0].cols, customConfig);
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}));
     const dictionary = getJsonResult(await fetchDictionary(dicNames));
-    dictionary['statusType'] = getJsonResult(await getStatus('renewal'));
+    dictionary['status_type'] = getJsonResult(await getStatus('renewal'));
     const currency = getJsonResult(await fetchJson(URL_CURRENCY, postOption({currencyTypeCode: '', maxNumber: 65536})));
     const renewalReasonOptions = await getRenewalReson(dictionary['responsible_party']);
     const newState = {tabs, activeKey, editConfig, status: 'page'};
     const payload = buildOrderPageState(list, index, newState);
 
-    setDictionary(payload.filter, dictionary);
+    setDictionary(payload.filters, dictionary);
     setDictionary(payload.tableCols, dictionary);
     setDictionary(payload.editConfig.controls[0].data, dictionary);
     setDictionary(payload.editConfig.tables[0].cols, dictionary);
