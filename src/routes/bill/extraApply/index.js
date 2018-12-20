@@ -1,4 +1,5 @@
 import React from 'react';
+import RootContainer from './RootContainer';
 
 export default {
   path: '/extra_apply',
@@ -6,7 +7,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <div>额外费用申请</div>
+      component: <RootContainer/>
     };
   }
 }
