@@ -88,12 +88,21 @@ const doubleClickActionCreator = (tabKey, index) => (dispatch, getState) => {
 };
 
 // 查看
-const linkActionCreator = (tabKey, key, rowIndex, item) => (dispatch, getState) => {
+const linkActionCreator = (tabKey, key, rowIndex, item) => async (dispatch, getState) => {
   if (key === 'orderNumber') {
     const selfState = getSelfState(getState());
     return showOrderInfoPage(dispatch, item, selfState);
   }else if (key === 'fileList') {
-
+    const URL_DOWNLOAD= '/api/track/file_manager/download';  // 点击下载
+    if(item.fileFormat === 'id'){
+      const {returnCode, result, returnMsg} = await helper.fetchJson(`${URL_DOWNLOAD}/${item.fileUrl}`);
+      if (returnCode !== 0) {
+        return helper.showError(returnMsg);
+      }
+      helper.download(`/api/proxy/zuul/file-center-service/${result[item.fileUrl]}`,'file');
+    }else {
+      helper.download(item.fileUrl, 'file');
+    }
   }
 };
 

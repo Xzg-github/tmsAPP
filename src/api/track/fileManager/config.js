@@ -55,9 +55,9 @@ const commonButtons = [{key: 'export', title: '导出', menu}];
 const config = {
   tabs: [{key: 'index', title: '文件管理', close: false}],
   subTabs: [
-    {key: 'uploading', title:'待上传', status: 0},
-    {key: 'checking', title:'待审核', status: 1},
-    {key: 'checked', title:'已审核', status: 2},
+    {key: 'uploading', title:'待上传', status: '0'},
+    {key: 'checking', title:'待审核', status: '1'},
+    {key: 'checked', title:'已审核', status: '2'},
   ],
   filters,
   tableCols,

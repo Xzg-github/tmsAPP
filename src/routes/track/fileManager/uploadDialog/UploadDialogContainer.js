@@ -46,7 +46,7 @@ const closePreviewActionCreator = () => {
 };
 
 const okActionCreator = () => async (dispatch, getState) => {
-  const {controls, formValue, fileList, delFileList, isEdit} = getSelfState(getState());
+  const {controls, formValue, fileList, delFileList} = getSelfState(getState());
   if (!helper.validValue(controls, formValue)) {
     dispatch(action.assign({valid: true}));
     return;
@@ -57,11 +57,11 @@ const okActionCreator = () => async (dispatch, getState) => {
   const newValue = {
     id: formValue.id,
     remark: formValue.remark,
-    uploadType: '',
+    uploadType: 'PC',
     fileList: commitList
   };
   const URL_OK = '/api/track/file_manager/upload'; //确定
-  let data = await helper.fetchJson(URL_OK, helper.postOption(helper.convert(newValue), isEdit ? 'put':'post'));
+  let data = await helper.fetchJson(URL_OK, helper.postOption(helper.convert(newValue), 'put'));
   dispatch(action.assign({confirmLoading: false}));
   if (data.returnCode !== 0) {
     return helper.showError(data.returnMsg);
@@ -156,7 +156,7 @@ const formatDisplayList =  async (originFileList=[]) => {
 * 参数：data: 【必需】待上传、编辑的记录信息
 * 返回值：成功返回true，取消或关闭时返回空
 */
-export default async (data, isEdit = false) => {
+export default async (data) => {
   const controls = [
     {key: 'orderNumber', title: '运单号', type:'readonly', required:true},
     {key: 'taskTypeName', title: '文件任务', type:'readonly', required:true},
@@ -177,8 +177,7 @@ export default async (data, isEdit = false) => {
     editFileList: fileList,
     previewVisible: false,
     previewImage: '',
-    visible: true,
-    isEdit
+    visible: true
   };
   global.store.dispatch(action.create(props));
   const Container = connect(mapStateToProps, actionCreators)(UploadDialog);
