@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import OrderPage from './OrderPage';
-import helper, {showError} from '../../../../common/common';
-import {search, search2} from '../../../../common/search';
-import {showColsSetting} from '../../../../common/tableColsSetting';
-import {fetchAllDictionary, setDictionary2, getStatus} from "../../../../common/dictionary";
-import {exportExcelFunc, commonExport} from '../../../../common/exportExcelSetting';
+import helper from '../../common/common';
+import {search2} from '../../common/search';
+import {showColsSetting} from '../../common/tableColsSetting';
+import {fetchAllDictionary, setDictionary2, getStatus} from "../../common/dictionary";
+import {exportExcelFunc, commonExport} from '../../common/exportExcelSetting';
 
 /**
  * 功能：生成一个公共的列表页面容器组件
@@ -15,6 +15,11 @@ import {exportExcelFunc, commonExport} from '../../../../common/exportExcelSetti
  */
 const createOrderPageContainer = (action, getSelfState, actionCreatorsEx={}) => {
 
+  const searchOptionsActionCreator = (key, filter, config) => async (dispatch) => {
+    const {returnCode, result} = await helper.fuzzySearchEx(filter, config);
+    dispatch(action.update({options: returnCode === 0 ? result : undefined}, 'filters', {key: 'key', value: key}));
+  };
+
   const changeActionCreator = (key, value) => {
     return action.assign({[key]: value}, 'searchData');
   };
@@ -23,7 +28,7 @@ const createOrderPageContainer = (action, getSelfState, actionCreatorsEx={}) => 
   const searchActionCreator = () => async (dispatch, getState) => {
     const {pageSize, searchData, urlList} = getSelfState(getState());
     const newState = {searchDataBak: searchData, currentPage: 1, sortInfo:{}, filterInfo:{}};
-    return search2(dispatch, action, urlList, 1, pageSize, searchData, newState);
+    return search2(dispatch, action, urlList, 1, pageSize, searchData, newState, undefined, false);
   };
 
   const resetActionCreator = () => (dispatch) => {
@@ -38,13 +43,13 @@ const createOrderPageContainer = (action, getSelfState, actionCreatorsEx={}) => 
   const pageNumberActionCreator = (currentPage) => (dispatch, getState) => {
     const {pageSize, searchDataBak={}, urlList} = getSelfState(getState());
     const newState = {currentPage, sortInfo:{}, filterInfo:{}};
-    return search2(dispatch, action, urlList, currentPage, pageSize, searchDataBak, newState);
+    return search2(dispatch, action, urlList, currentPage, pageSize, searchDataBak, newState, undefined, false);
   };
 
   const pageSizeActionCreator = (pageSize, currentPage) => async (dispatch, getState) => {
     const {searchDataBak={}, urlList} = getSelfState(getState());
     const newState = {pageSize, currentPage, sortInfo:{}, filterInfo:{}};
-    return search2(dispatch, action, urlList, currentPage, pageSize, searchDataBak, newState);
+    return search2(dispatch, action, urlList, currentPage, pageSize, searchDataBak, newState, undefined, false);
   };
 
   //配置字段按钮
@@ -86,12 +91,12 @@ const createOrderPageContainer = (action, getSelfState, actionCreatorsEx={}) => 
     onWebExport: webExportActionCreator, //点击页面导出按钮
     onAllExport: allExportActionCreator, //点击查询导出按钮
     onChange: changeActionCreator,        //过滤条件输入改变
+    onSearch: searchOptionsActionCreator, //过滤条件为search控件时的下拉搜索响应
     onCheck: checkActionCreator,          //表格勾选响应
     onTableChange: tableChangeActionCreator,  //表格组件过滤条件或排序条件改变响应
     onPageNumberChange: pageNumberActionCreator,  //页数改变响应
     onPageSizeChange: pageSizeActionCreator,      //每页记录条数改变响应
     //可扩展的响应
-    // onSearch: 搜索条件为search控件时的下拉搜索响应 func(key, filter)
     // onClick: 按钮点击响应 func(tabKey, buttonKey)
     // onDoubleClick: 表格双击响应 func(tabKey, rowIndex)
     // onLink: 表格点击链接响应 func(tabKey, key, rowIndex, item)
@@ -147,7 +152,7 @@ const buildOrderPageCommonState = async (urlConfig, urlList, statusNames=[]) => 
 const updateTable = (dispatch, action, selfState) => {
   const {currentPage, pageSize, searchDataBak={}, urlList} = selfState;
   const newState = {sortInfo:{}, filterInfo:{}};
-  return search2(dispatch, action, urlList, currentPage, pageSize, searchDataBak, newState);
+  return search2(dispatch, action, urlList, currentPage, pageSize, searchDataBak, newState, undefined, false);
 };
 
 export default createOrderPageContainer;

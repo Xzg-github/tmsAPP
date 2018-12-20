@@ -7,7 +7,7 @@ let api = express.Router();
 const service= `${host}/archiver-service`;
 
 const URL_DISTRICT_OPTIONS = `${host}/archiver-service/archiver/district/drop_list`;
-const URL_CHARGE_PLACE_OPTIONS = `${host}/archiver-service/archiver/transport_place/drop_list`;
+const URL_CHARGE_PLACE_OPTIONS = `${host}/archiver-service/archiver/district/drop_list`; //暂先改为所有行政区下拉列表
 
 // 获取界面信息
 api.get('/config', async (req, res) => {

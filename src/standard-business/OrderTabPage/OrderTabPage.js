@@ -1,8 +1,7 @@
 import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
-import withStyles from '../../../../../node_modules/isomorphic-style-loader/lib/withStyles';
+import withStyles from '../../../node_modules/isomorphic-style-loader/lib/withStyles';
 import s from './OrderTabPage.less';
-import {Search, SuperTable, SuperPagination, SuperToolbar, Card, SuperTab2} from '../../../../components/index';
+import {Search, SuperTable, SuperPagination, SuperToolbar, Card, SuperTab2} from '../../components/index';
 
 const props = {
   subTabs: PropTypes.array,
@@ -127,10 +126,13 @@ class OrderTabPage extends React.Component {
   };
 
   toTab = () => {
-    const {subTabs, subActiveKey, onSubTabChange} = this.props;
+    const {subTabs, isTotal, maxRecords, subActiveKey, onSubTabChange} = this.props;
+    const tabs = isTotal ? subTabs.map(tab => {
+      return {...tab, title: `${tab.title}(${maxRecords[tab.key]})`};
+    }) : subTabs;
     const props = {
       activeKey: subActiveKey,
-      tabs: subTabs,
+      tabs,
       onTabChange: onSubTabChange
     };
     return <SuperTab2 {...props} />;

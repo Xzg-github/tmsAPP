@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import OrderTabPage from './OrderTabPage';
-import helper, {showError} from '../../../../common/common';
-import {search} from '../../../../common/search';
-import {showColsSetting} from '../../../../common/tableColsSetting';
-import {fetchAllDictionary, setDictionary2, getStatus} from "../../../../common/dictionary";
-import {exportExcelFunc, commonExport} from '../../../../common/exportExcelSetting';
+import helper, {showError} from '../../common/common';
+import {search} from '../../common/search';
+import {showColsSetting} from '../../common/tableColsSetting';
+import {fetchAllDictionary, setDictionary2, getStatus} from "../../common/dictionary";
+import {exportExcelFunc, commonExport} from '../../common/exportExcelSetting';
 
 //实现搜索公共业务
 const mySearch = async (dispatch, action, selfState, currentPage, pageSize, filter, newState={}) => {
@@ -13,6 +13,9 @@ const mySearch = async (dispatch, action, selfState, currentPage, pageSize, filt
   const to = from + pageSize;
   const {returnCode, returnMsg, result} = await search(urlList, from, to, {...filter, ...fixedFilters[subActiveKey]}, false);
   if (returnCode === 0) {
+    if (!result.tags && result.tabTotal) { //转成统一结构
+      result.tags = Object.keys(result.tabTotal).map(item => ({tag: item, count: result.tabTotal[item]}));
+    }
     const payload = {
       ...newState,
       currentPage: {...selfState.currentPage, [subActiveKey]: currentPage},
@@ -40,6 +43,11 @@ const mySearch = async (dispatch, action, selfState, currentPage, pageSize, filt
  * 返回：带公共业务处理的列表页面容器组件
  */
 const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) => {
+
+  const searchOptionsActionCreator = (key, filter, config) => async (dispatch) => {
+    const {returnCode, result} = await helper.fuzzySearchEx(filter, config);
+    dispatch(action.update({options: returnCode === 0 ? result : undefined}, 'filters', {key: 'key', value: key}));
+  };
 
   const changeActionCreator = (key, value) => {
     return action.assign({[key]: value}, 'searchData');
@@ -95,7 +103,7 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
 
   //查询导出
   const allExportActionCreator = () => (dispatch, getState) => {
-    const {tableCols, searchData, fixedFilters, subActiveKey, urlExport} = getSelfState(getState());
+    const {tableCols, searchData, subActiveKey, urlExport, fixedFilters={}} = getSelfState(getState());
     const realSearchData = {...searchData, ...fixedFilters[subActiveKey]};
     return commonExport(tableCols, urlExport, realSearchData, true, false, 'post', false);
   };
@@ -132,13 +140,13 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
     onWebExport: webExportActionCreator, //点击页面导出按钮
     onAllExport: allExportActionCreator, //点击查询导出按钮
     onChange: changeActionCreator,        //过滤条件输入改变
+    onSearch: searchOptionsActionCreator, //过滤条件为search控件时的下拉搜索响应
     onCheck: checkActionCreator,          //表格勾选响应
     onTableChange: tableChangeActionCreator,  //表格组件过滤条件或排序条件改变响应
     onPageNumberChange: pageNumberActionCreator,  //页数改变响应
     onPageSizeChange: pageSizeActionCreator,      //每页记录条数改变响应
     onSubTabChange: tabChangeActionCreator,          //列表页签切换响应
     //可扩展的响应
-    // onSearch: 搜索条件为search控件时的下拉搜索响应 func(key, filter)
     // onClick: 按钮点击响应 func(tabKey, buttonKey)
     // onDoubleClick: 表格双击响应 func(tabKey, rowIndex)
     // onLink: 表格点击链接响应 func(tabKey, key, rowIndex, item)
@@ -164,28 +172,49 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[]) 
       dic[item] = helper.getJsonResult(await getStatus(item));
     }
     setDictionary2(dic, config.filters, config.tableCols);
-    const {subActiveKey, subTabs, isTotal, pageSize={}, fixedFilters={}, searchDataBak={}} = config;
+    const {subActiveKey, subTabs, isTotal, initPageSize, fixedFilters={}, searchDataBak={}, buttons={}} = config;
     //获取列表数据
     const body = {
       itemFrom: 0,
-      itemTo: pageSize[subActiveKey],
+      itemTo: initPageSize,
       ...fixedFilters[subActiveKey],
       ...searchDataBak
     };
     const data = helper.getJsonResult(await helper.fetchJson(urlList, helper.postOption(body)));
+    if (!data.tags && data.tabTotal) { //转成统一结构
+      data.tags = Object.keys(data.tabTotal).map(item => ({tag: item, count: data.tabTotal[item]}));
+    }
+
+    //初始化maxRecords
     const maxRecords = isTotal && data.tags ? subTabs.reduce((obj, tab) => {
       const {count = 0} = data.tags.filter(item => item.tag === tab.status).pop() || {};
       obj[tab.key] = count;
       return obj;
     }, {}) : {[subActiveKey]: data.returnTotalItem || data.returnTotalItems};
+
+    //初始化tableItmes\pageSize\currentPage\isRefresh\buttons
+    let tableItems = {}, pageSize={}, currentPage={}, isRefresh={}, finalButtons={};
+    subTabs.map(tab => {
+      tableItems[tab.key] = [];
+      pageSize[tab.key] = initPageSize;
+      currentPage[tab.key] = 1;
+      isRefresh[tab.key] = true;
+      finalButtons[tab.key] = buttons[tab.key] || []
+    });
+    tableItems[subActiveKey] = data.data || [];
+    isRefresh[subActiveKey] = false;
     return {
+      searchData:{},
+      searchDataBak: {},
       ...config,
       urlList,
+      pageSize,
+      currentPage,
       maxRecords,
+      isRefresh,
+      tableItems,
+      buttons: finalButtons,
       tableCols: helper.initTableCols(helper.getRouteKey(), config.tableCols),
-      tableItems: {
-        [subActiveKey]: data.data || []
-      },
       sortInfo: {},
       filterInfo: {},
       status: 'page'

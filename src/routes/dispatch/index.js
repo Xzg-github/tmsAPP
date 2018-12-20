@@ -7,7 +7,6 @@ const prefix = '/dispatch';
 const children = [
   require('./todo').default,
   require('./done').default,
-  require('./carManager').default,
 ];
 
 export default RouterHelper(prefix, title, children);

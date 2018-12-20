@@ -48,6 +48,13 @@ const loadSupervisor = (resolve, context, params) => {
   }, 'supervisor');
 };
 
+const loadTrack = (resolve, context, params) => {
+  require.ensure([], (require) => {
+    const route = require('./track').default;
+    dispatch(context, params, route, resolve);
+  }, 'track');
+};
+
 const loadBill = (resolve, context, params) => {
   require.ensure([], (require) => {
     const route = require('./bill').default;
@@ -94,6 +101,7 @@ export default {
     createRoute('/order', loadOrder),
     createRoute('/dispatch', loadDispatch),
     createRoute('/supervisor', loadSupervisor),
+    createRoute('/track', loadTrack),
     createRoute('/bill', loadBill),
     createRoute('/config', loadConfig),
     createRoute('/basic', loadBasic),

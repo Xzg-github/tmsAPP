@@ -158,7 +158,7 @@ const searchExportActionCrator =()=> async(dispatch, getState) => {
   const search = {
     ...toFormValue(searchData)
   };
-  commonExport(tableCols, '/archiver-service-yule/car_info/supplier_list/search', search,true,true);
+  commonExport(tableCols, '/archiver-service/car_info/supplier_list/search', search,true,true);
 };
 
 //页面导出

@@ -1,7 +1,8 @@
-import createOrderTabPageContainer, {buildOrderTabPageCommonState, updateTable} from '../common/OrderTabPage/createOrderTabPageContainer';
+import createOrderTabPageContainer, {buildOrderTabPageCommonState, updateTable} from '../../../standard-business/OrderTabPage/createOrderTabPageContainer';
 import {getPathValue} from '../../../action-reducer/helper';
 import {Action} from "../../../action-reducer/action";
 import helper from "../../../common/common";
+import showDispatchDialog from './dispatchDialog/DispatchDialogContainer';
 
 const STATE_PATH = ['pending'];
 const action = new Action(STATE_PATH);
@@ -16,39 +17,6 @@ const buildOrderTabPageState = async () => {
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
-};
-
-const searchActionCreator = (key, filter) => async (dispatch) => {
-  let data, options, url;
-  switch (key) {
-    case 'customerId': {
-      url = `/api/config/customer_contact/allCustomer`;
-      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, filter}));
-      break;
-    }
-    case 'customerServiceId': {
-      url = `/api/basic/user/name`;
-      data = await helper.fetchJson(url, helper.postOption({filter}));
-      break;
-    }
-    case 'carModeId': {
-      url = `/api/order/input/car_mode_drop_list`;
-      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, carMode: filter}));
-      break;
-    }
-    case 'departure':
-    case 'destination': {
-      url = `/api/config/customer_factory/charge_place_options`;
-      data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, placeName: filter}));
-      break;
-    }
-    default:
-      return;
-  }
-  if (data.returnCode === 0) {
-    options = data.result instanceof Array? data.result:data.result.data;
-    dispatch(action.update({options}, 'filters', {key: 'key', value: key}));
-  }
 };
 
 const showOrderInfoPage = (dispatch, item, selfState, readonly) => {
@@ -93,12 +61,11 @@ const deleteActionCreator = (tabKey) => async (dispatch, getState) => {
 //任务派发
 const sendActionCreator = (tabKey) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
-  const ids = tableItems[tabKey].filter(item => item.checked === true).map(item => item.id);
-  if (ids.length < 1) return helper.showError(`请先勾选记录`);
-  const {returnCode, returnMsg} = await helper.fetchJson(`/api/order/pending/send`, helper.postOption(ids));
-  if (returnCode !== 0) return helper.showError(returnMsg);
-  helper.showSuccessMsg('任务派发成功');
-  return updateTable(dispatch, action, getSelfState(getState()));
+  const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
+  if (checkedItems.length !== 1) return helper.showError(`请先勾选一条记录`);
+  if (true === await showDispatchDialog(checkedItems[0])) {
+    return updateTable(dispatch, action, getSelfState(getState()));
+  }
 };
 
 const buttons = {
@@ -131,7 +98,6 @@ const linkActionCreator = (tabKey, key, rowIndex, item) => (dispatch, getState) 
 };
 
 const actionCreatorsEx = {
-  onSearch: searchActionCreator,
   onClick: clickActionCreator,
   onDoubleClick: doubleClickActionCreator,
   onLink: linkActionCreator

@@ -9,7 +9,8 @@
 const NAV_ITEMS = [
   {key: 'order', icon: 'pld-yundan'},         // 运输订单
   {key: 'dispatch', icon: 'pld-cheliang'},    // 车辆调度
-  {key: 'supervisor', icon: 'pld-jianli'},    // 监理任务
+  {key: 'track', icon: 'pld-genzong'},       // 跟踪管控
+  // {key: 'supervisor', icon: 'pld-jianli'},    // 监理任务 --先隐藏
   {key: 'bill', icon: 'pld-feiyong'},         // 计费与对帐
   {key: 'config', icon: 'pld-dangan'},        // 档案管理
   {key: 'platform', icon: 'pld-pingtai'},     // 平台管理
@@ -30,7 +31,6 @@ const order = [
 const dispatch = [
   {key: 'todo'},          // 待办任务
   {key: 'done'},          // 已办任务
-  {key: 'car_manager'},   // 车辆管理
 ];
 
 // 监理任务侧边栏
@@ -38,6 +38,12 @@ const supervisor = [
   {key: 'waiting'},             // 待办任务
   {key: 'finish'},              // 已办任务
   {key: 'supervisor_manager'},  // 监理管理
+];
+
+// 跟踪管控侧边栏
+const track = [
+  {key: 'track_order'},     // 运单跟踪
+  {key: 'file_manager'},     // 文件管理
 ];
 
 // 应收管理子菜单
@@ -99,6 +105,7 @@ const inside_mgr = [
   {key: 'inside_factory'},      // 收发货档案
   {key: 'inside_car'},          // 自有车档案
   {key: 'insideDriver'},        // 自有司机档案
+  {key: 'car_manager'},         // 车辆管理
   {key: 'insideSupervisor'},    // 自有监理档案
   {key: 'rate'},                // 汇率档案
   {key: 'charge_item'},         // 费用项档案
@@ -234,7 +241,7 @@ const message = [
 
 // 所有侧边栏
 const SIDEBARS = {
-  order, dispatch, supervisor, bill, basic, config, platform, message
+  order, dispatch, supervisor, track, bill, basic, config, platform, message
 };
 
 export {NAV_ITEMS, SIDEBARS};
