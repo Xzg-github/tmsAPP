@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditPage.less';
-import {SuperTable2, Card, SuperForm, SuperTitle, SuperToolbar} from '../../../../components';
+import {Card, SuperForm, SuperTitle, SuperToolbar, SuperTab2, SuperTable} from '../../../../components';
 
 class EditPage extends React.Component {
 
@@ -9,7 +9,7 @@ class EditPage extends React.Component {
     const {controls, value, valid=false, readonly, onChange, onSearch, onExitValid, onAdd} = this.props;
     return controls.map((item, i) => {
       const props = {
-        controls: item.data,
+        controls: item.cols,
         value,
         valid: item.key === valid,
         readonly,
@@ -25,31 +25,41 @@ class EditPage extends React.Component {
     });
   }
 
-  toTable = () => {
-    const {tables, value, valid=false, readonly, onExitValid, onCheck, onContentChange, onClick} = this.props;
-    return tables.map((item, i) => {
-      const props = {
-        maxHeight: '500px',
-        cols: item.cols,
-        items: value[item.key] || [],
-        valid: item.key === valid,
-        callback: {
-          onCheck: onCheck.bind(null, item.key),
-          onExitValid: onExitValid.bind(null, item.key),
-          onContentChange: onContentChange.bind(null, item.key)
-        }
-      };
-      const titleProps = {
-        title: item.title,
-        buttons: item.btns,
-        readonly,
-        onClick: onClick.bind(null, item.key)
-      };
-      return (<div key={i} style={{marginTop: '10px'}}>
-        <SuperTitle {...titleProps}/>
-        <SuperTable2 {...props}/>
-      </div>)
-    });
+  toTab = () => {
+    const {tabs, activeKey, onTabChange} = this.props;
+    const props = {tabs, activeKey, onTabChange};
+    return <SuperTab2 {...props}/>
+  }
+
+  toInvoice = () => {
+    const {invoiceInfoConfig} = this.props;
+    return <h1>发票表格</h1>
+  }
+
+  toCostInfo = () => {
+    const {costInfoConfig, activeKey, value, onClick, onCheck} = this.props;
+    const {buttons, cols} = costInfoConfig;
+    const props = {
+      cols,
+      items: value[activeKey] || [],
+      onCheck
+    };
+    return (<div>
+      <SuperToolbar {...{buttons, onClick}}/>
+      <SuperTable {...props}/>
+    </div>)
+  }
+
+  toTabContent = () => {
+    const {activeKey} = this.props;
+    switch (activeKey) {
+      case 'invoiceInfo': {
+        return this.toInvoice()
+      }
+      case 'costInfo': {
+        return this.toCostInfo()
+      }
+    }
   }
 
   toFooter = () => {
@@ -66,7 +76,8 @@ class EditPage extends React.Component {
     return (
       <Card className={s.root}>
         {this.toForm()}
-        {this.toTable()}
+        {this.toTab()}
+        {this.toTabContent()}
         {this.toFooter()}
       </Card>
     );

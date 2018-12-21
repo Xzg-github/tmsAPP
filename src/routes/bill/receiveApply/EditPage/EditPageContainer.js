@@ -8,18 +8,18 @@ import showJoinDialog from './JoinDialog/JoinDialog';
 import execWithLoading from '../../../../standard-business/execWithLoading';
 import {updateOne} from '../../../../action-reducer/array';
 
-const PARENT_STATE_PATH = ['receiveBill'];
-const STATE_PATH = ['receiveBill', 'edit'];
+const PARENT_STATE_PATH = ['receiveApply'];
+const STATE_PATH = ['receiveApply', 'edit'];
 const action = new Action(STATE_PATH);
-const URL_DETAIL = '/api/bill/receiveBill/detail';
-const URL_JION_LIST = '/api/bill/receiveBill/joinList';
-const URL_JION = '/api/bill/receiveBill/joinDetail';
-const URL_REMOVE = '/api/bill/receiveBill/removeDetail';
-const URL_SAVE = '/api/bill/receiveBill/save';
-const URL_SEND = '/api/bill/receiveBill/send';
+const URL_DETAIL = '/api/bill/receiveApply/detail';
+const URL_JION_LIST = '/api/bill/receiveApply/joinList';
+const URL_JION = '/api/bill/receiveApply/joinDetail';
+const URL_REMOVE = '/api/bill/receiveApply/removeDetail';
+const URL_SAVE = '/api/bill/receiveApply/save';
+const URL_SEND = '/api/bill/receiveApply/send';
 const URL_CURRENCY = `/api/bill/receiveMake/currency`;
-const URL_CONTACTS = `/api/bill/receiveBill/cunstomer_contacts`;
-const URL_HEADER_INDO = `/api/bill/receiveBill/consignee_consignor`;
+const URL_CONTACTS = `/api/bill/receiveApply/cunstomer_contacts`;
+const URL_HEADER_INDO = `/api/bill/receiveApply/consignee_consignor`;
 
 
 const getSelfState = (rootState) => {
@@ -154,23 +154,21 @@ const clickActionCreator = (KEY, key) => {
 
 const exitValidActionCreator = (KEY) => action.assign({valid: KEY});
 
-const buildEditPageState = async (config, itemData, readonly) => {
+const buildEditPageState = async (config, itemData) => {
   const detailData = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
-  const {receivableBillChargeList: costInfo, ...formValue} = detailData;
   return {
     ...config,
     ...itemData,
-    readonly,
-    value: {...formValue, costInfo, orderNumber: itemData.orderNumber},
+    value: {...detailData},
     status: 'page'
   };
 };
 
 const initActionCreator = () => async (dispatch, getState) => {
   try {
-    const {readonly, config, itemData} = getSelfState(getState());
+    const {config, itemData} = getSelfState(getState());
     dispatch(action.assign({status: 'loading'}));
-    const payload = await buildEditPageState(config, itemData, readonly);
+    const payload = await buildEditPageState(config, itemData);
     dispatch(action.assign(payload));
   } catch (e) {
     showError(e.message);

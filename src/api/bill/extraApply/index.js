@@ -117,35 +117,35 @@ api.get('/detail/:id', async (req, res) => {
 
 // 保存
 api.post('/save', async (req, res) => {
-  const url = `${tms_service}/receivable_bill`;
+  const url = `${tms_service}/extra_charge`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
   res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
 });
 
 // 提交
 api.post('/commit', async (req, res) => {
-  const url = `${tms_service}/receivable_bill_charge/batch/${req.body.id}`;
+  const url = `${tms_service}/extra_charge/submit`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
   res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
 });
 
 // 回退
 api.post('/fallback', async (req, res) => {
-  const url = `${tms_service}/receivable_bill_charge/batch/${req.body.id}`;
+  const url = `${tms_service}/extra_charge/approval`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
   res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
 });
 
 // 审核
 api.post('/review', async (req, res) => {
-  const url = `${tms_service}/receivable_bill_charge/batch/${req.body.id}`;
+  const url = `${tms_service}/extra_charge/approval`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
   res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
 });
 
 // 结案
 api.post('/endCase', async (req, res) => {
-  const url = `${tms_service}/receivable_bill_charge/batch/${req.body.id}`;
+  const url = `${tms_service}/extra_charge/settle_lawsuit`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
   res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
 });

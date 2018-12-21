@@ -16,7 +16,7 @@ const filters = [
   {key: 'invoiceCategory', title: '发票种类', type: 'select', dictionary: name.INVOICE_CATEGORY},
   {key: 'settlementPersonnel', title: '财务人员', type: 'search', searchType: 'user'},
   {key: 'insertTimeFrom', title: '创建时间', type: 'date'},
-  {key: 'insertTimeTo', title: '至', type: 'date'},
+  {key: 'insertTimeTo', title: '至', type: 'date'}
 ];
 
 const buttons = [
@@ -101,12 +101,11 @@ const goodsInfo = [
 ];
 
 const controls = [
-  {key: 'baseInfo', title: '基本信息', data: baseInfo},
-  {key: 'goodsInfo', title: '货物信息', data: goodsInfo}
+  {key: 'baseInfo', title: '基本信息', cols: baseInfo},
+  {key: 'goodsInfo', title: '货物信息', cols: goodsInfo}
 ];
 
-const invoiceInfo = {
-  title: '发票内容',
+const invoiceInfoConfig = {
   cols: [
     {key: 'tax', title: '税率', type: 'readonly'},
     {key: 'taxAmount', title: '税额', type: 'readonly'},
@@ -124,7 +123,6 @@ const invoiceInfo = {
 };
 
 const costInfoConfig = {
-  title: '费用信息',
   buttons: [
     {key: 'join', title: '加入', bsStyle: 'primary'},
     {key: 'remove', title: '移除', confirm: '是否确认删除选中记录?'},
@@ -169,8 +167,13 @@ const costInfoConfig = {
 };
 
 const editConfig = {
+  activeKey: 'invoiceInfo',
+  tabs: [
+    {key: 'invoiceInfo', title: '发票内容'},
+    {key: 'costInfo', title: '费用信息'}
+  ],
   controls,
-  invoiceInfo,
+  invoiceInfoConfig,
   costInfoConfig,
   footerButtons: [
     {key: 'close', title: '关闭'},
@@ -197,7 +200,7 @@ const addDialogConfig = {
     {key: 'currency', title: '币种'},
     {key: 'amount', title: '金额'},
     {key: 'tax', title: '税率'},
-    {key: 'statusType', title: '状态'}
+    {key: 'statusType', title: '状态', dictionary: name.STATUS_TYPE}
   ],
   okText: '申请',
   pageSize,
@@ -217,7 +220,11 @@ const config = {
   editConfig,
   addDialogConfig,
   names: [
-    name.STATUS_TYPE, name.INVOICE_CATEGORY, name.ZERO_ONE, name.CHARGE_UNIT, name.TAX_RATE_WAY
+    name.STATUS_TYPE,
+    name.INVOICE_CATEGORY,
+    name.ZERO_ONE,
+    name.CHARGE_UNIT,
+    name.TAX_RATE_WAY
   ]
 };
 

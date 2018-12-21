@@ -37,26 +37,17 @@ class AddDialog extends React.Component {
     </div>)
   }
 
-  toFooter = () => {
-    const {buttons, footerBtnClick} = this.props;
-    const props = {
-      size: 'large',
-      buttons,
-      onClick: footerBtnClick
-    };
-    return <SuperToolbar {...props}/>
-  }
-
   getProps = () => {
-    const {title, afterClose, visible} = this.props;
+    const {title, afterClose, visible, okText, onOk} = this.props;
     return {
       title,
       visible,
       width: 1000,
       maskClosable: false,
       confirmLoading: false,
+      onOk,
       onCancel: afterClose,
-      footer: this.toFooter(),
+      okText,
       afterClose
     }
   }
