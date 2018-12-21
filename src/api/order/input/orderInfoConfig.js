@@ -1,10 +1,12 @@
+const URL_CUSTOMER_CONTACT = '/api/order/input/options/customer_contacts';
+const URL_SUPPLIER_DRIVER = '/api/order/input/options/supplier_drivers';
 
 const baseForm = [
-  {key: 'customerId', title: '客户', type:'search', required: true},
+  {key: 'customerId', title: '客户', type:'search', searchType: 'customer', required: true},
   {key: 'customerDelegateCode', title: '委托号', type:'text'},
   {key: 'customerDelegateTime', title: '委托日期', type:'date', props:{showTime: true}, required: true},
   {key: 'businessType', title: '运输类型', type:'select', dictionary: 'business_type', required: true},
-  {key: 'contactName', title: '客户联系人', type:'search', props: {searchWhenClick: true, noSearchWhenTypo: true}, showAdd: true , required: true},
+  {key: 'contactName', title: '客户联系人', type:'search', props: {searchWhenClick: true, noSearchWhenTypo: true}, showAdd: true , searchUrl: URL_CUSTOMER_CONTACT, required: true},
   {key: 'contactTelephone', title: '联系电话', type:'text'},
   {key: 'contactEmail', title: '联系邮箱', type:'text'},
   {key: 'transportType', title: '运输方式', type:'select', dictionary: 'transport_type', required: true},
@@ -19,8 +21,18 @@ const baseForm = [
   {key: 'salespersonId', title: '销售员', type:'readonly'},
   {key: 'customerServiceId', title: '客服', type:'readonly', showAdd: true, required: true},
   {key: 'palletsNumber', title: '总卡板数', type:'number', props: {real: true, precision: 2}},
-  {key: 'carModeId', title: '车型', type:'search', required: true},
+  {key: 'carModeId', title: '车型', type:'search', searchType: 'car_mode_active', required: true},
   {key: 'isSupervisor', title: '是否需要监理', type:'readonly', dictionary: 'zero_one_type', required: true},
+];
+
+const dispatchForm = [
+  {key: 'carInfoId', title: '车牌', type:'search', searchType: 'car_all', required: true},
+  {key: 'ownerCarTag', title: '是否自有车', type:'readonly', dictionary: 'zero_one_type', required: true},
+  {key: 'supplierId', title: '供应商', type:'readonly', required: true},
+  {key: 'driverId', title: '司机', type:'search', props: {searchWhenClick: true}, searchUrl: URL_SUPPLIER_DRIVER, required: true},
+  {key: 'driverMobilePhone', title: '司机号码', type:'readonly'},
+  {key: 'transportationDuration', title: '运输时长', type:'number', props: {real: true, precision: 2}},
+  {key: 'taskTypeCode', title: '文件任务', type:'select', props: {mode: 'multiple'}, dictionary: 'task_type_file', span: 2},
 ];
 
 const addForm = [
@@ -68,6 +80,7 @@ const goodsCols = [
 const config = {
   formSections: {
     baseInfo: {key: 'baseInfo', title: '基本信息', controls: baseForm},
+    dispatchInfo: {key: 'dispatchInfo', title: '派车信息', controls: dispatchForm}, //为补录运单时才展示该分组信息
     addInfo: {key: 'addInfo', title: '附加信息', controls: addForm},
   },
   addressTable: {
@@ -89,7 +102,7 @@ const config = {
   buttons: [
     {key: 'save', title: '保存'},
     {key: 'commit', title: '提交'},
-    {key: 'new', title: '下一单'},
+    {key: 'new', title: '创建下一单'},
   ],
   tabs: [
     {key: 'addressList', title: '收发货地址'},

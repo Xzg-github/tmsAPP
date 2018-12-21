@@ -83,13 +83,14 @@ const addActionCreator = (dispatch, getState) => {
   dispatch(action.assign(payload, 'edit'));
 };
 
+//需求变更 放开可编辑的权限
 const editAction = async (isDbClick, dispatch, getState, rowIndex=0) => {
   const {tableItems, editConfig, customConfig} = getSelfState(getState());
   const index = isDbClick ? rowIndex : helper.findOnlyCheckedIndex(tableItems);
   if (index === -1) return showError('请勾选一条数据！');
-  if(tableItems[index]['enabledType'] !== 'enabled_type_unenabled'){
-    return showError('只能编辑未启用状态记录');
-  }
+  // if(tableItems[index]['enabledType'] !== 'enabled_type_unenabled'){
+  //   return showError('只能编辑未启用状态记录');
+  // }
   const id = tableItems[index].id;
   const {returnCode, returnMsg, result} = await fetchJson(`${URL_DETAIL}/${id}`);
   if (returnCode !== 0) return showError(returnMsg);

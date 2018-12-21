@@ -21,7 +21,7 @@ class SuperTitle extends React.Component {
   }
 
   render() {
-    const {title, readonly, buttons, size='small', onClick} = this.props;
+    const {title='', readonly=false, buttons=[], size='small', onClick} = this.props;
     return (
       <div className={s.root}>
         <Title role='title' title={title} className={s[`title_${size}`]}>

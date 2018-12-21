@@ -20,7 +20,6 @@ const URL_CUSTOMER_SERVICE = '/api/bill/payMake/customerServiceId';
 const URL_CARMODE = '/api/bill/payMake/carModeId';
 const URL_DEPARTURE_DESTINATION = '/api/bill/payMake/departureDestination';
 const URL_AUDIT_BATCH = '/api/bill/payMake/auditBatch';
-const URL_PREPARING = '/api/bill/payMake/audit/preparing';
 const URL_CREATE_BILL = '/api/bill/payMake/createBill';
 
 const getSelfState = (rootState) => {
@@ -130,16 +129,11 @@ const auditActionCreator = async (dispatch, getState) => {
   const checkList = tableItems.filter(o=> o.checked);
   if(!checkList.length) return showError('请勾选一条数据！');
   if(checkList.find(o => o.statusType === "status_check_all_completed")) return showError('请取消已审核的记录！');
-  const guids = checkList.map(o => o.id);
-  const {returnCode, returnMsg, result} = await fetchJson(URL_PREPARING, postOption(guids));
-  if(returnCode !==0) return showError(returnMsg);
-  const auditsFunc = async () => {
-    const data = await fetchJson(URL_AUDIT_BATCH, postOption(guids));
-    if (data.returnCode !== 0) return showError(data.returnMsg);
-    showSuccessMsg('审核成功');
-    afterEdit(dispatch, getState);
-  };
-  return showConfirmDialog(`${result}`, auditsFunc);
+  const ids = checkList.map(o => o.id);
+  const {returnCode, result, returnMsg} = await fetchJson(URL_AUDIT_BATCH, postOption(ids));
+  if (returnCode !== 0) return showError(returnMsg);
+  showSuccessMsg(returnMsg);
+  afterEdit(dispatch, getState);
 };
 
 // 生成账单

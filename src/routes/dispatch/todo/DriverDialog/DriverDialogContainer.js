@@ -75,7 +75,7 @@ const buildDialogState = async (data) => {
       {key: 'driverName', title: '司机'},
       {key: 'driverMobilePhone', title: '司机号码'},
       {key: 'supplierId', title: '车主'},
-      {key: 'carState', title: '车辆状态'},
+      {key: 'carState', title: '车辆状态', dictionary: 'car_state'},
       {key: 'firstTransportOrderId', title: '待执行运单'},
       {key: 'transportOrderId', title: '操作中运单'},
       {key: 'operationPlanDeliveryTime', title: '操作中运单预计完成时间'},

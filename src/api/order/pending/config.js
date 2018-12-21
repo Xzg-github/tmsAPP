@@ -3,13 +3,13 @@ import {pageSize, pageSizeType, paginationConfig, searchConfig} from '../../glob
 const filters = [
   {key: 'orderNumber', title: '运单号', type: 'text'},
   {key: 'customerDelegateCode', title: '委托号', type: 'text'},
-  {key: 'customerId', title: '客户', type: 'search'},
+  {key: 'customerId', title: '客户', type: 'search', searchType: 'customer_all'},
   {key: 'businessType', title: '运输类型', type: 'select', dictionary: 'business_type'},
-  {key: 'customerServiceId', title: '客服人员', type: 'search'},
+  {key: 'customerServiceId', title: '客服人员', type: 'search', searchType: 'user'},
   {key: 'transportType', title: '运输方式', type: 'select', dictionary: 'transport_type'},
-  {key: 'carModeId', title: '车型', type: 'search'},
-  {key: 'departure', title: '始发地', type: 'search'},
-  {key: 'destination', title: '目的地', type: 'search'},
+  {key: 'carModeId', title: '车型', type: 'search', searchType: 'car_mode'},
+  {key: 'departure', title: '始发地', type: 'search', searchType:'charge_place'},
+  {key: 'destination', title: '目的地', type: 'search', searchType:'charge_place'},
   {key: 'planPickupTimeFrom', title: '要求装货时间', type: 'date', props: {showTime: true}},
   {key: 'planPickupTimeTo', title: '至', type: 'date', props: {showTime: true}},
   {key: 'insertTimeFrom', title: '创建时间', type: 'date', props: {showTime: true}},
@@ -86,7 +86,7 @@ const config = {
       {key: 'del', title: '删除', confirm: '删除！是否确认删除所有勾选运单？'},
     ].concat(commonButtons),
     sending: [
-      {key: 'send', title: '任务派发', bsStyle: 'primary', confirm: '是否确认派发所有勾选运单？'},
+      {key: 'send', title: '任务派发', bsStyle: 'primary'},
     ].concat(commonButtons),
   }
 };

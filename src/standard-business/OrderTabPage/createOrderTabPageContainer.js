@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import OrderTabPage from './OrderTabPage';
-import helper, {showError} from '../../../../common/common';
-import {search} from '../../../../common/search';
-import {showColsSetting} from '../../../../common/tableColsSetting';
-import {fetchAllDictionary, setDictionary2, getStatus} from "../../../../common/dictionary";
-import {exportExcelFunc, commonExport} from '../../../../common/exportExcelSetting';
+import helper, {showError} from '../../common/common';
+import {search} from '../../common/search';
+import {showColsSetting} from '../../common/tableColsSetting';
+import {fetchAllDictionary, setDictionary2, getStatus} from "../../common/dictionary";
+import {exportExcelFunc, commonExport} from '../../common/exportExcelSetting';
 
 //实现搜索公共业务
 const mySearch = async (dispatch, action, selfState, currentPage, pageSize, filter, newState={}) => {
@@ -43,6 +43,11 @@ const mySearch = async (dispatch, action, selfState, currentPage, pageSize, filt
  * 返回：带公共业务处理的列表页面容器组件
  */
 const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) => {
+
+  const searchOptionsActionCreator = (key, filter, config) => async (dispatch) => {
+    const {returnCode, result} = await helper.fuzzySearchEx(filter, config);
+    dispatch(action.update({options: returnCode === 0 ? result : undefined}, 'filters', {key: 'key', value: key}));
+  };
 
   const changeActionCreator = (key, value) => {
     return action.assign({[key]: value}, 'searchData');
@@ -135,13 +140,13 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
     onWebExport: webExportActionCreator, //点击页面导出按钮
     onAllExport: allExportActionCreator, //点击查询导出按钮
     onChange: changeActionCreator,        //过滤条件输入改变
+    onSearch: searchOptionsActionCreator, //过滤条件为search控件时的下拉搜索响应
     onCheck: checkActionCreator,          //表格勾选响应
     onTableChange: tableChangeActionCreator,  //表格组件过滤条件或排序条件改变响应
     onPageNumberChange: pageNumberActionCreator,  //页数改变响应
     onPageSizeChange: pageSizeActionCreator,      //每页记录条数改变响应
     onSubTabChange: tabChangeActionCreator,          //列表页签切换响应
     //可扩展的响应
-    // onSearch: 搜索条件为search控件时的下拉搜索响应 func(key, filter)
     // onClick: 按钮点击响应 func(tabKey, buttonKey)
     // onDoubleClick: 表格双击响应 func(tabKey, rowIndex)
     // onLink: 表格点击链接响应 func(tabKey, key, rowIndex, item)
@@ -167,8 +172,8 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[]) 
       dic[item] = helper.getJsonResult(await getStatus(item));
     }
     setDictionary2(dic, config.filters, config.tableCols);
-    const {subActiveKey, subTabs, isTotal, initPageSize, fixedFilters={}, searchDataBak={}, buttons={}} = config;
     //获取列表数据
+    const {subActiveKey, subTabs, isTotal, initPageSize, fixedFilters={}, searchDataBak={}, buttons={}} = config;
     const body = {
       itemFrom: 0,
       itemTo: initPageSize,
@@ -194,7 +199,8 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[]) 
       pageSize[tab.key] = initPageSize;
       currentPage[tab.key] = 1;
       isRefresh[tab.key] = true;
-      finalButtons[tab.key] = buttons[tab.key] || []
+      //处理按钮权限(要求按钮权限的资源代码结构为"上级资源代码_按钮key")
+      finalButtons[tab.key] = buttons[tab.key] ? buttons[tab.key].filter(btn => helper.getActions(helper.getRouteKey(), true).includes(btn.key)) : []
     });
     tableItems[subActiveKey] = data.data || [];
     isRefresh[subActiveKey] = false;

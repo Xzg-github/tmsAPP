@@ -1,12 +1,11 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import { getObject } from '../../../../common/common';
+import { getObject } from '../../common/common';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './OrderPage.less';
-import {Search, SuperTable, SuperPagination, SuperToolbar, Card} from '../../../../components/index';
+import {Search, SuperTable, SuperPagination, SuperToolbar, Card} from '../../components/index';
 
 const SEARCH_EVENTS = ['onChange', 'onSearch'];
-const TOOLBAR_EVENTS = ['onClick'];
 const TABLE_EVENTS = ['onTableChange', 'onCheck', 'onDoubleClick', 'onLink'];
 const PAGINATION = ['maxRecords', 'pageSize', 'currentPage', 'pageSizeType', 'description',
   'onPageNumberChange', 'onPageSizeChange'];

@@ -7,10 +7,10 @@ const filters = [
   {key: 'orderNumber', title: '运单号', type: 'text'},
   {key: 'customerDelegateCode', title: '委托号', type: 'text'},
   {key: 'customerId', title: '委托客户', type: 'search', searchType: 'customer_all'},
-  {key: 'payCustomerId', title: '付款单位', type: 'search',searchType: 'customer_all'},
+  {key: 'payCustomerId', title: '付款单位', type: 'search', searchType: 'customer_all'},
   {key: 'insertTimeFrom', title: '创建时间', type: 'date'},
   {key: 'insertTimeTo', title: '到', type: 'date'},
-  {key: 'customerServiceId', title: '客服人员', type: 'search',searchType: 'user'},
+  {key: 'customerServiceId', title: '客服人员', type: 'search', searchType: 'user'},
   {key: 'statusType', title: '状态', type: 'select', dictionary: name.STATUS_TYPE}
 ];
 
@@ -19,9 +19,12 @@ const buttons = [
   {key: 'add', title: '新增', bsStyle: 'primary'},
   {key: 'edit', title: '编辑'},
   {key: 'delete', title: '删除', confirm: '是否确定删除已选草稿状态的记录?'},
-  {key: 'auditing', title: '审核'},
+  {key: 'audit', title: '审核'},
   {key: 'output', title: '输出'},
-  {key: 'export', title: '导出'}
+  {key: 'export', title: '导出', menu: [
+    { key: 'exportSearch', title: '查询导出'},
+    { key: 'exportPage', title: '页面导出'},
+  ]}
 ];
 
 //OrderPage SuperTableComponent Config
@@ -58,9 +61,9 @@ const index = {
 //EditPage BaseInfo FormComponent Config
 const baseInfo = [
   {key: 'orderNumber', title: '运单订单', type: 'readonly'},
-  {key: 'payCustomerId', title: '付款单位', type: 'search', required: true},
-  {key: 'currency', title: '币种', type: 'select', required: true},
-  {key: 'customerContact', title: '联系人名称', type: 'select'},
+  {key: 'payCustomerId', title: '付款单位', type: 'search', searchType: 'customer_all', required: true},
+  {key: 'currency', title: '币种', type: 'search', required: true},
+  {key: 'customerContact', title: '联系人名称', type: 'search'},
   {key: 'customerContactPhone', title: '联系人电话', type: 'text'},
   {key: 'customerContactFax', title: '联系人传真', type: 'text'},
   {key: 'amount', title: '结算金额', type: 'readonly'},
@@ -115,15 +118,15 @@ const controls = [
 ];
 
 const tables = [
-  {key: 'costInfo', title: '费用信息', cols: costInfoCols, btns: costInfoButtons}
+  {key: 'chargeList', title: '费用信息', cols: costInfoCols, btns: costInfoButtons}
 ];
 
 const editConfig = {
   controls, tables, joinDialogTableCols,
   footerButtons: [
-    {key: 'close', title: '关闭'},
+    {key: 'close', title: '关闭', readonlyPage: true},
     {key: 'save', title: '保存'},
-    {key: 'send', title: '发送'}
+    {key: 'send', title: '发送', bsStyle: 'primary'}
   ]
 };
 
@@ -140,7 +143,7 @@ const addDialogFilters = [
   {key: 'customerDelegateCode', title: '委托号', type: 'text'},
   {key: 'customerId', title: '委托客户', type: 'search', searchType: 'customer_all'},
   {key: 'incomeTag', title: '费用状态', type: 'select', options: incomeTagOptions},
-  {key: 'statusType', title: '运单状态', type: 'select', dictionary: name.STATUS_TYPE},
+  {key: 'statusType', title: '运单状态', type: 'select', dictionary: 'status_type_addDialog'},
   {key: 'customerDelegateTimeFrom', title: '委托日期', type: 'date'},
   {key: 'customerDelegateTimeTo', title: '至', type: 'date'},
   {key: 'planPickupTimeFrom', title: '预计装货时间', type: 'date'},
@@ -154,7 +157,7 @@ const addDialogCols = [
   {key: 'customerDelegateCode', title: '委托号'},
   {key: 'customerId', title: '委托客户'},
   {key: 'incomeTag', title: '费用状态', options: incomeTagOptions},
-  {key: 'statusType', title: '运单状态', dictionary: name.STATUS_TYPE},
+  {key: 'statusType', title: '运单状态', dictionary: 'status_type_addDialog'},
   {key: 'receivableBillAmount', title: '可对帐税金额'},
   {key: 'planPickupTime', title: '要求装货时间'},
   {key: 'customerDelegateTime', title: '委托日期'}
@@ -172,8 +175,15 @@ const addDialogButtons = [
 
 //All need Informations of AddDialog
 const addConfig = {
-  filters: addDialogFilters,  tableCols: addDialogCols, footerButtons: addDialogButtons,
-  searchConfig, settlementTitle: '结算单信息'
+  filters: addDialogFilters,
+  cols: addDialogCols,
+  buttons: addDialogButtons,
+  pageSize,
+  pageSizeType,
+  description,
+  searchConfig,
+  tableTitle: '结算单信息',
+  title: '选择运单'
 };
 
 const tabs = [
@@ -183,7 +193,7 @@ const tabs = [
 const config = {
   activeKey: 'index', tabs, index, editConfig, addConfig,
   dicNames: [
-    name.STATUS_TYPE, name.TAX_RATE_WAY, name.CHARGE_UNIT
+    name.TAX_RATE_WAY, name.CHARGE_UNIT
   ]
 };
 

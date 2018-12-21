@@ -42,6 +42,7 @@ const initActionCreator = () => async (dispatch) => {
     const {index, edit, names} = getJsonResult(await fetchJson(URL_CONFIG));
     const customerConfig = getJsonResult(await fetchJson(`${URL_CUSTOMERCONFIG}/consignee_consignor_property`));
     index.tableCols = uniqueArrHandler(index.tableCols, customerConfig.controls);
+    edit.controls = uniqueArrHandler(edit.controls, customerConfig.controls);
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}));
     const dictionary = getJsonResult(await fetchDictionary(names));
     const body ={ maxNumber: 300, districtType: 2};

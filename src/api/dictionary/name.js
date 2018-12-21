@@ -201,6 +201,7 @@ const name = {
   ZERO_ONE: 'zero_one_type', //是否（0/1）
   TRANSPORT_TYPE: 'transport_type', //运输方式
   RESPONSIBLE_PARTY: 'responsible_party', //责任方
+  TASK_TYPE_FILE: 'task_type_file',  //文件任务
 };
 
 export default name;

@@ -23,9 +23,15 @@ api.delete('/', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
 });
 
+//获取任务派发默认设置
+api.get('/default_setting/:id', async (req, res) => {
+  const url = `${service}/transport_order/task/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
 //任务派发
 api.post('/send', async (req, res) => {
-  const url = `${service}/transport_order/batch/send`;
+  const url = `${service}/transport_order/send`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
