@@ -1,4 +1,5 @@
 import React from 'react';
+import Container from './AppendContainer';
 
 export default {
   path: '/append',
@@ -6,7 +7,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <div>运单补录</div>
+      component: <Container />
     };
   }
 }

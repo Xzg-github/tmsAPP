@@ -51,10 +51,17 @@ handlers['lo_company'] = (req, filter) => {
   return fetchJsonByNode(req, url, option);
 };
 
-// 车型
+// 车型(所有)
 handlers['car_mode'] = (req, filter) => {
   const url = `${host}/archiver_service/car_mode/drop_list`;
-  const option = postOption({maxNumber: maxSearchCount,carMode:filter});
+  const option = postOption({maxNumber: maxSearchCount, carMode: filter});
+  return fetchJsonByNode(req, url, option);
+};
+
+// 车型(激活)
+handlers['car_mode_active'] = (req, filter) => {
+  const url = `${host}/archiver_service/car_mode/drop_list`;
+  const option = postOption({maxNumber: maxSearchCount, carMode: filter, active: 'active_activated'});
   return fetchJsonByNode(req, url, option);
 };
 
