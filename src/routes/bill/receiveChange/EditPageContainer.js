@@ -298,7 +298,8 @@ const rejectAction = () => async (dispatch, getState) => {
     };
     const {returnCode, returnMsg} = await fetchJson(URL_REJECT, postOption(params, 'put'));
     if (returnCode !== 0) return showError(returnMsg);
-    afterEditAction();
+    helper.showSuccessMsg('操作成功');
+    afterEditAction()(dispatch, getState);
   };
   showAuditNoDialog(onOK);
 };
