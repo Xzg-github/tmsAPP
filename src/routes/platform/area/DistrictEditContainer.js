@@ -8,6 +8,7 @@ import {updateTree} from './AreaContainer';
 
 const URL_DISTRICT_SAVE = '/api/basic/area/district';
 const URL_DISTRICT_DROP_LIST = `/api/basic/area/district_drop_list`;
+const URL_DISTRICT_DROP_LIST_ALL = `/api/basic/area/district_drop_list_all`;
 const URL_DISTRICT_INFO = '/api/basic/area/district_info';
 
 const PARENT_STATE_PATH = ['basic', 'area', 'district'];
@@ -55,14 +56,18 @@ const changeActionCreator = (key, value) => {
 };
 
 const searchActionCreator = (key, title) => async (dispatch, getState) => {
-  const {value} = getSelfState(getState());
+  const {value, isEdit} = getSelfState(getState());
   if (key === 'parentDistrictGuid') {
-    const body = {
+    const body = isEdit ? {
       guid: value.guid,
       maxNumber: 20,
       districtName: title
+    } : {
+      districtName: title,
+      maxNumber: 20,
     };
-    const {returnCode, returnMsg, result} = await fetchJson(URL_DISTRICT_DROP_LIST, postOption(body));
+    const url = isEdit ? URL_DISTRICT_DROP_LIST : URL_DISTRICT_DROP_LIST_ALL;
+    const {returnCode, returnMsg, result} = await fetchJson(url, postOption(body));
     if (returnCode !== 0) {
       showError(`${returnCode}${returnMsg}`);
       return;

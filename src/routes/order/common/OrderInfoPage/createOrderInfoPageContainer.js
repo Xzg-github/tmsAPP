@@ -12,6 +12,7 @@ import helper from "../../../../common/common";
  * 返回：运单编辑页面容器组件
  * 初始化状态initState：{
  *     id - 运单标识，新增时为空
+ *     isAppend - true为补录运单，默认false
  *     readonly - true为页面只读
  *     closeFunc - 页面为tab页且存在按钮操作时，操作完成后的关闭页面回调函数，无按钮操作时可无
  * }
@@ -34,11 +35,12 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     return `${yyyy}-${mm}-${dd} ${hh}:${ff}:${ss}`;
   };
 
-  const buildState = async ({id, readonly, closeFunc}) => {
+  const buildState = async ({id, readonly, closeFunc, isAppend = false}) => {
     try {
       //获取并完善config
       let url = '/api/order/input/orderInfoConfig';
       const config = getJsonResult(await fetchJson(url));
+      !isAppend && delete config.formSections.dispatchInfo; //非补录运单无派车信息组
       const dic = getJsonResult(await fetchAllDictionary());
       Object.keys(config.formSections).map(key => {
         setDictionary2(dic, config.formSections[key].controls);
@@ -68,6 +70,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
         ...data,
         buttons,
         readonly,
+        isAppend,
         closeFunc,
         valid:{},
         status: 'page'
@@ -88,107 +91,145 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     }
   };
 
-  const changeActionCreator = (key, value) => async (dispatch, getState) => {
+  const customerIdChange = (key, value) => async (dispatch, getState) => {
     const {baseInfo} = getSelfState(getState());
     const oldValue = baseInfo[key];
-    let obj = {[key]: value};
+    let obj = {[key]: value, contactName: '', contactTelephone: '', contactEmail:'', salespersonId: '', customerServiceId: '',
+      departure:'', destination:'', goodsNumber:'', isSupervisor:'', route:''};
     let url, data;
-    switch (key) {
-      case 'customerId': {
-        obj.contactName = '';
-        obj.contactTelephone = '';
-        obj.contactEmail = '';
-        obj.salespersonId = '';
-        obj.customerServiceId = '';
-        if(value.value) {
-          if (oldValue && oldValue.value === value.value) return;
-          //获取客服
-          if (baseInfo.businessType) {
-            url = `/api/order/input/customer_service_info/${value.value}/${baseInfo.businessType}`;
-            data = await helper.fetchJson(url);
-            if (data.returnCode === 0) {
-              obj.customerServiceId = data.result || '';
-            }
-          }
-          //获取默认联系人信息
-          url = `/api/order/input/customer_default_contact/${value.value}`;
-          data = await helper.fetchJson(url);
-          if (data.returnCode === 0 && data.result.id) {
-            obj.contactName = {title: data.result.contactName, value: data.result.id};
-            obj.contactTelephone = data.result.contactMobile || '';
-            obj.contactEmail = data.result.contactEmail || '';
-          }
-          //获取客户信息带出销售人员
-          url = `/api/order/input/customer_info/${value.value}`;
-          data = await helper.fetchJson(url);
-          if (data.returnCode === 0) {
-            obj.salespersonId = data.result.salesPersonId || '';
-          }
+    if(value.value) {
+      if (oldValue && oldValue.value === value.value) return;
+      //获取客服
+      if (baseInfo.businessType) {
+        url = `/api/order/input/customer_service_info/${value.value}/${baseInfo.businessType}`;
+        data = await helper.fetchJson(url);
+        if (data.returnCode === 0) {
+          obj.customerServiceId = data.result || '';
         }
-        //清空收发货地址和货物明细以及其联动的基本信息
-        dispatch(action.assign({addressList:[{}, {}], goodsList:[]}));
-        dispatch(action.assign({departure:'', destination:'', goodsNumber:'', isSupervisor:'', route:''}));
-        break;
       }
-      case 'contactName': {
-        obj.contactTelephone = '';
-        obj.contactEmail = '';
-        if(value.value) {
-          if (oldValue && oldValue.value === value.value) return;
-          url = `/api/order/input/customer_contact_info/${value.value}`;
-          data = await helper.fetchJson(url);
-          if (data.returnCode === 0) {
-            obj.contactTelephone = data.result.contactMobile || '';
-            obj.contactEmail = data.result.contactEmail || '';
-          }
-        }
-        break;
+      //获取默认联系人信息
+      url = `/api/order/input/customer_default_contact/${value.value}`;
+      data = await helper.fetchJson(url);
+      if (data.returnCode === 0 && data.result.id) {
+        obj.contactName = {title: data.result.contactName, value: data.result.id};
+        obj.contactTelephone = data.result.contactMobile || '';
+        obj.contactEmail = data.result.contactEmail || '';
       }
-      case 'businessType': {
-        obj.customerServiceId = '';
-        if(value) {
-          if (oldValue && oldValue === value) return;
-          if (baseInfo.customerId) {
-            url = `/api/order/input/customer_service_info/${baseInfo.customerId.value}/${value}`;
-            data = await helper.fetchJson(url);
-            if (data.returnCode === 0) {
-              obj.customerServiceId = data.result || '';
-            }
-          }
-        }
-        break;
+      //获取客户信息带出销售人员
+      url = `/api/order/input/customer_info/${value.value}`;
+      data = await helper.fetchJson(url);
+      if (data.returnCode === 0) {
+        obj.salespersonId = data.result.salesPersonId || '';
+      }
+    }
+    //清空收发货地址和货物明细以及其联动的基本信息
+    dispatch(action.assign({addressList:[{}, {}], goodsList:[]}));
+    dispatch(action.assign(obj, 'baseInfo'));
+  };
+
+  const contactNameChange = (key, value) => async (dispatch, getState) => {
+    const {baseInfo} = getSelfState(getState());
+    const oldValue = baseInfo[key];
+    let obj = {[key]: value, contactTelephone: '', contactEmail: ''};
+    if(value.value) {
+      if (oldValue && oldValue.value === value.value) return;
+      const url = `/api/order/input/customer_contact_info/${value.value}`;
+      const data = await helper.fetchJson(url);
+      if (data.returnCode === 0) {
+        obj.contactTelephone = data.result.contactMobile || '';
+        obj.contactEmail = data.result.contactEmail || '';
       }
     }
     dispatch(action.assign(obj, 'baseInfo'));
   };
 
-  const searchActionCreator = (formKey, key, value) => async (dispatch, getState) => {
-    let url, data, options;
-    switch (key) {
-      case 'customerId': {
-        url = `/api/config/customer_contact/customer`;
-        data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, filter: value}));
-        break;
+  const businessTypeChange = (key, value) => async (dispatch, getState) => {
+    const {baseInfo} = getSelfState(getState());
+    const oldValue = baseInfo[key];
+    let obj = {[key]: value, customerServiceId: ''};
+    if(value) {
+      if (oldValue && oldValue === value) return;
+      if (baseInfo.customerId) {
+        const url = `/api/order/input/customer_service_info/${baseInfo.customerId.value}/${value}`;
+        const data = await helper.fetchJson(url);
+        if (data.returnCode === 0) {
+          obj.customerServiceId = data.result || '';
+        }
       }
-      case 'contactName': {
-        const {baseInfo} = getSelfState(getState());
-        url = `/api/order/input/customer_contacts/${baseInfo.customerId.value}`;
-        data = await helper.fetchJson(url, 'post');
-        break;
-      }
-      case 'carModeId': {
-        url = `/api/order/input/car_mode_drop_list`;
-        data = await helper.fetchJson(url, helper.postOption({maxNumber: 10, carMode: value, active: 'active_activated'}));
-        break;
-      }
-      default:
-        return;
     }
-    if (data.returnCode !== 0) {
-      return;
+    dispatch(action.assign(obj, 'baseInfo'));
+  };
+
+  const carInfoIdChange = (key, value) => async (dispatch, getState) => {
+    const {baseInfo} = getSelfState(getState());
+    const oldValue = baseInfo[key];
+    let obj = {[key]: value, ownerCarTag: '', supplierId:'', driverId:'', driverMobilePhone:''};
+    let url, data;
+    if(value.value) {
+      if (oldValue && oldValue.value === value.value) return;
+      url = `/api/dispatch/done/car_info/${value.value}`;
+      data = await helper.fetchJson(url);
+      if (data.returnCode === 0) {
+        obj.ownerCarTag = data.result.isOwner;
+        obj.supplierId = data.result.supplierId;
+        obj.driverId = data.result.driverId;
+      }
+      if (obj.driverId) {
+        url = `/api/dispatch/done/driver_info/${obj.driverId.value}`;
+        data = await helper.fetchJson(url);
+        if (data.returnCode === 0) {
+          obj.driverMobilePhone = data.result.driverMobilePhone;
+        }
+      }
     }
-    options =data.result instanceof Array? data.result:data.result.data;
-    dispatch(action.update({options}, ['formSections', formKey, 'controls'], {key:'key', value:key}));
+    dispatch(action.assign(obj, 'baseInfo'));
+  };
+
+  const driverIdChange = (key, value) => async (dispatch, getState) => {
+    const {baseInfo} = getSelfState(getState());
+    const oldValue = baseInfo[key];
+    let obj = {[key]: value, driverMobilePhone:''};
+    let url, data;
+    if(value.value) {
+    if (oldValue && oldValue.value === value.value) return;
+      url = `/api/dispatch/done/driver_info/${obj.driverId.value}`;
+      data = await helper.fetchJson(url);
+      if (data.returnCode === 0) {
+        obj.driverMobilePhone = data.result.driverMobilePhone;
+      }
+    }
+    dispatch(action.assign(obj, 'baseInfo'));
+  };
+
+  const changeKeys = {
+    customerId: customerIdChange,
+    contactName: contactNameChange,
+    businessType: businessTypeChange,
+    carInfoId: carInfoIdChange,
+    driverId: driverIdChange,
+  };
+
+  const changeActionCreator = (key, value) => {
+    if (changeKeys[key]) {
+      return changeKeys[key](key, value);
+    } else {
+      return action.assign({[key]: value}, 'baseInfo');
+    }
+  };
+
+  const searchActionCreator = (formKey, key, value, config) => async (dispatch, getState) => {
+    const {baseInfo} = getSelfState(getState());
+    let filter = value;
+    if (key === 'contactName') {
+      if (!baseInfo.customerId) return;
+      filter = baseInfo.customerId.value;
+    }
+    else if (key === 'driverId') {
+      if (!baseInfo.supplierId) return;
+      filter = `${baseInfo.supplierId.value}&isOwner=${baseInfo.ownerCarTag}&driverName=${value}`;
+    }
+    const {returnCode, result} = await helper.fuzzySearchEx(filter, config);
+    dispatch(action.update({options: returnCode === 0 ? result : undefined}, ['formSections', formKey, 'controls'], {key: 'key', value: key}));
   };
 
   const formAddActionCreator = (key) => (dispatch, getState) => {
@@ -334,6 +375,8 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     return {
       ...helper.convert(baseInfo),
       contactName: baseInfo.contactName && typeof baseInfo.contactName === 'object' ? baseInfo.contactName.title : baseInfo.contactName,
+      carNumber: baseInfo.carInfoId ? baseInfo.carInfoId.title : '',
+      driverName: baseInfo.driverId ? baseInfo.driverId.title : '',
       addressList: addressList.map((item, index) => ({
         ...helper.convert(item),
         consigneeConsignorName: item.consigneeConsignorId ? item.consigneeConsignorId.title : '',
@@ -351,7 +394,10 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     if (!baseInfo.customerId) return helper.showError('请先填写客户');
     const body = getSaveData(selfState);
     const method = baseInfo.id ? 'put' : 'post';
-    const url = helper.getRouteKey() === 'input' ? '/api/order/input' : '/api/order/complete/change';
+    let url = helper.getRouteKey() === 'input' ? '/api/order/input' : '/api/order/complete/change';
+    if (selfState.isAppend) {
+      url = '/api/bill/append';
+    }
     const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));
     if (returnCode !== 0) return helper.showError(returnMsg);
     helper.showSuccessMsg('保存成功');
@@ -385,12 +431,13 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   //提交
   const commitActionCreator = async (dispatch, getState) => {
     const selfState = getSelfState(getState());
-    const {baseInfo, closeFunc} = selfState;
+    const {baseInfo, closeFunc, isAppend} = selfState;
     //校验数据
     if (!checkData(selfState, dispatch)) return;
     const body = getSaveData(selfState);
     const method = baseInfo.id ? 'put' : 'post';
-    const {returnCode, returnMsg} = await helper.fetchJson(`/api/order/input/commit`, helper.postOption(body, method));
+    const url = isAppend ? '/api/bill/append/commit' : '/api/order/input/commit';
+    const {returnCode, returnMsg} = await helper.fetchJson(url, helper.postOption(body, method));
     if (returnCode !== 0) return helper.showError(returnMsg);
     helper.showSuccessMsg('提交成功');
     if (helper.getRouteKey() === 'input') {
@@ -505,7 +552,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     delGoods: delGoodsActionCreator,
     save: saveActionCreator,
     commit: commitActionCreator,
-    new: newActionCreator,
+    new: newActionCreator, //创建下一单
   };
 
   const clickActionCreator = (key) => {

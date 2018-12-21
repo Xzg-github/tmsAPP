@@ -16,13 +16,16 @@ const filters = [
 //OrderPage ToolbarComponent Config
 const buttons = [
   {key: 'add', title: '新增', bsStyle: 'primary'},
-  {key: 'add2', title: '税额改单'},
-  {key: 'add3', title: '净额改单'},
+  {key: 'addTax', title: '新增税额改单'},
+  {key: 'addNet', title: '新增净额改单'},
   {key: 'edit', title: '编辑'},
   {key: 'auditing', title: '审核'},
   {key: 'revoke', title: '撤销提交'},
   {key: 'delete', title: '删除', confirm: '是否确定删除已选中记录?'},
-  {key: 'export', title: '导出'},
+  {key: 'export', title: '导出', menu: [
+      { key: 'exportSearch', title: '查询导出'},
+      { key: 'exportPage', title: '页面导出'},
+    ]},
   {key: 'config', title: '配置字段'}
 ];
 
@@ -64,8 +67,7 @@ const baseInfo = [
   {key: 'transportOrderId', title: '运单号', type: 'search', required: true},
   {key: 'responsibleParty', title: '责任方', type: 'select', dictionary: name.RESPONSIBLE_PARTY, required: true},
   {key: 'renewalReason', title: '改单原因', type: 'select', required: true},
-  {key: 'logisticsOrderNumber', title: '物流订单号', type: 'readonly'},
-  {key: 'customerName', title: '客户', type: 'readonly'},
+  {key: 'balanceId', title: '客户', type: 'readonly'},
   {key: 'statusType', title: '状态', type: 'readonly', dictionary: name.STATUS_TYPE},
   {key: 'remark', title: '备注', type: 'text'}
 ];
@@ -84,7 +86,7 @@ const costInfoCols = [
   {key: 'index', title: '序号', type: 'index'},
   {key: 'chargeItemId', title: '费用名称', type: 'search', copy: true, required: true},
   {key: 'balanceId', title: '结算单位', type: 'search', copy: true, required: true},
-  {key: 'price', title: '单价', type: 'number', required: true, copy: true, props: {real: true, precision: 2}},
+  {key: 'price', title: '单价', type: 'number', required: true, copy: true, props: {real: true, sign: true,precision: 2}},
   {key: 'number', title: '数量', type: 'number', required: true, copy: true, props: {real: true, precision: 4}},
   {key: 'chargeUnit', title: '计量单位', type: 'select', required: true, copy: true, dictionary: name.CHARGE_UNIT},
   {key: 'currency', title: '币种', type: 'select', required: true, copy: true},
@@ -113,6 +115,11 @@ const editConfig = {
     {key: 'cancel', title: '关闭'},
     {key: 'save', title: '保存'},
     {key: 'commit', title: '提交', bsStyle: 'primary'}
+  ],
+  AuditFooter: [
+    {key: 'cancel', title: '关闭'},
+    {key: 'reject', title: '审核不通过'},
+    {key: 'confirm', title: '确认审核', bsStyle: 'primary'}
   ]
 };
 
