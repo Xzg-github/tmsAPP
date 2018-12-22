@@ -6,6 +6,9 @@ import {fetchAllDictionary, setDictionary2} from "../../../../common/dictionary"
 import helper from "../../../../common/common";
 import { showAddCustomerFactoryDialog } from '../../../config/customerFactory/EditDialogContainer';
 import showAddCustomerContactDialog from '../../../config/customerContact/EditDialogContainer';
+import { Action } from '../../../../action-reducer/action';
+
+const layoutAction = new Action(['layout']);
 
 /**
  * 功能：生成一个运单基本信息页面容器组件
@@ -97,6 +100,11 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       dispatch(action.create({...initState, status: 'retry'}));
     }else {
       dispatch(action.create(state));
+      if (helper.getRouteKey() === 'input') {
+        let [...pageTitle] = getState().layout.pageTitles.input;
+        pageTitle.push('新增');
+        dispatch(layoutAction.assign({input: pageTitle}, 'pageTitles'));
+      }
     }
   };
 
@@ -423,7 +431,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   //保存（不关闭当前页）
   const saveActionCreator = async (dispatch, getState) => {
     const selfState = getSelfState(getState());
-    const {baseInfo} = selfState;
+    const {baseInfo, isAppend} = selfState;
     if (!baseInfo.customerId) return helper.showError('请先填写客户');
     const body = getSaveData(selfState);
     const method = baseInfo.id ? 'put' : 'post';
@@ -435,10 +443,14 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     if (returnCode !== 0) return helper.showError(returnMsg);
     helper.showSuccessMsg('保存成功');
     if (!baseInfo.id) { //新增保存处理
-      if (isAppend) {
+      if (isAppend) { //新增补录运单
         dispatch(action.assign({id: result.id}, 'baseInfo'));
-      }else {
+      }else { //新增运单
         dispatch(action.assign({id: result}, 'baseInfo'));
+        let [...pageTitle] = getState().layout.pageTitles.input;
+        pageTitle.pop();
+        pageTitle.push('编辑');
+        dispatch(layoutAction.assign({input: pageTitle}, 'pageTitles'));
       }
       dispatch(action.update({type: 'readonly'}, ['formSections', 'baseInfo', 'controls'], {key: 'key', value: 'customerId'}));
     }
@@ -478,7 +490,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     if (returnCode !== 0) return helper.showError(returnMsg);
     helper.showSuccessMsg('提交成功');
     if (helper.getRouteKey() === 'input') {
-      newActionCreator(dispatch);
+      newActionCreator(dispatch, getState);
     }
     closeFunc && closeFunc();
   };
@@ -570,7 +582,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   };
 
   //下一单
-  const newActionCreator = (dispatch) => {
+  const newActionCreator = (dispatch, getState) => {
     dispatch(action.assign({
       baseInfo: {customerDelegateTime: getCurrentDate()},
       addressList:[{},{}],
@@ -578,6 +590,10 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       activeKey: 'addressList'
     }));
     dispatch(action.update({type: 'search'}, ['formSections', 'baseInfo', 'controls'], {key: 'key', value: 'customerId'}));
+    let [...pageTitle] = getState().layout.pageTitles.input;
+    pageTitle.pop();
+    pageTitle.push('新增');
+    dispatch(layoutAction.assign({input: pageTitle}, 'pageTitles'));
   };
 
   const buttons = {
