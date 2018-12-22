@@ -6,6 +6,7 @@ import {getPathValue} from '../../../../action-reducer/helper';
 import {EnhanceLoading} from '../../../../components/Enhance';
 import execWithLoading from '../../../../standard-business/execWithLoading';
 import {updateOne} from '../../../../action-reducer/array';
+import {afterEdit, setReadonly} from '../OrderPage/OrderPageContainer';
 
 const PARENT_STATE_PATH = ['extraApply'];
 const STATE_PATH = ['extraApply', 'edit'];
@@ -15,7 +16,6 @@ const URL_CHARGE_NAME = '/api/bill/extraApply/chargeItemId';
 const URL_TRANSPORT_ORDER = '/api/bill/extraApply/transportOrderId';
 const URL_SAVE = '/api/bill/extraApply/save';
 const URL_COMMIT = '/api/bill/extraApply/commit';
-const URL_FALLBACK = '/api/bill/extraApply/fallback';
 const URL_REVIEW = '/api/bill/extraApply/review';
 const URL_ENDCASE = '/api/bill/extraApply/endCase';
 
@@ -98,7 +98,7 @@ const copyActionCreator = (KEY) => async (dispatch, getState) => {
   dispatch(action.assign({[KEY]: newItems}, 'value'));
 };
 
-const delActionCreator = (KEY) => async (dispatch, getState) =>  {
+const payDelActionCreator = (KEY) => async (dispatch, getState) =>  {
   const {value} = getSelfState(getState());
   const list = value[KEY] || [];
   const checkList = list.filter(o => o.checked);
@@ -107,12 +107,13 @@ const delActionCreator = (KEY) => async (dispatch, getState) =>  {
   dispatch(action.assign({[KEY]: newItems}, 'value'));
 };
 
-const closeActionCreator = () => (dispatch, getState) => {
+const closeActionCreator = (isRefresh=false) => (dispatch, getState) => {
   const { tabs, activeKey } = getPathValue(getState(), PARENT_STATE_PATH);
   const newTabs = tabs.filter(tab => tab.key !== activeKey);
   let index = tabs.findIndex(tab => tab.key === activeKey);
   index--;
   dispatch(action.assignParent({ tabs: newTabs, activeKey: newTabs[index].key, [activeKey]: undefined }));
+  isRefresh && afterEdit(dispatch, getState);
 };
 
 const checkValid = (dispatch, getState) => {
@@ -142,22 +143,38 @@ const checkValid = (dispatch, getState) => {
 const saveActionCreator = () => async (dispatch, getState) => {
   if (checkValid(dispatch, getState)) return;
   execWithLoading(async () => {
-    const {value} = getSelfState(getState());
-    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SAVE, postOption({...convert(value)}));
+    const {value, editType, chargeFrom} = getSelfState(getState());
+    const {payChargeList, ...extraCharge} = value;
+    // type: 0:新增, 1:编辑, 2:编辑（费用来源不为空（外部系统接入））
+    const type = editType > 0 ? chargeFrom ? 2 : 1: 0;
+    const params = {
+      type,
+      extraCharge: convert(extraCharge),
+      chargeList: payChargeList.map(o => convert(o))
+    };
+    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SAVE, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    closeActionCreator()(dispatch, getState);
+    closeActionCreator(true)(dispatch, getState);
   });
 };
 
 const commitActionCreator = () => async (dispatch, getState) => {
   if (checkValid(dispatch, getState)) return;
   execWithLoading(async () => {
-    const {value} = getSelfState(getState());
-    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_COMMIT, postOption({...convert(value)}));
+    const {value, statusType, chargeFrom} = getSelfState(getState());
+    const {payChargeList, ...extraCharge} = value;
+    // type: 0:新增、编辑（待提交） 1:编辑（应收待提交）, 2:编辑（费用来源不为空（外部系统接入））
+    const type = chargeFrom ? 2 : statusType === 'status_receive_check_awaiting' ? 1: 0;
+    const params = {
+      type,
+      extraCharge: convert(extraCharge),
+      chargeList: payChargeList.map(o => convert(o))
+    };
+    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_COMMIT, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    closeActionCreator()(dispatch, getState);
+    closeActionCreator(true)(dispatch, getState);
   });
 };
 
@@ -165,10 +182,11 @@ const fallbackActionCreator = () => async (dispatch, getState) => {
   if (checkValid(dispatch, getState)) return;
   execWithLoading(async () => {
     const {value} = getSelfState(getState());
-    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_FALLBACK, postOption({...convert(value)}));
+    const params = {agreeOrFallback: false, ...convert(value)};
+    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_REVIEW, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    closeActionCreator()(dispatch, getState);
+    closeActionCreator(true)(dispatch, getState);
   });
 };
 
@@ -176,10 +194,11 @@ const reviewActionCreator = () => async (dispatch, getState) => {
   if (checkValid(dispatch, getState)) return;
   execWithLoading(async () => {
     const {value} = getSelfState(getState());
-    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_REVIEW, postOption({...convert(value)}));
+    const params = {agreeOrFallback: true, ...convert(value)};
+    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_REVIEW, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    closeActionCreator()(dispatch, getState);
+    closeActionCreator(true)(dispatch, getState);
   });
 };
 
@@ -190,20 +209,40 @@ const endACaseActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_ENDCASE, postOption({...convert(value)}));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    closeActionCreator()(dispatch, getState);
+    closeActionCreator(true)(dispatch, getState);
   });
+};
+
+const receiveDelActionCreator = (KEY) => async (dispatch, getState) =>  {
+  const {value} = getSelfState(getState());
+  const list = value[KEY] || [];
+  const checkList = list.filter(o => o.checked);
+  if (checkList.length === 0) return showError('请勾选一条数据！');
+  const newItems = list.filter(o => !o.checked);
+  dispatch(action.assign({[KEY]: newItems}, 'value'));
+};
+
+const convertActionCreator = (KEY) => async (dispatch, getState) =>  {
+  const {value} = getSelfState(getState());
+  const list = value[KEY] || [];
+  const checkList = list.filter(o => o.checked);
+  if (checkList.length === 0) return showError('请勾选一条数据！');
+  const newItems = list.filter(o => !o.checked);
+  dispatch(action.assign({[KEY]: newItems, receiveChargeList: checkList}, 'value'));
 };
 
 const buttons = {
   edit_add: addActionCreator,
   edit_copy: copyActionCreator,
-  edit_del: delActionCreator,
+  edit_del_pay: payDelActionCreator,
   close: closeActionCreator,
   save: saveActionCreator,
   commit: commitActionCreator,
   fallback: fallbackActionCreator,
   review: reviewActionCreator,
-  endACase: endACaseActionCreator
+  endACase: endACaseActionCreator,
+  edit_del_receive: receiveDelActionCreator,
+  convert: convertActionCreator
 };
 
 const clickActionCreator = (KEY, key) => {
@@ -220,8 +259,11 @@ const exitValidActionCreator = () => action.assign({valid: false});
 const buildEditPageState = async (config, itemData, editType) => {
   let value = {};
   if (editType !== 0) {
-    const detailData = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
-    value = {...detailData};
+    const {extraCharge, payChargeList, ...other} = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
+    value = {...extraCharge, payChargeList, ...other};
+    if (!extraCharge.directorIsTrueOrFalse) {
+      config.tables = setReadonly(config.tables);
+    }
   }
   return {
     ...config,

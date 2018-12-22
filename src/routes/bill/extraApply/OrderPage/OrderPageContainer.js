@@ -4,11 +4,11 @@ import helper,{postOption, fetchJson, showError, showSuccessMsg, convert, getJso
 import {Action} from '../../../../action-reducer/action';
 import {getPathValue} from '../../../../action-reducer/helper';
 import {search2} from '../../../../common/search';
-import {showOutputDialog} from '../../../../components/ModeOutput/ModeOutput';
 
 const STATE_PATH = ['extraApply'];
 const action = new Action(STATE_PATH);
 const URL_LIST = '/api/bill/extraApply/list';
+const URL_DELETE = '/api/bill/extraApply/delete';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -33,6 +33,11 @@ const searchActionCreator = async (dispatch, getState) => {
 
 const resetActionCreator = action.assign({searchData: {}});
 
+const afterEdit = async (dispatch, getState) => {
+  const {searchData, currentPage, pageSize} = getSelfState(getState());
+  await search2(dispatch, action, URL_LIST, currentPage, pageSize, convert(searchData), {}, undefined, false);
+};
+
 const setReadonly = (arr=[]) => {
   return arr.map(o => {
     o.btns = [];
@@ -46,47 +51,68 @@ const setReadonly = (arr=[]) => {
   });
 };
 
-// 弹出编辑页面
 const showEditPage = (dispatch, getState, editType=0, itemData={}) => {
+  // editType: 0:新增, 1:只读, 2:编辑, 3:审核, 4:结案
   const {tabs, editConfig} = getSelfState(getState());
   const key = editType === 0 ? 'add' : itemData['extraChargeNumber'];
   const title = editType === 0 ? '新增' : key;
   if (helper.isTabExist(tabs, key)) return dispatch(action.assign({activeKey: key}));
   const config = deepCopy(editConfig);
   config.footerButtons = config.footerButtons.filter(o => o.showInEditType.includes(editType));
-  // editType: 0:新增, 1:编辑, 2:只读(onLink), 3:审核, 4:结案
-  switch (editType) {
-    case 0: {
-      delete config.tables[1];
-      break;
-    }
-    case 1: {
-      config.controls[0].cols[0].type = 'readonly';
-      // 参照epld，如果不是应收待提交状态的编辑页面，去掉应收表格信息
-      // if (itemData.statusType !== 'status_receive_check_awaiting') {
-      //   delete config.tables[1];
-      // }
+  if (editType > 0) {
+    // 单号设为只读
+    config.controls[0].cols[0].type = 'readonly';
+  }
+  switch (itemData['statusType']) {
+    // 待提交
+    case 'status_submit_awaiting': {
+      // 去掉应收表格
+      config.tables = config.tables.filter(o => o.key === 'payChargeList');
       // 如果费用来源不为空，设置表格为只读
       if (itemData.chargeFrom) {
         config.tables = setReadonly(config.tables);
       }
       break;
     }
-    case 2: {
-      config.controls = setReadonly(config.controls);
-      config.tables = setReadonly(config.tables);
+    // 应收待提交
+    case 'status_receive_check_awaiting': {
+      // 去掉应收表格
+      config.tables = config.tables.filter(o => o.key === 'payChargeList');
+      // 如果费用来源不为空，设置表格为只读
+      if (itemData.chargeFrom) {
+        config.tables = setReadonly(config.tables);
+      }
+      config.controls[0].btns = config.payBtns;
+      config.controls[1].btns = config.receiveBtns;
       break;
     }
-    case 3: {
-      config.controls = setReadonly(config.controls);
-      config.tables = setReadonly(config.tables);
+    // 应付待审核
+    case 'status_pay_check_awaiting': {
+      // 去掉应收表格
+      config.tables = config.tables.filter(o => o.key === 'payChargeList');
       break;
     }
-    case 4: {
-      config.controls = setReadonly(config.controls);
-      config.tables = setReadonly(config.tables);
+    // 待审核
+    case 'status_check_awaiting': {
       break;
     }
+    // 新增
+    default: {
+      config.tables = config.tables.filter(o => o.key === 'payChargeList');
+    }
+  }
+  // 只读
+  if (editType === 1) {
+    config.controls = setReadonly(config.controls);
+    config.tables = setReadonly(config.tables);
+    config.fallbackInfo = config.fallbackInfo.map(o => {
+      o.type = 'readonly';
+      return o;
+    });
+    config.resultForm.cols = config.resultForm.cols.map(o => {
+      o.type = 'readonly';
+      return o;
+    });
   }
   dispatch(action.add({key, title}, 'tabs'));
   dispatch(action.assign({[key]: {editType, config, itemData}, activeKey: key}));
@@ -107,49 +133,49 @@ const checkOnly = (items) => {
 
 const isCanEdit = (item, type=0) => {
   // type: 0:编辑, 1:审核, 2:结案
-  // switch (type) {
-  //   case 0: {
-  //     if (item.statusType !== 'status_submit_awaiting') {
-  //       showError('只有待提交状态下才能编辑！');
-  //       return false;
-  //     }
-  //     break;
-  //   }
-  //   case 1: {
-  //     if (item.statusType !== 'status_receive_check_awaiting' || item.statusType !== 'status_pay_check_awaiting') {
-  //       showError('只有应收待提交或应付待审核状态下才能审核！');
-  //       return false;
-  //     }
-  //     break;
-  //   }
-  //   case 2: {
-  //     if (item.statusType !== 'status_settle_lawsuit_awaiting') {
-  //       showError('只有待结案状态下才能结案！');
-  //       return false;
-  //     }
-  //     break;
-  //   }
-  // }
+  switch (type) {
+    case 0: {
+      if (item.statusType !== 'status_submit_awaiting' && item.statusType !== 'status_receive_check_awaiting') {
+        showError('只有待提交或应收待提交状态下才能编辑！');
+        return false;
+      }
+      break;
+    }
+    case 1: {
+      if (item.statusType !== 'status_check_awaiting' && item.statusType !== 'status_pay_check_awaiting') {
+        showError('只有待审核或应付待审核状态下才能审核！');
+        return false;
+      }
+      break;
+    }
+    case 2: {
+      if (item.statusType !== 'status_settle_lawsuit_awaiting') {
+        showError('只有待结案状态下才能结案！');
+        return false;
+      }
+      break;
+    }
+  }
   return true;
 };
 
 const editActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const item = checkOnly(tableItems);
-  item && isCanEdit(item, 0) && showEditPage(dispatch, getState, 1, item);
+  item && isCanEdit(item, 0) && showEditPage(dispatch, getState, 2, item);
 };
 
 // 双击编辑
 const doubleClickActionCreator = (index) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const item = tableItems[index];
-  isCanEdit(item, 0) && showEditPage(dispatch, getState, 1, item);
+  isCanEdit(item, 0) && showEditPage(dispatch, getState, 2, item);
 };
 
 // 查看
 const linkActionCreator = (key, rowIndex, item) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
-  showEditPage(dispatch, getState, 2, tableItems[rowIndex]);
+  showEditPage(dispatch, getState, 1, tableItems[rowIndex]);
 };
 
 // 审核
@@ -166,12 +192,16 @@ const endACaseActionCreator = async (dispatch, getState) => {
   item && isCanEdit(item, 2) && showEditPage(dispatch, getState, 4, item);
 };
 
-// 输出
-const outputActionCreator = async (dispatch, getState) => {
+// 删除
+const deleteActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkList = tableItems.filter(o=> o.checked);
   if(!checkList.length) return showError('请勾选一条数据！');
-  showOutputDialog(checkList, 'receivable_month_bill');
+  const ids = checkList.map(o => o.id);
+  const {returnCode, result, returnMsg} = await helper.fetchJson(URL_DELETE, postOption(ids));
+  if (returnCode !== 0) return showError(returnMsg);
+  showSuccessMsg(returnMsg);
+  afterEdit(dispatch, getState);
 };
 
 const toolbarActions = {
@@ -181,7 +211,7 @@ const toolbarActions = {
   edit: editActionCreator,
   audit: auditActionCreator,
   endACase: endACaseActionCreator,
-  output: outputActionCreator
+  delete: deleteActionCreator
 };
 
 const clickActionCreator = (key) => {
@@ -224,3 +254,4 @@ const actionCreators = {
 
 const Container = connect(mapStateToProps, actionCreators)(OrderPage);
 export default Container;
+export {afterEdit, setReadonly};

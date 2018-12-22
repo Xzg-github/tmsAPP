@@ -22,42 +22,7 @@ api.get('/custom_config/:code', async (req, res) => {
 // 获取列表
 api.post('/list', async (req, res) => {
   const url = `${tms_service}/extra_charge/list/search`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: {data: [
-    {
-      id: 1,
-      'statusType': 'status_settle_lawsuit_awaiting',
-      'extraChargeNumber': '000000001',
-      'orderNumber': '001',
-      'customerId': {value: 'aaa', title: 'aaa'},
-      'supplierId': {value: 'bbb', title: 'bbb'},
-      'customerServiceId': {value: 'aaa', title: 'aaa'},
-      'customerDelegateCode': 'aaaaaaaaaaa',
-      'customerDelegateTime': '2018-12-19',
-      // 'chargeFrom': 'charge_from_edi',
-      'occurrenceClass': 'occurrence_class_001',
-      'responsibleParty': 'responsible_party_customer',
-      'customerPayIntention': 'customer_pay_intention_001',
-      'description': '11212',
-      'actualOccurrenceClass': 'occurrence_class_002',
-      'actualResponsibleParty': 'responsible_party_customer_service',
-      'settleLawsuitUser': {value: 'aaa', title: 'aaa'},
-      'settleLawsuitTime': '2018-12-19',
-      'receiveAmount': 100,
-      'payAmount': 20,
-      'profitAmount': 80,
-      'payCheckUser': {value: 'aaa', title: 'aaa'},
-      'receiveCheckTime': '2018-12-19',
-      'approvalUser': {value: 'bbb', title: 'bbb'},
-      'approvalTime': '2018-12-19',
-      'fallbackRemark': 'sahsaihsoia',
-      'waitCheckUser': {value: 'aaa', title: 'aaa'},
-      'insertUser': {value: 'bbb', title: 'bbb'},
-      'insertTime': '2018-12-19',
-      'updateUser': {value: 'aaa', title: 'aaa'},
-      'updateTime': '2018-12-19',
-    }
-  ], returnTotalItem: 100}});
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 // 获取币种下拉
@@ -78,76 +43,69 @@ api.post('/transportOrderId', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
+// 批量删除
+api.post('/delete', async (req, res) => {
+  const url = `${tms_service}/extra_charge/delete`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
+});
+
 // 获取单条记录的详细信息
 api.get('/detail/:id', async (req, res) => {
   const url = `${tms_service}/extra_charge/${req.params.id}`;
-  // res.send(await fetchJsonByNode(req, url));
-  res.send({returnCode: 0, result: {
-    'transportOrderId': '001',
-    'occurrenceClass': 'occurrence_class_001',
-    'responsibleParty': 'responsible_party_customer',
-    'customerPayIntention': 'customer_pay_intention_001',
-    'description': '11212',
-    'payChargeList': [{
-      'supplierId': {value: 'aaa', title: 'aaa'},
-      'chargeItemId': {value: 'aaa', title: 'aaa'},
-      'chargeUnit': {value: 'aaa', title: 'aaa'},
-      'price': 1,
-      'number': 2,
-      'amount': 3,
-      'currency': {value: "EUR", title: "EUR"},
-      'exchangeRate': 4,
-      'tax': 5,
-      'statusType': 'status_submit_awaiting',
-    }],
-    'receiveChargeList': [{
-      'supplierId': {value: 'aaa', title: 'aaa'},
-      'chargeItemId': {value: 'aaa', title: 'aaa'},
-      'chargeUnit': {value: 'aaa', title: 'aaa'},
-      'price': 1,
-      'number': 2,
-      'amount': 3,
-      'currency': {value: "EUR", title: "EUR"},
-      'exchangeRate': 4,
-      'tax': 5,
-      'statusType': 'status_submit_awaiting',
-    }]
-  }});
+  res.send(await fetchJsonByNode(req, url));
 });
 
 // 保存
 api.post('/save', async (req, res) => {
-  const url = `${tms_service}/extra_charge`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  let url = `${tms_service}/extra_charge`;
+  let method = 'post';
+  // type: 0:新增, 1:编辑, 2:编辑（费用来源不为空（外部系统接入））
+  const {type=0, ...body} = req.body;
+  switch (type) {
+    case 1: {
+      method = 'put';
+      break;
+    }
+    case 2: {
+      method = 'put';
+      url = `${tms_service}/extra_charge/external`;
+      break;
+    }
+  }
+  res.send(await fetchJsonByNode(req, url, postOption(body, method)));
 });
 
 // 提交
 api.post('/commit', async (req, res) => {
-  const url = `${tms_service}/extra_charge/submit`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  let url = `${tms_service}/extra_charge/submit`;
+  let method = 'put';
+  // type: 0:新增、编辑（待提交） 1:编辑（应收待提交）, 2:编辑（费用来源不为空（外部系统接入））
+  const {type=0, ...body} = req.body;
+  switch (type) {
+    case 1: {
+      method = 'post';
+      url = `${tms_service}/extra_charge/receive/submit`;
+      break;
+    }
+    case 2: {
+      method = 'post';
+      url = `${tms_service}/extra_charge/external`;
+      break;
+    }
+  }
+  res.send(await fetchJsonByNode(req, url, postOption(body, method)));
 });
 
-// 回退
-api.post('/fallback', async (req, res) => {
-  const url = `${tms_service}/extra_charge/approval`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
-});
-
-// 审核
+// 审核/回退
 api.post('/review', async (req, res) => {
   const url = `${tms_service}/extra_charge/approval`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 // 结案
 api.post('/endCase', async (req, res) => {
   const url = `${tms_service}/extra_charge/settle_lawsuit`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 

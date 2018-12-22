@@ -21,7 +21,7 @@ class EditPage extends React.Component {
   toToolbar = (isPay) => {
     const {isReadonly, payButtons, receiveButtons, onClick} = this.props;
     const buttons = isPay ? payButtons : receiveButtons;
-    const title = isPay ? '应收信息' : '应付信息';
+    const title = isPay ? '应付信息' : '应收信息';
     const props = {title, buttons, onClick, readonly: isReadonly};
     return <SuperTitle {...props}/>
   }

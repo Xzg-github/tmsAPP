@@ -21,7 +21,7 @@ const buttons = [
   {key: 'edit', title: '编辑'},
   {key: 'audit', title: '审核'},
   {key: 'endACase', title: '结案'},
-  {key: 'output', title: '输出'}
+  {key: 'delete', title: '删除', confirm :'是否确认删除勾选数据？'}
 ];
 
 const tableCols = [
@@ -68,10 +68,10 @@ const index = {
 };
 
 const baseInfo = [
-  {key: 'transportOrderId', title: '运单号', type: 'search'},
-  {key: 'occurrenceClass', title: '发生类别', type: 'select', dictionary: name.REASON_TYPE},
-  {key: 'responsibleParty', title: '责任方', type: 'select', dictionary: name.RESPONSIBLE_PARTY},
-  {key: 'customerPayIntention', title: '客户支付意向', type: 'select', dictionary: name.CUSTOMER_PAY_INTENTION},
+  {key: 'transportOrderId', title: '运单号', type: 'search', required: true},
+  {key: 'occurrenceClass', title: '发生类别', type: 'select', dictionary: name.REASON_TYPE, required: true},
+  {key: 'responsibleParty', title: '责任方', type: 'select', dictionary: name.RESPONSIBLE_PARTY, required: true},
+  {key: 'customerPayIntention', title: '客户支付意向', type: 'select', dictionary: name.CUSTOMER_PAY_INTENTION, required: true},
   {key: 'description', title: '详细说明', type: 'textArea'}
 ];
 
@@ -82,13 +82,13 @@ const controls = [
 const payButtons = [
   {key: 'edit_add', title: '新增', bsStyle: 'primary'},
   {key: 'edit_copy', title: '复制新增'},
-  {key: 'edit_del', title: '删除', confirm: '是否确定删除选中的未审核费用？'},
+  {key: 'edit_del_pay', title: '删除', confirm: '是否确定删除选中的未审核费用？'},
 ];
 
 const payCols = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
-  {key: 'supplierId', title: '结算单位', type: 'search', searchType: 'supplier'},
+  {key: 'balanceId', title: '结算单位', type: 'search', searchType: 'supplier'},
   {key: 'chargeItemId', title: '费用名称', type: 'search'},
   {key: 'chargeUnit', title: '计量单位', type: 'select', dictionary: name.CHARGE_UNIT},
   {key: 'price', title: '单价', type: 'number', props: {real: true, precision: 2}},
@@ -118,7 +118,7 @@ const payCols = [
 const receiveCols = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
-  {key: 'customerId', title: '结算单位', type: 'search', searchType: 'customer'},
+  {key: 'balanceId', title: '结算单位', type: 'search', searchType: 'customer'},
   {key: 'chargeItemId', title: '费用名称', type: 'search'},
   {key: 'chargeUnit', title: '计量单位', type: 'select', dictionary: name.CHARGE_UNIT},
   {key: 'price', title: '单价', type: 'number', props: {real: true, precision: 2}},
@@ -132,13 +132,13 @@ const receiveCols = [
 
 const tables = [
   {key: 'payChargeList', title: '应付费用', cols: payCols, btns: payButtons},
-  {key: 'receiveChargeList', title: '应收费用', cols: receiveCols, btns: []}
+  {key: 'receiveChargeList', title: '应收费用', cols: receiveCols}
 ];
 
 const footerButtons = [
   {key: 'close', title: '关闭', showInEditType: [0, 1, 2, 3, 4]},
-  {key: 'save', title: '保存', showInEditType: [0, 1]},
-  {key: 'commit', title: '提交', bsStyle: 'primary', showInEditType: [0, 1]},
+  {key: 'save', title: '保存', showInEditType: [0, 2]},
+  {key: 'commit', title: '提交', bsStyle: 'primary', showInEditType: [0, 2]},
   {key: 'fallback', title: '回退', bsStyle: 'primary', showInEditType: [3]},
   {key: 'review', title: '审核', bsStyle: 'primary', showInEditType: [3]},
   {key: 'endACase', title: '结案', bsStyle: 'primary', showInEditType: [4]}
@@ -165,6 +165,8 @@ const resultForm = {
 
 const editConfig = {
   controls,
+  payBtns: [{key: 'convert', title: '转应收'}],
+  receiveBtns: [{key: 'edit_del_receive', title: '删除'}],
   tables,
   footerButtons,
   amountInfo,
