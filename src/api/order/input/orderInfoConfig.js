@@ -32,7 +32,7 @@ const dispatchForm = [
   {key: 'driverId', title: '司机', type:'search', props: {searchWhenClick: true}, searchUrl: URL_SUPPLIER_DRIVER, required: true},
   {key: 'driverMobilePhone', title: '司机号码', type:'readonly'},
   {key: 'transportationDuration', title: '运输时长', type:'number', props: {real: true, precision: 2}},
-  {key: 'taskTypeName', title: '文件任务', type:'select', props: {mode: 'multiple'}, dictionary: 'task_type_file', span: 2},
+  {key: 'taskTypeCode', title: '文件任务', type:'select', props: {mode: 'multiple'}, dictionary: 'task_type_file', span: 2},
 ];
 
 const addForm = [

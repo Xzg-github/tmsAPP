@@ -9,23 +9,19 @@ const filters = [
   {key: 'driverId', title: '司机', type: 'search', searchType:'driver_all'},
   {key: 'businessType', title: '运输类型', type: 'select', dictionary: 'business_type'},
   {key: 'customerServiceId', title: '客服人员', type: 'search', searchType: 'user'},
-  {key: 'dispatchUser', title: '派单人', type: 'search', searchType: 'user'},
   {key: 'transportType', title: '运输方式', type: 'select', dictionary: 'transport_type'},
   {key: 'carModeId', title: '车型', type: 'search', searchType: 'car_mode'},
   {key: 'departure', title: '始发地', type: 'search', searchType:'charge_place'},
   {key: 'destination', title: '目的地', type: 'search', searchType:'charge_place'},
   {key: 'planPickupTimeFrom', title: '要求装货时间', type: 'date', props: {showTime: true}},
   {key: 'planPickupTimeTo', title: '至', type: 'date', props: {showTime: true}},
-  {key: 'dispatchTimeFrom', title: '派单时间', type: 'date', props: {showTime: true}},
-  {key: 'dispatchTimeTo', title: '至', type: 'date', props: {showTime: true}},
   {key: 'insertTimeFrom', title: '创建时间', type: 'date', props: {showTime: true}},
-  {key: 'insertTimeTo', title: '至', type: 'date', props: {showTime: true}}
+  {key: 'insertTimeTo', title: '至', type: 'date', props: {showTime: true}},
+  {key: 'insertUser', title: '创建人', type: 'search', searchType: 'user'},
 ];
 
 const tableCols = [
   {key: 'orderNumber', title: '运单号', link: true},
-  {key: 'orderType', title: '任务状态', dictionary: 'order_type'},
-  {key: 'statusType', title: '运单状态', dictionary: 'transport_order'},
   {key: 'customerId', title: '客户'},
   {key: 'customerDelegateCode', title: '委托号'},
   {key: 'customerDelegateTime', title: '委托日期'},
@@ -47,7 +43,6 @@ const tableCols = [
   {key: 'planDeliveryTime', title: '要求卸货时间'},
   {key: 'route', title: '路线'},
   {key: 'isSupervisor', title: '是否需要监理', dictionary: 'zero_one_type'},
-  {key: 'reason', title: '原因'},
   {key: 'commodityDescription', title: '商品描述'},
   {key: 'palletsNumber', title: '总卡板数'},
   {key: 'goodsNumber', title: '总数量'},

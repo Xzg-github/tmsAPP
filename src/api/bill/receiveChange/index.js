@@ -3,7 +3,7 @@ import {postOption, fetchJsonByNode} from '../../../common/common';
 import {host} from '../../globalConfig';
 import {search} from "../../helper";
 
-const service = `${host}/tms-service-he`;
+const service = `${host}/tms-service`;
 const archiver_service = `${host}/archiver-service`;
 const tenant_service = `${host}/tenant_service`;
 const charge_direction = 0;

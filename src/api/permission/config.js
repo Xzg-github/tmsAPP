@@ -77,6 +77,7 @@ const institution_mgr = [
   {key: 'institution'},         // 组织机构
   {key: 'department'},          // 部门档案
   {key: 'user'},                // 用户档案
+  {key: 'corporation'},        // 法人档案
 ];
 
 // 客户管理子菜单
@@ -87,6 +88,7 @@ const customer_mgr = [
   {key: 'customer_factory'},    // 收发货档案
   {key: 'customer_tax'},        // 税率档案
   {key: 'customer_cost'},       // 习惯费用项
+  {key: 'customer_invoice'},       // 开票档案
 ];
 
 // 供应商管理子菜单
@@ -124,6 +126,7 @@ const config = [
   {key: 'supplier_mgr', children: supplier_mgr},        // 供应商管理
   {key: 'inside_mgr', children: inside_mgr},            // 内部档案
   {key: 'price_mgr', children: price_mgr},              // 价格管理
+  {key: 'bank'},                                          // 银行档案
 ];
 
 // 开发配置子菜单

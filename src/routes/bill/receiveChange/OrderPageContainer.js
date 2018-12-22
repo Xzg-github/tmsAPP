@@ -46,16 +46,16 @@ const resetActionCreator = (dispatch) => {
   dispatch(action.assign({searchData: {}}));
 };
 
-const searchActionCreator = () => async (dispatch, getState) => {
+const searchActionCreator = async (dispatch, getState) => {
   const {pageSize, searchData} = getSelfState(getState());
   const newState = {searchDataBak: searchData, currentPage: 1};
-  return search2(dispatch, action, URL_LIST, 1, pageSize, searchData, newState);
+  return search2(dispatch, action, URL_LIST, 1, pageSize, searchData, newState, undefined, false);
 };
 
 // 查询导出
 const exportSearchActionCreator = (dispatch, getState) => {
   const {tableCols, searchData} = getSelfState(getState());
-  return commonExport(tableCols, '/tms-service/0/search', searchData);
+  return commonExport(tableCols, '/tms-service/renewal/0/search', searchData);
 };
 
 // 页面导出

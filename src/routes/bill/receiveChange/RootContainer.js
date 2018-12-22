@@ -66,7 +66,7 @@ const initActionCreator = () => async (dispatch) => {
     const {index, editConfig, dicNames, tabs, activeKey} = getJsonResult(await fetchJson(URL_CONFIG));
     // 添加备用字段
     const customConfig = getJsonResult(await fetchJson(`${CUSTOM_CONFIG}/renewal_detail`));
-    editConfig.tables[0].cols = uniqueArrHanlder(editConfig.tables[0].cols, customConfig);
+    editConfig.tables[0].cols = uniqueArrHanlder(editConfig.tables[0].cols, customConfig.controls);
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}));
     const dictionary = getJsonResult(await fetchDictionary(dicNames));
     dictionary['status_type'] = getJsonResult(await getStatus('renewal'));
