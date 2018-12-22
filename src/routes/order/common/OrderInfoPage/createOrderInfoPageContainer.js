@@ -423,12 +423,12 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   //保存（不关闭当前页）
   const saveActionCreator = async (dispatch, getState) => {
     const selfState = getSelfState(getState());
-    const {baseInfo} = selfState;
+    const {baseInfo, isAppend} = selfState;
     if (!baseInfo.customerId) return helper.showError('请先填写客户');
     const body = getSaveData(selfState);
     const method = baseInfo.id ? 'put' : 'post';
     let url = helper.getRouteKey() === 'input' ? '/api/order/input' : '/api/order/complete/change';
-    if (selfState.isAppend) {
+    if (isAppend) {
       url = '/api/bill/append';
     }
     const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));
