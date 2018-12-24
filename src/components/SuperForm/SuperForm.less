@@ -7,7 +7,7 @@
     overflow: hidden;
 
     > div {
-      margin-bottom: -6px;
+      margin-bottom: -15px;
     }
 
     [role='add'] {
@@ -16,8 +16,19 @@
       color: @primary-color;
     }
 
-    :global(.ant-form-item-label) {
-      margin-bottom: 1px;
+    :global(.ant-form-item) {
+      margin-bottom: 15px;
+
+      :global(.ant-form-item-label) {
+        margin-bottom: 10px;
+      }
+
+      :global(.ant-form-item-control) {
+        :global(.ant-input),
+        :global(.ant-select-selection) {
+          border-radius: 2px !important;
+        }
+      }
     }
 
     :global(.ant-form-item-control) input,

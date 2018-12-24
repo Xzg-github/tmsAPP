@@ -7,7 +7,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './SuperForm.less';
 
 const FormItem = Form.Item;
-const defaultSize = 'small';
+const defaultSize = 'default';
 const defaultColNum = 4;
 
 const TYPE = [
