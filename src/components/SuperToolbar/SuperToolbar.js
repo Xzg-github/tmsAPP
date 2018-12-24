@@ -52,7 +52,7 @@ class SuperToolbar extends React.Component {
 
   toButton = ({key, title, bsStyle: type, confirm, menu}) => {
     const onClick = this.onClick.bind(this, key);
-    const {size='small'} = this.props;
+    const {size='default'} = this.props;
     if (menu && menu.length) {
       return (
         <Dropdown key={key} trigger={['hover']} overlay={this.toMenu(menu)}>
