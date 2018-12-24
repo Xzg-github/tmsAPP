@@ -107,7 +107,7 @@ const initActionCreator = () => async (dispatch) => {
     const currencyList = getJsonResult(await fetchJson(URL_CURRENCY, postOption({currencyTypeCode: '', maxNumber: 65536})));
     payload.editConfig.currencyList = currencyList;
     const dictionarys = getJsonResult(await fetchDictionary(names));
-    dictionarys['status_type'] = getJsonResult(await getStatus("charge_detail_type"));
+    dictionarys['status_type_01'] = getJsonResult(await getStatus("charge_detail_type"));
     dictionarys['currency'] = currencyList;
     setDictionary(payload.tableCols, dictionarys);
     setDictionary(payload.filters, dictionarys);

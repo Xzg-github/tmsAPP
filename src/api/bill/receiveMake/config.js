@@ -87,7 +87,7 @@ const receiveCols = [
   {key: 'netAmount', title: '净价'},
   {key: 'remark', title: '备注'},
   {key: 'isAdditional', title: '是否额外费用', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'statusType', title: '状态', dictionary: name.STATUS_TYPE},
+  {key: 'statusType', title: '状态', dictionary: 'status_type_01'},
   {key: 'relationNumber', title: '关联编码'},
   {key: 'chargeOrigin', title: '费用来源', dictionary: name.CHARGE_ORIGIN},
   {key: 'institutionId', title: '费用归属机构'},
@@ -126,7 +126,7 @@ const payCols = [
   {key: 'netAmount', title: '净价'},
   {key: 'remark', title: '备注'},
   {key: 'isAdditional', title: '是否额外费用', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'statusType', title: '状态', dictionary: name.STATUS_TYPE},
+  {key: 'statusType', title: '状态', dictionary: 'status_type_01'},
   {key: 'relationNumber', title: '关联编码'},
   {key: 'chargeOrigin', title: '费用来源', dictionary: name.CHARGE_ORIGIN},
   {key: 'isExpense', title: '是否报销', dictionary: name.ZERO_ONE_TYPE},
@@ -180,7 +180,7 @@ const receiveColsEdit = [
   {key: 'currency', title: '币种', type: 'select', required: true, dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率', type: 'readonly'},
   {key: 'remark', title: '备注', type: 'text'},
-  {key: 'statusType', title: '状态', type: 'readonly', dictionary: name.STATUS_TYPE}
+  {key: 'statusType', title: '状态', type: 'readonly', dictionary: 'status_type_01'}
 ];
 
 const payColsEdit = [
@@ -202,7 +202,7 @@ const payColsEdit = [
   {key: 'netAmount', title: '净价', type: 'number'},
   {key: 'remark', title: '备注', type: 'text'},
   {key: 'isAdditional', title: '是否额外费用', type: 'select', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'statusType', title: '状态', type: 'select', dictionary: name.STATUS_TYPE},
+  {key: 'statusType', title: '状态', type: 'select', dictionary: 'status_type_01'},
   {key: 'relationNumber', title: '关联编码', type: 'text'},
   {key: 'chargeOrigin', title: '费用来源', type: 'select', dictionary: name.CHARGE_ORIGIN},
   {key: 'isExpense', title: '是否报销', type: 'select', dictionary: name.ZERO_ONE_TYPE},

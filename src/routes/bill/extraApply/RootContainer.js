@@ -62,7 +62,7 @@ const initActionCreator = () => async (dispatch) => {
     const dics = deepCopy(dictionarys);
     dics['status_type'] = getJsonResult(await getStatus("extra_charge"));
     setDictionary(payload.filters, dics);
-    dictionarys['status_type'] = getJsonResult(await getStatus("renewal"));
+    dictionarys['status_type'] = getJsonResult(await getStatus("extra_charge"));
     dictionarys['currency'] = getJsonResult(await fetchJson(URL_CURRENCY, postOption({currencyTypeCode: '', maxNumber: 65536})));
     setDictionary(payload.tableCols, dictionarys);
     setDictionary(payload.editConfig.controls[0].cols, dictionarys);
