@@ -32,23 +32,18 @@ const changeActionCreator = (key, value) => async (dispatch, getState) =>  {
 };
 
 const formSearchActionCreator = (KEY, key, filter, control) => async (dispatch, getState) => {
-  const {controls, value} = getSelfState(getState());
-  const customerId = value['payCustomerId'].value;
+  const {controls, value, customerId} = getSelfState(getState());
   let result;
   if (control.searchType) {
     result = getJsonResult(await fuzzySearchEx(filter, control));
   } else {
     switch (key) {
-      case 'currency': {
+      case 'receivableOpeningBank': {
         result = getJsonResult(await fetchJson(URL_CURRENCY, postOption({currencyTypeCode: filter, maxNumber: 65536})));
         break;
       }
-      case 'customerContact': {
-        result = getJsonResult(await fetchJson(URL_CONTACTS, postOption({customerId})));
-        break;
-      }
-      case 'customerHeaderInformation': {
-        result = getJsonResult(await fetchJson(URL_HEADER_INDO, postOption({customerId, name: filter})));
+      case 'invoiceHeaderInformation': {
+        result = getJsonResult(await fetchJson(URL_HEADER_INDO, postOption({customerId: customerId.value, name: filter})));
         break;
       }
     }

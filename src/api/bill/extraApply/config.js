@@ -25,7 +25,7 @@ const buttons = [
 ];
 
 const tableCols = [
-  {key: 'statusType', title: '运单状态', dictionary: name.STATUS_TYPE},
+  {key: 'statusType', title: '状态', dictionary: name.STATUS_TYPE},
   {key: 'extraChargeNumber', title: '额外费用编码', link: true},
   {key: 'orderNumber', title: '运单号'},
   {key: 'customerId', title: '委托客户'},
@@ -97,22 +97,10 @@ const payCols = [
   {key: 'currency', title: '币种', type: 'select', dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率', type: 'readonly'},
   {key: 'tax', title: '税率', type: 'readonly'},
-  {key: 'taxType', title: '计税方式', type: 'readonly', dictionary: name.TAX_TYPE},
+  {key: 'taxRateWay', title: '计税方式', type: 'readonly', dictionary: name.TAX_TYPE},
   {key: 'taxAmount', title: '税额', type: 'readonly'},
   {key: 'netAmount', title: '净价', type: 'readonly'},
-  {key: 'remark', title: '备注', type: 'text'},
-  {key: 'isAdditional', title: '是否额外费用', type: 'select', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'statusType', title: '状态', type: 'select', dictionary: name.STATUS_TYPE},
-  {key: 'relationNumber', title: '关联编码', type: 'text'},
-  {key: 'chargeOrigin', title: '费用来源', type: 'select', dictionary: name.CHARGE_ORIGIN},
-  {key: 'isExpense', title: '是否报销', type: 'select', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'isOutputValue', title: '是否产值', type: 'select', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'sequence', title: '排序', type: 'readonly'},
-  {key: 'institutionId', title: '费用归属机构', type: 'readonly'},
-  {key: 'insertUser', title: '创建人', type: 'readonly'},
-  {key: 'insertDate', title: '创建时间', type: 'readonly'},
-  {key: 'updateUser', title: '更新人', type: 'readonly'},
-  {key: 'updateDate', title: '更新时间', type: 'readonly'}
+  {key: 'remark', title: '备注', type: 'text'}
 ];
 
 const receiveCols = [
@@ -165,8 +153,8 @@ const resultForm = {
 
 const editConfig = {
   controls,
-  payBtns: [{key: 'convert', title: '转应收'}],
-  receiveBtns: [{key: 'edit_del_receive', title: '删除'}],
+  payBtns: [{key: 'convert', title: '转应收', bsStyle: 'primary'}],
+  receiveBtns: [{key: 'edit_del_receive', title: '删除', bsStyle: 'primary'}],
   tables,
   footerButtons,
   amountInfo,

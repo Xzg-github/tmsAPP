@@ -76,24 +76,42 @@ const showEditPage = (dispatch, getState, editType=0, itemData={}) => {
     }
     // 应收待提交
     case 'status_receive_check_awaiting': {
-      // 去掉应收表格
-      config.tables = config.tables.filter(o => o.key === 'payChargeList');
+      config.tables[0].btns = config.payBtns;
+      config.tables[1].btns = config.receiveBtns;
+      config.isShowAudit = true;
+      config.footerButtons = config.footerButtons.filter(o => o.key !== 'save');
       // 如果费用来源不为空，设置表格为只读
-      if (itemData.chargeFrom) {
+      if (itemData['chargeFrom']) {
         config.tables = setReadonly(config.tables);
       }
-      config.controls[0].btns = config.payBtns;
-      config.controls[1].btns = config.receiveBtns;
       break;
     }
     // 应付待审核
     case 'status_pay_check_awaiting': {
       // 去掉应收表格
       config.tables = config.tables.filter(o => o.key === 'payChargeList');
+      config.isShowAudit = true;
       break;
     }
     // 待审核
     case 'status_check_awaiting': {
+      config.isShowAudit = true;
+      config.controls = setReadonly(config.controls);
+      config.tables = setReadonly(config.tables);
+      break;
+    }
+    // 待结案
+    case 'status_settle_lawsuit_awaiting': {
+      config.isShowEndCase = true;
+      config.controls = setReadonly(config.controls);
+      config.tables = setReadonly(config.tables);
+      break;
+    }
+    // 已结案
+    case 'status_settle_lawsuit_completed': {
+      config.isShowEndCase = true;
+      config.controls = setReadonly(config.controls);
+      config.tables = setReadonly(config.tables);
       break;
     }
     // 新增

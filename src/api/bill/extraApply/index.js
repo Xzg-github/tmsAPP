@@ -1,7 +1,7 @@
 import express from 'express';
 import {fetchJsonByNode, postOption} from '../../../common/common';
 import {host} from '../../globalConfig';
-const tms_service = `${host}/tms-service-he`;
+const tms_service = `${host}/tms-service`;
 const archiver_service = `${host}/archiver-service`;
 let api = express.Router();
 
@@ -39,7 +39,7 @@ api.post('/chargeItemId', async (req, res) => {
 
 // 运单号下拉(0:待审核)
 api.post('/transportOrderId', async (req, res) => {
-  const url = `${tms_service}/transport_order/income/drop_list/0`;
+  const url = `${tms_service}/transport_order/cost/drop_list/0`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 

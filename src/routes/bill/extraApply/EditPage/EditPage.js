@@ -33,7 +33,7 @@ class EditPage extends React.Component {
         valid: item.key === valid,
         callback: {
           onCheck: onCheck.bind(null, item.key),
-          onExitValid: onExitValid,
+          onExitValid,
           onSearch: onTableSearch.bind(null, item.key),
           onContentChange: onContentChange.bind(null, item.key)
         }
@@ -51,8 +51,8 @@ class EditPage extends React.Component {
   }
 
   toAmount = () => {
-    const {editType, amountInfo, value} = this.props;
-    return editType === 3 ? (<div style={{marginTop: '-10px', marginBottom: '10px'}}>{
+    const {amountInfo, value, isShowAudit} = this.props;
+    return isShowAudit ? (<div style={{marginTop: '-10px', marginBottom: '10px'}}>{
       amountInfo.map(it => {
         const className = it.important ? s.important : '';
         const amount = value[it.key] || 0;
@@ -62,25 +62,26 @@ class EditPage extends React.Component {
   }
 
   toFallback () {
-    const {editType, value, onChange, fallbackInfo} = this.props;
+    const {value, onChange, fallbackInfo, isShowAudit} = this.props;
     const props = {
       allFullFather: true,
       controls: fallbackInfo,
       value,
       onChange
     };
-    return editType === 3 ? <SuperForm {...props}/> : null;
+    return isShowAudit ? <SuperForm {...props}/> : null;
   }
 
   toResultForm () {
-    const {editType, value, valid, onChange, resultForm} = this.props;
+    const {value, valid, onChange, resultForm, onExitValid, isShowEndCase} = this.props;
     const props = {
       controls: resultForm.cols,
       valid: valid === resultForm.key,
       value,
-      onChange: onChange.bind(null, resultForm.key)
+      onChange: onChange.bind(null, resultForm.key),
+      onExitValid
     };
-    return editType === 4 ? (<div className={s.contenItemBox}>
+    return isShowEndCase ? (<div className={s.contenItemBox}>
       <div className={s.superTitle}><SuperTitle title={resultForm.title}/></div>
       <SuperForm {...props}/>
     </div>) : null;

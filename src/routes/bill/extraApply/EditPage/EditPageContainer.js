@@ -144,13 +144,14 @@ const saveActionCreator = () => async (dispatch, getState) => {
   if (checkValid(dispatch, getState)) return;
   execWithLoading(async () => {
     const {value, editType, chargeFrom} = getSelfState(getState());
-    const {payChargeList, ...extraCharge} = value;
+    const {payChargeList=[], receiveChargeList=[], ...extraCharge} = value;
     // type: 0:新增, 1:编辑, 2:编辑（费用来源不为空（外部系统接入））
     const type = editType > 0 ? chargeFrom ? 2 : 1: 0;
+    const list = type === 1 ? receiveChargeList : payChargeList;
     const params = {
       type,
       extraCharge: convert(extraCharge),
-      chargeList: payChargeList.map(o => convert(o))
+      chargeList: list.map(o => convert(o))
     };
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SAVE, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
@@ -163,13 +164,14 @@ const commitActionCreator = () => async (dispatch, getState) => {
   if (checkValid(dispatch, getState)) return;
   execWithLoading(async () => {
     const {value, statusType, chargeFrom} = getSelfState(getState());
-    const {payChargeList, ...extraCharge} = value;
+    const {payChargeList=[], receiveChargeList=[], ...extraCharge} = value;
     // type: 0:新增、编辑（待提交） 1:编辑（应收待提交）, 2:编辑（费用来源不为空（外部系统接入））
     const type = chargeFrom ? 2 : statusType === 'status_receive_check_awaiting' ? 1: 0;
+    const list = type === 1 ? receiveChargeList : payChargeList;
     const params = {
       type,
       extraCharge: convert(extraCharge),
-      chargeList: payChargeList.map(o => convert(o))
+      chargeList: list.map(o => convert(o))
     };
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_COMMIT, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
@@ -182,7 +184,7 @@ const fallbackActionCreator = () => async (dispatch, getState) => {
   if (checkValid(dispatch, getState)) return;
   execWithLoading(async () => {
     const {value} = getSelfState(getState());
-    const params = {agreeOrFallback: false, ...convert(value)};
+    const params = {agreeOrFallback: 'fallback', ...convert(value)};
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_REVIEW, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
@@ -194,7 +196,7 @@ const reviewActionCreator = () => async (dispatch, getState) => {
   if (checkValid(dispatch, getState)) return;
   execWithLoading(async () => {
     const {value} = getSelfState(getState());
-    const params = {agreeOrFallback: true, ...convert(value)};
+    const params = {agreeOrFallback: 'agree', ...convert(value)};
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_REVIEW, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
@@ -261,8 +263,10 @@ const buildEditPageState = async (config, itemData, editType) => {
   if (editType !== 0) {
     const {extraCharge, payChargeList, ...other} = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
     value = {...extraCharge, payChargeList, ...other};
-    if (!extraCharge.directorIsTrueOrFalse) {
+    // 如果是非待提交编辑页面且费用来源为空，才去判断后端给的是否只读的变量
+    if (itemData['statusType'] !== 'status_submit_awaiting' && !itemData['chargeFrom'] && !extraCharge.directorIsTrueOrFalse) {
       config.tables = setReadonly(config.tables);
+      config.footerButtons = config.footerButtons.filter(o => o.key === 'close');
     }
   }
   return {

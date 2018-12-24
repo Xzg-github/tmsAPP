@@ -18,8 +18,8 @@ class EditPage extends React.Component {
         onExitValid: onExitValid.bind(null, item.key),
         // onAdd: onAdd.bind(null, item.key)
       };
-      return (<div key={i}>
-        <SuperTitle title={item.title} style={{marginTop: '10px'}}/>
+      return (<div key={i} style={{marginBottom: '10px'}}>
+        <SuperTitle title={item.title}/>
         <SuperForm {...props}/>
       </div>)
     });

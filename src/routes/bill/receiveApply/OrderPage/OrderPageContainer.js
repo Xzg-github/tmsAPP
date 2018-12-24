@@ -74,13 +74,21 @@ const editActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const index = helper.findOnlyCheckedIndex(tableItems);
   if(index === -1) return showError('请勾选一条数据！');
-  showEditPage(dispatch, getState, tableItems[index]);
+  const item = tableItems[index];
+  if (item.statusType !== 'status_draft' && item.statusType !== 'status_handling_completed') {
+    return showError('只有草稿和已受理状态才能编辑！');
+  }
+  showEditPage(dispatch, getState, item);
 };
 
 // 双击编辑
 const doubleClickActionCreator = (index) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
-  showEditPage(dispatch, getState, tableItems[index]);
+  const item = tableItems[index];
+  if (item.statusType !== 'status_draft' && item.statusType !== 'status_handling_completed') {
+    return showError('只有草稿和已受理状态才能编辑！');
+  }
+  showEditPage(dispatch, getState, item);
 };
 
 // 查看
