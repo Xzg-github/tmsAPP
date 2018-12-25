@@ -1,6 +1,5 @@
 import React, {PropTypes} from 'react';
-import create1 from './DrawingControl';
-import create2 from './LocationControl';
+import helper from '../../common/common';
 
 const BAIDU_AK = 'iX2MgjEUZUDwNWzKlEv6ScbK';
 
@@ -18,20 +17,20 @@ const createScript = (id, url) => {
   });
 };
 
-const toBmapPoint = (point) => {
-  return new BMap.Point(point.lng, point.lat);
+const getPoint = async (address) => {
+  const url = `/api/proxy/${BAIDU_AK}/${address}`;
+  const json = await helper.fetchJson(url);
+  if (json.returnCode === 0) {
+    const x = json.result.x / 100;
+    const y = json.result.y / 100;
+    return new BMap.MercatorProjection().pointToLngLat(new BMap.Pixel(x, y));
+  } else {
+    return null;
+  }
 };
 
-const toBmapPoints = (points) => {
-  if (points.length > 0) {
-    if (points[0] instanceof BMap.Point) {
-      return points;
-    } else {
-      return points.map(toBmapPoint);
-    }
-  } else {
-    return points;
-  }
+const toBmapPoint = (point) => {
+  return new BMap.Point(point.lng, point.lat);
 };
 
 const loadMapScript = (onLoad) => {
@@ -44,130 +43,78 @@ const loadMapScript = (onLoad) => {
   });
 };
 
-const styleOptions = {
-  strokeColor:"#2196f3",  // 边线颜色。
-  fillColor:"#2196f3",    // 填充颜色。当参数为空时，圆形将没有填充效果。
-  strokeWeight: 2,        // 边线的宽度，以像素为单位。
-  strokeOpacity: 0.8,     // 边线透明度，取值范围0 - 1。
-  fillOpacity: 0.4,       // 填充的透明度，取值范围0 - 1。
-  strokeStyle: 'solid'    // 边线的样式，solid或dashed。
-};
-
 class Map extends React.Component {
   static propTypes = {
     height: PropTypes.any.isRequired,
     address: PropTypes.string.isRequired,
     center: PropTypes.object,
-    shape: PropTypes.string,
-    cc: PropTypes.object,
-    cr: PropTypes.number,
-    points: PropTypes.array,
     onCenterChange: PropTypes.func,
-    onShapeChange: PropTypes.func
+    onPosition: PropTypes.func
   };
 
-  onEnd = (overlay, drawingMode) => {
-    this.overlay = overlay;
-    if (drawingMode === 'circle') {
-      this.props.onShapeChange('circle', overlay.getCenter(), overlay.getRadius());
-    } else {
-      this.props.onShapeChange('polygon', overlay.getPath());
+  onMarkerChange = (point) => {
+    this.geo.getLocation(point, (result) => {
+      const address = result ? result.address : '';
+      this.props.onCenterChange(point, address);
+    });
+  };
+
+  drawMarker = () => {
+    if (this.props.center && !this.marker) {
+      this.marker = new BMap.Marker(toBmapPoint(this.props.center), {enableDragging: true});
+      this.marker.addEventListener('dragend', ({point}) => this.onMarkerChange(point));
+      this.map.addOverlay(this.marker);
     }
   };
 
-  createDrawingControl = () => {
-    const DrawingControl = create1(BMap, BMapLib);
-    return new DrawingControl({
-      anchor: BMAP_ANCHOR_TOP_LEFT,
-      offset: new BMap.Size(80, 10),
-      style: styleOptions,
-      onStart: this.removeShape,
-      onEnd: this.onEnd
+  // 定位：确定address的经纬度
+  position = () => {
+    const {center, address, onPosition} = this.props;
+    return new Promise(resolve => {
+      if (center) {
+        resolve(false);
+      } else {
+        getPoint(address).then(point => {
+          if (point) {
+            onPosition(point);
+            resolve(true);
+          } else {
+            helper.showError('当前地址无法转换成经纬度');
+            resolve(false);
+          }
+        });
+      }
     });
-  };
-
-  createLocationControl = (marker) => {
-    const LocationControl = create2(BMap);
-    return new LocationControl(marker, {
-      anchor: BMAP_ANCHOR_BOTTOM_LEFT,
-      offset: new BMap.Size(12, 60),
-    });
-  };
-
-  addCenter = (map, point) => {
-    this.center = point;
-    this.marker = new BMap.Marker(point, {enableDragging: true});
-    this.marker.addEventListener('dragend', ({point}) => {
-      this.removeShape();
-      this.geo.getLocation(point, (result) => {
-        const address = result ? result.address : '';
-        this.props.onCenterChange(point, true, address);
-      });
-    });
-    map.addOverlay(this.marker);
-    map.addControl(this.createLocationControl(this.marker));
   };
 
   setCenter = () => {
-    if (this.overlay) {
-      this.map.setViewport(this.overlay.getBounds());
-    } else {
-      this.map.centerAndZoom(this.center || this.props.address, 11);
-    }
-  };
-
-  removeShape = () => {
-    if (this.overlay) {
-      this.map.removeOverlay(this.overlay);
-      this.overlay = null;
-      this.props.onShapeChange('none');
-    }
-  };
-
-  initShape = () => {
-    const {shape, cc, cr, points} = this.props;
-    if (shape === 'circle') {
-      this.overlay = new BMap.Circle(toBmapPoint(cc), cr, styleOptions);
-      this.map.addOverlay(this.overlay);
-    } else if (shape === 'polygon') {
-      this.overlay = new BMap.Polygon(toBmapPoints(points), styleOptions);
-      this.map.addOverlay(this.overlay);
-    }
-  };
-
-  initCenter = () => {
-    const {center, address, onCenterChange} = this.props;
-    this.geo = new BMap.Geocoder();
-    if (!center) {
-      this.geo.getPoint(address, point => {
-        if (point) {
-          onCenterChange(point, false);
-          this.addCenter(this.map, point);
-          this.setCenter();
-        } else {
-          this.setCenter();
-        }
-      });
-    } else {
-      this.addCenter(this.map, toBmapPoint(center));
-      this.setCenter();
+    if (!this.init) {
+      this.init = true;
+      if (this.props.center) {
+        this.map.centerAndZoom(toBmapPoint(this.props.center), 11);
+      } else {
+        this.map.centerAndZoom('深圳市', 11);
+      }
     }
   };
 
   componentDidMount() {
-    loadMapScript(() => {
+    loadMapScript(async () => {
       const map = this.map = new BMap.Map("map");
       map.enableScrollWheelZoom(true);
       map.addControl(new BMap.MapTypeControl());
       map.addControl(new BMap.NavigationControl());
-      map.addControl(this.createDrawingControl());
-      this.initShape();
-      this.initCenter();
+      this.geo = new BMap.Geocoder();
+      if (!await this.position()) {
+        this.drawMarker();
+        this.setCenter();
+      }
     });
   }
 
-  shouldComponentUpdate(nextProps) {
-    return !!nextProps.update;
+  componentDidUpdate() {
+    this.drawMarker();
+    this.setCenter();
   }
 
   render() {
