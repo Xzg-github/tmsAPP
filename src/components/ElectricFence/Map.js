@@ -29,6 +29,29 @@ const getPoint = async (address) => {
   }
 };
 
+// 批量获取经纬度
+export const getPoints = async (items) => {
+  const url1 = `http://api.map.baidu.com/getscript?v=2.0&ak=${BAIDU_AK}`;
+  const url2 = 'http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js';
+  await createScript('BMap', url1);
+  await createScript('BMapLib', url2);
+
+  const result = [];
+  for (const item of items) {
+    if (!item.address || (item.longitude && item.latitude)) {
+      result.push(item);
+    } else {
+      const point = await getPoint(item.address);
+      if (point) {
+        result.push(Object.assign({}, item, {longitude: point.lng, latitude: point.lat}));
+      } else {
+        result.push(item);
+      }
+    }
+  }
+  return result;
+};
+
 const toBmapPoint = (point) => {
   return new BMap.Point(point.lng, point.lat);
 };
@@ -47,6 +70,7 @@ class Map extends React.Component {
   static propTypes = {
     height: PropTypes.any.isRequired,
     address: PropTypes.string.isRequired,
+    level: PropTypes.number,
     center: PropTypes.object,
     onCenterChange: PropTypes.func,
     onPosition: PropTypes.func
@@ -89,11 +113,12 @@ class Map extends React.Component {
 
   setCenter = () => {
     if (!this.init) {
+      const level = this.props.level || 11;
       this.init = true;
       if (this.props.center) {
-        this.map.centerAndZoom(toBmapPoint(this.props.center), 11);
+        this.map.centerAndZoom(toBmapPoint(this.props.center), level);
       } else {
-        this.map.centerAndZoom('深圳市', 11);
+        this.map.centerAndZoom('深圳市', level);
       }
     }
   };

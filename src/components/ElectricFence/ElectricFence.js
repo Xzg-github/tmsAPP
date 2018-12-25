@@ -32,6 +32,7 @@ class ElectricFence extends React.Component {
     return {
       address: this.props.address,
       center: this.state.center,
+      level: 17,
       height: 500,
       onCenterChange: (center, current) => this.setState({center, current}),
       onPosition: (center) => this.setState({center})

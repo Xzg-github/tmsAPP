@@ -35,6 +35,8 @@ const children = [
 
   require('./customerPrice').default,
   require('./supplierPrice').default,
+
+  require('./position').default
 ];
 
 export default RouterHelper(prefix, title, children);

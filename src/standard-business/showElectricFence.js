@@ -1,5 +1,6 @@
 import showPopup from './showPopup';
 import {ElectricFence} from '../components';
+import {getPoints} from '../components/ElectricFence/Map';
 
 class Fence {
   constructor(addressKey='address') {
@@ -31,6 +32,8 @@ class Fence {
   show = (props) => {
     return showPopup(ElectricFence, props);
   };
+
+  getPoints = getPoints;
 
   async showEx(value, addressEx = undefined) {
     const result = await this.show(this.toFenceProps(value, addressEx));
