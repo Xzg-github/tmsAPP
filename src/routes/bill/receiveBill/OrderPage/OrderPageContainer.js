@@ -39,11 +39,9 @@ const searchActionCreator = async (dispatch, getState) => {
 const resetActionCreator = action.assign({searchData: {}});
 
 const addActionCreator = async (dispatch, getState) => {
-  execWithLoading(async () => {
-    const {addConfig} = getSelfState(getState());
-    showAddDialog(addConfig);
-    searchActionCreator(dispatch, getState);
-  });
+  const {addConfig} = getSelfState(getState());
+  const flag = await showAddDialog(addConfig);
+  flag && (await searchActionCreator(dispatch, getState));
 };
 
 const setReadonlyTables = (tables=[]) => {
