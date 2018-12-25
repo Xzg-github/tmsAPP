@@ -1,4 +1,5 @@
 import React from 'react';
+import RootContainer from './RootContainer';
 
 export default {
   path: '/pay_change',
@@ -6,7 +7,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <div>应付改单</div>
+      component: <RootContainer />
     };
   }
 }
