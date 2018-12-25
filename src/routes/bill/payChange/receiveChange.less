@@ -1,0 +1,32 @@
+@import '../../../components/variables.less';
+
+.root {
+  position: relative;
+  padding-top: @padding-vertical;
+
+  > div{
+    margin: 0 @padding-horizontal;
+    margin-bottom: @padding-vertical;
+  }
+
+  :global(.ant-table-wrapper) {
+    margin-top: @padding-vertical;
+    margin-bottom: @padding-vertical;
+  }
+
+  .title {
+    margin: 10px 0 5px 0;
+  }
+
+  .tableInfo {
+    margin-left: 15px;
+  }
+
+  .footer {
+    text-align: center;
+    button {
+      margin: 0 10px;
+    }
+  }
+
+}
