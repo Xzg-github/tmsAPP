@@ -4,6 +4,8 @@ import {EnhanceLoading} from '../../../../components/Enhance';
 import {fetchJson, getJsonResult} from "../../../../common/common";
 import {fetchAllDictionary, setDictionary2} from "../../../../common/dictionary";
 import helper from "../../../../common/common";
+import { showAddCustomerFactoryDialog } from '../../../config/customerFactory/EditDialogContainer';
+import showAddCustomerContactDialog from '../../../config/customerContact/EditDialogContainer';
 
 /**
  * 功能：生成一个运单基本信息页面容器组件
@@ -12,7 +14,7 @@ import helper from "../../../../common/common";
  * 返回：运单编辑页面容器组件
  * 初始化状态initState：{
  *     id - 运单标识，新增时为空
- *     isAppend - true为补录运单，默认false
+ *     isAppend - true为补录运单，默认false，为false且id不为空时跟据运单数据自动设置
  *     readonly - true为页面只读
  *     closeFunc - 页面为tab页且存在按钮操作时，操作完成后的关闭页面回调函数，无按钮操作时可无
  * }
@@ -40,7 +42,6 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       //获取并完善config
       let url = '/api/order/input/orderInfoConfig';
       const config = getJsonResult(await fetchJson(url));
-      !isAppend && delete config.formSections.dispatchInfo; //非补录运单无派车信息组
       const dic = getJsonResult(await fetchAllDictionary());
       Object.keys(config.formSections).map(key => {
         setDictionary2(dic, config.formSections[key].controls);
@@ -52,12 +53,20 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
         url = `/api/order/input/info/${id}`;
         const {addressList=[], goodsList=[], ...baseInfo} = getJsonResult(await fetchJson(url));
         data = {
-          baseInfo,
+          baseInfo: {
+            ...baseInfo,
+            taskTypeCode: baseInfo.taskTypeCode ? baseInfo.taskTypeCode.split(',') : '',
+            carInfoId: baseInfo.carInfoId ? {value: baseInfo.carInfoId, title: baseInfo.carNumber} : '',
+            driverId: baseInfo.driverId ? {value: baseInfo.driverId, title: baseInfo.driverName}: '',
+          },
           addressList: addressList.map(item => item.consigneeConsignorId ? {...item, consigneeConsignorId: {value: item.consigneeConsignorId, title: item.consigneeConsignorName}} : item),
           goodsList: goodsList
         };
+        isAppend = !!baseInfo.supplementType; //设置是否为补录运单
         config.formSections.baseInfo.controls = config.formSections.baseInfo.controls.map(item => item.key === 'customerId' ? {...item, type: 'readonly'} : item);
+        isAppend && (config.formSections.dispatchInfo.controls = config.formSections.dispatchInfo.controls.map(item => item.key === 'taskTypeCode' ? {...item, key: 'taskTypeName'} : item));
       }
+      !isAppend && delete config.formSections.dispatchInfo; //非补录运单无派车信息组
       let buttons = [...config.buttons];
       if (helper.getRouteKey() !== 'input') {
         buttons = buttons.filter(item => item.key !== 'new');
@@ -201,12 +210,27 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     dispatch(action.assign(obj, 'baseInfo'));
   };
 
+  const taskTypeCodeChange = (key, value) => (dispatch, getState) => {
+    const {formSections} = getSelfState(getState());
+    const {options= []} = formSections.dispatchInfo.controls.filter(item => item.key === 'taskTypeCode').pop() || {};
+    let obj = {[key]: value};
+    if (value && Array.isArray(value)) {
+      obj.taskTypeName = '';
+      value.map((item, index) => {
+        const {title=''} = options.filter(option => option.value === item).pop() || {};
+        obj.taskTypeName += index === value.length-1 ? `${title}` : `${title},`;
+      });
+    }
+    dispatch(action.assign(obj, 'baseInfo'));
+  };
+
   const changeKeys = {
     customerId: customerIdChange,
     contactName: contactNameChange,
     businessType: businessTypeChange,
     carInfoId: carInfoIdChange,
     driverId: driverIdChange,
+    taskTypeCode: taskTypeCodeChange,
   };
 
   const changeActionCreator = (key, value) => {
@@ -232,14 +256,22 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     dispatch(action.update({options: returnCode === 0 ? result : undefined}, ['formSections', formKey, 'controls'], {key: 'key', value: key}));
   };
 
-  const formAddActionCreator = (key) => (dispatch, getState) => {
+  const formAddActionCreator = (key) => async (dispatch, getState) => {
+    const {baseInfo} = getSelfState(getState());
+    if (!baseInfo.customerId) return helper.showError('请先填写客户');
+    if (key === 'contactName') {
+      return showAddCustomerContactDialog(undefined, {customerId: baseInfo.customerId}, true);
+    }else if (key === 'consigneeConsignorId') {
+      return showAddCustomerFactoryDialog(undefined, {customerId: baseInfo.customerId});
+    }
   };
 
   //计算表格数据变化后联动到基本信息的数据
   const countBaseInfoData = async (list=[], changeKey) => {
     let obj = {goodsNumber: 0, isSupervisor:'', route:''};
-    list.map(({deliveryGoodsNumber, isSupervisor, consigneeConsignorShortName}) => {
-      consigneeConsignorShortName && (obj.route = obj.route + `${consigneeConsignorShortName}; `);
+    list.map(({deliveryGoodsNumber, isSupervisor, consigneeConsignorShortName}, index) => {
+      const newNode = index === list.length-1 ? consigneeConsignorShortName : `${consigneeConsignorShortName}->`;
+      consigneeConsignorShortName && (obj.route = obj.route + newNode);
       obj.isSupervisor === '' && isSupervisor === '1' && (obj.isSupervisor = isSupervisor);
       obj.goodsNumber += Number(deliveryGoodsNumber || 0);
     });
@@ -377,6 +409,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       contactName: baseInfo.contactName && typeof baseInfo.contactName === 'object' ? baseInfo.contactName.title : baseInfo.contactName,
       carNumber: baseInfo.carInfoId ? baseInfo.carInfoId.title : '',
       driverName: baseInfo.driverId ? baseInfo.driverId.title : '',
+      taskTypeCode: baseInfo.taskTypeCode ? baseInfo.taskTypeCode.join(',') : '',
       addressList: addressList.map((item, index) => ({
         ...helper.convert(item),
         consigneeConsignorName: item.consigneeConsignorId ? item.consigneeConsignorId.title : '',
@@ -390,19 +423,23 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   //保存（不关闭当前页）
   const saveActionCreator = async (dispatch, getState) => {
     const selfState = getSelfState(getState());
-    const {baseInfo} = selfState;
+    const {baseInfo, isAppend} = selfState;
     if (!baseInfo.customerId) return helper.showError('请先填写客户');
     const body = getSaveData(selfState);
     const method = baseInfo.id ? 'put' : 'post';
     let url = helper.getRouteKey() === 'input' ? '/api/order/input' : '/api/order/complete/change';
-    if (selfState.isAppend) {
+    if (isAppend) {
       url = '/api/bill/append';
     }
     const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));
     if (returnCode !== 0) return helper.showError(returnMsg);
     helper.showSuccessMsg('保存成功');
     if (!baseInfo.id) { //新增保存处理
-      dispatch(action.assign({id: result}, 'baseInfo'));
+      if (isAppend) {
+        dispatch(action.assign({id: result.id}, 'baseInfo'));
+      }else {
+        dispatch(action.assign({id: result}, 'baseInfo'));
+      }
       dispatch(action.update({type: 'readonly'}, ['formSections', 'baseInfo', 'controls'], {key: 'key', value: 'customerId'}));
     }
   };

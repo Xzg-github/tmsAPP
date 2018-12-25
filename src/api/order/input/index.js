@@ -110,9 +110,4 @@ api.get('/customer_contact_info/:id', async (req, res) => {
   res.send(await fetchJsonByNode(req, url));
 });
 
-//计费地点下拉-暂使用所有行政区下拉接口
-api.post('/charge_place_options', async (req, res) => {
-  res.send(await fetchJsonByNode(req, `${host}/archiver-service/archiver/district/drop_list`, postOption(req.body)));
-});
-
 export default api;

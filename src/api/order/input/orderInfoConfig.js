@@ -32,7 +32,7 @@ const dispatchForm = [
   {key: 'driverId', title: '司机', type:'search', props: {searchWhenClick: true}, searchUrl: URL_SUPPLIER_DRIVER, required: true},
   {key: 'driverMobilePhone', title: '司机号码', type:'readonly'},
   {key: 'transportationDuration', title: '运输时长', type:'number', props: {real: true, precision: 2}},
-  {key: 'taskTypeName', title: '文件任务', type:'select', props: {mode: 'multiple'}, dictionary: 'task_type_file', span: 2},
+  {key: 'taskTypeCode', title: '文件任务', type:'select', props: {mode: 'multiple'}, dictionary: 'task_type_file', span: 2},
 ];
 
 const addForm = [
@@ -52,7 +52,7 @@ const addressCols = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
   {key: 'pickupDeliveryType', title: '收发货类型', type:'select', options},
-  {key: 'consigneeConsignorId', title: '收发货人', type:'search', props: {searchWhenClick: true}, required: true},
+  {key: 'consigneeConsignorId', title: '收发货人', type:'search', props: {searchWhenClick: true}, showAdd: true, required: true},
   {key: 'consigneeConsignorCode', title: '收发货人编码', type:'readonly'},
   {key: 'consigneeConsignorShortName', title: '收发货人简称', type:'readonly'},
   {key: 'contactName', title: '联系人', type:'search', props: {searchWhenClick: true}},

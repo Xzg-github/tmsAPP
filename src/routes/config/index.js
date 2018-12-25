@@ -6,6 +6,8 @@ const children = [
   require('./institution').default,
   require('./department').default,
   require('./user').default,
+  require('./corporation').default,
+  require('./bank').default,
 
   require('./customersArchives').default,
   require('./customerContact').default,
@@ -13,6 +15,7 @@ const children = [
   require('./customerTax').default,
   require('./customerCost').default,
   require('./customerService').default,
+  require('./customerInvoice').default,
 
   require('./suppliersArchives').default,
   require('./supplierContact').default,

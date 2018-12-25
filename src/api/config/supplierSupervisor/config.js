@@ -1,6 +1,7 @@
 import {pageSize, pageSizeType, description, searchConfig} from '../../globalConfig';
 import name from '../../dictionary/name';
 
+const SUPPLIER = '/api/config/supplier_car/search/trailer'; //供应商托车行下拉
 const filters = [
   {key: 'supplierId', title: '所属供应商',type:'search'},
   {key: 'supervisorName', title: '监理姓名', type: 'text'},
@@ -43,7 +44,7 @@ const buttons = [
 ];
 
 const controls = [
-  {key: 'supplierId', title: '所属供应商', type: 'search', required: true},
+  {key: 'supplierId', title: '所属供应商', type: 'search', required: true,searchUrl:SUPPLIER},
   {key: 'supervisorName', title: '监理姓名', type: 'text', required: true},
   {key: 'supervisorMobilePhone', title: '手机号码', type: 'text', required: true},
   {key: 'shortNumber', title: '短号', type: 'text', required: true},
