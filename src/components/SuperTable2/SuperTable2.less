@@ -4,6 +4,14 @@
   border-spacing: 0;
   cursor: default;
 
+  :global(.ant-table) {
+    border-radius: 0 !important;
+  }
+
+  table {
+    border-radius: 0 !important;
+  }
+
   :global(.ant-checkbox-input) {
     z-index: -1;
   }
@@ -12,10 +20,25 @@
     z-index: 0;
   }
 
+  :global(.ant-table-footer) {
+    background-color: #f5f7fa !important;
+    color: #333;
+  }
+
+  th {
+    background-color: #f5f7fa !important;
+    color: #333 !important;
+    line-height: 23px;
+  }
+
   th [role='add'] {
     color: @primary-color;
     margin-left: 4px;
     cursor: pointer;
+  }
+
+  td {
+    padding: 5px 7.5px !important;
   }
 }
 

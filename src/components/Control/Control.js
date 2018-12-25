@@ -52,7 +52,7 @@ const textArea = (props) => {
   if (props.readonly) {
     delete props.readonly;
     props.readOnly = true;
-    props.style = Object.assign(props.style || {}, {backgroundColor: '#f0f0f0'});
+    props.style = Object.assign(props.style || {}, {backgroundColor: '#f5f7fa'});
   }
   return <TextArea {...props} />;
 };
@@ -60,7 +60,7 @@ const textArea = (props) => {
 // 只读框
 const readonly = (props) => {
   props.readOnly = true;
-  props.style = Object.assign(props.style || {}, {backgroundColor: '#f0f0f0'});
+  props.style = Object.assign(props.style || {}, {backgroundColor: '#f5f7fa'});
   if (props.value || props.defaultValue) {
     props.title = props.value || props.defaultValue;
   }

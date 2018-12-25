@@ -172,10 +172,11 @@ class SuperTable2 extends React.Component {
       case 'link':
         return this.renderLinkCell(col, value, record, index);
       case 'button':
-        const onClick = this.props.callback.onBtnClick.bind(null, index, col.key);
-        return <Button onClick={onClick} size='small'>{col.typeRelated}</Button>;
+        // const onClick = this.props.callback.onBtnClick.bind(null, index, col.key);
+        const onClick = () => {};
+        return <Button onClick={onClick} size='default'>{col.typeRelated}</Button>;
       case 'switch':
-        return <Switch onChange={this.onSwitch(col.key, index)} size='small' checked={value || false}/>;
+        return <Switch onChange={this.onSwitch(col.key, index)} size='default' checked={value || false}/>;
       case 'custom':
         return this.props.callback.onRenderCustom(index, col.key, value, col.props);
       default:
@@ -260,7 +261,7 @@ class SuperTable2 extends React.Component {
       columns: this.getColumns(cols),
       dataSource: this.getDataSource(items, cols),
       style: Object.assign({}, {whiteSpace: 'nowrap'}, style),
-      size: 'small',
+      size: 'default',
       scroll: {x: true},
       pagination: false,
       footer,

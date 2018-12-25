@@ -324,7 +324,7 @@ class SuperTable extends React.Component {
       className: tableClassName,
       columns: this.getColumns(cols),
       dataSource: this.getDataSource(items, cols),
-      size: 'small',
+      size: 'default',
       pagination: isPaging,
       scroll: {x: true},
       onRowDoubleClick: this.onDoubleClick,

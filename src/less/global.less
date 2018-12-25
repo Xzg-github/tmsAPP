@@ -1,5 +1,5 @@
 
-@scroll-width: 10px;
+@scroll-width: 8px;
 
 ::-webkit-scrollbar {
   width: @scroll-width;
@@ -7,7 +7,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #c0c0c0;
+  background-color: #e6eaf1;
+  border-radius: @scroll-width;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f5f7fa;
   border-radius: @scroll-width;
 }
 
@@ -108,4 +113,10 @@ fieldset {
     transition: none;
     vertical-align: top;
   }
+}
+
+.ant-input,
+.ant-btn,
+.ant-select-selection {
+  border-radius: 2px;
 }
