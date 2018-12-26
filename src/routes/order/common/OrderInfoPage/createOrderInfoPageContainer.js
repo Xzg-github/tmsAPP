@@ -31,9 +31,9 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     const h = date.getHours();
     const hh = h < 10 ? `0${h}` : String(h);
     const f = date.getMinutes();
-    const ff = f < 10 ? `0${d}` : String(d);
+    const ff = f < 10 ? `0${f}` : String(f);
     const s = date.getSeconds();
-    const ss = s < 10 ? `0${d}` : String(d);
+    const ss = s < 10 ? `0${s}` : String(s);
     return `${yyyy}-${mm}-${dd} ${hh}:${ff}:${ss}`;
   };
 
@@ -65,8 +65,8 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
         isAppend = !!baseInfo.supplementType; //设置是否为补录运单
         config.formSections.baseInfo.controls = config.formSections.baseInfo.controls.map(item => item.key === 'customerId' ? {...item, type: 'readonly'} : item);
         isAppend && (config.formSections.dispatchInfo.controls = config.formSections.dispatchInfo.controls.map(item => item.key === 'taskTypeCode' ? {...item, key: 'taskTypeName'} : item));
+        !isAppend && delete config.formSections.dispatchInfo; //非补录运单无派车信息组
       }
-      !isAppend && delete config.formSections.dispatchInfo; //非补录运单无派车信息组
       let buttons = [...config.buttons];
       if (helper.getRouteKey() !== 'input') {
         buttons = buttons.filter(item => item.key !== 'new');
@@ -423,12 +423,12 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   //保存（不关闭当前页）
   const saveActionCreator = async (dispatch, getState) => {
     const selfState = getSelfState(getState());
-    const {baseInfo, isAppend} = selfState;
+    const {baseInfo} = selfState;
     if (!baseInfo.customerId) return helper.showError('请先填写客户');
     const body = getSaveData(selfState);
     const method = baseInfo.id ? 'put' : 'post';
     let url = helper.getRouteKey() === 'input' ? '/api/order/input' : '/api/order/complete/change';
-    if (isAppend) {
+    if (selfState.isAppend) {
       url = '/api/bill/append';
     }
     const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));
