@@ -81,7 +81,7 @@ class OrderInfoPage extends React.Component {
   };
 
   toContent = () => {
-    const {activeKey, goodsTable, addressTable, valid={}, readonly, onClick, onCheck, onContentChange, onContentSearch, onExitValid} = this.props;
+    const {activeKey, goodsTable, addressTable, valid={}, readonly, onClick, onCheck, onContentChange, onContentSearch, onExitValid, onAdd} = this.props;
     const config = (activeKey === 'addressList') ? addressTable : goodsTable;
     const toolbarProps = {
       buttons: config.buttons,
@@ -96,6 +96,7 @@ class OrderInfoPage extends React.Component {
         onContentChange : onContentChange ? onContentChange.bind(null, activeKey) : undefined,
         onSearch : onContentSearch ? onContentSearch.bind(null, activeKey) : undefined,
         onExitValid: onExitValid ? onExitValid.bind(null, activeKey) : undefined,
+        onAdd
       }
     };
     return (

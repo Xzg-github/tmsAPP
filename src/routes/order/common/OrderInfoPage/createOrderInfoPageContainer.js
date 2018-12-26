@@ -4,6 +4,8 @@ import {EnhanceLoading} from '../../../../components/Enhance';
 import {fetchJson, getJsonResult} from "../../../../common/common";
 import {fetchAllDictionary, setDictionary2} from "../../../../common/dictionary";
 import helper from "../../../../common/common";
+import { showAddCustomerFactoryDialog } from '../../../config/customerFactory/EditDialogContainer';
+import showAddCustomerContactDialog from '../../../config/customerContact/EditDialogContainer';
 
 /**
  * 功能：生成一个运单基本信息页面容器组件
@@ -63,8 +65,8 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
         isAppend = !!baseInfo.supplementType; //设置是否为补录运单
         config.formSections.baseInfo.controls = config.formSections.baseInfo.controls.map(item => item.key === 'customerId' ? {...item, type: 'readonly'} : item);
         isAppend && (config.formSections.dispatchInfo.controls = config.formSections.dispatchInfo.controls.map(item => item.key === 'taskTypeCode' ? {...item, key: 'taskTypeName'} : item));
-        !isAppend && delete config.formSections.dispatchInfo; //非补录运单无派车信息组
       }
+      !isAppend && delete config.formSections.dispatchInfo; //非补录运单无派车信息组
       let buttons = [...config.buttons];
       if (helper.getRouteKey() !== 'input') {
         buttons = buttons.filter(item => item.key !== 'new');
@@ -254,7 +256,14 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     dispatch(action.update({options: returnCode === 0 ? result : undefined}, ['formSections', formKey, 'controls'], {key: 'key', value: key}));
   };
 
-  const formAddActionCreator = (key) => (dispatch, getState) => {
+  const formAddActionCreator = (key) => async (dispatch, getState) => {
+    const {baseInfo} = getSelfState(getState());
+    if (!baseInfo.customerId) return helper.showError('请先填写客户');
+    if (key === 'contactName') {
+      return showAddCustomerContactDialog(undefined, {customerId: baseInfo.customerId}, true);
+    }else if (key === 'consigneeConsignorId') {
+      return showAddCustomerFactoryDialog(undefined, {customerId: baseInfo.customerId});
+    }
   };
 
   //计算表格数据变化后联动到基本信息的数据
@@ -414,12 +423,12 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   //保存（不关闭当前页）
   const saveActionCreator = async (dispatch, getState) => {
     const selfState = getSelfState(getState());
-    const {baseInfo} = selfState;
+    const {baseInfo, isAppend} = selfState;
     if (!baseInfo.customerId) return helper.showError('请先填写客户');
     const body = getSaveData(selfState);
     const method = baseInfo.id ? 'put' : 'post';
     let url = helper.getRouteKey() === 'input' ? '/api/order/input' : '/api/order/complete/change';
-    if (selfState.isAppend) {
+    if (isAppend) {
       url = '/api/bill/append';
     }
     const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));

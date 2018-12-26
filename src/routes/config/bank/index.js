@@ -1,13 +1,13 @@
 import React from 'react';
-import RootContainer from './RootContainer';
+import Container from './OrderPageContainer';
 
 export default {
-  path: '/pay_change',
+  path: '/bank',
 
   action() {
     return {
       wrap: true,
-      component: <RootContainer />
+      component: <Container />
     };
   }
 }

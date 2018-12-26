@@ -134,6 +134,8 @@ const buildOrderPageCommonState = async (urlConfig, urlList, statusNames=[]) => 
     };
     const data = helper.getJsonResult(await helper.fetchJson(urlList, helper.postOption(body)));
     return {
+      searchData:{},
+      searchDataBak: {},
       ...config,
       urlList,
       maxRecords: data.returnTotalItem || data.returnTotalItems,
