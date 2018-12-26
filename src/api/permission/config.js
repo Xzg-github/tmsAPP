@@ -119,6 +119,11 @@ const price_mgr = [
   {key: 'supplier_price'},      // 供应商价格
 ];
 
+// 扩展功能子菜单
+const expand = [
+  {key: 'position'}             // 位置设置
+];
+
 // 档案管理侧边栏
 const config = [
   {key: 'institution_mgr', children: institution_mgr},  // 组织档案
@@ -126,7 +131,8 @@ const config = [
   {key: 'supplier_mgr', children: supplier_mgr},        // 供应商管理
   {key: 'inside_mgr', children: inside_mgr},            // 内部档案
   {key: 'price_mgr', children: price_mgr},              // 价格管理
-  {key: 'bank'},                                          // 银行档案
+  {key: 'bank'},                                        // 银行档案
+  {key: 'expand', children: expand}                     // 扩展功能
 ];
 
 // 开发配置子菜单
