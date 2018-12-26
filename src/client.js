@@ -1,4 +1,5 @@
 import 'babel-polyfill';
+import 'xlsx';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
@@ -9,7 +10,8 @@ import history from './core/history';
 import App from './components/App';
 import { ErrorReporter, deepForceUpdate } from './core/devUtils';
 import getStore from './store';
-import E from 'wangeditor'
+import E from 'wangeditor';
+
 global.store = getStore(window.initState);
 
 // Global (context) variables that can be easily accessed from any React component

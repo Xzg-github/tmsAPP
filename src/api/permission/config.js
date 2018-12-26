@@ -43,6 +43,7 @@ const supervisor = [
 // 跟踪管控侧边栏
 const track = [
   {key: 'track_order'},     // 运单跟踪
+  {key: 'file_manager'},     // 文件管理
 ];
 
 // 应收管理子菜单
@@ -76,6 +77,7 @@ const institution_mgr = [
   {key: 'institution'},         // 组织机构
   {key: 'department'},          // 部门档案
   {key: 'user'},                // 用户档案
+  {key: 'corporation'},        // 法人档案
 ];
 
 // 客户管理子菜单
@@ -86,6 +88,7 @@ const customer_mgr = [
   {key: 'customer_factory'},    // 收发货档案
   {key: 'customer_tax'},        // 税率档案
   {key: 'customer_cost'},       // 习惯费用项
+  {key: 'customer_invoice'},       // 开票档案
 ];
 
 // 供应商管理子菜单
@@ -116,6 +119,11 @@ const price_mgr = [
   {key: 'supplier_price'},      // 供应商价格
 ];
 
+// 扩展功能子菜单
+const expand = [
+  {key: 'position'}             // 位置设置
+];
+
 // 档案管理侧边栏
 const config = [
   {key: 'institution_mgr', children: institution_mgr},  // 组织档案
@@ -123,6 +131,8 @@ const config = [
   {key: 'supplier_mgr', children: supplier_mgr},        // 供应商管理
   {key: 'inside_mgr', children: inside_mgr},            // 内部档案
   {key: 'price_mgr', children: price_mgr},              // 价格管理
+  {key: 'bank'},                                        // 银行档案
+  {key: 'expand', children: expand}                     // 扩展功能
 ];
 
 // 开发配置子菜单

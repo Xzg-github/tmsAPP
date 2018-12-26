@@ -74,6 +74,7 @@ const rootReducer = combineReducers({
 
   //跟踪管控
   trackOrder: create('trackOrder'),
+  fileManager: create('fileManager'),
 
   //计费与对帐
   receiveMake: createBillReducer('receiveMake'),
@@ -94,6 +95,7 @@ const rootReducer = combineReducers({
   customerTax: create('customerTax', false),
   customerCost: create('customerCost', false),
   customerService: create('customerService', false),
+  customerInvoice: create('customerInvoice', false),
   supplierContact: create('supplierContact', false),
   supplierCar: create('supplierCar', false),
   supplierDriver: create('supplierDriver', false),
@@ -106,6 +108,9 @@ const rootReducer = combineReducers({
   supplierPrice: create('supplierPrice'),
   supplierTax: create('supplierTax', false),
   carManager: create('carManager'),
+  corporation: create('corporation', false),
+  bank: create('bank', false),
+  position: create('position', false)
 });
 
 export default rootReducer;

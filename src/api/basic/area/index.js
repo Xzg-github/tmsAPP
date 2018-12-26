@@ -7,7 +7,6 @@ let api = express.Router();
 const service = 'archiver-service';
 
 const URL_TREE = `${host}/${service}/archiver/district/tree`;
-const URL_TREE_LIST = `${host}/${service}/archiver/districts`;
 
 const URL_DISTRICT_LIST = `${host}/${service}/archiver/district/direct_child_list`;
 const URL_DISTRICT_INFO = `${host}/${service}/archiver/district`;
@@ -58,6 +57,11 @@ api.put('/district',async (req, res)=>{
 //获取行政区下拉列表（上级）
 api.post('/district_drop_list', async (req, res)=>{
   res.send(await fetchJsonByNode(req, URL_DISTRICT_DROP_LIST, postOption(req.body)));
+});
+
+//获取行政区下拉列表（所有）
+api.post('/district_drop_list_all', async (req, res)=>{
+  res.send(await fetchJsonByNode(req, `${host}/${service}/archiver/district/drop_list`, postOption(req.body)));
 });
 
 //搜索

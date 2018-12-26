@@ -51,20 +51,40 @@ handlers['lo_company'] = (req, filter) => {
   return fetchJsonByNode(req, url, option);
 };
 
-// 物流公司(所有)
-handlers['lo_company_all'] = (req, filter) => {
-  const url = `${host}/archiver-service/logistics_company/drop_list`;
-  const option = postOption({maxNumber: maxSearchCount, logisticsName: filter});
+// 车型(所有)
+handlers['car_mode'] = (req, filter) => {
+  const url = `${host}/archiver_service/car_mode/drop_list`;
+  const option = postOption({maxNumber: maxSearchCount, carMode: filter});
   return fetchJsonByNode(req, url, option);
 };
 
-// 组织机构
-handlers['institution'] = (req, filter) => {
-  const url = `${host}/tenant-service/institution/drop_list`;
-  const option = postOption({institutionName:filter,active:'active_activated'});
+// 车型(激活)
+handlers['car_mode_active'] = (req, filter) => {
+  const url = `${host}/archiver_service/car_mode/drop_list`;
+  const option = postOption({maxNumber: maxSearchCount, carMode: filter, active: 'active_activated'});
   return fetchJsonByNode(req, url, option);
 };
 
+// 计费地点（暂为所有行政区档案下拉）
+handlers['charge_place'] = (req, filter) => {
+  const url = `${host}/archiver-service/archiver/district/drop_list`;
+  const option = postOption({maxNumber: maxSearchCount,districtName:filter});
+  return fetchJsonByNode(req, url, option);
+};
+
+// 车牌号码（所有自有车和供应商车辆）
+handlers['car_all'] = (req, filter) => {
+  const url = `${host}/archiver-service/car_info/drop_list`;
+  const option = postOption({maxNumber: maxSearchCount,carNumber:filter});
+  return fetchJsonByNode(req, url, option);
+};
+
+// 司机（所有自有司机和供应商司机）
+handlers['driver_all'] = (req, filter) => {
+  const url = `${host}/archiver-service/driver_info/drop_list`;
+  const option = postOption({maxNumber: maxSearchCount,carNumber:filter});
+  return fetchJsonByNode(req, url, option);
+};
 
 export const search = async (req, type, filter='') => {
   const handler = handlers[type];

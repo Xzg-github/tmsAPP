@@ -15,7 +15,8 @@ const tableCols = [
   {key: 'code', title: '代码'},
   {key: 'api', title: 'API'},
   {key: 'remark', title: '说明'},
-  {key: 'apiRequestMethod', title: '请求方式', options:methodOptions}
+  {key: 'apiRequestMethod', title: '请求方式', options:methodOptions},
+  {key: 'parentCode', title: '归属编码'}
 ];
 
 const buttons = [
@@ -38,10 +39,11 @@ const index = {
 const controls = [
   {key: 'apiName', title: '名称', type: 'text', required: true},
   {key: 'code', title: '代码', type: 'text', required: true},
-  {key: 'api', title: 'API', type: 'text', required: true},
   {key: 'remark', title: '说明', type: 'text', required: true},
-  {key: 'content', title: '内容定义', type: 'text', required: true},
-  {key: 'apiRequestMethod', title: '请求方式', type: 'select', options:methodOptions, required: true}
+  {key: 'apiRequestMethod', title: '请求方式', type: 'select', options:methodOptions, required: true},
+  {key: 'parentCode', title: '归属编码', type: 'text'},
+  {key: 'api', title: 'API', type: 'text', required: true , span:3},
+  {key: 'content', title: '内容定义', type: 'textArea', required: true, span: 3}
 ];
 
 const edit = {

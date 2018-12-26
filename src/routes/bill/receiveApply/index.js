@@ -1,4 +1,5 @@
 import React from 'react';
+import RootContainer from './RootContainer';
 
 export default {
   path: '/receive_apply',
@@ -6,7 +7,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <div>应收发票申请</div>
+      component: <RootContainer/>
     };
   }
 }

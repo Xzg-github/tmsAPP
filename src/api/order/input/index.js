@@ -1,6 +1,6 @@
 import express from 'express';
 import {postOption, fetchJsonByNode} from '../../../common/common';
-import {host} from '../../globalConfig';
+import {host, maxSearchCount} from '../../globalConfig';
 
 const service = `${host}/tms-service`;
 let api = express.Router();
@@ -56,15 +56,22 @@ api.get('/info/:id', async (req, res) => {
 });
 
 //根据客户id获取客户联系人下拉
-api.post('/customer_contacts/:id', async (req, res) => {
-  const url = `${host}/archiver-service/customer_contact/${req.params.id}/drop_list/enabled_type_enabled`;
+api.get('/options/customer_contacts', async (req, res) => {
+  const url = `${host}/archiver-service/customer_contact/${req.query.filter}/drop_list/enabled_type_enabled`;
   res.send(await fetchJsonByNode(req, url, 'post'));
 });
 
-//获取车型下拉列表
-api.post('/car_mode_drop_list', async (req, res) => {
-  const url = `${host}/archiver-service/car_mode/drop_list`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+//根据供应商id获取供应商司机下拉
+api.get('/options/supplier_drivers', async (req, res) => {
+  const url = `${host}/archiver-service/driver_info/drop_list`;
+  const body = {
+    supplierId: req.query.filter,
+    isOwner: req.query.isOwner,
+    driverName: req.query.driverName,
+    maxNumber: maxSearchCount,
+    enabledType: 'enabled_type_enabled'
+  };
+  res.send(await fetchJsonByNode(req, url, postOption(body)));
 });
 
 //获取指定客户收发货人下拉列表
@@ -101,11 +108,6 @@ api.get('/customer_info/:customerId', async (req, res) => {
 api.get('/customer_contact_info/:id', async (req, res) => {
   const url = `${host}/archiver-service/customer_contact/${req.params.id}`;
   res.send(await fetchJsonByNode(req, url));
-});
-
-//计费地点下拉-暂使用所有行政区下拉接口
-api.post('/charge_place_options', async (req, res) => {
-  res.send(await fetchJsonByNode(req, `${host}/archiver-service/archiver/district/drop_list`, postOption(req.body)));
 });
 
 export default api;

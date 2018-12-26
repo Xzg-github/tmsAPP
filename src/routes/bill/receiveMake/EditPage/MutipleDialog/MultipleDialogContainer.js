@@ -6,6 +6,7 @@ import {Action} from '../../../../../action-reducer/action';
 import {getPathValue} from '../../../../../action-reducer/helper';
 import {showColsSetting} from '../../../../../common/tableColsSetting';
 import showPopup from '../../../../../standard-business/showPopup';
+import showGetChargeDialog from '../GetChargeDialog/GetChargeDialog';
 
 const STATE_PATH = ['temp'];
 const action = new Action(STATE_PATH, false);
@@ -13,6 +14,7 @@ const action = new Action(STATE_PATH, false);
 const URL_CUSTOMER = '/api/bill/receiveMake/customerId';
 const URL_CHARGE_NAME = '/api/bill/receiveMake/chargeItemId';
 const URL_SUPPLIER = '/api/bill/payMake/supplierId';
+const URL_GET_COST = '/api/bill/receiveMake/getCost';
 
 
 const getSelfState = (rootState) => {
@@ -81,28 +83,24 @@ const delActionCreator = () => async (dispatch, getState) =>{
 };
 
 const getActionCreator = () => async (dispatch, getState) => {
-  const {customerId, activeCurrency} = getSelfState(getState());
-  return alert('获取费用项！');
-
-  // const chargeList = await showGetChargeDialog(customerId.value, true);
-  // if (Array.isArray(chargeList) && chargeList.length > 0) {
-  //   const info = result.filter(item => item.taskUnitCode === activeKey).pop() || {};
-  //   const [...newItems] = tasks[activeKey];
-  //   chargeList.map(item => {
-  //     newItems.push({
-  //       currencyTypeCode: activeCurrency,
-  //       taskUnitName:info.taskUnitName,
-  //       businessName:info.businessName,
-  //       serviceName:info.serviceName,
-  //       taskUnitCode:{title:info.taskUnitName,value:info.taskUnitCode},
-  //       businessCode:{value:info.businessCode,title:info.businessName},
-  //       serviceCode:{value:info.serviceCode,title:info.serviceName},
-  //       balanceCompanyGuid: customerId,
-  //       chargeGuid: {value: item.value, title: item.title}
-  //     });
-  //   });
-  //   dispatch(action.assign({[activeKey]: newItems}, 'tasks'));
-  // }
+  const {customerId, supplierId, items, activeCurrency, dialogType} = getSelfState(getState());
+  const id = customerId ? customerId.value : supplierId ? supplierId.value : '';
+  const {returnCode, result, returnMsg} = await helper.fetchJson(`${URL_GET_COST}/${id}`);
+  if (returnCode !== 0) return showError(returnMsg);
+  const okFunc = (resultList) => {
+    if (resultList.length === 0) return;
+    const list = resultList.map(o => {
+      return {
+        checked: false,
+        currency: activeCurrency,
+        customerId,
+        supplierId,
+        chargeItemId: o
+      }
+    });
+    dispatch(action.assign({items: deepCopy(items.concat(list))}));
+  }
+  await showGetChargeDialog(result, okFunc);
 };
 
 //配置字段按钮
