@@ -59,6 +59,7 @@ const createBillActionCreator = (buildType) => async (dispatch, getState) => {
       const { returnCode, result, returnMsg } = await fetchJson(URL_CREATE_BILL, postOption(params));
       if(returnCode !== 0) return showError(returnMsg);
       showSuccessMsg(returnMsg);
+      dispatch(action.assign({okResult: true}));
     });
   }
   dispatch(action.assign({visible: false}));
@@ -105,11 +106,13 @@ const actionCreators = {
   footerBtnClick: createBillActionCreator
 };
 
-const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(AddDialog));
+const Container = connect(mapStateToProps, actionCreators)(AddDialog);
 export default async (params) => {
-  const list = getJsonResult(await search(URL_LIST, 0, params.pageSize, {}, false));
-  const payload = buildAddDialogState(list, params);
-  global.store.dispatch(action.create(payload));
+  execWithLoading (async () => {
+    const list = getJsonResult(await search(URL_LIST, 0, params.pageSize, {}, false));
+    const payload = buildAddDialogState(list, params);
+    global.store.dispatch(action.create(payload));
+  });
   await showPopup(Container, {status: 'page'}, true);
   const state = getSelfState(global.store.getState());
   global.store.dispatch(action.create({}));
