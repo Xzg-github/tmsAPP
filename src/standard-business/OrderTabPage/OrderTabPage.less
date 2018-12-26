@@ -1,16 +1,19 @@
 @import '../../components/variables';
 
 .root {
-  position: relative;
-
-  :global(.ant-table-wrapper) {
-    margin-top: @padding-vertical;
-    margin-bottom: @padding-vertical;
+  > * {
+    margin: 0 @padding-horizontal @padding-vertical @padding-horizontal;
   }
 
-  > div:nth-child(2) {
-    > div:first-child {
-      margin-bottom: @padding-vertical;
-    }
+  > *:first-child {
+    margin-bottom: 5px;
+  }
+
+  > *:last-child {
+    margin-bottom: @padding-vertical-lg;
+  }
+
+  [role='toolbar'] {
+    margin-bottom: @padding-vertical-sm;
   }
 }

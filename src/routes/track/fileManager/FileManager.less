@@ -2,14 +2,15 @@
 
 .root {
   height: inherit;
-  padding-top: @padding-vertical;
 
   > *:first-child {
-    margin: 0 @padding-horizontal;
+    margin-bottom: @padding-vertical;
+    margin-left: @padding-horizontal;
+    margin-right: @padding-horizontal;
   }
 
   > div:nth-child(2) {
     overflow: auto;
-    max-height: calc(~'100% - 47px');
+    max-height: calc(~'100% - 10px');
   }
 }
