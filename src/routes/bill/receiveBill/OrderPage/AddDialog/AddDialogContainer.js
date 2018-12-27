@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import {EnhanceLoading} from '../../../../../components/Enhance';
 import AddDialog from './AddDialog';
 import {postOption, showError, showSuccessMsg, getJsonResult, convert, fuzzySearchEx, fetchJson}from '../../../../../common/common';
 import {Action} from '../../../../../action-reducer/action';
@@ -113,7 +112,7 @@ export default async (params) => {
     const payload = buildAddDialogState(list, params);
     global.store.dispatch(action.create(payload));
   });
-  await showPopup(Container, {status: 'page'}, true);
+  await showPopup(Container, {}, true);
   const state = getSelfState(global.store.getState());
   global.store.dispatch(action.create({}));
   return state.okResult;

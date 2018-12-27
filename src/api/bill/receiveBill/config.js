@@ -3,7 +3,7 @@ import name from '../../dictionary/name';
 
 //OrderPage SearchComponent Config
 const filters = [
-  {key: 'billNmuber', title: '账单号', type: 'text'},
+  {key: 'billNumber', title: '账单号', type: 'text'},
   {key: 'orderNumber', title: '运单号', type: 'text'},
   {key: 'customerDelegateCode', title: '委托号', type: 'text'},
   {key: 'customerId', title: '委托客户', type: 'search', searchType: 'customer_all'},
