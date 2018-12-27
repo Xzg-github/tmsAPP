@@ -4,7 +4,7 @@ import {host} from '../../globalConfig';
 
 let api = express.Router();
 
-const service = `${host}/tms-service`;
+const service = `${host}/tms-service-yule`;
 const archiver_service = `${host}/archiver-service`;
 
 //获取页面配置信息
