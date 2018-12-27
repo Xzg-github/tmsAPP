@@ -66,24 +66,21 @@ const changeActionCreator = (key, value) => {
   return action.assign({[key]: value}, 'searchData');
 };
 
-const formSearchActionCreator = (key, title) => async (dispatch, getState) => {
+const formSearchActionCreator = (key, title, keyControls) => async (dispatch, getState) => {
   const {filters} = getSelfState(getState());
-  let data, options, body;
-  switch (key) {
-    case 'institutionId': {
-      body = {institutionName: title};
-      data = await fetchJson(URL_ALL_INSTITUTION, helper.postOption(body));
-      break;
-    }
-    default:
-      return;
+  let data, body;
+  if(key === 'institutionId') {                                                     //归属机构
+    body = {institutionName: title};
+    data = await helper.fetchJson(URL_ALL_INSTITUTION, helper.postOption(body));
+  }else{
+    data = await helper.fuzzySearchEx(title, keyControls);
   }
   if (data.returnCode !== 0) {
+    helper.showError(data.returnMsg);
     return;
   }
-  options = data.result;
   const index = filters.findIndex(item => item.key === key);
-  dispatch(action.update({options}, 'filters', index));
+  dispatch(action.update({options: data.result}, 'filters', index));
 };
 
 //搜索
