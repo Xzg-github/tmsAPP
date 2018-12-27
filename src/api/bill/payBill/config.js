@@ -7,6 +7,7 @@ const filters = [
   {key: 'orderNumber', title: '运单号', type: 'text'},
   {key: 'customerDelegateCode', title: '委托号', type: 'text'},
   {key: 'customerId', title: '委托客户', type: 'search', searchType: 'customer_all'},
+  {key: 'supplierId', title: '供应商', type: 'search', searchType: 'supplier_all'},
   {key: 'payCustomerId', title: '付款单位', type: 'search', searchType: 'customer_all'},
   {key: 'insertTimeFrom', title: '创建时间', type: 'date'},
   {key: 'insertTimeTo', title: '到', type: 'date'},
@@ -33,6 +34,7 @@ const tableCols = [
   {key: 'billNumber', title: '账单号', link: true},
   {key: 'orderNumber', title: '运单订单'},
   {key: 'payCustomerId', title: '付款单位'},
+  {key: 'supplierId', title: '供应商'},
   {key: 'customerId', title: '委托客户'},
   {key: 'customerServiceId', title: '客服人员'},
   {key: 'customerDelegateCode', title: '委托号'},
@@ -61,15 +63,14 @@ const index = {
 //EditPage BaseInfo FormComponent Config
 const baseInfo = [
   {key: 'orderNumber', title: '运单订单', type: 'readonly'},
-  {key: 'payCustomerId', title: '付款单位', type: 'search', searchType: 'customer_all', required: true},
+  {key: 'supplierId', title: '收款单位', type: 'search', searchType: 'supplier_all', required: true},
   {key: 'currency', title: '币种', type: 'search', required: true},
-  {key: 'customerContact', title: '联系人名称', type: 'search'},
-  {key: 'customerContactPhone', title: '联系人电话', type: 'text'},
-  {key: 'customerContactFax', title: '联系人传真', type: 'text'},
+  {key: 'supplierContact', title: '联系人名称', type: 'search'},
+  {key: 'supplierContactPhone', title: '联系人电话', type: 'text'},
+  {key: 'supplierContactFax', title: '联系人传真', type: 'text'},
   {key: 'amount', title: '结算金额', type: 'readonly'},
   {key: 'amountCapital', title: '金额大写', type: 'readonly'},
-  {key: 'customerHeaderInformation', title: '客户抬头', type: 'search', props: {searchWhenClick: true}, showAdd: true},
-  {key: 'customerAddress', title: '客户抬头地址', type: 'textArea'}
+  {key: 'supplierHeaderInformation', title: '供应商抬头', type: 'search', props: {searchWhenClick: true}, showAdd: true},
 ];
 
 //EditPage costInfo buttons Config
@@ -84,7 +85,7 @@ const costInfoCols = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
   {key: 'sequence', title: '排序', type: 'number', required: true},
-  {key: 'customerId', title: '结算单位', type: 'readonly'},
+  {key: 'supplierId', title: '结算单位', type: 'readonly'},
   {key: 'chargeItemId', title: '费用名称', type: 'readonly'},
   {key: 'chargeUnit', title: '计量单位', type: 'readonly', dictionary: name.CHARGE_UNIT},
   {key: 'currency', title: '币种', type: 'readonly'},
@@ -142,6 +143,7 @@ const addDialogFilters = [
   {key: 'orderNumber', title: '运单号', type: 'text'},
   {key: 'customerDelegateCode', title: '委托号', type: 'text'},
   {key: 'customerId', title: '委托客户', type: 'search', searchType: 'customer_all'},
+  {key: 'supplierId', title: '供应商', type: 'search', searchType: 'supplier_all'},
   {key: 'incomeTag', title: '费用状态', type: 'select', options: incomeTagOptions},
   {key: 'statusType', title: '运单状态', type: 'select', dictionary: 'status_type_addDialog'},
   {key: 'customerDelegateTimeFrom', title: '委托日期', type: 'date'},
@@ -156,6 +158,7 @@ const addDialogCols = [
   {key: 'orderNumber', title: '运单号'},
   {key: 'customerDelegateCode', title: '委托号'},
   {key: 'customerId', title: '委托客户'},
+  {key: 'supplierId', title: '供应商'},
   {key: 'incomeTag', title: '费用状态', options: incomeTagOptions},
   {key: 'statusType', title: '运单状态', dictionary: 'status_type_addDialog'},
   {key: 'receivableBillAmount', title: '可对帐税金额'},

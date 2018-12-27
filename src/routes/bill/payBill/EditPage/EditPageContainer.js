@@ -9,18 +9,18 @@ import execWithLoading from '../../../../standard-business/execWithLoading';
 import {updateOne} from '../../../../action-reducer/array';
 import {showAddCustomerFactoryDialog} from '../../../config/customerFactory/EditDialogContainer';
 
-const PARENT_STATE_PATH = ['receiveBill'];
-const STATE_PATH = ['receiveBill', 'edit'];
+const PARENT_STATE_PATH = ['payBill'];
+const STATE_PATH = ['payBill', 'edit'];
 const action = new Action(STATE_PATH);
-const URL_DETAIL = '/api/bill/receiveBill/detail';
-const URL_JION_LIST = '/api/bill/receiveBill/joinList';
-const URL_JION = '/api/bill/receiveBill/joinDetail';
-const URL_REMOVE = '/api/bill/receiveBill/removeDetail';
-const URL_SAVE = '/api/bill/receiveBill/save';
-const URL_SEND = '/api/bill/receiveBill/send';
+const URL_DETAIL = '/api/bill/payBill/detail';
+const URL_JION_LIST = '/api/bill/payBill/joinList';
+const URL_JION = '/api/bill/payBill/joinDetail';
+const URL_REMOVE = '/api/bill/payBill/removeDetail';
+const URL_SAVE = '/api/bill/payBill/save';
+const URL_SEND = '/api/bill/payBill/send';
 const URL_CURRENCY = `/api/bill/receiveMake/currency`;
-const URL_CONTACTS = `/api/bill/receiveBill/cunstomer_contacts`;
-const URL_HEADER_INDO = `/api/bill/receiveBill/consignee_consignor`;
+const URL_CONTACTS = `/api/bill/payBill/cunstomer_contacts`;
+const URL_HEADER_INDO = `/api/bill/payBill/consignee_consignor`;
 
 
 const getSelfState = (rootState) => {
@@ -30,7 +30,7 @@ const getSelfState = (rootState) => {
 
 const changeActionCreator = (KEY, keyName, keyValue) => async (dispatch, getState) =>  {
   let payload = {[keyName]: keyValue};
-  if (keyValue && keyName === 'customerHeaderInformation') {
+  if (keyValue && keyName === 'supplierHeaderInformation') {
     payload['customerAddress'] = keyValue.address;
   } else if (keyValue && keyName === 'customerContact') {
     payload['customerContactPhone'] = keyValue.contactMobile;
@@ -45,18 +45,18 @@ const formSearchActionCreator = (KEY, key, filter, control) => async (dispatch, 
   if (control.searchType) {
     result = getJsonResult(await fuzzySearchEx(filter, control));
   } else {
-    const customerId = value['payCustomerId'].value;
+    const supplierId = value['supplierId'].value;
     switch (key) {
       case 'currency': {
         result = getJsonResult(await fetchJson(URL_CURRENCY, postOption({currencyTypeCode: filter, maxNumber: 65536})));
         break;
       }
-      case 'customerContact': {
-        result = getJsonResult(await fetchJson(URL_CONTACTS, postOption({customerId})));
+      case 'supplierContact': {
+        result = getJsonResult(await fetchJson(URL_CONTACTS, postOption({supplierId})));
         break;
       }
-      case 'customerHeaderInformation': {
-        result = getJsonResult(await fetchJson(URL_HEADER_INDO, postOption({customerId, name: filter})));
+      case 'supplierHeaderInformation': {
+        result = getJsonResult(await fetchJson(URL_HEADER_INDO, postOption({supplierId, name: filter})));
         break;
       }
     }
@@ -101,8 +101,8 @@ const removeActionCreator = (KEY) => async (dispatch, getState) =>  {
   const {value, id} = getSelfState(getState());
   const checkList = value[KEY].filter(item => item.checked);
   if (checkList.length === 0) return showError('请勾选一条数据！');
-  const incomeDetailIdList = checkList.map(o => Number(o.transportOrderIncomeId));
-  const {returnCode, result, returnMsg} = await helper.fetchJson(`${URL_REMOVE}/${id}`, postOption(incomeDetailIdList));
+  const costDetailIdList = checkList.map(o => Number(o.transportOrderCostId));
+  const {returnCode, result, returnMsg} = await helper.fetchJson(`${URL_REMOVE}/${id}`, postOption(costDetailIdList));
   if (returnCode !== 0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
   const notCheckList = value[KEY].filter(item => !item.checked);

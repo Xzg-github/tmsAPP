@@ -10,8 +10,8 @@ import execWithLoading from '../../../../../standard-business/execWithLoading';
 const STATE_PATH = ['temp'];
 const action = new Action(STATE_PATH, false);
 
-const URL_LIST = '/api/bill/receiveBill/income_list';
-const URL_CREATE_BILL = '/api/bill/receiveBill/createBill';
+const URL_LIST = '/api/bill/payBill/income_list';
+const URL_CREATE_BILL = '/api/bill/payBill/createBill';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -52,14 +52,12 @@ const createBillActionCreator = (buildType) => async (dispatch, getState) => {
     const {items} = getSelfState(getState());
     const checkList = items.filter(o=> o.checked);
     if(!checkList.length) return showError('请勾选一条数据！');
-    execWithLoading(async () => {
       const transportOrderIdList = checkList.map(o => o.id);
       const params = {opType: buildType, transportOrderIdList};
       const { returnCode, result, returnMsg } = await fetchJson(URL_CREATE_BILL, postOption(params));
       if(returnCode !== 0) return showError(returnMsg);
       showSuccessMsg(returnMsg);
       dispatch(action.assign({okResult: true}));
-    });
   }
   dispatch(action.assign({visible: false}));
 };
