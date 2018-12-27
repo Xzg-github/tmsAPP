@@ -1,0 +1,18 @@
+@import '../../../../components/variables.less';
+
+.root {
+  margin: @padding-vertical @padding-horizontal;
+
+  :global(.pld-card) {
+    margin: 0;
+  }
+
+  > :last-child {
+    overflow: auto;
+
+    > *:not(:last-child) {
+      margin-bottom: @padding-vertical;
+    }
+
+  }
+}

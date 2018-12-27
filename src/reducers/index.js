@@ -26,6 +26,26 @@ const create = (key, isTabPage=true) => {
   }
 };
 
+/*
+* 功能：创建编辑页面带运单子页签信息的reduce结构，运单信息容器组件statePath=[key, 'edit', 'orderInfo']
+* */
+const createBillReducer = (key) => {
+  const prefix = [key];
+  const editPrefix = [key, 'edit'];
+  const toKeyReducer = ({activeKey}) => {
+    const orderInfoPrefix = editPrefix.concat('orderInfo');
+    const recucerName = activeKey === 'index' ? editPrefix : orderInfoPrefix;
+    return {keys: [activeKey], reducer: createReducer(recucerName)};
+  };
+  const edit = createReducer(editPrefix, mapReducer(toKeyReducer));
+  const toEdit = ({activeKey}, {payload={}}) => {
+    const key = payload.currentKey || activeKey;
+    return key !== 'index' ? {keys: [key], reducer: edit} : {};
+  };
+  return createReducer(prefix, mapReducer(toEdit));
+};
+
+
 const rootReducer = combineReducers({
   layout: createReducer(['layout']),
   home: createReducer(['home']),
@@ -37,7 +57,7 @@ const rootReducer = combineReducers({
   message,
 
   //运输订单
-  input: create('input'),
+  input: create('input', false),
   import: create('import'),
   pending: create('pending'),
   complete: create('complete'),
@@ -46,20 +66,23 @@ const rootReducer = combineReducers({
   //车辆调度
   todo: create('todo'),
   done: create('done'),
-  carManager: create('carManager'),
 
   //监理任务
   waiting: create('waiting'),
   finish: create('finish'),
   supervisorManager: create('supervisorManager'),
 
+  //跟踪管控
+  trackOrder: create('trackOrder'),
+  fileManager: create('fileManager'),
+
   //计费与对帐
-  receiveMake: create('receiveMake'),
+  receiveMake: createBillReducer('receiveMake'),
   receiveChange: create('receiveChange'),
   receiveBill: create('receiveBill'),
   receiveMonthlyBill: create('receiveMonthlyBill'),
   receiveApply: create('receiveApply'),
-  payMake: create('payMake'),
+  payMake: createBillReducer('payMake'),
   payChange: create('payChange'),
   payBill: create('payBill'),
   payMonthlyBill: create('payMonthlyBill'),
@@ -68,22 +91,26 @@ const rootReducer = combineReducers({
   append: create('append'),
 
   //档案管理
-  customerContact: create('customerContact'),
-  customerFactory: create('customerFactory'),
-  customerTax: create('customerTax'),
-  customerCost: create('customerCost'),
-  supplierContact: create('supplierContact'),
-  supplierCar: create('supplierCar'),
+  customerContact: create('customerContact', false),
+  customerTax: create('customerTax', false),
+  customerCost: create('customerCost', false),
+  customerService: create('customerService', false),
+  customerInvoice: create('customerInvoice', false),
+  supplierContact: create('supplierContact', false),
+  supplierCar: create('supplierCar', false),
   supplierDriver: create('supplierDriver', false),
   supplierSupervisor: create('supplierSupervisor', false),
-  supplierCost: create('supplierCost'),
-  insideFactory: create('insideFactory'),
-  insideCar: create('insideCar'),
+  supplierCost: create('supplierCost', false),
+  insideCar: create('insideCar', false),
   insideDriver: create('insideDriver', false),
   insideSupervisor: create('insideSupervisor', false),
   customerPrice: create('customerPrice'),
   supplierPrice: create('supplierPrice'),
-  supplierTax: create('supplierTax'),
+  supplierTax: create('supplierTax', false),
+  carManager: create('carManager'),
+  corporation: create('corporation', false),
+  bank: create('bank', false),
+  position: create('position', false)
 });
 
 export default rootReducer;

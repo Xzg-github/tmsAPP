@@ -5,7 +5,8 @@ import AddDialog from './AddDialog';
 import {Action} from '../../../../action-reducer/action';
 import showPopup from '../../../../standard-business/showPopup';
 
-const URL_ACTIVE_SUPPLIER = '/api/config/supplierDriver/active_supplier'; //激活供应商下拉
+//const URL_ACTIVE_SUPPLIER = '/api/config/supplierDriver/active_supplier'; //激活供应商下拉
+const SUPPLIER = '/api/config/supplierDriver/search/trailer'; //供应商托车行下拉
 const URL_SAVE = '/api/config/supplierDriver/save';
 
 const STATE_PATH = ['temp'];
@@ -38,17 +39,17 @@ const exitValidActionCreator = () => {
 };
 
 //输入框搜索
-const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
+const formSearchActionCreator = (key,keyValue,keyControls) => async (dispatch, getState) => {
   const {controls} = getSelfState(getState());
-  let data, body;
-  if(key === 'supplierId'){                                                     //所属供应商
-    body = {maxNumber: 10, supplierId: value};
-    data = await helper.fetchJson(URL_ACTIVE_SUPPLIER, helper.postOption(body));
-    if (data.returnCode !== 0) {
-      return;
-    }
-    const index = controls.findIndex(item => item.key === key);
-    dispatch(action.update({options: data.result}, 'controls', index));
+  let json;
+  if(key === 'supplierId') {                                                     //所属供应商
+    json = await helper.fuzzySearchEx(keyValue, keyControls);
+  }
+  if (!json.returnCode) {
+    const index = controls.findIndex(item => item.key == key);
+    dispatch(action.update({options:json.result}, 'controls', index));
+  }else {
+    helper.showError(json.returnMsg)
   }
 };
 

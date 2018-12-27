@@ -10,7 +10,8 @@ const filters = [
   {key: 'shortName', title: '客户简称', type: 'text'},
   {key: 'englishName', title: '英文名称', type: 'text'},
   {key: 'salesPersonId', title: '销售人员', type: 'search'},
-  {key: 'companyLevel', title: '客户级别', type: 'select', dictionary: name.COMPANY_LEVEL}
+  {key: 'companyLevel', title: '客户级别', type: 'select', dictionary: name.COMPANY_LEVEL},
+  {key: 'settlementPersonnel', title: '财务人员', type: 'search'}
 ];
 
 const buttons = [
@@ -24,6 +25,7 @@ const buttons = [
     { key: 'suppliersArchives_exportSearch', title: '查询导出'},
     { key: 'suppliersArchives_exportPage', title: '页面导出'},
   ]},
+  {key: 'customersArchives_finance', title: '设置财务人员'},
   {key: 'customersArchives_config', title: '配置字段'}
 ];
 
@@ -34,6 +36,7 @@ const tableCols = [
   {key: 'shortName', title: '客户简称'},
   {key: 'telephone', title: '电话'},
   {key: 'salesPersonId', title: '销售人员', type: 'search'},
+  {key: 'settlementPersonnel', title: '财务人员'},
   {key: 'isContract', title: '是否签订合同', type: 'radio', dictionary: name.YES_OR_NO},
   {key: 'contractStartTime', title: '合同开始日期', type: 'date'},
   {key: 'contractEndTime', title: '合同结束日期', type: 'date'},
@@ -95,6 +98,12 @@ const controls = [
   {key: 'cooperationInfo', title: '合作信息', data: cooperationInfo}
 ];
 
+//设置财务人员Config
+const finance = {
+  controls: [{key: 'settlementPersonnel', title: '财务人员', type: 'search', required: true}],
+  size: 'small',
+  config: {ok: '确定', cancel: '取消'}
+};
 
 const edit = {
   controls,
@@ -107,6 +116,7 @@ const edit = {
 const config = {
   edit,
   index,
+  finance,
   names: [ name.BALANCE_WAY, name.YES_OR_NO, name.TAX_TYPE,
     name.ENABLED_TYPE, name.COMPANY_TYPE, name.COMPANY_LEVEL
   ]

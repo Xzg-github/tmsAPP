@@ -5,6 +5,7 @@ import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
 import showPopup from "../../../standard-business/showPopup";
 import {updateTable} from './OrderPageContainer';
+import {fetchAllDictionary, setDictionary2} from '../../../common/dictionary';
 
 const STATE_PATH = ['temp'];
 const action = new Action(STATE_PATH, false);
@@ -94,6 +95,15 @@ const Container = connect(mapStateToProps, actionCreators)(EditDialog);
 
 
 export default async(config, data={},isAdd=true) => {
+  if (!config) {
+    const {returnCode, result} = await helper.fetchJson('/api/config/customer_contact/config');
+    if (returnCode !== 0) return helper.showError('获取界面配置失败');
+    config = result.edit;
+    const dic = await fetchAllDictionary();
+    if (dic.returnCode === 0) {
+      setDictionary2(dic.result, config.controls);
+    }
+  }
   global.store.dispatch(action.create(buildState(config, data, isAdd)));
   await showPopup(Container, data,true);
 };

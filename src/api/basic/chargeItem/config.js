@@ -4,7 +4,6 @@ import name from '../../dictionary/name';
 const filters = [
   {key: 'chargeName', title: '费用名称', type: 'text'},
   {key: 'chargeCode', title: '费用编码', type: 'text'},
-  // {key: 'apportionmentRule', title: '分摊规则', type: 'select', dictionary: name.APPORTIONMENT_RULE},
 ];
 
 const tableCols = [
@@ -12,12 +11,11 @@ const tableCols = [
   {key: 'active', title: '状态', dictionary: name.ACTIVE},
   {key: 'chargeCode', title: '费用编码'},
   {key: 'chargeEnName', title: '英文名称'},
-  // {key: 'isTax', title: '税额改单', dictionary: name.YES_OR_NO},
-  // {key: 'isNet', title: '净额改单', dictionary: name.YES_OR_NO},
-  // {key: 'relationThreePartyCode', title: '第三方系统编码'},
-  // {key: 'apportionmentRule', title: '分摊规则', dictionary: name.APPORTIONMENT_RULE},
+  {key: 'isTax', title: '税额改单', dictionary: name.ZERO_ONE},
+  {key: 'isNet', title: '净额改单', dictionary: name.ZERO_ONE},
+  {key: 'relationThreePartyCode', title: '第三方系统编码'},
+  {key: 'chargeType', title: '费用类型', dictionary: 'charge_type'},
   {key: 'description', title: '描述'},
-
 ];
 
 const buttons = [
@@ -26,7 +24,6 @@ const buttons = [
   {key: 'del', title: '失效', sign: 'charge_item_unactive'},
   {key: 'active', title: '激活', sign: 'charge_item_active'},
   {key: 'import', title: '导入', sign: 'charge_item_import'},
-  // {key: 'setRule', title: '设置分摊规则', sign: 'charge_item_setRule'}
 ];
 
 const controls = [
@@ -34,16 +31,13 @@ const controls = [
   {key: 'active', title: '状态', type: 'readonly', dictionary: name.ACTIVE},
   {key: 'chargeCode', title: '费用编码', type: 'text'},
   {key: 'chargeEnName', title: '英文名称', type: 'text'},
-  // {key: 'isTax', title: '税额改单', type: 'select', dictionary: name.YES_OR_NO},
-  // {key: 'isNet', title: '净额改单', type: 'select', dictionary: name.YES_OR_NO},
-  // {key: 'relationThreePartyCode', title: '第三方系统编码', type: 'text'},
+  {key: 'isTax', title: '税额改单', type: 'select', dictionary: name.ZERO_ONE},
+  {key: 'isNet', title: '净额改单', type: 'select', dictionary: name.ZERO_ONE},
+  {key: 'relationThreePartyCode', title: '第三方系统编码', type: 'text'},
+  {key: 'chargeType', title: '费用类型', type: 'select', dictionary: 'charge_type'},
   {key: 'description', title: '描述', type: 'text'}
 ];
 
-// const apportionmentRuleConfig = {
-//   controls:[{ key: 'apportionmentRule', title: '分摊规则', type: 'text', type: 'select', dictionary: name.APPORTIONMENT_RULE }],
-//   title:"设置分摊规则"
-// };
 const index = {
   filters,
   buttons,
@@ -52,7 +46,6 @@ const index = {
   pageSizeType,
   description,
   searchConfig,
-  // apportionmentRuleConfig
 };
 
 const edit = {

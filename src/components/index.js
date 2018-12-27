@@ -16,6 +16,7 @@ import Title from './Title';
 import ElectricFence from './ElectricFence';
 import ModalWithDrag from './ModalWithDrag';
 import NumberInput from './NumberInput';
+import SuperTitle from './SuperTitle'
 
 export {
   Card,
@@ -35,5 +36,6 @@ export {
   Title,
   ElectricFence,
   ModalWithDrag,
-  NumberInput
+  NumberInput,
+  SuperTitle
 };

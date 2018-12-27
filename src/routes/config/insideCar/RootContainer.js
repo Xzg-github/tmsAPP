@@ -6,7 +6,7 @@ import helper from '../../../common/common';
 import {buildOrderPageState} from '../../../common/state';
 import {search, search2} from '../../../common/search';
 import {fetchDictionary, setDictionary2} from '../../../common/dictionary';
-import showDiaLog from '../supplierCar/CarContainer';
+import showDiaLog from './CarContainer';
 import {showImportDialog} from '../../../common/modeImport';
 import { exportExcelFunc, commonExport } from '../../../common/exportExcelSetting';
 import {toFormValue,hasSign} from '../../../common/check';
@@ -33,7 +33,7 @@ const initActionCreator = () => async (dispatch) => {
     dispatch(action.assign({status: 'loading'}));
     const config = helper.getJsonResult(await helper.fetchJson(URL_CONFIG));
     const dictionary = helper.getJsonResult(await fetchDictionary(config.dictionary));
-    const list = helper.getJsonResult(await search(URL_LIST, 0, config.pageSize, {supplierId:-1}));
+    const list = helper.getJsonResult(await search(URL_LIST, 0, config.pageSize, {}));
 
     const {tableCols,edit} = config;
     //拓展字段
@@ -46,7 +46,7 @@ const initActionCreator = () => async (dispatch) => {
     const payload = buildOrderPageState(list, config);
     payload.status = 'page';
     payload.edit = config.edit;
-    payload.searchData = {...payload.searchData ,supplierId:-1};
+    payload.searchData = {};
     payload.searchDataBak = payload.searchData;
     setDictionary2(dictionary, payload.tableCols, payload.edit.controls,payload.tableCols,payload.filters);
     dispatch(action.assign(payload));
@@ -158,7 +158,7 @@ const searchExportActionCrator =()=> async(dispatch, getState) => {
   const search = {
     ...toFormValue(searchData)
   };
-  commonExport(tableCols, '/archiver-service-yule/car_info/list/search', search);
+  commonExport(tableCols, '/archiver-service/car_info/list/search', search);
 };
 
 //页面导出
@@ -214,10 +214,10 @@ const checkActionCreator = (isAll, checked, rowIndex) => {
 };
 
 const formSearchActionCreator = (key,keyValue,keyControls) => async(dispatch,getState) => {
-  const {filters,value} = getSelfState(getState());
+  const {filters} = getSelfState(getState());
   const json = await helper.fuzzySearchEx(keyValue,keyControls);
   if (!json.returnCode) {
-    const index = filters.findIndex(item => item.key == key);
+    const index = filters.findIndex(item => item.key === key);
     dispatch(action.update({options:json.result}, 'filters', index));
   }else {
     helper.showError(json.returnMsg)

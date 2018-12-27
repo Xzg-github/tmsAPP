@@ -2,6 +2,7 @@ import {pageSize, pageSizeType, description, searchConfig} from '../../globalCon
 
 const CAR_MODE = '/api/config/supplier_car/search/car_mode'; //车型下拉
 const DRIVER = '/api/config/supplier_car/search/driver'; //司机下拉
+const SUPPLIER = '/api/config/supplier_car/search/trailer'; //供应商托车行下拉
 
 const filters = [
   {key: 'supplierId', title: '所属供应商', type: 'search',searchType:'supplier'},
@@ -51,11 +52,11 @@ const tableCols = [
 ];
 
 const controls = [
-  {key: 'supplierId', title: '所属供应商',type:'search',searchType:'supplier',required:true},
+  {key: 'supplierId', title: '所属供应商',type:'search',searchUrl:SUPPLIER,required:true},
   {key: 'isOwner', title: '是否自有',type:'readonly',dictionary:'zero_one_type',required:true},
   {key: 'carModeId', title: '车型',type:'search',required:true,searchUrl:CAR_MODE},
   {key: 'carNumber', title: '车牌号',type:'text',required:true},
-  {key: 'driverId', title: '司机标识',type:'search',required:true,showAdd:true,searchUrl:DRIVER},
+  {key: 'driverId', title: '司机标识',type:'search',required:true,showAdd:true,searchUrl:DRIVER,props:{searchWhenClick:true}},
  // {key: 'institutionId', title: '归属机构',type:'search',searchType:'institution'},
   {key: 'companyHeader', title: '车辆抬头公司',type:'text',required:true},
   {key: 'companyHeaderAddress', title: '牌头地址',type:'text'},

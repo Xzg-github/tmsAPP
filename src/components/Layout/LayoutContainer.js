@@ -10,6 +10,7 @@ import getWsClient from '../../standard-business/wsClient';
 import {notification} from 'antd';
 import showPerson from './Person';
 import showMode from './Mode';
+import showPassword from '../../routes/password/modify/ModifyContainer';
 
 const action = new Action(['layout']);
 const PRIVILEGE_URL = '/api/permission/privilege';
@@ -27,17 +28,6 @@ const getTableColsConfig = async () => {
   return setting;
 };
 
-const splitNavigation = (navItems) => {
-  const index = navItems.findIndex(item => item.key === 'basic');
-  const settingUrl = index >= 0 ? navItems[index].href : '';
-  const index1 = navItems.findIndex(item => item.key === 'message');
-  const messageUrl = index1 >= 0 ? navItems[index1].href : '';
-  (index >= 0) && navItems.splice(index, 1);
-  let flag = index >= 0 ? index1-1 : index1;
-  (index1 >= 0) && navItems.splice(flag, 1);
-  return {navItems, settingUrl,messageUrl};
-};
-
 const msgConfig = [
   {title: '系统消息', url: '/message/msg_system'},
   {title: '订单消息', url: '/message/msg_order'},
@@ -53,7 +43,7 @@ const showGlobalMessage = (type=0, message) => {
     key,
     message: config.title,
     description: <Link to={config.url} onClick={() => notification.close(key)}>{message}</Link>,
-  duration: 10,
+    duration: 10,
     placement: 'bottomRight',
     style: {
     whiteSpace: 'pre'
@@ -80,11 +70,15 @@ const initActionCreator = () => async (dispatch) => {
   const {returnCode, returnMsg, result} = await helper.fetchJson(PRIVILEGE_URL);
   if (returnCode === 0) {
     const tableColsSetting = await getTableColsConfig();
-    const payload = Object.assign(result, splitNavigation(result.navigation), {tableColsSetting, status: 'page'});
-    payload.messageUrl && (payload.messageCount = await getUreadCount());
+    const payload = Object.assign(result, {tableColsSetting, status: 'page'});
+    payload.messageCount = await getUreadCount();
     dispatch(action.create(payload));
     // 获取到权限后，再次引发路由，以保证没有该页面的权限时显示404的页面
-    jump(window.location.pathname + window.location.search);
+    if (window.location.pathname === '/') {
+      jump(payload.navigation[0].href);
+    } else {
+      jump(window.location.pathname + window.location.search);
+    }
     connectWsServer();
   } else {
     if (returnCode !== 9998) {
@@ -131,7 +125,7 @@ const menuClickActionCreator = (key) => async () => {
     await helper.fetchJson(REVOKE_URL, 'put');
     window.location.href = '/login';
   } else if (key === 'modify') {
-    jump('/password/modify');
+    showPassword()
   } else if (key === 'person') {
     showPerson();
   } else if (key === 'mode') {

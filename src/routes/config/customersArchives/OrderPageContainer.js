@@ -2,11 +2,13 @@ import { connect } from 'react-redux';
 import OrderPage from '../../../components/OrderPage';
 import { Action } from '../../../action-reducer/action';
 import { getPathValue } from '../../../action-reducer/helper';
-import helper, { getObject, fetchJson, showError, showSuccessMsg, deepCopy} from '../../../common/common';
+import helper, { getObject, fetchJson, showError, showSuccessMsg} from '../../../common/common';
 import {search2} from '../../../common/search';
 import {showImportDialog} from '../../../common/modeImport';
 import { exportExcelFunc, commonExport } from '../../../common/exportExcelSetting';
 import { showColsSetting } from '../../../common/tableColsSetting';
+import showFinanceDialog from './financeDialog';
+import {toFormValue} from "../../../common/check";
 
 const STATE_PATH = ['config', 'customersArchives'];
 const URL_LIST = '/api/config/customersArchives/list';
@@ -14,6 +16,7 @@ const URL_ABLE = '/api/config/customersArchives/able';
 const URL_SALEMEN = '/api/config/customersArchives/salemen';
 const URL_DETAIL = '/api/config/customersArchives/detail';
 const URL_DELETE = '/api/config/customersArchives/delete';
+const URL_FINANANCIAL = '/api/basic/user/name';
 
 const action = new Action(STATE_PATH);
 
@@ -33,7 +36,12 @@ const buildEditDialogState = (config={}, data, edit) => {
   };
 };
 
-const resetActionCreator = (dispatch, getState) => {
+const updateTable = async (dispatch, getState) => {
+  const {currentPage, pageSize, searchDataBak={}} = getSelfState(getState());
+  return search2(dispatch, action, URL_LIST, currentPage, pageSize, toFormValue(searchDataBak))
+};
+
+const resetActionCreator = (dispatch) => {
   dispatch(action.assign({searchData: {}}));
 };
 
@@ -55,10 +63,16 @@ const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
        options = data.result.data;
        break;
     }
+    case 'settlementPersonnel': {
+      const option = helper.postOption({filter: value});
+      data = await fetchJson(URL_FINANANCIAL, option);
+      options = data.result.data;
+      break;
+    }
     default: return;
   }
   if(data.returnCode !== 0) return showError(data.returnMsg);
-  const index = filters.findIndex(item => item.key == key);
+  const index = filters.findIndex(item => item.key === key);
   dispatch(action.update({options}, 'filters', index));
 };
 
@@ -69,13 +83,14 @@ const addActionCreator = (dispatch, getState) => {
   dispatch(action.assign(payload, 'edit'));
 };
 
+// 需求变更 放开可编辑的权限
 const editAction = async (isDbClick, dispatch, getState, rowIndex=0) => {
   const {tableItems, editConfig, customConfig} = getSelfState(getState());
   const index = isDbClick ? rowIndex : helper.findOnlyCheckedIndex(tableItems);
   if (index === -1) return showError('请勾选一条数据！');
-  if(tableItems[index]['enabledType'] !== 'enabled_type_unenabled'){
-    return showError('只能编辑未启用状态记录');
-  }
+  // if(tableItems[index]['enabledType'] !== 'enabled_type_unenabled'){
+  //   return showError('只能编辑未启用状态记录');
+  // }
   const id = tableItems[index].id;
   const {returnCode, returnMsg, result} = await fetchJson(`${URL_DETAIL}/${id}`);
   if (returnCode !== 0) return showError(returnMsg);
@@ -87,6 +102,18 @@ const editAction = async (isDbClick, dispatch, getState, rowIndex=0) => {
   const payload = buildEditDialogState(editConfig, result, true);
   dispatch(action.assign(payload, 'edit'));
 };
+
+//设置财务人员
+const financeActionCreator = async (dispatch, getState) => {
+  const {finance, tableItems} = getSelfState(getState());
+  const idList = tableItems.reduce((result, item) => {
+    item.checked && result.push(item.id);
+    return result
+  }, []);
+  return !idList.length ? showError('请勾选一条数据') :
+    await showFinanceDialog(finance, idList);
+};
+
 // 编辑
 const editActionCreator = async (dispatch, getState) => {
   editAction(false, dispatch, getState);
@@ -108,7 +135,7 @@ const ableActionCreator = async (type='enabled_type_enabled', dispatch, getState
     ids: checkItems.map(o=>o.id),
     type
   };
-  const {returnCode, returnMsg, result} = await fetchJson(`${URL_ABLE}`, helper.postOption(params));
+  const {returnCode, returnMsg} = await fetchJson(`${URL_ABLE}`, helper.postOption(params));
   if (returnCode !== 0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
   searchActionCreator(dispatch, getState);
@@ -126,14 +153,14 @@ const deleteActionCreator = async (dispatch, getState) => {
   const checkItems = tableItems.filter(o=>o.checked);
   if(checkItems.length < 1) return showError('请勾选一条数据！');
   if (checkItems.some(o => o.enabledType !== 'enabled_type_unenabled')) return showError('请选择未启用状态的数据！');
-  const {returnCode, returnMsg, result} = await fetchJson(URL_DELETE, helper.postOption(checkItems.map(o=>o.id)));
+  const {returnCode, returnMsg} = await fetchJson(URL_DELETE, helper.postOption(checkItems.map(o=>o.id)));
   if (returnCode !== 0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
   searchActionCreator(dispatch, getState);
 };
 
 // 导入
-const importActionCreator = (dispatch, getState) => showImportDialog('customer_import');;
+const importActionCreator = () => showImportDialog('customer_import');
 
 // 查询导出
 const exportSearchActionCreator =(dispatch,getState)=>{
@@ -167,6 +194,7 @@ const toolbarActions = {
   import: importActionCreator,
   exportSearch: exportSearchActionCreator,
   exportPage :exportPageActionCreator,
+  finance: financeActionCreator,
   config: configActionCreator
 };
 
@@ -218,4 +246,4 @@ const afterEditActionCreator = (isOk=false ,dispatch, getState) => {
 
 const Container = connect(mapStateToProps, actionCreators)(OrderPage);
 export default Container;
-export {afterEditActionCreator};
+export {afterEditActionCreator, updateTable};

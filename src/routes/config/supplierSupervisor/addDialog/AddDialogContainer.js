@@ -47,12 +47,11 @@ const exitValidActionCreator = () => {
 };
 
 //输入框搜索
-const formSearchActionCreator = (key, title) => async (dispatch, getState) => {
+const formSearchActionCreator = (key, title, keyControls) => async (dispatch, getState) => {
   const {controls, value} = getSelfState(getState());
   let data, body;
   if(key === 'supplierId'){
-    body = {maxNumber: 10, supplierId: title};
-    data = await helper.fetchJson(URL_ACTIVE_SUPPLIER, helper.postOption(body));
+    data = await helper.fuzzySearchEx(title, keyControls);
     if (data.returnCode !== 0) {
       return;
     }

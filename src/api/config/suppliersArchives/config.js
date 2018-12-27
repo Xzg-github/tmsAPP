@@ -3,7 +3,7 @@ import name from '../../dictionary/name';
 
 const filters = [
   {key: 'supplierCode', title: '供应商编码', type: 'text'},
-  {key: 'companyType', title: '供应商类型', type: 'select', dictionary: name.COMPANY_TYPE},
+  {key: 'supplierType', title: '供应商类型', type: 'select', dictionary: name.SUPPLIER_TYPE},
   {key: 'companyLevel', title: '供应商级别', type: 'select', dictionary: name.COMPANY_LEVEL},
   {key: 'supplierName', title: '供应商名称', type: 'text'},
   {key: 'thirdPartyCode', title: '第三方系统编码', type: 'text'},
@@ -11,6 +11,7 @@ const filters = [
   {key: 'englishName', title: '英文名称', type: 'text'},
   {key: 'purchasePersonId', title: '采购人员', type: 'search'},
   {key: 'enabledType', title: '状态', type: 'select', dictionary: name.ENABLED_TYPE},
+  {key: 'settlementPersonnel', title: '财务人员', type: 'search'}
 ];
 
 const buttons = [
@@ -24,6 +25,7 @@ const buttons = [
     { key: 'suppliersArchives_exportSearch', title: '查询导出'},
     { key: 'suppliersArchives_exportPage', title: '页面导出'},
   ]},
+  {key: 'suppliersArchives_finance', title: '设置财务人员'},
   {key: 'suppliersArchives_config', title: '配置字段'}
 ];
 
@@ -35,10 +37,11 @@ const tableCols = [
   {key: 'englishName', title: '英文名称'},
   {key: 'telephone', title: '电话'},
   {key: 'purchasePersonId', title: '采购人员', type: 'search'},
+  {key: 'settlementPersonnel', title: '财务人员'},
   {key: 'isContract', title: '是否签订合同', type: 'radio', dictionary: name.YES_OR_NO},
   {key: 'contractStartTime', title: '合同开始日期', type: 'date'},
   {key: 'contractEndTime', title: '合同结束日期', type: 'date'},
-  {key: 'companyType', title: '供应商类型', type: 'select', dictionary: name.COMPANY_TYPE},
+  {key: 'supplierType', title: '供应商类型', type: 'select', dictionary: name.SUPPLIER_TYPE},
   {key: 'companyLevel', title: '供应商级别', type: 'select',dictionary: name.COMPANY_LEVEL},
   {key: 'insertUser', title: '操作人'},
   {key: 'insertTime', title: '操作时间', type: 'date'}
@@ -75,7 +78,7 @@ const baseInfo = [
 ];
 
 const cooperationInfo = [
-  {key: 'companyType', title: '供应商类型', type: 'select', dictionary: name.COMPANY_TYPE},
+  {key: 'supplierType', title: '供应商类型', type: 'select', dictionary: name.SUPPLIER_TYPE,required:true},
   {key: 'companyLevel', title: '供应商级别', type: 'select', dictionary: name.COMPANY_LEVEL, required: true},
   {key: 'isContract', title: '是否签订合同', type: 'radioGroup', dictionary: name.YES_OR_NO},
   {key: 'contractStartTime', title: '合同生效日期', type: 'date', rule: {type: '<', key: 'contractEndTime'}},
@@ -103,12 +106,20 @@ const edit = {
   config: {ok: '确定', cancel: '取消'}
 };
 
+//设置财务人员Config
+const finance = {
+  controls: [{key: 'settlementPersonnel', title: '财务人员', type: 'search', required: true}],
+  size: 'small',
+  config: {ok: '确定', cancel: '取消'}
+};
+
 const config = {
   edit,
   index,
+  finance,
   names: [
     name.BALANCE_WAY, name.YES_OR_NO,name.CUSTOMER_TYPE, name.TAX_TYPE,
-    name.ENABLED_TYPE, name.COMPANY_TYPE, name.COMPANY_LEVEL
+    name.ENABLED_TYPE, name.COMPANY_TYPE, name.COMPANY_LEVEL,name.SUPPLIER_TYPE
   ]
 };
 

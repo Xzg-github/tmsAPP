@@ -52,14 +52,15 @@ class EditDialog extends React.Component {
   };
 
   getProps = () => {
-    const {title, config, onFence, visible=true, inset=true} = this.props;
+    const {title, config, onFence, visible=true, inset=true, afterClose, res, confirmLoading=false} = this.props;
     const onOk = this.props.onOk.bind(null, this.props);
     const onCancel = this.props.onCancel.bind(null, this.props);
     const extra = {};
     inset && (extra.getContainer = () => ReactDOM.findDOMNode(this).firstChild);
     config.fence && (extra.footer = this.getFooter(config, onOk, onCancel, onFence));
     return {
-      title, visible, onOk, onCancel,
+      title, visible, confirmLoading, onOk, onCancel,
+      afterClose: () => {afterClose && afterClose(res)},
       width: this.getWidth(),
       maskClosable: false,
       okText: config.ok,

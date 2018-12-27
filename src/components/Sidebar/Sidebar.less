@@ -1,15 +1,129 @@
 @import '../variables.less';
 
-.root {
-  margin: @padding-vertical @padding-horizontal;
-}
+@arrow-width: 30px;
+@item-height: 40px;
+@shousuo-height: 52px;
 
-.unreadTotalLink{
+.root {
+  width: @sidebar-width;
+  height: inherit;
+  min-height: 101px;
+  background: #f2f6ff;
   position: relative;
-  .unreadTotal{
-    color: orangered;
-    float: right;
+  transition: width 0.3s;
+  white-space: nowrap;
+
+  &[data-mode='collapse'] {
+    width: 0;
+
+    > [data-role='shousuo'] {
+      transform-origin: 100% 50%;
+      transform: scaleX(-1);
+    }
+  }
+
+  > :first-child {
+    line-height: 60px;
+    border-bottom: 1px solid #d7dbf1;
+    color: #333;
+    font-size: 14px;
+    overflow: hidden;
+
+    > :first-child {
+      display: inline-block;
+      width: @arrow-width;
+    }
+  }
+
+  > ul {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: ~'calc(100% - 61px)';
+  }
+
+  > [data-role='shousuo'] {
     position: absolute;
-    right: 5px;
+    z-index: 1;
+    top: ~'calc(50% - 25px)';
+    right: 0;
+    width: 20px;
+    height: @shousuo-height;
+    cursor: pointer;
+    overflow: hidden;
+
+    > div {
+      transform: translateX(5px);
+      transition: transform 0.1s;
+
+      &:hover {
+        transform: translateX(0);
+      }
+
+      > div {
+        line-height: @shousuo-height;
+        text-align: right;
+        font-size: 16px;
+      }
+
+      > i {
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        height: @shousuo-height;
+        border-width: 10px 20px 10px 0;
+        border-color: transparent #dde7ff;
+        border-style: solid;
+      }
+    }
+  }
+
+  li {
+    line-height: @item-height;
+    overflow: hidden;
+    transition: height 0.3s;
+
+    > a {
+      display: block;
+      color: #666;
+      font-size: 12px;
+      transition: none;
+
+      &:hover {
+        color: @primary-color;
+      }
+
+      &[data-select='true'] {
+        background: white;
+        color: @primary-color;
+      }
+    }
+  }
+
+  [data-role='parent-item'] {
+    > :first-child {
+      display: inline-block;
+      line-height: @item-height;
+      width: 30px;
+      text-align: center;
+
+      > * {
+        transition: transform 0.3s;
+        transform-origin: 50% 30%;
+
+        &[data-open='true'] {
+          transform: rotate(90deg);
+        }
+      }
+    }
+  }
+
+  [data-role='child-item'] {
+    padding-left: @arrow-width;
+
+    > :first-child::before {
+      display: inline-block;
+      content: '\2022';
+      margin-right: 2px;
+    }
   }
 }

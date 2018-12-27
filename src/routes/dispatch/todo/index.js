@@ -1,4 +1,5 @@
 import React from 'react';
+import Container from './TodoContainer';
 
 export default {
   path: '/todo',
@@ -6,7 +7,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <div>待办任务</div>
+      component: <Container />
     };
   }
 }

@@ -13,17 +13,17 @@ import extraApply from './extraApply';
 import append from './append';
 
 let api = express.Router();
-api.use('/receive_make', receiveMake);
+api.use('/receiveMake', receiveMake);
 api.use('/receive_change', receiveChange);
-api.use('/receive_bill', receiveBill);
+api.use('/receiveBill', receiveBill);
 api.use('/receive_monthly_bill', receiveMonthlyBill);
-api.use('/receive_apply', receiveApply);
-api.use('/pay_make', payMake);
+api.use('/receiveApply', receiveApply);
+api.use('/payMake', payMake);
 api.use('/pay_change', payChange);
-api.use('/pay_bill', payBill);
+api.use('/payBill', payBill);
 api.use('/pay_monthly_bill', payMonthlyBill);
 api.use('/audit', audit);
-api.use('/extra_apply', extraApply);
+api.use('/extraApply', extraApply);
 api.use('/append', append);
 
 export default api;

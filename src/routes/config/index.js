@@ -6,17 +6,22 @@ const children = [
   require('./institution').default,
   require('./department').default,
   require('./user').default,
+  require('./corporation').default,
+  require('./bank').default,
 
   require('./customersArchives').default,
   require('./customerContact').default,
   require('./customerFactory').default,
   require('./customerTax').default,
   require('./customerCost').default,
+  require('./customerService').default,
+  require('./customerInvoice').default,
 
   require('./suppliersArchives').default,
   require('./supplierContact').default,
   require('./supplierCar').default,
   require('./supplierDriver').default,
+  require('./carManager').default,
   require('./supplierSupervisor').default,
   require('./supplierCost').default,
   require('./supplierTax').default,
@@ -30,6 +35,8 @@ const children = [
 
   require('./customerPrice').default,
   require('./supplierPrice').default,
+
+  require('./position').default
 ];
 
 export default RouterHelper(prefix, title, children);

@@ -28,6 +28,12 @@ import insideSupervisor from './insideSupervisor';
 import customerPrice from './customerPrice';
 import supplierPrice from './supplierPrice';
 import supplierTax from './supplierTax';
+import customerService from './customerService';
+import carManager from './carManager';
+import corporation from './corporation';
+import bank from './bank';
+import customerInvoice from './customerInvoice';
+import position from './position';
 
 let api = express.Router();
 api.use('/dataset', apiDataSet);
@@ -59,5 +65,11 @@ api.use('/insideSupervisor', insideSupervisor);
 api.use('/customer_price', customerPrice);
 api.use('/supplier_price', supplierPrice);
 api.use('/supplier_tax', supplierTax);
+api.use('/customer_service', customerService);
+api.use('/car_manager', carManager);
+api.use('/corporation', corporation);
+api.use('/bank', bank);
+api.use('/customer_invoice', customerInvoice);
+api.use('/position', position);
 
 export default api;

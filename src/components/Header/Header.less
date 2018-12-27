@@ -3,15 +3,19 @@
 .root {
   height: @header-height;
   color: @header-color;
-  background-color: @header-color-bg;
-  background-image: url('/navigation.png');
-  font-size: @header-font-size;
+  background: @header-background;
   line-height: @header-height;
 
-  > * {
+  > :first-child {
+    font-size: 32px;
+    line-height: @header-height;
+    margin: 0 10px;
+  }
+
+  > :nth-child(2) {
     display: inline-block;
-    text-align: center;
     vertical-align: top;
+    font-size: 16px;
   }
 
   > :last-child {
@@ -19,30 +23,16 @@
     margin-right: 15px;
   }
 
-  [data-role='block'] {
+  [data-role='setting'],
+  [data-role='message'],
+  [data-role='avatar'] {
     display: inline-block;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
     color: @header-color;
-
-    &:hover,
-    &[data-active] {
-      background-color: @header-hover-bg;
-    }
   }
 
-  [role='logo'] {
-    font-size: 1.3em;
-    width: @sidebar-width;
-  }
-
-  [role='avatar'] {
-    cursor: pointer;
-    padding-left: 4px;
-    padding-right: 5px;
-  }
-
-  [role='message'] {
+  [data-role='avatar'] {
     padding-left: 10px;
     padding-right: 10px;
   }
@@ -50,7 +40,11 @@
   :global {
     .ant-avatar {
       vertical-align: top;
-      margin-top: 4px;
+      margin-top: 9px;
+    }
+
+    .ant-badge {
+      vertical-align: 3px;
     }
 
     .ant-badge-dot {

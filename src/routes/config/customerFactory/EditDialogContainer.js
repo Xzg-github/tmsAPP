@@ -5,12 +5,16 @@ import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
 import Fence from '../../../standard-business/showElectricFence';
 import {updateTable} from  "./OrderPageContainer";
+import {fetchDictionary, setDictionary} from '../../../common/dictionary';
+import showDialog from '../../../standard-business/showDialog';
 
 const fence = new Fence();
 const URL_SAVE = '/api/config/customer_factory/add';
 const URL_CUSTOMER = '/api/config/customer_factory/customer';
 const URL_DISTRICT_OPTIONS = '/api/config/customer_factory/district_options';
 const URL_CHARGE_PLACE_OPTIONS = '/api/config/customer_factory/charge_place_options';
+
+const URL_CONFIG = '/api/config/customer_factory/config';
 
 const changeRequire=(array,controls,keyValue)=>{
   array.map(x=>{
@@ -91,7 +95,7 @@ const createContainer = (statePath, afterEditActionCreator) => {
         return await dealDistrictFunc('city', payload);
       }
       case 'city': {
-        const payload = {[keyName]: keyValue, district:undefined, street:undefined};
+        const payload = {[keyName]: keyValue, district:undefined, street:undefined, chargingPlaceId: keyValue};
         return await dealDistrictFunc('district', payload);
       }
       case 'district': {
@@ -107,7 +111,7 @@ const createContainer = (statePath, afterEditActionCreator) => {
   };
 
   const formSearchActionCreator = (key, title) => async (dispatch, getState) => {
-    const {controls} = getSelfState(getState());
+    const {controls, value} = getSelfState(getState());
     let data, options, body;
     switch (key) {
       case 'customerId': {
@@ -116,8 +120,28 @@ const createContainer = (statePath, afterEditActionCreator) => {
         break;
       }
       case 'chargingPlaceId': {
-        body = {maxNumber: 10, placeName: title};
+        body = {maxNumber: 10, districtName: title};
         data = await fetchJson(URL_CHARGE_PLACE_OPTIONS, postOption(body));
+        break;
+      }
+      case 'province' : {
+        body = {maxNumber: 300, parentDistrictGuid: value['country'] ? value['country'].value : ''};
+        data = await fetchJson(URL_DISTRICT_OPTIONS, postOption(body));
+        break;
+      }
+      case 'city': {
+        body = {maxNumber: 300, parentDistrictGuid: value['province'] ? value['province'].value : ''};
+        data = await fetchJson(URL_DISTRICT_OPTIONS, postOption(body));
+        break;
+      }
+      case 'district': {
+        body = {maxNumber: 300, parentDistrictGuid: value['city'] ? value['city'].value : ''};
+        data = await fetchJson(URL_DISTRICT_OPTIONS, postOption(body));
+        break;
+      }
+      case 'street': {
+        body = {maxNumber: 300, parentDistrictGuid: value['district'] ? value['district'].value: ''};
+        data = await fetchJson(URL_DISTRICT_OPTIONS, postOption(body));
         break;
       }
       default:
@@ -141,6 +165,9 @@ const createContainer = (statePath, afterEditActionCreator) => {
     if (!helper.validValue(controls, value)) {
       dispatch(action.assign({valid: true}));
       return;
+    }
+    if (tableItems.length === 0) {
+      return showError('请填写联系人表格信息！');
     }
     if (!helper.validArray(tableCols, tableItems)) {
       dispatch(action.assign({tableValid: true}));
@@ -238,5 +265,16 @@ const afterEditActionCreator = (result) => (dispatch, getState) => {
 };
 
 const Container = createContainer(STATE_PATH, afterEditActionCreator);
+
+const showAddCustomerFactoryDialog = async (onOk, defaultValue={}, isEdit=false) => {
+  const {edit, names} = helper.getJsonResult(await fetchJson(URL_CONFIG));
+  const dictionary = helper.getJsonResult(await fetchDictionary(names));
+  setDictionary(edit.controls, dictionary);
+  const country = helper.getJsonResult(await fetchJson(URL_DISTRICT_OPTIONS, postOption({maxNumber: 300, districtType: 2})));
+  helper.setOptions('country', edit.controls, country);
+  const payload = buildEditState(edit, defaultValue, isEdit, onOk);
+  showDialog(createContainer, payload);
+};
+
 export default Container;
-export {buildEditState, createContainer};
+export {buildEditState, createContainer, showAddCustomerFactoryDialog};

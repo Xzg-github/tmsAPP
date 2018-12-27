@@ -37,14 +37,14 @@ const uniqueArrHanlder = (tableCols=[], customConfig=[]) => {
 const initActionCreator = () => async (dispatch) => {
   try {
     dispatch(action.assign({status: 'loading'}));
-    const {index, edit, names} = getJsonResult(await fetchJson(URL_CONFIG));
+    const {index, edit, names, finance} = getJsonResult(await fetchJson(URL_CONFIG));
     const customConfig = getJsonResult(await fetchJson(`${CUSTOM_CONFIG}/supplier_property`));
     index.tableCols = uniqueArrHanlder(index.tableCols, customConfig.controls);
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}));
     const dictionary = getJsonResult(await fetchDictionary(names));
     const buyers = getJsonResult(await fetchJson(URL_BUYERS, postOption({maxNumber: 20, filter: ''})));
     const country = getJsonResult(await fetchJson(URL_DISTRICT, postOption({maxNumber: 300, districtType: 2})));
-    const payload = buildOrderPageState(list, index, {editConfig: edit, customConfig, status: 'page'});
+    const payload = buildOrderPageState(list, index, {editConfig: edit, customConfig, finance, status: 'page'});
     helper.setOptions('country', payload.tableCols, country);
     helper.setOptions('country', payload.editConfig.controls[0].data, country);
     helper.setOptions('purchasePersonId', payload.tableCols, buyers.data);

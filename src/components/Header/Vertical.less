@@ -1,0 +1,59 @@
+@import '../variables.less';
+
+@width: @header-height;
+@height: 40px;
+
+.root {
+  position: relative;
+  z-index: 100;
+  background: @header-primary-color;
+  width: @width;
+  height: ~'calc(100vh - @{header-height})';
+  transition: width 0.2s;
+
+  > a {
+    display: block;
+    height: @height;
+    color: white;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: none;
+
+    > :first-child {
+      display: inline-block;
+      vertical-align: top;
+      width: @width;
+      line-height: @height;
+      text-align: center;
+      font-size: 16px;
+      padding-top: 1px;
+      color: #d3eafd;
+    }
+
+    > :last-child {
+      line-height: @height;
+    }
+
+    &:hover > :first-child {
+      color: white;
+    }
+
+    &[data-select='true'] {
+      background: white;
+      color: @primary-color;
+
+      > :first-child {
+        color: @primary-color;
+      }
+    }
+  }
+
+  &:hover {
+    width: @width + @sidebar-width;
+  }
+
+  &[data-click='true'] {
+    width: @width;
+    transition: none;
+  }
+}

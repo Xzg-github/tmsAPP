@@ -4,22 +4,40 @@ import s from './Layout.less';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
 import Loading from '../Loading';
-import {Icon} from 'antd';
+
+const HeaderV = Header.Vertical;
+
+const getUsername = () => {
+  const username = 'username=';
+  const cookie = document.cookie;
+  const begin = cookie.indexOf(username) + username.length;
+  const end = cookie.indexOf(';', begin);
+  return unescape(cookie.substring(begin, end < 0 ? cookie.length : end));
+};
 
 class Layout extends React.Component {
   static propTypes = {
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node,
     nav1: PropTypes.string,
     nav2: PropTypes.string,
     settingUrl: PropTypes.string,
-    navItems: PropTypes.array,
+    navigation: PropTypes.array,
     sidebars: PropTypes.object,
     openKeys: PropTypes.object,
     onOpenChange: PropTypes.func,
     onMenuClick: PropTypes.func
   };
 
-  state = {expand: true};
+  constructor(props) {
+    super(props);
+    this.state = {mode: 'expand', username: getUsername(), url: {}};
+  }
+
+  componentWillReceiveProps(props) {
+    if (!props.loading) {
+      this.setState({url: Object.assign({}, this.state.url, {[props.nav1]: `/${props.nav1}/${props.nav2}`})});
+    }
+  }
 
   onOpenChange = (openKeys) => {
     const {nav1, onOpenChange} = this.props;
@@ -28,56 +46,54 @@ class Layout extends React.Component {
     }
   };
 
-  getSidebarProps = (nav1, nav2) => {
-    const {sidebars, openKeys={}} = this.props;
+  findNavItem = (key) => {
+    return this.props.navigation.find(item => item.key === key);
+  };
+
+  headerProps = (selectKey) => {
     return {
-      activeKey: nav2,
-      items: sidebars[nav1] || [],
-      onOpenChange: this.onOpenChange,
-      openKeys: openKeys[nav1]
+      selectKey,
+      url: this.state.url,
+      setting: this.findNavItem('basic'),
+      message: this.findNavItem('message'),
+      messageCount: this.props.messageCount,
+      username: this.state.username,
+      onMenuClick: this.props.onMenuClick
     };
   };
 
-  toSidebar = (nav1, nav2) => {
-    if (!nav2) {
-      return null;
-    } else {
-      return (
-        <aside data-expand={this.state.expand}>
-          <div onClick={() => this.setState({expand: !this.state.expand})}><Icon type='right'/></div>
-          <div><Sidebar {...this.getSidebarProps(nav1, nav2)} /></div>
-        </aside>
-      );
-    }
+  headerVProps = (selectKey) => {
+    const keys = ['basic', 'message'];
+    return {
+      selectKey,
+      url: this.state.url,
+      items: this.props.navigation.filter(item => !keys.includes(item.key))
+    };
   };
 
-  getSelectKey = (nav1) => {
-    if (nav1 === 'basic') {
-      return 'setting';
-    } else {
-      return nav1;
-    }
-  };
-
-  toHeader = (loading, nav1, nav2) => {
-    const {navItems: items, settingUrl,messageUrl, onMenuClick,messageCount} = this.props;
-    const selectKey = this.getSelectKey(nav1);
-    const selectUrl = loading ? '' : `/${nav1}/${nav2}`;
-    return <Header {...{items, selectKey, selectUrl, settingUrl,messageUrl, onMenuClick,messageCount}} />;
+  sidebarProps = (nav1, nav2) => {
+    const item = this.props.navigation.find(item => item.key === nav1) || {};
+    return {
+      mode: this.state.mode,
+      title: item.title,
+      activeKey: nav2,
+      items: this.props.sidebars[nav1] || [],
+      openKeys: (this.props.openKeys || {})[nav1],
+      onOpenChange: this.onOpenChange,
+      onModeChange: mode => this.setState({mode})
+    };
   };
 
   render() {
     const {loading, nav1='', nav2='', children} = this.props;
     return (
       <div className={s.root}>
-        {this.toHeader(loading, loading || nav1, nav2)}
-        {
-          loading ? <Loading /> :
-          <div>
-            {this.toSidebar(nav1, nav2)}
-            <section>{children}</section>
-          </div>
-        }
+        <Header {...this.headerProps(loading || nav1)} />
+        <div>
+          <HeaderV {...this.headerVProps(loading || nav1)} />
+          <aside>{nav2 ? <Sidebar {...this.sidebarProps(nav1, nav2)} /> : null}</aside>
+          {loading ? <Loading /> : <section>{children}</section>}
+        </div>
       </div>
     )
   };
