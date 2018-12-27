@@ -261,7 +261,7 @@ class SuperTable2 extends React.Component {
       columns: this.getColumns(cols),
       dataSource: this.getDataSource(items, cols),
       style: Object.assign({}, {whiteSpace: 'nowrap'}, style),
-      size: 'default',
+      size: 'small',
       scroll: {x: true},
       pagination: false,
       footer,

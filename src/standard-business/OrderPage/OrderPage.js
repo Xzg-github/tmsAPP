@@ -34,7 +34,7 @@ class OrderPage extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {height: 82};
+    this.state = {height: 67};
   }
 
   onHeightChange = (height) => {
@@ -104,7 +104,7 @@ class OrderPage extends React.Component {
       cols: tableCols,
       items: tableItems,
       callback: getObject(this.props, TABLE_EVENTS),
-      maxHeight: `calc(100vh - ${this.state.height + 298 + extra}px)`
+      maxHeight: `calc(100vh - ${this.state.height + 253 + extra}px)`
     };
     return <SuperTable {...props}/>;
   };

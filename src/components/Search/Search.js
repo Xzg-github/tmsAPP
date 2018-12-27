@@ -230,9 +230,9 @@ class Search extends React.Component {
     const {colNum=defaultColNum, filters} = this.props;
     if (more) {
       const row = Math.ceil(filters.length / colNum);
-      return row * 67 + 15;
+      return row * 57 + 10;
     } else {
-      return 82;
+      return 67;
     }
   };
 
