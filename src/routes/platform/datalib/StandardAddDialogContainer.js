@@ -51,7 +51,8 @@ const okActionCreator = () => async (dispatch, getState) => {
     api: value.api,
     remark: value.remark,
     content: value.content,
-    apiRequestMethod: value.apiRequestMethod
+    apiRequestMethod: value.apiRequestMethod,
+    parentCode: value.parentCode
   };
   let res;
   if(edit){

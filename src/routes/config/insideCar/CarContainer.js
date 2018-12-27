@@ -63,10 +63,7 @@ const searchActionCreator = (key,keyValue,keyControls) => async(dispatch,getStat
   const {controls,value} = getSelfState(getState());
   let json,id;
   if(key === 'driverId' ){//司机标识跟所属供应商联动
-    if(!value.supplierId)
-      return showError('请先选择供应商');
-
-    id =  value.supplierId.value;
+    id =  -1;
     const body = {
       supplierId:id,
       name:keyValue
