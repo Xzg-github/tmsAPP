@@ -104,7 +104,7 @@ const costInfoCols = [
 //EditPage joinDialog SuperTableComponent Config
 const joinDialogTableCols = [
   {key: 'checked', title: '', type: 'checkbox'},
-  {key: 'customerId', title: '结算单位', type: 'text'},
+  {key: 'supplierId', title: '结算单位', type: 'text'},
   {key: 'chargeItemId', title: '费用名称', type: 'text'},
   {key: 'chargeUnit', title: '计量单位', type: 'select', dictionary: name.CHARGE_UNIT},
   {key: 'currency', title: '币种', type: 'text'},
