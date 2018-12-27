@@ -7,13 +7,12 @@ import { exportExcelFunc, commonExport } from '../../../../common/exportExcelSet
 import {search2} from '../../../../common/search';
 import showAddDialog from './AddDialog/AddDialogContainer';
 import {showOutputDialog} from '../../../../components/ModeOutput/ModeOutput';
-import execWithLoading from '../../../../standard-business/execWithLoading';
 
-const STATE_PATH = ['receiveBill'];
+const STATE_PATH = ['payBill'];
 const action = new Action(STATE_PATH);
-const URL_LIST = '/api/bill/receiveBill/list';
-const URL_DELETE = '/api/bill/receiveBill/delete';
-const URL_AUDIT_BATCH = '/api/bill/receiveBill/auditBatch';
+const URL_LIST = '/api/bill/payBill/list';
+const URL_DELETE = '/api/bill/payBill/delete';
+const URL_AUDIT_BATCH = '/api/bill/payBill/auditBatch';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -123,13 +122,13 @@ const outputActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkList = tableItems.filter(o=> o.checked);
   if(!checkList.length) return showError('请勾选一条数据！');
-  showOutputDialog(checkList, 'receivable_invoice');
+  showOutputDialog(checkList, 'pay_pay');
 };
 
 // 查询导出
 const exportSearchActionCreator = (dispatch, getState) => {
   const {tableCols, searchData} = getSelfState(getState());
-  commonExport(tableCols, '/tms-service/receivable_bill/batch', searchData);
+  commonExport(tableCols, '/tms-service/pay_bill/batch', searchData);
 };
 
 // 页面导出
