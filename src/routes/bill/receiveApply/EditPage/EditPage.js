@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditPage.less';
 import {Card, SuperForm, SuperTitle, SuperToolbar, SuperTab2, SuperTable} from '../../../../components';
+import InvoiceTable from './InvoiceTable/InvoiceTable';
 
 class EditPage extends React.Component {
 
@@ -16,7 +17,7 @@ class EditPage extends React.Component {
         onChange: onChange.bind(null, item.key),
         onSearch: onSearch.bind(null, item.key),
         onExitValid: onExitValid.bind(null, item.key),
-        // onAdd: onAdd.bind(null, item.key)
+        onAdd: onAdd.bind(null, item.key)
       };
       return (<div key={i} style={{marginBottom: '10px'}}>
         <SuperTitle title={item.title}/>
@@ -32,8 +33,15 @@ class EditPage extends React.Component {
   }
 
   toInvoice = () => {
-    const {invoiceInfoConfig} = this.props;
-    return <h1>发票表格</h1>
+    const {invoiceInfoConfig, value, activeKey, onInvoiceChange, onInvoiceSelect} = this.props;
+    const props = {
+      cols: invoiceInfoConfig.cols,
+      items: value[activeKey],
+      currencyList: value['currencyList'],
+      onChange: onInvoiceChange.bind(null, activeKey),
+      onSelect: onInvoiceSelect.bind(null, activeKey)
+    };
+    return <InvoiceTable {...props}/>
   }
 
   toCostInfo = () => {
@@ -42,10 +50,14 @@ class EditPage extends React.Component {
     const props = {
       cols,
       items: value[activeKey] || [],
-      onCheck
+      callback: {onCheck: onCheck.bind(null, activeKey)}
+    };
+    const toolbarProps = {
+      buttons,
+      onClick: onClick.bind(null, activeKey)
     };
     return (<div>
-      <SuperToolbar {...{buttons, onClick}}/>
+      <div className={s.superTitle}><SuperToolbar {...toolbarProps}/></div>
       <SuperTable {...props}/>
     </div>)
   }
@@ -77,7 +89,7 @@ class EditPage extends React.Component {
       <Card className={s.root}>
         {this.toForm()}
         {this.toTab()}
-        {this.toTabContent()}
+        <Card>{this.toTabContent()}</Card>
         {this.toFooter()}
       </Card>
     );

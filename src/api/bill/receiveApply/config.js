@@ -1,5 +1,6 @@
 import {pageSize, pageSizeType, description, searchConfig} from "../../globalConfig";
 import name from '../../dictionary/name';
+import invoiceConfig from '../../config/customerInvoice/config';
 
 const filters = [
   {key: 'orderNumber', title: '运单号', type: 'text'},
@@ -41,7 +42,7 @@ const tableCols = [
   {key: 'billNumber', title: '账单号'},
   {key: 'invoiceCategory', title: '发票种类', type: 'select', dictionary: name.INVOICE_CATEGORY},
   {key: 'taxRegistrationNumber', title: '税务登记号'},
-  {key: 'businessRegistrationNumber ', title: '工商注册号'},
+  {key: 'businessRegistrationNumber', title: '工商注册号'},
   {key: 'customerId', title: '结算单位'},
   {key: 'invoiceHeaderInformation', title: '发票抬头'},
   {key: 'taxpayerIdentificationNumber', title: '纳税人识别号'},
@@ -84,20 +85,19 @@ const baseInfo = [
   {key: 'receivableAccountNumber', title: '法人银行账号', type: 'text'},
   {key: 'enterpriseSignature', title: '企业签章', type: 'readonly'},
   {key: 'taxRegistrationNumber', title: '税务登记号', type: 'readonly'},
-  {key: 'businessRegistrationNumber ', title: '工商注册号', type: 'readonly'}
+  {key: 'businessRegistrationNumber', title: '工商注册号', type: 'readonly'}
 ];
 
 const goodsInfo = [
-  {key: 'customerId ', title: '结算单位', type: 'readonly'},
-  {key: 'invoiceHeaderInformation ', title: '发票抬头', type: 'search'},
-  {key: 'taxpayerIdentificationNumber ', title: '纳税人识别号', type: 'readonly'},
+  {key: 'customerId', title: '结算单位', type: 'readonly'},
+  {key: 'invoiceHeaderInformation', title: '发票抬头', type: 'search', showAdd: true},
+  {key: 'taxpayerIdentificationNumber', title: '纳税人识别号', type: 'readonly'},
   {key: 'addressPhone', title: '地址', type: 'readonly'},
   {key: 'openingBank', title: '开户行', type: 'readonly'},
   {key: 'accountNumber', title: '银行账号', type: 'readonly'},
   {key: 'isPost', title: '是否寄发票', type: 'readonly', dictionary: name.ZERO_ONE},
   {key: 'postAddress', title: '寄送地址', type: 'readonly'},
-  {key: 'isThirdPartyAgreement', title: '是否第三方协议', type: 'readonly', dictionary: name.ZERO_ONE},
-  {key: 'remark', title: '备注', type: 'readonly'}
+  {key: 'isThirdPartyAgreement', title: '是否第三方协议', type: 'readonly', dictionary: name.ZERO_ONE}
 ];
 
 const controls = [
@@ -107,18 +107,17 @@ const controls = [
 
 const invoiceInfoConfig = {
   cols: [
-    {key: 'tax', title: '税率', type: 'readonly'},
-    {key: 'taxAmount', title: '税额', type: 'readonly'},
-    {key: 'netAmount', title: '净额', type: 'readonly'},
-    {key: 'goodsName', title: '货物名称', type: 'text'},
-    {key: 'chargeName', title: '费用项', type: 'text'},
-    {key: 'price', title: '单价', type: 'number', props: {real: true, precision: 2}},
-    {key: 'itemCount', title: '数量', type: 'number'},
-    {key: 'exchange_currency', title: '折合币种（开票币种）', type: 'readonly'},
-    {key: 'exchange_amount', title: '折算金额', type: 'readonly'},
-    {key: 'currency', title: '折算币种（金额合计币种）', type: 'readonly'},
-    {key: 'amountCapital', title: '大写金额', type: 'readonly'},
-    {key: 'amount', title: '发票金额（合计）', type: 'readonly'}
+    {key: 'goodsName', title: '货物名称', type: 'textarea', props: {prefix: '金额合计：', colSpan: 1, align: 'right'}},
+    {key: 'chargeName', title: '费用项', type: 'textarea', props: {colSpan: 7, align: 'left', select: true}},
+    {key: 'price', title: '单价', type: 'number', props: {precision: 2, disabled: true, colSpan: 1}},
+    {key: 'itemCount', title: '数量', type: 'number', props: {disabled: true}},
+    {key: 'tax', title: '税率', type: 'number'},
+    {key: 'taxAmount', title: '税额', type: 'number', props: {disabled: true}},
+    {key: 'netAmount', title: '净额', type: 'number', props: {disabled: true}},
+    {key: 'currency', title: '折算币种）', type: 'text', props: {disabled: true}},
+    {key: 'exchangeCurrency', title: '开票币种', type: 'text', props: {disabled: true}},
+    {key: 'exchangeAmount', title: '折算金额', type: 'number', props: {prefix: '合计：', colSpan: 1, align: 'right'}},
+    {key: 'remark', title: '备注', type: 'textarea', props: {colSpan: 1, addonBefore: '￥', align: 'left'}}
   ]
 };
 
@@ -138,7 +137,8 @@ const costInfoConfig = {
     {key: 'chargeUnit', title: '计量单位', dictionary: name.CHARGE_UNIT},
     {key: 'price', title: '单价'},
     {key: 'number', title: '数量'},
-    {key: 'amount', title: '费用金额'},
+    {key: 'amount', title: '金额'},
+    {key: 'currencyTypeCode', title: '币种', dictionary: name.BALANCE_CURRENCY},
     {key: 'tax', title: '税率'},
     {key: 'taxRateWay', title: '计税方式', dictionary: name.TAX_RATE_WAY},
     {key: 'taxAmount', title: '税额'},
@@ -147,9 +147,14 @@ const costInfoConfig = {
   ],
   joinDialogConfig: {
     title: '可加入费用信息',
+    pageSize,
+    pageSizeType,
+    description,
+    searchConfig,
     filters: [
-      {key: 'billNumber', title: '账单号', type: 'text'},
-      {key: 'orderNumber', title: '运单号', type: 'text'},
+      { key: 'billNumber', title: '账单编号', type: 'text' },
+      { key: 'incomeCode', title: '结算单号', type: 'text' },
+      { key: 'logisticsOrderNumber', title: '物流订单号', type: 'text' }
     ],
     tableTitle: '账单信息',
     cols: [
@@ -163,6 +168,13 @@ const costInfoConfig = {
       {key: 'number', title: '数量', type: 'number', copy: true},
       {key: 'amount', title: '费用金额', type: 'text'}
     ]
+  },
+  changeRateDialogConfig: {
+    title: '变更开票汇率',
+    cols: [
+      {key: 'currencyTypeCode', title: '币种', type: 'readonly'},
+      {key: 'invoiceExchangeRate', title: '开票汇率', type: 'text' }
+    ]
   }
 };
 
@@ -175,6 +187,7 @@ const editConfig = {
   controls,
   invoiceInfoConfig,
   costInfoConfig,
+  addInvoiceConfig: invoiceConfig.editConfig,
   footerButtons: [
     {key: 'close', title: '关闭'},
     {key: 'save', title: '保存'},
@@ -224,7 +237,8 @@ const config = {
     name.INVOICE_CATEGORY,
     name.ZERO_ONE,
     name.CHARGE_UNIT,
-    name.TAX_RATE_WAY
+    name.TAX_RATE_WAY,
+    name.BALANCE_CURRENCY
   ]
 };
 
