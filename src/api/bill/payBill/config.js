@@ -190,7 +190,7 @@ const addConfig = {
 };
 
 const tabs = [
-  {key: 'index', title: '应收账单列表', close: false}
+  {key: 'index', title: '应付账单列表', close: false}
 ];
 
 const config = {
