@@ -111,7 +111,7 @@ const removeActionCreator = (KEY) => async (dispatch, getState) =>  {
 
 const changeSortActionCreator  = (KEY) => async (dispatch, getState) => {
   const {value} = getSelfState(getState());
-  const newItems = value[KEY].sort((a, b) => a.sequence > b.sequence);
+  const newItems = value[KEY].sort((a, b) => a.sequence - b.sequence);
   dispatch(action.assign({[KEY]: newItems}, 'value'));
 };
 

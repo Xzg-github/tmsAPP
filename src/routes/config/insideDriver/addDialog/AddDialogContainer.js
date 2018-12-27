@@ -38,18 +38,20 @@ const exitValidActionCreator = () => {
 };
 
 //输入框搜索
-const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
+const formSearchActionCreator = (key, value, keyControls) => async (dispatch, getState) => {
   const {controls} = getSelfState(getState());
   let data, body;
   if(key === 'institutionId') {                                                     //归属机构
     body = {institutionName: value};
     data = await helper.fetchJson(URL_ALL_INSTITUTION, helper.postOption(body));
+  }else{
+    data = await helper.fuzzySearchEx(value, keyControls);
+  }
     if (data.returnCode !== 0) {
       return;
     }
     const index = controls.findIndex(item => item.key === key);
     dispatch(action.update({options: data.result}, 'controls', index));
-  }
 };
 
 const okActionCreator = () => async (dispatch, getState) => {

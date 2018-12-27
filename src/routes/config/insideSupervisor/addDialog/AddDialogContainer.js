@@ -47,36 +47,28 @@ const exitValidActionCreator = () => {
 };
 
 //输入框搜索
-const formSearchActionCreator = (key, title) => async (dispatch, getState) => {
+const formSearchActionCreator = (key, title, keyControls) => async (dispatch, getState) => {
   const {controls, value} = getSelfState(getState());
   let data, body;
   if(key === 'institutionId') {                                                     //归属机构
     body = {institutionName: title};
     data = await helper.fetchJson(URL_ALL_INSTITUTION, helper.postOption(body));
-    if (data.returnCode !== 0) {
-      return;
-    }
-    const index = controls.findIndex(item => item.key === key);
-    dispatch(action.update({options: data.result}, 'controls', index));
   }else if(key === 'factoryId'){
     if(value.supplierId){
       body = {customerId: '-1', name: title};
       data = await helper.fetchJson(URL_ALL_SITE, helper.postOption(body));
-      if (data.returnCode !== 0) {
-        return;
-      }
-      const index = controls.findIndex(item => item.key === key);
-      dispatch(action.update({options: data.result}, 'controls', index));
     }
   }else if(key === 'driverId'){
     body = { supplierId: -1, name: title};
     data = await helper.fetchJson(URL_ALL_DRIVER, helper.postOption(body));
-    if (data.returnCode !== 0) {
-      return;
-    }
-    const index = controls.findIndex(item => item.key === key);
-    dispatch(action.update({options: data.result}, 'controls', index));
+  }else{
+    data = await helper.fuzzySearchEx(title, keyControls);
   }
+  if (data.returnCode !== 0) {
+    return;
+  }
+  const index = controls.findIndex(item => item.key === key);
+  dispatch(action.update({options: data.result}, 'controls', index));
 };
 
 const okActionCreator = () => async (dispatch, getState) => {

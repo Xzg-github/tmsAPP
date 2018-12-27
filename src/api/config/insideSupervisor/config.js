@@ -1,7 +1,9 @@
 import {pageSize, pageSizeType, description, searchConfig} from '../../globalConfig';
 import name from '../../dictionary/name';
 
+const SUPPLIER = '/api/config/supplier_car/search/owner'; //供应商车主下拉
 const filters = [
+  {key: 'supplierId', title: '车主', type:'search', required:true, searchUrl:SUPPLIER},
   {key: 'institutionId', title: '归属机构', type:'search'},
   {key: 'supervisorName', title: '监理姓名', type: 'text'},
   {key: 'active', title: '状态', type: 'select', dictionary: name.ENABLED_TYPE}
@@ -9,6 +11,7 @@ const filters = [
 
 
 const tableCols = [
+  {key: 'supplierId', title: '车主'},
   {key: 'institutionId', title: '归属机构'},
   {key: 'supervisorName', title: '监理姓名', type: 'text'},
   {key: 'enabledType', title: '状态', dictionary: name.ENABLED_TYPE},
@@ -43,6 +46,7 @@ const buttons = [
 ];
 
 const controls = [
+  {key: 'supplierId', title: '车主', type:'search', required:true, searchUrl:SUPPLIER},
   {key: 'institutionId', title: '归属机构', type:'search'},
   {key: 'supervisorName', title: '监理姓名', type: 'text', required: true},
   {key: 'supervisorMobilePhone', title: '手机号码', type: 'text', required: true},

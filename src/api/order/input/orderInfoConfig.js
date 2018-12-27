@@ -11,7 +11,7 @@ const baseForm = [
   {key: 'contactEmail', title: '联系邮箱', type:'text'},
   {key: 'transportType', title: '运输方式', type:'select', dictionary: 'transport_type', required: true},
   {key: 'planPickupTime', title: '要求装货时间', type:'date', props:{showTime: true}, required: true},
-  {key: 'planDeliveryTime', title: '要求卸货时间', type:'date', props:{showTime: true}, required: true},
+  {key: 'planDeliveryTime', title: '要求卸货时间', type:'date', props:{showTime: true}},
   {key: 'departure', title: '始发地', type:'readonly', required: true},
   {key: 'destination', title: '目的地', type:'readonly', required: true},
   {key: 'commodityDescription', title: '商品描述', type:'text'},
@@ -59,8 +59,8 @@ const addressCols = [
   {key: 'contactTelephone', title: '联系电话', type:'text'},
   {key: 'contactEmail', title: '联系邮箱', type:'text'},
   {key: 'consigneeConsignorAddress', title: '详细地址', type:'text'},
-  {key: 'pickupGoodsNumber', title: '发货数量', type:'number'},
-  {key: 'deliveryGoodsNumber', title: '收货数量', type:'number'},
+  {key: 'pickupGoodsNumber', title: '发货数量', type:'number', props: {real: true, precision: 2}},
+  {key: 'deliveryGoodsNumber', title: '收货数量', type:'number', props: {real: true, precision: 2}},
   {key: 'isSupervisor', title: '是否监理', type:'select', dictionary: 'zero_one_type'},
 ];
 
@@ -70,7 +70,7 @@ const goodsCols = [
   {key: 'consignorId', title: '发货人', type:'select', required: true},
   {key: 'consigneeId', title: '收货人', type:'select', required: true},
   {key: 'commodityName', title: '商品名称', type:'text', required: true},
-  {key: 'goodsNumber', title: '数量', type:'number',},
+  {key: 'goodsNumber', title: '数量', type:'number', props: {real: true, precision: 2}},
   {key: 'volume', title: '体积', type:'number', props: {real: true, precision: 4}},
   {key: 'roughWeight', title: '重量', type:'number', props: {real: true, precision: 2}},
   {key: 'packageUnit', title: '包装单位', type:'select', dictionary: 'package_unit'},

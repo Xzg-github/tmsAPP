@@ -31,9 +31,9 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     const h = date.getHours();
     const hh = h < 10 ? `0${h}` : String(h);
     const f = date.getMinutes();
-    const ff = f < 10 ? `0${d}` : String(d);
+    const ff = f < 10 ? `0${f}` : String(f);
     const s = date.getSeconds();
-    const ss = s < 10 ? `0${d}` : String(d);
+    const ss = s < 10 ? `0${s}` : String(s);
     return `${yyyy}-${mm}-${dd} ${hh}:${ff}:${ss}`;
   };
 
@@ -48,7 +48,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       });
       setDictionary2(dic, config.addressTable.cols, config.goodsTable.cols);
       //获取订单数据
-      let data = {baseInfo:{customerDelegateTime: getCurrentDate()}, addressList:[{},{}], goodsList:[]};
+      let data = {baseInfo:{customerDelegateTime: getCurrentDate()}, addressList:[{pickupDeliveryType: '0'},{pickupDeliveryType: '1'}], goodsList:[]};
       if (id) {
         url = `/api/order/input/info/${id}`;
         const {addressList=[], goodsList=[], ...baseInfo} = getJsonResult(await fetchJson(url));
@@ -132,7 +132,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       }
     }
     //清空收发货地址和货物明细以及其联动的基本信息
-    dispatch(action.assign({addressList:[{}, {}], goodsList:[]}));
+    dispatch(action.assign({addressList:[{pickupDeliveryType: '0'}, {pickupDeliveryType: '1'}], goodsList:[]}));
     dispatch(action.assign(obj, 'baseInfo'));
   };
 
@@ -253,7 +253,8 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       filter = `${baseInfo.supplierId.value}&isOwner=${baseInfo.ownerCarTag}&driverName=${value}`;
     }
     const {returnCode, result} = await helper.fuzzySearchEx(filter, config);
-    dispatch(action.update({options: returnCode === 0 ? result : undefined}, ['formSections', formKey, 'controls'], {key: 'key', value: key}));
+    let options = returnCode === 0 ? result : undefined;
+    dispatch(action.update({options}, ['formSections', formKey, 'controls'], {key: 'key', value: key}));
   };
 
   const formAddActionCreator = (key) => async (dispatch, getState) => {
@@ -275,6 +276,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       obj.isSupervisor === '' && isSupervisor === '1' && (obj.isSupervisor = isSupervisor);
       obj.goodsNumber += Number(deliveryGoodsNumber || 0);
     });
+    obj.goodsNumber = obj.goodsNumber.toFixed(2);
     obj.isSupervisor === '' && (obj.isSupervisor = '0');
     if (['consigneeConsignorId', 'pickupDeliveryType'].includes(changeKey)) {
       obj.departure = '';
@@ -357,7 +359,10 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
         url = `/api/order/input/customer_factory_drop_list`;
         data = await helper.fetchJson(url, helper.postOption({customerId: baseInfo.customerId.value, name: value}));
         if (data.returnCode === 0) {
-          dispatch(action.update({options: data.result}, ['addressTable', 'cols'], {key: 'key', value: keyName}));
+          let options = data.result || [];
+          const existValueIds = addressList.map(item => item[keyName] ? item[keyName].value : '');
+          options = options.filter(item => !existValueIds.includes(item.value));
+          dispatch(action.update({options}, ['addressTable', 'cols'], {key: 'key', value: keyName}));
         }
       }else if (keyName === 'contactName') {
         if (!addressList[rowIndex].consigneeConsignorId) {
@@ -423,12 +428,12 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   //保存（不关闭当前页）
   const saveActionCreator = async (dispatch, getState) => {
     const selfState = getSelfState(getState());
-    const {baseInfo, isAppend} = selfState;
+    const {baseInfo} = selfState;
     if (!baseInfo.customerId) return helper.showError('请先填写客户');
     const body = getSaveData(selfState);
     const method = baseInfo.id ? 'put' : 'post';
     let url = helper.getRouteKey() === 'input' ? '/api/order/input' : '/api/order/complete/change';
-    if (isAppend) {
+    if (selfState.isAppend) {
       url = '/api/bill/append';
     }
     const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));
@@ -573,7 +578,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   const newActionCreator = (dispatch) => {
     dispatch(action.assign({
       baseInfo: {customerDelegateTime: getCurrentDate()},
-      addressList:[{},{}],
+      addressList:[{pickupDeliveryType: '0'}, {pickupDeliveryType: '1'}],
       goodsList:[],
       activeKey: 'addressList'
     }));
