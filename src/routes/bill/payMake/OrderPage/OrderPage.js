@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { getObject } from '../../../../common/common';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './OrderPage.less';
-import {Search, SuperTab2, SuperTable, SuperPagination, SuperToolbar, Card} from '../../../../components';
+import {Search, SuperTab2, SuperTable, SuperPagination, SuperToolbar, Indent} from '../../../../components';
 
 const SEARCH_EVENTS = ['onChange', 'onSearch', 'onClick'];
 const TOOLBAR_EVENTS = ['onClick'];
@@ -77,17 +77,13 @@ class OrderPage extends React.Component {
   render() {
     return (
       <div className={s.root}>
-        <Card>
-          {this.toSearch()}
-        </Card>
-        <Card>
-          {this.toTab()}
-        </Card>
-        <Card>
+        <Indent>{this.toSearch()}</Indent>
+        <div className={s.marginBottom}>{this.toTab()}</div>
+        <Indent>
           {this.props.buttons.length > 0 ? this.toToolbar() : null}
           {this.toTable()}
           {this.toPagination()}
-        </Card>
+        </Indent>
       </div>
     );
   };

@@ -1,6 +1,12 @@
 @import '../../../../../components/variables.less';
 
 .root {
+  // margin: @padding-vertical @padding-horizontal;
+  margin: 0;
+
+  :global(.pld-card) {
+    margin: 0;
+  }
 
   > :last-child {
     overflow: auto;
@@ -9,8 +15,5 @@
       margin-bottom: @padding-vertical;
     }
 
-  }
-  .table{
-    margin-top: 15px;
   }
 }

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Card, SuperTable2, SuperToolbar, ModalWithDrag} from '../../../../../components';
+import { Indent, SuperTable2, SuperToolbar, ModalWithDrag} from '../../../../../components';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from '../EditPage.less';
 
@@ -50,10 +50,8 @@ class MultipleDialog extends React.Component {
   render() {
     return (
       <ModalWithDrag {...this.getProps()}>
-      {this.toToolbar()}
-        <Card>
-          {this.toTable()}
-        </Card>
+      <div className={s.marginBottomSM}>{this.toToolbar()}</div>
+      {this.toTable()}
       </ModalWithDrag>
     )
   }

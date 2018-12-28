@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Card, SuperTable, SuperToolbar, Search, ModalWithDrag, Title, SuperPagination} from '../../../../../components';
+import { Indent, SuperTable, SuperToolbar, Search, ModalWithDrag, Title, SuperPagination} from '../../../../../components';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from '../../EditPage/EditPage.less';
 
@@ -64,10 +64,10 @@ class AddDialog extends React.Component {
   render() {
     return (
       <ModalWithDrag {...this.getProps()}>
-        <Card>
+        <Indent>
           {this.toSearch()}
           {this.toTable()}
-        </Card>
+        </Indent>
       </ModalWithDrag>
     )
   }

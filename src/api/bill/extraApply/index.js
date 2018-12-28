@@ -1,11 +1,8 @@
 import express from 'express';
 import {fetchJsonByNode, postOption} from '../../../common/common';
 import {host} from '../../globalConfig';
-import  {search} from "../../helper";
 const tms_service = `${host}/tms-service`;
 const archiver_service = `${host}/archiver-service`;
-const charge_service = `${host}/charge_service`;
-const tenant_service = `${host}/tenant_service`;
 let api = express.Router();
 
 // 获取UI标签
@@ -24,7 +21,7 @@ api.get('/custom_config/:code', async (req, res) => {
 
 // 获取列表
 api.post('/list', async (req, res) => {
-  const url = `${tms_service}/transport_order/cost/search`;
+  const url = `${tms_service}/extra_charge/list/search`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
@@ -34,150 +31,82 @@ api.post('/currency', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
-// 根据结算单位获取结算币种（主币种）
-api.get('/currencyTypeCode', async (req, res) => {
-  const url = `${archiver_service}/charge/tenant_currency_type/main_currency`;
-  res.send(await fetchJsonByNode(req, url));
-});
-
-// 获取客户下拉
-api.post('/customerId', async (req, res) => {
-  const url = `${archiver_service}/customer/drop_list/enabled_type_enabled`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-});
-
-// 获取客服人员下拉
-api.post('/customerServiceId', async (req, res) => {
-  const url = `${tenant_service}/user/name/search`;
-  res.send(await search(req, url, 'username', req.body.filter));
-});
-
-// 获取车型下拉
-api.post('/carModeId', async (req, res) => {
-  const url = `${archiver_service}/car_mode/drop_list`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-});
-
-// 获取始发地、目的地下拉
-api.post('/departureDestination', async (req, res) => {
-  const url = `${archiver_service}/archiver/district/drop_list`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-});
-
-// 获取供应商下拉
-api.post('/supplierId', async (req, res) => {
-  const url = `${archiver_service}/supplier/drop_list/enabled_type_enabled`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-});
-
-// 获取车牌下拉
-api.post('/carInfoId', async (req, res) => {
-  const url = `${archiver_service}/car_info/list/search`;
-  const params = {
-    itemFrom: 0,
-    itemTo: req.body.maxNumber,
-    filter: {
-      carNumber: req.body.filter
-    }
-  };
-  const data = await fetchJsonByNode(req, url, postOption(params))
-  const list = data.result.data.map(o => ({
-    value: o.id,
-    title: o.carNumber
-  }));
-  res.send({returnCode: 0, returnMsg: 'Success', result: list});
-});
-
-// 获取司机下拉
-api.post('/driverId', async (req, res) => {
-  const url = `${archiver_service}/driver_info/drop_list`;
-  res.send(await fetchJsonByNode(req, url, postOption({name: req.body.filter})));
-});
-
-// 获取监理下拉
-api.post('/supervisorId', async (req, res) => {
-  const url = `${archiver_service}/supervisor_info/list/search`;
-  const params = {
-    itemFrom: 0,
-    itemTo: req.body.maxNumber,
-    filter: {
-      supervisorName: req.body.filter
-    }
-  };
-  const data = await fetchJsonByNode(req, url, postOption(params))
-  const list = data.result.data.map(o => ({
-    value: o.id,
-    title: o.supervisorName
-  }));
-  res.send({returnCode: 0, returnMsg: 'Success', result: list});
-});
-
-// 获取单条记录的详细信息
-api.get('/detail/:id', async (req, res) => {
-  const url = `${tms_service}/transport_order/cost/details/${req.params.id}`;
-  res.send(await fetchJsonByNode(req, url));
-});
-
-// 获取汇总信息
-api.get('/total/:id/:currency', async (req, res) => {
-  const url = `${tms_service}/transport_order/cost/count/amount/${req.params.id}/${req.params.currency}`;
-  res.send(await fetchJsonByNode(req, url));
-});
-
 // 获取费用名称下拉
 api.post('/chargeItemId', async (req, res) => {
   const url = `${archiver_service}/charge_item/drop_list/enabled_type_enabled`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
-// 整审（批量）
-api.post('/auditBatch', async (req, res) => {
-  const url = `${tms_service}/transport_order/cost/check/batch`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-});
-
-// 生成结算单
-api.post('/createBill', async (req, res) => {
-  const url = `${charge_service}/receivable_bills`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: 'Success', returnMsg: '生成结算单成功！'});
-});
-
-// 应付明细批量新增
-api.post('/batchAdd', async (req, res) => {
-  const url = `${tms_service}/transport_order/cost/details/batch`;
+// 运单号下拉(0:待审核)
+api.post('/transportOrderId', async (req, res) => {
+  const url = `${tms_service}/transport_order/cost/drop_list/0`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
-// 应付明细批量编辑
-api.post('/batchEdit', async (req, res) => {
-  const url = `${tms_service}/transport_order/cost/details/batch`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-});
-
-// 应付明细表格批量删除
-api.post('/batchDelete', async (req, res) => {
-  const url = `${tms_service}/transport_order/cost/details/batch`;
+// 批量删除
+api.post('/delete', async (req, res) => {
+  const url = `${tms_service}/extra_charge/delete`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
 });
 
-// 应付明细表格批量审核
-api.post('/batchAudit', async (req, res) => {
-  const url = `${tms_service}/transport_order/cost/details/check/batch`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
+// 获取单条记录的详细信息
+api.get('/detail/:id', async (req, res) => {
+  const url = `${tms_service}/extra_charge/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
 });
 
-// 应付明细表格冲账
-api.post('/strikeBalance/:id', async (req, res) => {
-  const url = `${tms_service}/transport_order/cost/detail/cancel/${req.params.id}`;
-  res.send(await fetchJsonByNode(req, url, 'put'));
+// 保存
+api.post('/save', async (req, res) => {
+  let url = `${tms_service}/extra_charge`;
+  let method = 'post';
+  // type: 0:新增, 1:编辑, 2:编辑（费用来源不为空（外部系统接入））
+  const {type=0, ...body} = req.body;
+  switch (type) {
+    case 1: {
+      method = 'put';
+      break;
+    }
+    case 2: {
+      method = 'put';
+      url = `${tms_service}/extra_charge/external`;
+      break;
+    }
+  }
+  res.send(await fetchJsonByNode(req, url, postOption(body, method)));
 });
 
-// 应付明细表格自动计费
-api.post('/autoBilling/:id', async (req, res) => {
-  const url = `${tms_service}/cost/income_details/auto/${req.params.id}`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: 'Success', returnMsg: '自动计费成功！'});
+// 提交
+api.post('/commit', async (req, res) => {
+  let url = `${tms_service}/extra_charge/submit`;
+  let method = 'put';
+  // type: 0:新增、编辑（待提交） 1:编辑（应收待提交）, 2:编辑（费用来源不为空（外部系统接入））
+  const {type=0, ...body} = req.body;
+  switch (type) {
+    case 1: {
+      method = 'post';
+      url = `${tms_service}/extra_charge/receive/submit`;
+      break;
+    }
+    case 2: {
+      method = 'post';
+      url = `${tms_service}/extra_charge/external`;
+      break;
+    }
+  }
+  res.send(await fetchJsonByNode(req, url, postOption(body, method)));
 });
+
+// 审核/回退
+api.post('/review', async (req, res) => {
+  const url = `${tms_service}/extra_charge/approval`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+// 结案
+api.post('/endCase', async (req, res) => {
+  const url = `${tms_service}/extra_charge/settle_lawsuit`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
 
 export default api;
