@@ -12,8 +12,9 @@ api.get('/orderInfoConfig', async (req, res) => {
   //运单其他信息配置
   let data = await fetchJsonByNode(req, `${host}/archiver-service/table_extend_property_config/config/transport_order_property`);
   if (data.returnCode !== 0) return res.send(data);
+  const addInfo = {...config.formSections.addInfo};
   if (data.result.controls && data.result.controls.length > 0) {
-    config.formSections.otherInfo = {key: 'otherInfo', title: '其他信息', controls: data.result.controls};
+    addInfo.controls = addInfo.controls.concat(data.result.controls);
   }
   //运单货物明细扩展信息配置
   data = await fetchJsonByNode(req, `${host}/archiver-service/table_extend_property_config/config/transport_order_goods_property`);
@@ -22,7 +23,7 @@ api.get('/orderInfoConfig', async (req, res) => {
   if (data.result.controls && data.result.controls.length > 0) {
     goodsTable.cols = config.goodsTable.cols.concat(data.result.controls);
   }
-  res.send({returnCode: 0, result: {...config, goodsTable}});
+  res.send({returnCode: 0, result: {...config, goodsTable, formSections: {...config.formSections, addInfo}}});
 });
 
 //新增保存运单

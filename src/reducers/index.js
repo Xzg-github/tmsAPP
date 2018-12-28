@@ -86,7 +86,6 @@ const rootReducer = combineReducers({
   payChange: create('payChange'),
   payBill: create('payBill'),
   payMonthlyBill: create('payMonthlyBill'),
-  audit: create('audit'),
   extraApply: create('extraApply'),
   append: create('append'),
 

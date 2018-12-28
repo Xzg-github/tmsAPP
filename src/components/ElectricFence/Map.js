@@ -120,6 +120,10 @@ class Map extends React.Component {
       } else {
         this.map.centerAndZoom('深圳市', level);
       }
+    } else {
+      if (this.marker) {
+        this.map.panTo(this.marker.getPosition());
+      }
     }
   };
 
@@ -138,8 +142,21 @@ class Map extends React.Component {
   }
 
   componentDidUpdate() {
-    this.drawMarker();
-    this.setCenter();
+    if (this.marker) {
+      this.marker = null;
+      this.map.clearOverlays();
+    }
+
+    this.position().then(need => {
+      if (!need) {
+        this.drawMarker();
+        this.setCenter();
+      }
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    return (nextProps.center !== this.props.center) || (nextProps.address !== this.props.address);
   }
 
   render() {
