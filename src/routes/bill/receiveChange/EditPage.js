@@ -1,7 +1,7 @@
 import React, {PropTypes}from 'react';
 import withStyle from 'isomorphic-style-loader/lib/withStyles';
 import s from './receiveChange.less';
-import {Card, Title, SuperForm, SuperTable2, SuperToolbar, SuperTable} from '../../../components';
+import {Indent, Title, SuperForm, SuperTable2, SuperToolbar, SuperTable} from '../../../components';
 
 class EditPage extends React.Component{
   static propTypes = {
@@ -26,7 +26,7 @@ class EditPage extends React.Component{
           };
           return (
             <div key={index}>
-              <Title className = {s.title} title = {item.title}/>
+              <Title className = {s.marginBottomSM} title = {item.title}/>
               <SuperForm {...props}/>
             </div>
           )
@@ -49,7 +49,7 @@ class EditPage extends React.Component{
             };
             return (
               <div key={item.key}>
-                <Title className={s.title} title={item.title} />
+                <Title className={s.marginBottomSM} title={item.title} />
                 <SuperTable {...superTableProps} />
               </div>
             );
@@ -77,7 +77,7 @@ class EditPage extends React.Component{
           };
           return (
             <div key={index}>
-              <Title className={s.title} title={item.title} />
+              <Title className={s.marginBottom} title={item.title} />
               {!isReadOnly && <SuperToolbar {...btnProps} />}
               <SuperTable2 {...tableProps}/>
             </div>
@@ -104,11 +104,11 @@ class EditPage extends React.Component{
   render(){
     const {isReadOnly, isAudit} = this.props;
     return (
-      <Card className={s.root}>
+      <Indent className={s.root}>
         {this.toForm()}
         {isReadOnly ? this.toSuperTable() : this.toSuperTable2()}
         {(!isReadOnly || isAudit) && this.toFooter()}
-      </Card>
+      </Indent>
     )
   }
 }

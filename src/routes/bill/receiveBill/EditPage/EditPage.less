@@ -1,12 +1,6 @@
 @import '../../../../components/variables.less';
 
 .root {
-  margin: @padding-vertical @padding-horizontal;
-  height: ~'calc(100% - 40px)';
-
-  :global(.pld-card) {
-    margin: 0;
-  }
 
   > :last-child {
     overflow: auto;
@@ -18,7 +12,11 @@
   }
 }
 .superTitle{
-  margin: 6px 0;
+  margin-top: @padding-vertical;
+  margin-bottom: @padding-vertical-sm;
+}
+.marginTop{
+  margin-top: @padding-vertical !important;
 }
 .footer{
   text-align: center;

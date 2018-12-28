@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditPage.less';
-import {Card, SuperForm, SuperTitle, SuperToolbar, SuperTab2, SuperTable} from '../../../../components';
+import {Indent, SuperForm, SuperTitle, SuperToolbar, SuperTab2, SuperTable} from '../../../../components';
 import InvoiceTable from './InvoiceTable/InvoiceTable';
 
 class EditPage extends React.Component {
@@ -19,9 +19,9 @@ class EditPage extends React.Component {
         onExitValid: onExitValid.bind(null, item.key),
         onAdd: onAdd.bind(null, item.key)
       };
-      return (<div key={i} style={{marginBottom: '10px'}}>
+      return (<div key={i} className={s.marginBottom}>
         <SuperTitle title={item.title}/>
-        <SuperForm {...props}/>
+        <Indent className={s.marginTop}><SuperForm {...props}/></Indent>
       </div>)
     });
   }
@@ -41,7 +41,7 @@ class EditPage extends React.Component {
       onChange: onInvoiceChange.bind(null, activeKey),
       onSelect: onInvoiceSelect.bind(null, activeKey)
     };
-    return <InvoiceTable {...props}/>
+    return <Indent className={s.marginTop}><InvoiceTable {...props}/></Indent>
   }
 
   toCostInfo = () => {
@@ -56,10 +56,10 @@ class EditPage extends React.Component {
       buttons,
       onClick: onClick.bind(null, activeKey)
     };
-    return (<div>
-      <div className={s.superTitle}><SuperToolbar {...toolbarProps}/></div>
+    return (<Indent>
+      <div className={s.margin2}><SuperToolbar {...toolbarProps}/></div>
       <SuperTable {...props}/>
-    </div>)
+    </Indent>)
   }
 
   toTabContent = () => {
@@ -86,12 +86,12 @@ class EditPage extends React.Component {
 
   render() {
     return (
-      <Card className={s.root}>
+      <div className={s.root}>
         {this.toForm()}
         {this.toTab()}
-        <Card>{this.toTabContent()}</Card>
+        {this.toTabContent()}
         {this.toFooter()}
-      </Card>
+      </div>
     );
   }
 }

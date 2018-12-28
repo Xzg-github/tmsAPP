@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Card, SuperTable, ModalWithDrag, Search, SuperTitle, SuperPagination} from '../../../../../components';
+import { Indent, SuperTable, ModalWithDrag, Search, SuperTitle, SuperPagination} from '../../../../../components';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './JoinDialog.less';
 
@@ -49,10 +49,10 @@ class JoinDialog extends React.Component {
   render() {
     return (
       <ModalWithDrag {...this.getProps()}>
-        <Card className={s.root}>
+        <Indent className={s.root}>
           {this.toSearch()}
           {this.toTable()}
-        </Card>
+        </Indent>
       </ModalWithDrag>
     )
   }

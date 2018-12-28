@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Card, ModalWithDrag, SuperTable2} from '../../../../../components';
+import { Indent, ModalWithDrag, SuperTable2} from '../../../../../components';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ChangeRateDialog.less';
 import showPopup from '../../../../../standard-business/showPopup';
@@ -58,9 +58,9 @@ class ChangeRateDialog extends React.Component {
   render() {
     return (
       <ModalWithDrag {...this.getProps()}>
-        <Card className={s.root}>
+        <Indent className={s.root}>
           {this.toTable()}
-        </Card>
+        </Indent>
       </ModalWithDrag>
     )
   }
