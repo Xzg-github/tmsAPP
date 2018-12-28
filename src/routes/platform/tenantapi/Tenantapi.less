@@ -1,25 +1,12 @@
 @import '../../../components/variables.less';
+
 .root {
-  padding-bottom: 100%;
-
   > * {
-    &[role="search"] {
-      padding-bottom: 1px;
+    margin: 0 @padding-horizontal @padding-vertical @padding-horizontal;
+  }
 
-      > :first-child > :last-child > :last-child > :last-child {
-        display: none;
-
-      }
-    }
-
-    &[role="card"] {
-      > {
-        &[role="buttons"] {
-          padding-top: 5px;
-          padding-bottom: 5px;
-        }
-      }
-    }
+  [role='buttons'] {
+    margin-bottom: @padding-vertical-sm;
   }
 }
 
