@@ -1,10 +1,7 @@
-@import '../../../components/variables';
+@import '../../../components/variables.less';
 
 .root {
-  position: relative;
-
-  :global(.ant-table-wrapper) {
-    margin-top: @padding-vertical;
-    margin-bottom: @padding-vertical;
+  > * {
+    margin: 0 @padding-horizontal @padding-vertical @padding-horizontal;
   }
 }

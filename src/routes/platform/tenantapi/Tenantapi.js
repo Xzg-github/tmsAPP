@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import ReactDOM from 'react-dom';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import {Search, SuperTable, SuperToolbar, Card} from '../../../components/index';
+import {Search, SuperTable, SuperToolbar} from '../../../components/index';
 import s from './Tenantapi.less';
 import {getObject} from '../../../common/common';
 
@@ -41,7 +41,7 @@ class Tenantapi extends React.Component {
       option: {bsSize: 'small'},
       callback: getObject(this.props, TOOLBAR_EVENTS)
     };
-    return <div role="buttons"><SuperToolbar {...props}/></div>;
+    return <div role='buttons'><SuperToolbar {...props}/></div>;
   };
 
   toTable = () => {
@@ -58,11 +58,9 @@ class Tenantapi extends React.Component {
   render() {
     return (
       <div className={s.root}>
-        <Card role="card">
-          {this.toSearch()}
-          {this.toToolbar()}
-          {this.toTable()}
-        </Card>
+        {this.toSearch()}
+        {this.toToolbar()}
+        {this.toTable()}
       </div>
     );
   }
