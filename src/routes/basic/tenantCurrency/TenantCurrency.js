@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { getObject } from '../../../common/common';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './TenantCurrency.less';
-import {SuperTable, SuperToolbar, Card} from '../../../components/index';
+import {SuperTable, SuperToolbar, Indent} from '../../../components/index';
 
 const TOOLBAR_EVENTS = ['onClick'];
 const TABLE_EVENTS = ['onCheck', 'onDoubleClick', 'onLink'];
@@ -38,12 +38,10 @@ class TenantCurrency extends React.Component {
 
   render = () => {
     return (
-      <div className={s.root}>
-        <Card>
-          {this.toToolbar()}
-          {this.toTable()}
-        </Card>
-      </div>
+      <Indent className={s.root}>
+        {this.toToolbar()}
+        {this.toTable()}
+      </Indent>
     );
   };
 }
