@@ -80,6 +80,22 @@ const getOpenKeys = (sidebars) => {
   }, {});
 };
 
+const getPageTitles = (sidebars) => {
+  return Object.keys(sidebars).reduce((result, key) => {
+    const sidebarArr = sidebars[key];
+    sidebarArr.map(sidebar => {
+      if (sidebar.children) {
+        sidebar.children.map(item => {
+          result[item.key] = [sidebar.title, item.title];
+        });
+      }else {
+        result[sidebar.key] = [sidebar.title];
+      }
+    });
+    return result;
+  }, {});
+};
+
 const toBool = (obj) => {
   return Object.keys(obj).reduce((result, key) => {
     result[key] = !!obj[key];
@@ -91,7 +107,8 @@ const calculate = (privilege, actions={}) => {
   const sidebars = getSidebars(NAV_ITEMS_NEW, SIDEBARS_NEW, privilege);
   const navigation = getNavItems(NAV_ITEMS_NEW, sidebars, privilege);
   const openKeys = getOpenKeys(sidebars);
-  return {actions, sidebars, navigation, openKeys, privilege: toBool(privilege)};
+  const pageTitles = getPageTitles(sidebars);
+  return {actions, sidebars, navigation, openKeys, pageTitles, privilege: toBool(privilege)};
 };
 
 function flattenTree(privilege, result={}) {

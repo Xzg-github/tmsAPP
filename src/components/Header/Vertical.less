@@ -9,7 +9,7 @@
   background: @header-primary-color;
   width: @width;
   height: ~'calc(100vh - @{header-height})';
-  transition: width 0.2s;
+  transition: width 0.4s;
 
   > a {
     display: block;
@@ -32,6 +32,7 @@
 
     > :last-child {
       line-height: @height;
+      font-size: 14px;
     }
 
     &:hover > :first-child {
@@ -39,11 +40,11 @@
     }
 
     &[data-select='true'] {
-      background: white;
-      color: @primary-color;
+      background: @primary-color;
+      color: white;
 
       > :first-child {
-        color: @primary-color;
+        color: white;
       }
     }
   }

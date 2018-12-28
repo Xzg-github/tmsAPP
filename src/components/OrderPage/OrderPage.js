@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { getObject } from '../../common/common';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './OrderPage.less';
-import {Search, SuperTable, SuperPagination, SuperToolbar, Card} from '../index';
+import {Search, SuperTable, SuperPagination, SuperToolbar} from '../index';
 
 const SEARCH_EVENTS = ['onChange', 'onSearch', 'onClick'];
 const TOOLBAR_EVENTS = ['onClick'];
@@ -35,7 +35,7 @@ class OrderPage extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {height: 36};
+    this.state = {height: 67};
   }
 
   onHeightChange = (height) => {
@@ -68,7 +68,7 @@ class OrderPage extends React.Component {
 
   toTable = () => {
     const {tableCols, tableItems, sortInfo, filterInfo, buttons,hasUnreadTable} = this.props;
-    const extra = buttons.length ? 0 : -32;
+    const extra = buttons.length ? 0 : -45;
     const props = {
       hasUnreadTable,
       sortInfo,
@@ -76,7 +76,7 @@ class OrderPage extends React.Component {
       cols: tableCols,
       items: tableItems,
       callback: getObject(this.props, TABLE_EVENTS),
-      maxHeight: `calc(100vh - ${this.state.height + 219 + extra}px)`
+      maxHeight: `calc(100vh - ${this.state.height + 253 + extra}px)`
     };
     return <SuperTable {...props}/>;
   };
@@ -92,14 +92,10 @@ class OrderPage extends React.Component {
   render() {
     return (
       <div className={s.root}>
-        <Card>
-          {this.toSearch()}
-        </Card>
-        <Card>
-          {this.props.buttons.length > 0 ? this.toToolbar() : null}
-          {this.toTable()}
-          {this.toPagination()}
-        </Card>
+        {this.toSearch()}
+        {this.props.buttons.length ? this.toToolbar() : null}
+        {this.toTable()}
+        {this.toPagination()}
       </div>
     );
   };

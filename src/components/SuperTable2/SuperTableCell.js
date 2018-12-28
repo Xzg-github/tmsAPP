@@ -85,7 +85,7 @@ class SuperTableCell extends React.Component {
     (type === 'readonly') && (props = {});
     return {
       ...props, type, value,
-      size: 'small',
+      size: 'default',
       autoFocus: this.props.error,
       style: {width: '100%', minWidth: width},
       onBlur: this.props.onBlur,

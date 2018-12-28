@@ -6,7 +6,7 @@ import Control, {getTitle, makeString} from '../Control';
 import s from './Search.less';
 
 const FormItem = Form.Item;
-const defaultSize = 'small';
+const defaultSize = 'default';
 const defaultColNum = 4;
 
 const TYPE = [
@@ -230,9 +230,9 @@ class Search extends React.Component {
     const {colNum=defaultColNum, filters} = this.props;
     if (more) {
       const row = Math.ceil(filters.length / colNum);
-      return row * 36 + (row - 1) * 10;
+      return row * 57 + 10;
     } else {
-      return 36;
+      return 67;
     }
   };
 

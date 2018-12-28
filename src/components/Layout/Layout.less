@@ -19,9 +19,24 @@
       margin-left: @header-height;
     }
 
-    > :last-child {
-      height: inherit;
+    > :nth-child(3) {
+      height: 40px;
       overflow: auto;
+      background-color: @background-color;
+      padding-left: 15px;
+      padding-top: 10px;
+
+      > span {
+        font-size: 14px;
+        font-weight: bold;
+        color: #666;
+      }
+    }
+
+    > :last-child {
+      height: calc(~"100% - 40px");
+      overflow: auto;
+      background-color: @background-color;
     }
   }
 }

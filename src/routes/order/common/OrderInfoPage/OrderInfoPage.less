@@ -1,29 +1,18 @@
 @import '../../../../components/variables.less';
 
-@margin-left-sub-content: 8px;
-
 .root {
   position: relative;
 
   > * {
-    margin-bottom: 5px;
-  }
-
-  > div > :global(.ant-form) {
-    margin-left: @margin-left-sub-content;
-  }
-
-  :global(.ant-table-wrapper) {
-    margin-top: @padding-vertical;
-  }
-
-  [role='title'] {
-    > [role='toolbar'] {
-      display: inline-block;
-    }
+    margin: 0 @padding-horizontal @padding-vertical @padding-horizontal;
   }
 
   > [role='toolbar'] {
+    margin-bottom: @padding-vertical-sm;
+  }
+
+  > [role='toolbar']:last-child {
+    margin-bottom: @padding-vertical-lg;
     text-align: center;
   }
 }

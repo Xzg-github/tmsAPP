@@ -4,6 +4,8 @@ import s from './Layout.less';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
 import Loading from '../Loading';
+import { Breadcrumb } from 'antd';
+const BreadcrumbItem = Breadcrumb.Item;
 
 const HeaderV = Header.Vertical;
 
@@ -84,6 +86,15 @@ class Layout extends React.Component {
     };
   };
 
+  toPageTitle = () => {
+    const {pageTitles, nav2} = this.props;
+    return (
+      <Breadcrumb separator=">">
+        {pageTitles[nav2].map((item, index) => (<BreadcrumbItem key={index}>{item}</BreadcrumbItem>))}
+      </Breadcrumb>
+    );
+  };
+
   render() {
     const {loading, nav1='', nav2='', children} = this.props;
     return (
@@ -92,6 +103,7 @@ class Layout extends React.Component {
         <div>
           <HeaderV {...this.headerVProps(loading || nav1)} />
           <aside>{nav2 ? <Sidebar {...this.sidebarProps(nav1, nav2)} /> : null}</aside>
+          {nav2 ? this.toPageTitle() : null}
           {loading ? <Loading /> : <section>{children}</section>}
         </div>
       </div>

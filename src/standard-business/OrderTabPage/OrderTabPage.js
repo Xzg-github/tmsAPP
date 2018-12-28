@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import withStyles from '../../../node_modules/isomorphic-style-loader/lib/withStyles';
 import s from './OrderTabPage.less';
-import {Search, SuperTable, SuperPagination, SuperToolbar, Card, SuperTab2} from '../../components/index';
+import {Search, SuperTable, SuperPagination, SuperToolbar, SuperTab2} from '../../components/index';
 
 const props = {
   subTabs: PropTypes.array,
@@ -26,7 +26,7 @@ class OrderTabPage extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {height: 36};
+    this.state = {height: 67};
   }
 
   onHeightChange = (height) => {
@@ -84,7 +84,6 @@ class OrderTabPage extends React.Component {
     const {subActiveKey, buttons} = this.props;
     const props = {
       buttons: buttons[subActiveKey].concat({key: 'config', title: '配置字段'}),
-      size: 'small',
       onClick: this.onHandleClick
     };
     return <SuperToolbar {...props} />;
@@ -92,7 +91,7 @@ class OrderTabPage extends React.Component {
 
   toTable = () => {
     const {subActiveKey, tableCols, tableItems, buttons, sortInfo, filterInfo, onCheck, onDoubleClick, onLink, onTableChange} = this.props;
-    const extra = buttons.length ? 0 : -32;
+    const extra = buttons.length ? 0 : -45;
     const props = {
       sortInfo: sortInfo[subActiveKey],
       filterInfo: filterInfo[subActiveKey],
@@ -104,7 +103,7 @@ class OrderTabPage extends React.Component {
         onLink: onLink ? onLink.bind(null, subActiveKey) : undefined,
         onTableChange: onTableChange.bind(null, subActiveKey)
       },
-      maxHeight: `calc(100vh - ${this.state.height + 225 + extra}px)`
+      maxHeight: `calc(100vh - ${this.state.height + 333 + extra}px)`
     };
     return <SuperTable {...props}/>;
   };
@@ -141,15 +140,11 @@ class OrderTabPage extends React.Component {
   render = () => {
     return (
       <div className={s.root}>
-        <Card >
-          {this.toSearch()}
-        </Card>
-        <Card>
-          {this.toTab()}
-          {this.toToolbar()}
-          {this.toTable()}
-          {this.toPagination()}
-        </Card>
+        {this.toSearch()}
+        {this.toTab()}
+        {this.toToolbar()}
+        {this.toTable()}
+        {this.toPagination()}
       </div>
     );
   };

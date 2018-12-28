@@ -31,6 +31,7 @@ const TypeEnum = [
  * width: 嵌入的组件的宽度，默认值为100
  * align：对齐方式，index默认center，其他类型默认为left
  * showAdd: 表头是否显示+号，默认为false，加号会触发onAdd事件
+ * hide: 为true时隐藏该列
  */
 const ColType = {
   key: PropTypes.string.isRequired,
@@ -41,6 +42,7 @@ const ColType = {
   width: PropTypes.number,
   options: PropTypes.array,
   showAdd: PropTypes.any,
+  hide: PropTypes.bool,
   props: PropTypes.any
 };
 
@@ -68,6 +70,7 @@ class SuperTable2 extends React.Component {
     items: PropTypes.array.isRequired,
     options: PropTypes.object,
     valid: PropTypes.bool,
+    readonly: PropTypes.bool,
     style: PropTypes.object,
     maxHeight: PropTypes.string,
     emptyText: PropTypes.string,
@@ -172,10 +175,11 @@ class SuperTable2 extends React.Component {
       case 'link':
         return this.renderLinkCell(col, value, record, index);
       case 'button':
-        const onClick = this.props.callback.onBtnClick.bind(null, index, col.key);
-        return <Button onClick={onClick} size='small'>{col.typeRelated}</Button>;
+        // const onClick = this.props.callback.onBtnClick.bind(null, index, col.key);
+        const onClick = () => {};
+        return <Button onClick={onClick} size='default'>{col.typeRelated}</Button>;
       case 'switch':
-        return <Switch onChange={this.onSwitch(col.key, index)} size='small' checked={value || false}/>;
+        return <Switch onChange={this.onSwitch(col.key, index)} size='default' checked={value || false}/>;
       case 'custom':
         return this.props.callback.onRenderCustom(index, col.key, value, col.props);
       default:
@@ -224,16 +228,23 @@ class SuperTable2 extends React.Component {
     }
   };
 
+  canReadonly = (type) => {
+    return !['index', 'checkbox', 'link', 'button', 'switch', 'custom'].includes(type);
+  };
+
   getColumns = (cols) => {
-    return cols.map(({...col}) => {
+    const readonly = this.props.readonly;
+    return cols.filter(col => !col.hide).map(({...col}) => {
       col.className = this.getColumnClassName(col);
       col.title = this.getColumnTitle(col);
       col.dataIndex = col.key;
-      if (col.type) {
-        col.render = this.getCellRender(col);
-      } else if (col.link) {
-        col.type = 'link';
-        col.render = this.getCellRender(col);
+      if (!readonly || !this.canReadonly(col.type)) {
+        if (col.type) {
+          col.render = this.getCellRender(col);
+        } else if (col.link) {
+          col.type = 'link';
+          col.render = this.getCellRender(col);
+        }
       }
       return col;
     });

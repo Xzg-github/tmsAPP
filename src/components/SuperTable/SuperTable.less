@@ -4,17 +4,26 @@
   border-spacing: 0;
   cursor: default;
 
+  :global(.ant-table) {
+    border-radius: 0 !important;
+  }
+
   table {
     white-space: pre;
+    border-radius: 0 !important;
 
     :global(.ant-checkbox-input) {
       z-index: -1;
+    }
+
+    > thead tr th {
+      line-height: 16px;
     }
   }
 }
 
 .select {
-  background-color: @table-row-hover-bg;
+  background-color: @primary-1;
 }
 
 .center {
@@ -34,6 +43,7 @@
   color :#000;
   font-weight: 700;
 }
+
 .unReadRowUnselect{
   color :#000;
   font-weight: 700;

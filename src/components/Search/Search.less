@@ -1,6 +1,8 @@
 @import '../variables.less';
 
 .root {
+  background-color: #e6eaf1;
+  padding: 10px;
   transition: all 0.3s;
   overflow: hidden;
 
@@ -12,9 +14,13 @@
     :global(.ant-form-item) {
       margin-bottom: 10px;
 
+      :global(.ant-form-item-label) {
+        margin-bottom: 5px;
+      }
+
       :global(.ant-select) {
         overflow: auto;
-        max-height: 22px;
+        max-height: 28px;
       }
     }
   }
@@ -23,7 +29,7 @@
     display: inline-block;
     vertical-align: top;
     padding-left: 20px;
-    padding-top: 14px;
+    padding-top: 18px;
     width: 25%;
   }
 
@@ -34,10 +40,11 @@
 
   [role='buttons'] > * {
     margin-right: 5px;
+    border-radius: 2px;
   }
 
   [role='more'] {
-    color: rgba(0, 0, 0, 0.65);
+    color: #333;
     user-select: none;
 
     &:hover {
