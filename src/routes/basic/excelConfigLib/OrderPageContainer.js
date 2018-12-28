@@ -5,8 +5,10 @@ import {getObject, showError, findOnlyCheckedIndex, fetchJson, showSuccessMsg} f
 import {getPathValue} from '../../../action-reducer/helper';
 import {search2} from '../../../common/search';
 import {toFormValue} from "../../../common/check";
-import {showImportDialog} from '../../../common/modeImport';
+//import {showImportDialog} from '../../../common/modeImport';
 import { searchAction, pageNumberAction} from './helper';
+import execWithLoading from '../../../standard-business/execWithLoading';
+import upload from './upload';
 
 const STATE_PATH = ['basic', 'excelConfigLib'];
 const URL_LIST = '/api/basic/excelConfigLib/list';
@@ -29,12 +31,12 @@ const updateTable = async (dispatch, getState) => {
 // 页码过滤
 const pageNumberActionCreator = (currentPage) => async (dispatch, getState) => {
   const { pageSize } = getSelfState(getState(), STATE_PATH);
-  pageNumberAction(dispatch, action, getSelfState(getState(), STATE_PATH), currentPage, pageSize, URL_LIST);
+  return pageNumberAction(dispatch, action, getSelfState(getState(), STATE_PATH), currentPage, pageSize, URL_LIST);
 };
 
 // 页条数过滤
 const pageSizeActionCreator = (pageSize, currentPage) => async (dispatch, getState) => {
-  pageNumberAction(dispatch, action, getSelfState(getState(), STATE_PATH), currentPage, pageSize, URL_LIST);
+ return pageNumberAction(dispatch, action, getSelfState(getState(), STATE_PATH), currentPage, pageSize, URL_LIST);
 };
 
 //判断是否选择项卡是否已存在
@@ -52,7 +54,7 @@ const readOnlyConfig = (editConfig = {},buttons1) => {
 
 //搜索
 const onSearchActionCreator = async (dispatch, getState) => {
-  searchAction(dispatch, action, getSelfState(getState(), STATE_PATH), URL_LIST);
+  return searchAction(dispatch, action, getSelfState(getState(), STATE_PATH), URL_LIST);
 };
 
 //重置
@@ -110,9 +112,9 @@ const editAction = async (dispatch, getState) => {
   const tableCode = content.table[0].tableCode.split(','); //以逗号为分割，生成数组，元素为字符串
   const CURRNT_TABLE_CODE = tableCode[0];
   const tableTitle = content.table[0].tableTitle.split(',');
-  const tabKey = tableCode.map((key, index) => ({key, title: state[key].sheetName}));
+  const tabKey = tableCode.map((key, index) => ({key, title: tableTitle[index]}));
   const add = { ...newConfig,value:result,edit:true, content, CURRNT_TABLE_CODE, tabs: tabKey, state};
-  const tab = { key:key, title: '编辑' };
+  const tab = { key:key, title: result.modelName };
   dispatch(action.assign({[tab.key]: add,activeKey:tab.key, tabs: tabs.concat(tab)}));
 };
 
@@ -140,6 +142,7 @@ const copyAddAction = async (dispatch, getState) => {
   ];
   const newConfig = key ? readOnlyConfig({...editConfig}, buttons1) : editConfig;
   delete result.id;
+  delete result.url;
   const state = result.sheetList.reduce((result, item) => {
     const key = Object.keys(item)[0];
     result[key] = item[key];
@@ -149,10 +152,10 @@ const copyAddAction = async (dispatch, getState) => {
   const tableCode = content.table[0].tableCode.split(','); //以逗号为分割，生成数组，元素为字符串
   const CURRNT_TABLE_CODE = tableCode[0];
   const tableTitle = content.table[0].tableTitle.split(',');
-  const tabKey = tableCode.map((key, index) => ({key, title: state[key].sheetName}));
+  const tabKey = tableCode.map((key, index) => ({key, title: tableTitle[index]}));
   const add = { ...newConfig,value:result,edit:false, content, CURRNT_TABLE_CODE, tabs: tabKey, state};
-  const tab = { key:key, title: '复新增辑' };
-  dispatch(action.assign({[tab.key]: add,activeKey:tab.key, tabs: tabs.concat(tab)}));
+  const tab = { key:key, title: '复制新增' };
+  dispatch(action.assign({[tab.key]: add, activeKey: tab.key, tabs: tabs.concat(tab)}))
 };
 
 //删除
@@ -170,6 +173,30 @@ const delAction = async (dispatch, getState) => {
     showSuccessMsg('删除成功');
   }else{
     showError('returnMsg');
+  }
+};
+
+// 导入测试
+const importAction =  async(dispatch,getState)=> {
+  const {tableItems} = getSelfState(getState());
+  const index = findOnlyCheckedIndex(tableItems);
+  if (index === -1) {
+    showError('请勾选一条记录');
+    return;
+  }
+  const id = tableItems[index].id;
+  const url = `/api/proxy/zuul/integration_service/excelModelConfig/uploadExcelModel`;
+  const start = await upload(url);
+  if (start) {
+    execWithLoading(async () => {
+      const sss = await start();
+      const {status, name, response={}} = sss;
+      if (status && response.returnCode === 0) {
+        showSuccessMsg(`[${name}]上传成功`);
+      } else {
+        showError(`[${name}]上传失败:${response.returnMsg}`);
+      }
+    });
   }
 };
 
@@ -195,6 +222,18 @@ const generateAction = async (dispatch, getState) => {
   showSuccessMsg(returnMsg);
 };
 
+//点击超链接下载
+const onLinkActionCreator = (key, rowIndex, item)  => async () => {
+  const id = item.id;
+  const url = '/api/config/modeinput/down';
+  const {result, returnCode} = await fetchJson(`${url}?id=${id}`);
+  if(returnCode !== 0) {
+    showError('没有可下载的模板，请先上传');
+    return;
+  }
+  window.open(`/api/proxy/file-center-service/${result}`);
+};
+
 //勾选复选框
 const onCheckActionCreator = (isAll, checked, rowIndex) => {
   isAll && (rowIndex = -1);
@@ -214,7 +253,7 @@ const toolbarActions = {
   edit: editAction,
   copyAdd: copyAddAction,
   delete: delAction,
-  import: importActionCreator,
+  import: importAction,
   generate: generateAction,
 };
 
@@ -237,6 +276,7 @@ const actionCreators = {
   onPageNumberChange: pageNumberActionCreator,
   onPageSizeChange: pageSizeActionCreator,
   onCheck: onCheckActionCreator,
+  onLink: onLinkActionCreator,
 };
 
 const Container = connect(mapStateToProps, actionCreators)(OrderPage);
