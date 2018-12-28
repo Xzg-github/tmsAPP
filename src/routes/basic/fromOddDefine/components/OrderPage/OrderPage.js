@@ -76,13 +76,9 @@ class OrderPage extends React.Component {
   render = () => {
     return (
       <div className={s.root}>
-        <Card >
-          {this.toSearch()}
-        </Card>
-        <Card>
-          {this.toToolbar()}
-          {this.toTable()}
-        </Card>
+        {this.toSearch()}
+        {this.toToolbar()}
+        {this.toTable()}
       </div>
     );
   };

@@ -1,10 +1,15 @@
 @import '../../../../../components/variables';
 
 .root {
-  position: relative;
+  > * {
+    margin: 0 @padding-horizontal @padding-vertical @padding-horizontal;
+  }
 
-  :global(.ant-table-wrapper) {
-    margin-top: @padding-vertical;
-    margin-bottom: @padding-vertical;
+  > *:last-child {
+    margin-bottom: @padding-vertical-lg;
+  }
+
+  [role='toolbar'] {
+    margin-bottom: @padding-vertical-sm;
   }
 }

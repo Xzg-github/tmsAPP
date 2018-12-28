@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {Card, SuperToolbar, SuperTable} from '../../../components';
+import {SuperToolbar, SuperTable, Indent} from '../../../components';
 
 class Position extends React.Component {
   static propTypes = {
@@ -24,7 +24,7 @@ class Position extends React.Component {
       cols: this.props.cols,
       items: this.props.items,
       checkedRows: this.props.checkedRows,
-      maxHeight: 'calc(100vh - 124px)',
+      maxHeight: 'calc(100vh - 145px)',
       callback: {
         onCheck: this.props.onCheck
       }
@@ -33,12 +33,12 @@ class Position extends React.Component {
 
   render() {
     return (
-      <Card>
+      <Indent>
         <SuperToolbar {...this.toolbarProps()} />
-        <div style={{margin: '10px 0 0'}}>
+        <div style={{margin: '5px 0 0'}}>
           <SuperTable {...this.tableProps()} />
         </div>
-      </Card>
+      </Indent>
     );
   }
 }
