@@ -26,8 +26,8 @@ class EditPage extends React.Component{
           };
           return (
             <div key={index}>
-              <Title className = {s.marginBottomSM} title = {item.title}/>
-              <SuperForm {...props}/>
+              <Title title = {item.title}/>
+              <Indent className={s.margin}><SuperForm {...props}/></Indent>
             </div>
           )
         })}
@@ -78,8 +78,8 @@ class EditPage extends React.Component{
           return (
             <div key={index}>
               <Title className={s.marginBottom} title={item.title} />
-              {!isReadOnly && <SuperToolbar {...btnProps} />}
-              <SuperTable2 {...tableProps}/>
+              <Indent className={s.margin}>{!isReadOnly && <SuperToolbar {...btnProps} />}
+              <SuperTable2 {...tableProps}/></Indent>
             </div>
           )
         })}
