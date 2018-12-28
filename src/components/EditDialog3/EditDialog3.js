@@ -4,6 +4,7 @@ import {Button} from 'antd';
 import SuperForm from '../SuperForm/SuperForm';
 import Title from '../Title/Title';
 import ModalWithDrag from '../ModalWithDrag/ModalWithDrag';
+import Indent from "../Indent";
 
 const defaultSize = 'small';
 
@@ -94,8 +95,10 @@ class EditDialog3 extends React.Component {
           const props = {...this.props, controls: item.data, valid: this.props.valid === item.key};
           return (
             <div key={index}>
-              <Title title={item.title} />
-              <SuperForm {...props} size={defaultSize} colNum={this.getColNumber()} />
+              <Title style={{marginBottom: '15px'}} title={item.title} />
+              <Indent style={{marginBottom: '15px'}}>
+                <SuperForm {...props} size={defaultSize} colNum={this.getColNumber()} />
+              </Indent>
             </div>
           )
         })}
