@@ -8,7 +8,6 @@ import payMake from './payMake';
 import payChange from './payChange';
 import payBill from './payBill';
 import payMonthlyBill from './payMonthlyBill';
-import audit from './audit';
 import extraApply from './extraApply';
 import append from './append';
 
@@ -22,7 +21,6 @@ api.use('/payMake', payMake);
 api.use('/pay_change', payChange);
 api.use('/payBill', payBill);
 api.use('/pay_monthly_bill', payMonthlyBill);
-api.use('/audit', audit);
 api.use('/extraApply', extraApply);
 api.use('/append', append);
 

@@ -91,7 +91,7 @@ class OrderTabPage extends React.Component {
 
   toTable = () => {
     const {subActiveKey, tableCols, tableItems, buttons, sortInfo, filterInfo, onCheck, onDoubleClick, onLink, onTableChange} = this.props;
-    const extra = buttons.length ? 0 : -45;
+    const extra = buttons.length ? 0 : -33;
     const props = {
       sortInfo: sortInfo[subActiveKey],
       filterInfo: filterInfo[subActiveKey],
@@ -103,7 +103,7 @@ class OrderTabPage extends React.Component {
         onLink: onLink ? onLink.bind(null, subActiveKey) : undefined,
         onTableChange: onTableChange.bind(null, subActiveKey)
       },
-      maxHeight: `calc(100vh - ${this.state.height + 333 + extra}px)`
+      maxHeight: `calc(100vh - ${this.state.height + 322 + extra}px)`
     };
     return <SuperTable {...props}/>;
   };
