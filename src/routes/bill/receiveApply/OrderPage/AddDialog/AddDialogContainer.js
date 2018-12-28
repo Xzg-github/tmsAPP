@@ -11,8 +11,8 @@ import execWithLoading from '../../../../../standard-business/execWithLoading';
 const STATE_PATH = ['temp'];
 const action = new Action(STATE_PATH, false);
 
-const URL_LIST = '/api/bill/receiveBill/income_list';
-const URL_CREATE_BILL = '/api/bill/receiveBill/createBill';
+const URL_LIST = '/api/bill/receiveApply/income_list';
+const URL_ADD_APPLY = '/api/bill/receiveApply/addApply';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -47,21 +47,19 @@ const searchActionCreator = async (dispatch, getState) => {
 
 const resetActionCreator = action.assign({searchData: {}});
 
-// 生成账单
-const createBillActionCreator = (buildType) => async (dispatch, getState) => {
-  if (buildType !== 'close') {
-    const {items} = getSelfState(getState());
-    const checkList = items.filter(o=> o.checked);
-    if(!checkList.length) return showError('请勾选一条数据！');
-    execWithLoading(async () => {
-      const transportOrderIdList = checkList.map(o => convert(o));
-      const params = {opType: buildType, transportOrderIdList};
-      const { returnCode, result, returnMsg } = await fetchJson(URL_CREATE_BILL, postOption(params));
-      if(returnCode !== 0) return showError(returnMsg);
-      showSuccessMsg(returnMsg);
-    });
-  }
-  dispatch(action.assign({visible: false}));
+// 申请
+const onOkActionCreator = () => async (dispatch, getState) => {
+  const {items} = getSelfState(getState());
+  const checkList = items.filter(o=> o.checked);
+  if(!checkList.length) return showError('请勾选一条数据！');
+  execWithLoading(async () => {
+    const list = checkList.map(o => convert(o));
+    const params = {list};
+    const { returnCode, result, returnMsg } = await fetchJson(URL_ADD_APPLY, postOption(params));
+    if(returnCode !== 0) return showError(returnMsg);
+    showSuccessMsg(returnMsg);
+    dispatch(action.assign({visible: false}));
+  });
 };
 
 const buttons = {
@@ -102,7 +100,7 @@ const actionCreators = {
   onSearch: formSearchActionCreator,
   onPageNumberChange: pageNumberActionCreator,
   onPageSizeChange: pageSizeActionCreator,
-  footerBtnClick: createBillActionCreator
+  onOk: onOkActionCreator
 };
 
 const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(AddDialog));
@@ -111,7 +109,4 @@ export default async (params) => {
   const payload = buildAddDialogState(list, params);
   global.store.dispatch(action.create(payload));
   await showPopup(Container, {status: 'page'}, true);
-  const state = getSelfState(global.store.getState());
-  global.store.dispatch(action.create({}));
-  return state.okResult;
 }

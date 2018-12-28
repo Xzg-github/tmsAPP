@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Total.less';
-import {Card, Control} from '../../../../../components';
+import {Indent, Control} from '../../../../../components';
 
 // const calTotal = (items) => {
 //   return items.reduce((result, item) => {
@@ -112,7 +112,7 @@ class Total extends React.Component {
   render () {
     const {label, net, tax} = calTotalByCompany(this.props.items);
     return (
-      <Card className={s.root} role='total'>
+      <Indent className={s.root} role='total'>
         {this.totalHead()}
         <table>
           <tbody>
@@ -120,7 +120,7 @@ class Total extends React.Component {
             {this.totalRow(label, net, '净价总额')}
           </tbody>
         </table>
-      </Card>
+      </Indent>
     )
   }
 }

@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditPage.less';
-import {SuperTable, SuperTab2, Card, SuperToolbar} from '../../../../components';
+import {SuperTable, SuperTab2, Indent, SuperToolbar} from '../../../../components';
 import Total from '../../receiveMake/EditPage/Total/Total';
 import {createOrderInfo} from '../../receiveMake/EditPage/OrderInfoPage/OrderInfoPageContainer';
 
@@ -41,11 +41,11 @@ class EditPage extends React.Component {
 
   toCostInfo = () => {
     return (
-      <Card>
+      <Indent>
         {this.toTotal()}
         {this.toToolbar()}
         {this.toTable()}
-      </Card>
+      </Indent>
     )
   }
 
@@ -63,10 +63,10 @@ class EditPage extends React.Component {
 
   render() {
     return (
-      <Card className={s.root}>
-        {this.toSuperTab()}
+      <Indent className={s.root}>
+        <div className={s.marginBottom}>{this.toSuperTab()}</div>
         {this.toTabContent()}
-      </Card>
+      </Indent>
     );
   }
 }
