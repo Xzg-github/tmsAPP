@@ -7,7 +7,6 @@ import { exportExcelFunc, commonExport } from '../../../../common/exportExcelSet
 import {search2} from '../../../../common/search';
 import showAddDialog from './AddDialog/AddDialogContainer';
 import {showOutputDialog} from '../../../../components/ModeOutput/ModeOutput';
-import execWithLoading from '../../../../standard-business/execWithLoading';
 
 const STATE_PATH = ['receiveBill'];
 const action = new Action(STATE_PATH);
@@ -39,11 +38,9 @@ const searchActionCreator = async (dispatch, getState) => {
 const resetActionCreator = action.assign({searchData: {}});
 
 const addActionCreator = async (dispatch, getState) => {
-  execWithLoading(async () => {
-    const {addConfig} = getSelfState(getState());
-    showAddDialog(addConfig);
-    searchActionCreator(dispatch, getState);
-  });
+  const {addConfig} = getSelfState(getState());
+  const flag = await showAddDialog(addConfig);
+  flag && (await searchActionCreator(dispatch, getState));
 };
 
 const setReadonlyTables = (tables=[]) => {
@@ -125,7 +122,7 @@ const outputActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkList = tableItems.filter(o=> o.checked);
   if(!checkList.length) return showError('请勾选一条数据！');
-  showOutputDialog(checkList, 'receivable_invoice');
+  showOutputDialog(checkList, 'receivable_pay');
 };
 
 // 查询导出

@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import {EnhanceLoading} from '../../../../../components/Enhance';
 import AddDialog from './AddDialog';
 import {postOption, showError, showSuccessMsg, getJsonResult, convert, fuzzySearchEx, fetchJson}from '../../../../../common/common';
 import {Action} from '../../../../../action-reducer/action';
@@ -53,13 +52,12 @@ const createBillActionCreator = (buildType) => async (dispatch, getState) => {
     const {items} = getSelfState(getState());
     const checkList = items.filter(o=> o.checked);
     if(!checkList.length) return showError('请勾选一条数据！');
-    execWithLoading(async () => {
       const transportOrderIdList = checkList.map(o => o.id);
       const params = {opType: buildType, transportOrderIdList};
       const { returnCode, result, returnMsg } = await fetchJson(URL_CREATE_BILL, postOption(params));
       if(returnCode !== 0) return showError(returnMsg);
       showSuccessMsg(returnMsg);
-    });
+      dispatch(action.assign({okResult: true}));
   }
   dispatch(action.assign({visible: false}));
 };
@@ -105,12 +103,14 @@ const actionCreators = {
   footerBtnClick: createBillActionCreator
 };
 
-const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(AddDialog));
+const Container = connect(mapStateToProps, actionCreators)(AddDialog);
 export default async (params) => {
-  const list = getJsonResult(await search(URL_LIST, 0, params.pageSize, {}, false));
-  const payload = buildAddDialogState(list, params);
-  global.store.dispatch(action.create(payload));
-  await showPopup(Container, {status: 'page'}, true);
+  execWithLoading (async () => {
+    const list = getJsonResult(await search(URL_LIST, 0, params.pageSize, {}, false));
+    const payload = buildAddDialogState(list, params);
+    global.store.dispatch(action.create(payload));
+  });
+  await showPopup(Container, {}, true);
   const state = getSelfState(global.store.getState());
   global.store.dispatch(action.create({}));
   return state.okResult;

@@ -7,7 +7,7 @@ import ConfirmDialog from '../../../../components/ConfirmDialog';
 
 const TOOLBAR_EVENTS = ['onClick']; // 工具栏点击事件
 
-const props = {
+/*const props = {
   tableCols: PropTypes.array,
   buttons: PropTypes.array,
   buttons1: PropTypes.array,
@@ -21,11 +21,11 @@ const props = {
   onChange: PropTypes.func,
   onSearch: PropTypes.func,
   onExitValid: PropTypes.func,
-};
+};*/
 
 class NewModel extends React.Component {
-  static propTypes = props;
-  static PROPS = Object.keys(props);
+  /*static propTypes = props;
+  static PROPS = Object.keys(props);*/
   state = {
     value: '',
     showConfirm: false,
@@ -82,7 +82,7 @@ class NewModel extends React.Component {
 
   toToolbar = (buttons) => {
     const props = { buttons, size: 'default', callback: getObject(this.props, TOOLBAR_EVENTS) };
-    return <div style = {{marginTop: '30px', marginBottom: '30px', textAlign: 'center'}}><SuperToolbar {...props} /></div>;
+    return <div style = {{marginTop: '20px', marginBottom: '20px', textAlign: 'center'}}><SuperToolbar {...props} /></div>;
   };
 
   toTab = () => {
@@ -113,8 +113,23 @@ class NewModel extends React.Component {
     return <ConfirmDialog {...props} />
   };
 
+  toShowButton = (buttons) => {
+    const {value} = this.props;
+    const props = { buttons, size: 'default', callback: getObject(this.props, TOOLBAR_EVENTS) };
+    if(value.url){
+      return(
+        <div style = {{marginTop: '10px'}}>
+          <Title title="上传模板信息" />
+          <div style = {{marginTop: '6px',marginLeft: '6px', textAlign: 'left'}}>
+            <SuperToolbar {...props} />
+          </div>
+        </div>
+      )
+    }
+  };
+
   render() {
-    const { tableCols, buttons, buttons1, state, CURRNT_TABLE_CODE} = this.props;
+    const { tableCols, buttons, buttons1,buttons2, state, CURRNT_TABLE_CODE} = this.props;
     const { onContentChange: onContentChange, onCheck } = getObject(this.props, ['onContentChange', 'onCheck']);
     const events1 = { onContentChange, onCheck };
     return (
@@ -127,6 +142,7 @@ class NewModel extends React.Component {
           {this.toForm1()}
           {this.toSuperToolbar(buttons)}
           {this.toTable(tableCols, state[CURRNT_TABLE_CODE].mapperList, events1)}
+          {this.toShowButton(buttons2)}
           {this.toToolbar(buttons1)}
         </Card>
         {this.toUploadFile(this.props)}

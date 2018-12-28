@@ -12,6 +12,7 @@ const URL_OPTIONS = '/api/basic/excelConfigLib/options';
 const URL_MODEL_TYPE = '/api/basic/excelConfigLib/tenantModelType';
 const URL_MODEL_TYPE_ADD = '/api/basic/excelConfigLib/add';
 const URL_UPLOAD_EXCEL = '/api/proxy/integration_service/excelModel/importExcelContent';
+const URL_EXCEL_MODEL= '/api/basic/excelConfigLib/selectExcelModel';
 
 const STATE_PATH = ['basic','excelConfigLib','edit'];
 const PARENT_STATE_PATH = ['basic','excelConfigLib'];
@@ -25,6 +26,8 @@ const getSelfState = (rootState) => {
 const getParentState = (rootState) => {
   return getPathValue(rootState, PARENT_STATE_PATH);
 };
+
+const actionParent = new Action(PARENT_STATE_PATH);
 
 // 关闭编辑页
 const cancelAction = (dispatch, getState) => {
@@ -98,19 +101,6 @@ const changeActionCreator = (key, values) => async(dispatch, getState) => {
     dispatch(action.assign({state, controls1, content: result.content, CURRNT_TABLE_CODE, tabs: newTabs}));
   }
   if (controls1.map(item=>item.key).includes(key)) {
-    value[CURRNT_TABLE_CODE] = value[CURRNT_TABLE_CODE] || {};
-    if(key === 'sheetName'){
-      const {tabs, content} = getSelfState(getState());
-      for(let i = 0; i < tabs.length; i ++){
-        if(CURRNT_TABLE_CODE === tabs[i].key){
-          tabs[i].title = values;   //输入框与对应的Tab组件的Title进行联动
-        }
-        if(!tabs[i].title){
-          tabs[i].title = content.table[0].tableTitle.split(',')[i];  //输入框为空时，Title为之前默认
-        }
-      }
-      dispatch(action.assign(tabs))
-    }
     dispatch(action.assign({[key]: values}, ['state', CURRNT_TABLE_CODE]));
   }else {
     dispatch(action.assign({[key]: values}, 'value'));
@@ -126,6 +116,33 @@ const uploadActionCreator = (dispatch, getState) => {
 // 弹出框关闭
 const onCancel1ActionCreator = () => (dispatch, getState) => {
   dispatch(action.assign({ visible1: false }));
+};
+
+//刷新页面
+const updatePage = (guid) => async (dispatch, getState) => {
+  showSuccessMsg('保存成功');
+  const selfState = getSelfState(getState());
+  const {returnCode, result, returnMsg} = await fetchJson(`${URL_EXCEL_MODEL}/${guid}`);
+  if (returnCode !== 0) {
+    return showError(`刷新页面数据失败-${returnMsg}`);
+  }
+  const state = result.sheetList.reduce((result, item) => {
+    const key = Object.keys(item)[0];
+    result[key] = item[key];
+    return result;
+  }, {});
+  const buttons1 = [
+    { key: "cancel", title: '关闭'},
+    { key: 'upload', title: '上传模板'},
+    { key: 'save', title: '保存', bsStyle: 'primary'},
+  ];
+  const newControls = selfState.controls[0].type = 'readonly';
+  dispatch(action.assign({value:result, edit: true, state, newControls, buttons1}));
+  selfState.tabs.map(tab => {
+    dispatch(action.assign({items: result[tab.key] || []}, tab.key));
+  });
+  const {activeKey} = getPathValue(getState(), PARENT_STATE_PATH);
+  dispatch(actionParent.update({title: result.modelName}, 'tabs', {key: 'key', value: activeKey}));
 };
 
 //保存
@@ -155,19 +172,17 @@ const saveAction = async (dispatch, getState) => {
     uniqueTitle: value.uniqueTitle ? value.uniqueTitle.title : '',
     sheetList: fieldList,
   };
-  const res = await fetchJson(edit? URL_EDIT : URL_INSERT_EXCEL, postOption(postData, 'post'));
-  if (res.returnCode !== 0) {
-    showError(res.returnMsg);
+  const {result, returnCode, returnMsg} = await fetchJson(edit? URL_EDIT : URL_INSERT_EXCEL, postOption(postData, 'post'));
+  if (returnCode !== 0) {
+    showError(returnMsg);
     return;
   }
-  showSuccessMsg(res.returnMsg);
-  const { activeKey, tabs } = getParentState(getState());
-  const newTabs = tabs.filter(tab => tab.key !== activeKey);
-  dispatch(action.assignParent({ tabs: newTabs, [activeKey]: undefined,activeKey: 'index'}));
-  return updateTable(dispatch, getState);
+  updatePage(result.id)(dispatch, getState);
+  updateTable(dispatch, getState);
 };
 
-const onUploadAction = async (dispatch, getState, action, STATE_PATH, URL_EXCEL, URL_UPLOAD_EXCEL, file) => {
+// 上传
+const onUploadActionCreator = (file) => async (dispatch, getState) => {
   const { value } = getSelfState(getState());
   const formData = new FormData();
   formData.append('file', file);
@@ -187,7 +202,7 @@ const onUploadAction = async (dispatch, getState, action, STATE_PATH, URL_EXCEL,
         return;
       }
       returnMsg && showSuccessMsg(returnMsg);
-      dispatch(action.update({ checked: false }, 'tableItems', -1));
+      dispatch(actionParent.update({ checked: false }, 'tableItems', -1));
     };
     xhr.onabort = (event) => {
       showError('上传失败');
@@ -198,10 +213,6 @@ const onUploadAction = async (dispatch, getState, action, STATE_PATH, URL_EXCEL,
   } else {
     showError('Your browser does not support XMLHTTP.');
   }
-};
-// 上传
-const onUploadActionCreator = (file) => async (dispatch, getState) => {
-  onUploadAction(dispatch, getState, action, STATE_PATH, URL_EXCEL, URL_UPLOAD_EXCEL, file);
 };
 
 // 删除单元行
@@ -235,9 +246,38 @@ const loadActionCreator = async (dispatch, getState) => {
       });
     }
   }
-
   state[CURRNT_TABLE_CODE].mapperList =  state[CURRNT_TABLE_CODE].mapperList.concat(plus);
   dispatch(action.assign({ items:  state[CURRNT_TABLE_CODE].mapperList.concat(plus)}));
+};
+
+//清空列标题
+const emptyAction = (dispatch, getState) => {
+  const {state, CURRNT_TABLE_CODE} = getSelfState(getState());
+  let idList = [];
+  state[CURRNT_TABLE_CODE].mapperList.map((item) => {
+    if(item.checked){idList.push(item)}
+  });
+  if(idList.length === 0){
+    showError('请勾选要删除的记录');
+    return;
+  }
+  const newTable = idList.map( item => {
+    return Object.assign(item, {columnTitle: ''});
+  });
+  dispatch(action.assign({items: newTable}))
+};
+
+//下载模板
+const importAction = async (dispatch, getState) => {
+  const {value} = getSelfState(getState());
+  const id = value.id;
+  const url = '/api/config/modeinput/down';
+  const {result, returnCode} = await fetchJson(`${url}?id=${id}`);
+  if(returnCode !== 0) {
+    showError('没有可下载的模板，请先上传');
+    return;
+  }
+  window.open(`/api/proxy/file-center-service/${result}`);
 };
 
 const toolbarActions = {
@@ -245,7 +285,9 @@ const toolbarActions = {
   save: saveAction,
   delete: delAction,
   load: loadActionCreator,
-  cancel: cancelAction
+  cancel: cancelAction,
+  empty: emptyAction,
+  import: importAction
 };
 
 const clickActionCreator = (key) => {

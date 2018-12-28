@@ -20,7 +20,7 @@ api.use('/receive_monthly_bill', receiveMonthlyBill);
 api.use('/receiveApply', receiveApply);
 api.use('/payMake', payMake);
 api.use('/pay_change', payChange);
-api.use('/pay_bill', payBill);
+api.use('/payBill', payBill);
 api.use('/pay_monthly_bill', payMonthlyBill);
 api.use('/audit', audit);
 api.use('/extraApply', extraApply);
