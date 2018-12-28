@@ -96,7 +96,7 @@ class OrderPage extends React.Component {
 
   toTable = () => {
     const {tableCols, tableItems, sortInfo, filterInfo, buttons,hasUnreadTable} = this.props;
-    const extra = buttons.length ? 0 : -45;
+    const extra = buttons.length ? 0 : -33;
     const props = {
       hasUnreadTable,
       sortInfo,

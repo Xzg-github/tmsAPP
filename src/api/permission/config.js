@@ -67,7 +67,6 @@ const pay_mgr = [
 const bill = [
   {key: 'receive', children: receive_mgr},  // 应收管理
   {key: 'pay', children: pay_mgr},  // 应付管理
-  {key: 'audit'},                   // 费用整审
   {key: 'extra_apply'},             // 额外费用申请
   {key: 'append'},                  // 运单补录
 ];
