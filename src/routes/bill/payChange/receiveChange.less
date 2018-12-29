@@ -2,7 +2,6 @@
 
 .root {
   position: relative;
-  padding-top: @padding-vertical;
 
   > div{
     margin: 0 @padding-horizontal;
@@ -10,16 +9,17 @@
   }
 
   :global(.ant-table-wrapper) {
-    margin-top: @padding-vertical;
+    margin-top: @padding-vertical-sm;
     margin-bottom: @padding-vertical;
   }
 
-  .title {
-    margin: 10px 0 5px 0;
+  .form {
+    margin-top: @padding-vertical !important;
+    margin-bottom: @padding-vertical !important;
   }
 
   .tableInfo {
-    margin-left: 15px;
+    margin-top: 15px;
   }
 
   .footer {

@@ -1,7 +1,7 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './SystemConfig.less';
-import {Title, SuperToolbar, Card} from '../../../components';
+import {Title, SuperToolbar, Indent} from '../../../components';
 import {Checkbox} from 'antd';
 const CheckboxGroup = Checkbox.Group;
 
@@ -21,10 +21,10 @@ class SystemConfig extends React.Component {
     const {buttons, sections, onClick} = this.props;
     return (
       <div className={s.root}>
-        <Card>
+        <Indent>
           {sections.map(this.toSection)}
           <SuperToolbar buttons={buttons} onClick={onClick} size='default'/>
-        </Card>
+        </Indent>
       </div>
     );
   };

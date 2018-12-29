@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Card, SuperTable, SuperToolbar, Search, ModalWithDrag, Title, SuperPagination} from '../../../../../components';
+import { Indent, SuperTable, SuperToolbar, Search, ModalWithDrag, Title, SuperPagination} from '../../../../../components';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from '../../EditPage/EditPage.less';
 
@@ -30,33 +30,24 @@ class AddDialog extends React.Component {
       maxHeight: "400px",
       callback: {onCheck}
     };
-    return (<div>
-      <Title className={s.superTitle} title={tableTitle}/>
-      <SuperTable {...props}/>
-      <SuperPagination style={{marginTop: '15px'}} {...this.props}/>
+    return (<div className={s.marginTop}>
+      <Title title={tableTitle}/>
+      <div className={s.margin}><SuperTable {...props}/></div>
+      <SuperPagination {...this.props}/>
     </div>)
   }
 
-  toFooter = () => {
-    const {buttons, footerBtnClick} = this.props;
-    const props = {
-      size: 'large',
-      buttons,
-      onClick: footerBtnClick
-    };
-    return <SuperToolbar {...props}/>
-  }
-
   getProps = () => {
-    const {title, afterClose, visible} = this.props;
+    const {title, afterClose, visible, okText, onOk} = this.props;
     return {
       title,
       visible,
       width: 1000,
       maskClosable: false,
       confirmLoading: false,
+      onOk,
       onCancel: afterClose,
-      footer: this.toFooter(),
+      okText,
       afterClose
     }
   }
@@ -64,10 +55,10 @@ class AddDialog extends React.Component {
   render() {
     return (
       <ModalWithDrag {...this.getProps()}>
-        <Card>
+        <Indent>
           {this.toSearch()}
           {this.toTable()}
-        </Card>
+        </Indent>
       </ModalWithDrag>
     )
   }

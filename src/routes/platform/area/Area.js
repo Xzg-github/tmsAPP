@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Area.less';
-import {SuperTab2, SuperTable, SuperTab, Card, Search} from '../../../components/index';
+import {SuperTab2, SuperTable, SuperTab, Search, Indent} from '../../../components/index';
 import DistrictContainer from './DistrictContainer';
 import {Tree} from 'antd';
 const TreeNode = Tree.TreeNode;
@@ -39,7 +39,7 @@ class Area extends React.Component {
       items:this.props.indexTableItems || [],
       checkbox: false,
       index: false,
-      maxHeight: `calc(100vh - 160px)`,
+      maxHeight: `calc(100vh - 238px)`,
       callback: {
         onLink: this.props.onLink
       }
@@ -81,30 +81,30 @@ class Area extends React.Component {
       onSelect
     };
     return (
-      <Card noPadding>
+      <div role='tree'>
         <Tree {...props}>
           {this.renderTreeNodes(this.props.treeData)}
         </Tree>
-      </Card>
+      </div>
     );
   };
 
   toTabContent = () => {
     const {indexActiveKey = 'tree'} = this.props;
     return indexActiveKey === 'tree' ? this.toTree() : (
-      <Card noPadding>
+      <div role='search'>
         <Search {...this.getSearchProps2()} />
         <SuperTable {...this.getIndexTableProps()} />
-      </Card>
+      </div>
     )
   };
 
   left = () => {
     return (
-      <div>
+      <Indent>
         <SuperTab {...this.getTabProps()} />
         {this.toTabContent()}
-      </div>
+      </Indent>
     );
   };
 
@@ -118,10 +118,10 @@ class Area extends React.Component {
   right = () => {
     const {activeKey, tabs, onTabChange} = this.props;
     return (
-      <Card>
+      <Indent>
         <SuperTab2 tabs={tabs} activeKey={activeKey} callback={{onTabChange}} />
         {this.toPage(activeKey)}
-      </Card>
+      </Indent>
     );
   };
 

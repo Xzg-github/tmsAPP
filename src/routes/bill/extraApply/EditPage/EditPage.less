@@ -1,0 +1,35 @@
+@import '../../../../components/variables.less';
+
+.root {
+  margin: @padding-vertical @padding-horizontal;
+  height: ~'calc(100% - 40px)';
+
+  :global(.pld-card) {
+    margin: 0;
+  }
+
+  > :last-child {
+    overflow: auto;
+
+    > *:not(:last-child) {
+      margin-bottom: @padding-vertical;
+    }
+
+  }
+}
+.contenItemBox{
+  margin-bottom: 15px;
+}
+.superTitle{
+  margin-bottom: 5px;
+}
+.footer{
+  text-align: center;
+  margin-top: 20px;
+  button {
+    margin: 0 10px;
+  }
+}
+.important{
+  color: orangered;
+}

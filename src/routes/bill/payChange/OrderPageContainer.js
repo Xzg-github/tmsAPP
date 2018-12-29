@@ -81,7 +81,7 @@ const revokeActionCreator = async (dispatch, getState) => {
     item.checked && item.statusType === 'status_submit_completed' && result.push(item.id);
     return result;
   }, []);
-  if (idList.length === tableItems.filter(item => item.checked).length) {
+  if (idList.length && idList.length === tableItems.filter(item => item.checked).length) {
     const {returnCode, returnMsg} = await fetchJson(URL_REVOKE, postOption(idList));
     return returnCode === 0 ? updateTable(dispatch, getState) : showError(returnMsg);
   }else {

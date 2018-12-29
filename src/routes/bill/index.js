@@ -14,7 +14,6 @@ const children = [
   require('./payChange').default,
   require('./payBill').default,
   require('./payMonthlyBill').default,
-  require('./audit').default,
   require('./extraApply').default,
   require('./append').default,
 ];

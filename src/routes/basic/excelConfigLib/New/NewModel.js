@@ -136,7 +136,6 @@ class NewModel extends React.Component {
       <div>
         <div style={{marginLeft: '15px', marginRight: '15px', marginBottom: '15px'}}><Title title= '基本信息' /></div>
            <Indent>{this.toForm()}</Indent>
-        <div style={{margin: '15px'}}><Title title= 'Excel模板信息' /></div>
         <Indent>
           {this.toTab()}
           {this.toForm1()}

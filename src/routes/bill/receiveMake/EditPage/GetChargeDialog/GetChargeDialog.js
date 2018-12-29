@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Card, SuperTable, ModalWithDrag} from '../../../../../components';
+import { Indent, SuperTable, ModalWithDrag} from '../../../../../components';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './GetChargeDialog.less';
 import showPopup from '../../../../../standard-business/showPopup';
@@ -64,9 +64,7 @@ class GetChargeDialog extends React.Component {
   render() {
     return (
       <ModalWithDrag {...this.getProps()}>
-        <Card>
-          {this.toTable()}
-        </Card>
+        <Indent>{this.toTable()}</Indent>
       </ModalWithDrag>
     )
   }
