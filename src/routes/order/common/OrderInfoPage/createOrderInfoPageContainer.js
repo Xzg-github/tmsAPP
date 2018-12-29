@@ -6,9 +6,6 @@ import {fetchAllDictionary, setDictionary2} from "../../../../common/dictionary"
 import helper from "../../../../common/common";
 import { showAddCustomerFactoryDialog } from '../../../config/customerFactory/EditDialogContainer';
 import showAddCustomerContactDialog from '../../../config/customerContact/EditDialogContainer';
-import { Action } from '../../../../action-reducer/action';
-
-const layoutAction = new Action(['layout']);
 
 /**
  * 功能：生成一个运单基本信息页面容器组件
@@ -101,9 +98,9 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     }else {
       dispatch(action.create(state));
       if (helper.getRouteKey() === 'input') {
-        let [...pageTitle] = getState().layout.pageTitles.input;
+        let [...pageTitle] = helper.getPageTitle();
         pageTitle.push('新增');
-        dispatch(layoutAction.assign({input: pageTitle}, 'pageTitles'));
+        helper.setPageTitle(pageTitle);
       }
     }
   };
@@ -452,10 +449,10 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
         dispatch(action.assign({id: result.id}, 'baseInfo'));
       }else { //新增运单
         dispatch(action.assign({id: result}, 'baseInfo'));
-        let [...pageTitle] = getState().layout.pageTitles.input;
+        let [...pageTitle] = helper.getPageTitle();
         pageTitle.pop();
         pageTitle.push('编辑');
-        dispatch(layoutAction.assign({input: pageTitle}, 'pageTitles'));
+        helper.setPageTitle(pageTitle);
       }
       dispatch(action.update({type: 'readonly'}, ['formSections', 'baseInfo', 'controls'], {key: 'key', value: 'customerId'}));
     }
@@ -595,10 +592,10 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       activeKey: 'addressList'
     }));
     dispatch(action.update({type: 'search'}, ['formSections', 'baseInfo', 'controls'], {key: 'key', value: 'customerId'}));
-    let [...pageTitle] = getState().layout.pageTitles.input;
+    let [...pageTitle] = helper.getPageTitle();
     pageTitle.pop();
     pageTitle.push('新增');
-    dispatch(layoutAction.assign({input: pageTitle}, 'pageTitles'));
+    helper.setPageTitle(pageTitle);
   };
 
   const buttons = {
