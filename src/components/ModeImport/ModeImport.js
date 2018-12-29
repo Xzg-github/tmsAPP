@@ -34,7 +34,7 @@ class ModeImport extends React.Component {
       msg: '',
       fileList: [],
       uploading: false,
-      modeValue: undefined,
+      modeValue: props.modeValue,
       modeNameStatus: undefined,
       isOk: false,
       percent: 0
