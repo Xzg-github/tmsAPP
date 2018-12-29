@@ -23,7 +23,7 @@ class EditPage extends React.Component {
     const buttons = isPay ? payButtons : receiveButtons;
     const title = isPay ? '应付信息' : '应收信息';
     const props = {title, buttons, onClick, readonly: isReadonly};
-    return <SuperTitle {...props}/>
+    return <div className={s.titleBg}><SuperTitle {...props}/></div>
   }
 
   toTable = (isPay) => {

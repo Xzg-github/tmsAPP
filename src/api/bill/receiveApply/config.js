@@ -8,7 +8,7 @@ const filters = [
   {key: 'customerId', title: '结算单位', type: 'search', searchType: 'customer_all'},
   {key: 'receivableInvoiceNumber', title: '发票号', type: 'text'},
   {key: 'billNumber', title: '账单号', type: 'text'},
-  {key: 'receivableInvoiceSysnumber', title: '发票申请号', type: 'text'},
+  {key: 'receivableInvoiceSysNumber', title: '发票申请号', type: 'text'},
   {key: 'receivableInvoiceCode', title: '发票代码', type: 'text'},
   {key: 'invoiceTimeFrom', title: '发票日期', type: 'date'},
   {key: 'invoiceTimeTo', title: '至', type: 'date'},
@@ -32,7 +32,7 @@ const buttons = [
 ];
 
 const tableCols = [
-  {key: 'receivableInvoiceSysnumber', title: '发票申请号', link: true},
+  {key: 'receivableInvoiceSysNumber', title: '发票申请号', link: true},
   {key: 'statusType', title: '状态', dictionary: name.STATUS_TYPE},
   {key: 'orderNumber', title: '运单号'},
   {key: 'customerDelegateCode', title: '客户委托号'},
@@ -107,17 +107,27 @@ const controls = [
 
 const invoiceInfoConfig = {
   cols: [
-    {key: 'goodsName', title: '货物名称', type: 'textarea', props: {prefix: '金额合计：', colSpan: 1, align: 'right'}},
-    {key: 'chargeName', title: '费用项', type: 'textarea', props: {colSpan: 7, align: 'left', select: true}},
-    {key: 'price', title: '单价', type: 'number', props: {precision: 2, disabled: true, colSpan: 1}},
-    {key: 'itemCount', title: '数量', type: 'number', props: {disabled: true}},
-    {key: 'tax', title: '税率', type: 'number'},
-    {key: 'taxAmount', title: '税额', type: 'number', props: {disabled: true}},
-    {key: 'netAmount', title: '净额', type: 'number', props: {disabled: true}},
-    {key: 'currency', title: '折算币种）', type: 'text', props: {disabled: true}},
-    {key: 'exchangeCurrency', title: '开票币种', type: 'text', props: {disabled: true}},
-    {key: 'exchangeAmount', title: '折算金额', type: 'number', props: {prefix: '合计：', colSpan: 1, align: 'right'}},
-    {key: 'remark', title: '备注', type: 'textarea', props: {colSpan: 1, addonBefore: '￥', align: 'left'}}
+    {key: 'goodsName', title: '货物名称', type: 'textarea',
+      otherProps: {prefix: '金额合计：', colSpan: 1, align: 'right'}},
+    {key: 'chargeName', title: '费用项', type: 'textarea',
+      otherProps: {colSpan: 8, align: 'left', select: true}},
+    {key: 'price', title: '单价', type: 'number', props: {real: true, precision: 2},
+      otherProps: {disabled: true}},
+    {key: 'itemCount', title: '数量', type: 'number',
+      otherProps: {disabled: true}},
+    {key: 'tax', title: '税率', type: 'number', props: {real: true, precision: 2}},
+    {key: 'taxAmount', title: '税额', type: 'number',
+      otherProps: {disabled: true}},
+    {key: 'netAmount', title: '净额', type: 'number',
+      otherProps: {disabled: true}},
+    {key: 'currency', title: '折算币种', type: 'text',
+      otherProps: {disabled: true}},
+    {key: 'exchangeCurrency', title: '开票币种', type: 'text',
+      otherProps: {disabled: true}},
+    {key: 'exchangeAmount', title: '折算金额', type: 'number', props: {real: true, precision: 2},
+      otherProps: {prefix: '合计：', colSpan: 1, align: 'right',}},
+    {key: 'remark', title: '备注', type: 'textarea', props: {real: true, precision: 2},
+      otherProps: {colSpan: 1, addonBefore: '￥', align: 'left', type: 'number',}}
   ]
 };
 
@@ -156,7 +166,6 @@ const costInfoConfig = {
       { key: 'incomeCode', title: '结算单号', type: 'text' },
       { key: 'logisticsOrderNumber', title: '物流订单号', type: 'text' }
     ],
-    tableTitle: '账单信息',
     cols: [
       {key: 'checked', title: '', type: 'checkbox'},
       {key: 'customerId', title: '结算单位', type: 'text'},
@@ -172,7 +181,7 @@ const costInfoConfig = {
   changeRateDialogConfig: {
     title: '变更开票汇率',
     cols: [
-      {key: 'currencyTypeCode', title: '币种', type: 'readonly'},
+      {key: 'currency', title: '币种', type: 'readonly'},
       {key: 'invoiceExchangeRate', title: '开票汇率', type: 'text' }
     ]
   }
@@ -198,13 +207,12 @@ const editConfig = {
 const addDialogConfig = {
   title: '发票申请',
   filters: [
-    {key: 'orderNumber', title: '运单号', type: 'text'},
-    {key: 'customerDelegateCode', title: '客户委托号', type: 'text'},
     {key: 'customerId', title: '结算单位', type: 'search', searchType: 'customer_all', required: true},
+    {key: 'tax', title: '税率', type: 'number', required: true},
+    {key: 'orderNumber', title: '运单号', type: 'text'},
     {key: 'billNumber', title: '账单号', type: 'text'},
-    {key: 'tax', title: '税率', type: 'number', required: true}
+    {key: 'customerDelegateCode', title: '客户委托号', type: 'text'}
   ],
-  tableTitle: '账单信息',
   cols: [
     {key: 'billNumber', title: '账单号'},
     {key: 'orderNumber', title: '运单号'},

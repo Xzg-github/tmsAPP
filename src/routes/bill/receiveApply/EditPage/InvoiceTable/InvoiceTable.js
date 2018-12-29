@@ -3,6 +3,7 @@ import React, {PropTypes} from 'react';
 import {Table, Input, Select} from 'antd';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './InvoiceTable.less';
+import {NumberInput} from '../../../../../components';
 const InputGroup = Input.Group;
 const Option = Select.Option;
 
@@ -34,6 +35,15 @@ const toCapitalization = (num=0) => {
   return head + s.replace(/(零.)*零元/, '元').replace(/(零.)+/g, '零').replace(/^整$/, '零元整');
 }
 
+const getValue = (value='', type='text', precision=0) => {
+  switch (type) {
+    case 'number': {
+      return String(Number(value).toFixed(Number(precision)))
+    }
+    default: return value;
+  }
+}
+
 class InvoiceTable extends React.Component {
 
   static propTypes = {
@@ -45,20 +55,21 @@ class InvoiceTable extends React.Component {
 
   onChange = (key, index) => (e) => {
     const {onChange} = this.props;
-    onChange && onChange(key, e.target.value, index);
+    const value = typeof e === 'object' ? e.target.value : e;
+    onChange && onChange(key, value, index);
   }
 
-  onSelect = (value, option) => {
+  onSelect = (key, index) => (value, option) => {
     const {onSelect} = this.props;
-    onSelect && onSelect(value, option);
+    onSelect && onSelect(key, value, index);
   }
 
-  renderSelect = (value='') => {
+  renderSelect = (col, value='', index) => {
     const {currencyList=[], items} = this.props;
     const props = {
       defaultValue: value,
       className: s.select,
-      onSelect: this.onSelect
+      onSelect: this.onSelect(col.key, index)
     };
     const inputProps = {
       className: s.capital,
@@ -78,9 +89,11 @@ class InvoiceTable extends React.Component {
   }
 
   renderTotal = (col, value='', index) => {
-    const {colSpan=0, prefix='', addonBefore='', align='center', select} = col.props || {};
+    const {props={}, otherProps={}} = col;
+    const {colSpan=0, prefix='', addonBefore='', align='center', select, type} = otherProps;
     const inputProps = {
       addonBefore,
+      // value: getValue(`${prefix}${value}`, type, props.precision),
       value: `${prefix}${value}`,
       disabled: !select,
       onChange: this.onChange(col.key, index),
@@ -88,18 +101,20 @@ class InvoiceTable extends React.Component {
     };
     return {
       props: {colSpan},
-      children: select ? this.renderSelect(value) : <Input {...inputProps}/>
+      children: select ? this.renderSelect(col, value, index) : <Input {...inputProps}/>
     }
   }
 
   renderCell = (col, value, index) => {
-    const {key, title, type, props={}} = col;
-    const {disabled} = props;
+    const {key, title, type, props={}, otherProps={}} = col;
     const inputProps = {
-      key, title, type, value, disabled,
-      onChange: this.onChange(col.key, index)
+      key, title, type,
+      disabled: otherProps.disabled,
+      // value: getValue(value, type, props.precision),
+      value,
+      onChange: this.onChange(col.key, index),
     };
-    return <Input {...inputProps}/>
+    return type === 'number' ? <NumberInput {...{...inputProps, ...props}}/> : <Input {...inputProps}/>
   }
 
   getColumns = () => {
@@ -139,3 +154,5 @@ class InvoiceTable extends React.Component {
 }
 
 export default withStyles(s)(InvoiceTable);
+
+export {toCapitalization, getValue};

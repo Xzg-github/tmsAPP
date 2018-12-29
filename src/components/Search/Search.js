@@ -33,12 +33,14 @@ const ConfigType = {
  * key: 唯一标识一个表单元素
  * title：表单元素旁边的标题
  * type：表单元素的类型
+ * require: 是否必填的 * 展示
  * props：传递给表单元素的额外属性
  */
 const FilterType = {
   key: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   type: PropTypes.oneOf(TYPE).isRequired,
+  required: PropTypes.bool,
   options: PropTypes.array,
   props: PropTypes.object
 };
@@ -202,9 +204,12 @@ class Search extends React.Component {
 
   toCol = (span, control) => {
     const factor = control.span || 1;
+    const title = control.required ?
+      <span>{control.title}<span className={s.requiredMark}>*</span></span> :
+      <span>{control.title}</span>;
     return (
       <Col span={span * factor} key={control.key}>
-        <FormItem label={control.title}>
+        <FormItem label={title}>
           {this.toControl(control)}
         </FormItem>
       </Col>

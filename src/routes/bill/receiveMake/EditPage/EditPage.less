@@ -3,15 +3,11 @@
 .root {
   margin: @padding-vertical @padding-horizontal;
 
-  :global(.pld-card) {
-    margin: 0;
-  }
-
   > :last-child {
     overflow: auto;
 
     > *:not(:last-child) {
-      margin-bottom: @padding-vertical-sm;
+      margin-bottom: @padding-vertical;
     }
   }
 }
@@ -20,4 +16,7 @@
 }
 .marginBottom{
   margin-bottom: @padding-vertical !important;
+}
+.titleBg > div > div{
+  background: white;
 }

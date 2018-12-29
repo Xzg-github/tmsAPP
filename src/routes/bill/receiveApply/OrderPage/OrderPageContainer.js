@@ -41,7 +41,8 @@ const resetActionCreator = action.assign({searchData: {}});
 
 const addActionCreator = async (dispatch, getState) => {
   const {addDialogConfig} = getSelfState(getState());
-  showAddDialog(addDialogConfig);
+  const okResult = await showAddDialog(addDialogConfig);
+  okResult && searchActionCreator(dispatch, getState);
 };
 
 const setReadonly = (arr=[]) => {
@@ -60,7 +61,7 @@ const setReadonly = (arr=[]) => {
 // 弹出编辑页面
 const showEditPage = (dispatch, getState, item, readonly=false) => {
   const {tabs, editConfig} = getSelfState(getState());
-  const key = item['receivableInvoiceSysnumber'];
+  const key = item['receivableInvoiceSysNumber'];
   if (helper.isTabExist(tabs, key)) return dispatch(action.assign({activeKey: key}));
   const config = deepCopy(editConfig);
   if (readonly) {
@@ -107,6 +108,7 @@ const deleteActionCreator = async (dispatch, getState) => {
   const {returnCode, returnMsg, result} = await fetchJson(URL_DELETE, postOption(ids));
   if(returnCode !==0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
+  searchActionCreator(dispatch, getState);
 };
 
 // 提交
@@ -119,6 +121,7 @@ const commitActionCreator = async (dispatch, getState) => {
   const {returnCode, returnMsg, result} = await fetchJson(URL_COMMIT, postOption(ids));
   if(returnCode !==0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
+  searchActionCreator(dispatch, getState);
 };
 
 // 撤销
@@ -126,11 +129,12 @@ const revokeActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkList = tableItems.filter(o=> o.checked);
   if(checkList.length === 0) return showError('请勾选一条数据！');
-  if(checkList.find(o => o.statusType !== "status_handling_awaiting")) return showError('请选择待受理状态的数据！');
+  if(checkList.find(o => o.statusType !== "status_handling_completed")) return showError('请选择已受理状态的数据！');
   const ids = checkList.map(o => o.id);
   const {returnCode, returnMsg, result} = await fetchJson(URL_REVOKE, postOption(ids));
   if(returnCode !==0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
+  searchActionCreator(dispatch, getState);
 };
 
 // 受理
@@ -143,6 +147,7 @@ const acceptActionCreator = async (dispatch, getState) => {
   const {returnCode, returnMsg, result} = await fetchJson(URL_ACCEPT, postOption(ids));
   if(returnCode !==0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
+  searchActionCreator(dispatch, getState);
 };
 
 
@@ -156,6 +161,7 @@ const invoiceActionCreator = async (dispatch, getState) => {
   const {returnCode, returnMsg, result} = await fetchJson(URL_INVOICE, postOption(ids));
   if(returnCode !==0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
+  searchActionCreator(dispatch, getState);
 };
 
 // 输出

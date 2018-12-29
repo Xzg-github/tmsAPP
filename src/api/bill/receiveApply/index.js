@@ -13,116 +13,55 @@ api.get('/config', async (req, res) => {
 });
 
 api.post('/list', async (req, res) => {
-  const url = `${service}/receivable_bill/search`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: {data: [{
-    id: 1,
-    'receivableInvoiceSysnumber': '000001',
-    'orderNumber': '1111111',
-    'customerDelegateCode': '222222',
-    'customerId': {'value': 'b2b3f754-380e-4359-a45c-a803e00eb897', 'title': '云恋科技有限公司'},
-    'incomeTag': 0,
-    'statusType': 'status_draft',
-    'receivableBillAmount': 100,
-    'planPickupTime': '2018-12-12',
-    'customerDelegateTime': '2018-12-12'
-  },{
-    'receivableInvoiceSysnumber': '000002',
-    'orderNumber': '333333',
-    'customerDelegateCode': '44444',
-    'customerId': {'value': 'b2b3f754-380e-4359-a45c-a803e00eb897', 'title': '云恋科技有限公司'},
-    'incomeTag': 0,
-    'statusType': 'status_handling_awaiting',
-    'receivableBillAmount': 100,
-    'planPickupTime': '2018-12-12',
-    'customerDelegateTime': '2018-12-12'
-  },{
-    'receivableInvoiceSysnumber': '000003',
-    'orderNumber': '55555',
-    'customerDelegateCode': '6666',
-    'customerId': {'value': 'b2b3f754-380e-4359-a45c-a803e00eb897', 'title': '云恋科技有限公司'},
-    'incomeTag': 0,
-    'statusType': 'status_handling_completed',
-    'receivableBillAmount': 100,
-    'planPickupTime': '2018-12-12',
-    'customerDelegateTime': '2018-12-12'
-  }], returnTotalItem: 100}, returnMsg: 'Success'});
+  const url = `${service}/receivable_invoice/list/search`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
+// 获取可用新增开票列表
 api.post('/income_list', async(req, res) => {
-  const url = `${service}/receivable_bill/can_bill/search`;
-  // res.send(await fetchJsonByNode((req, url, postOption(req.body))));
-  res.send({returnCode: 0, result: {data: [{
-    'orderNumber': '1111111',
-    'customerDelegateCode': '222222',
-    'customerId': {'value': 'b2b3f754-380e-4359-a45c-a803e00eb897', 'title': '云恋科技有限公司'},
-    'incomeTag': 0,
-    'statusType': 'status_customer_order_completed',
-    'receivableBillAmount': 100,
-    'planPickupTime': '2018-12-12',
-    'customerDelegateTime': '2018-12-12'
-  }], returnTotalItem: 100}, returnMsg: 'Success'});
+  const url = `${service}/receivable_invoice/open/search`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
+// 新增
 api.post('/addApply', async(req, res) => {
-  const url = `${service}/receivable_bill/batch`;
-  // res.send(await fetchJsonByNode((req, url, postOption(req.body))));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  const url = `${service}/receivable_invoice/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
+// 删除
 api.post('/delete', async(req, res) => {
-  const url = `${service}/receivable_bill/batch`;
-  // res.send(await fetchJsonByNode((req, url, postOption(req.body, 'delete'))));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  const url = `${service}/receivable_invoice/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
 });
 
+// 提交
 api.post('/commit', async(req, res) => {
-  const url = `${service}/receivable_bill/check`;
-  // res.send(await fetchJsonByNode((req, url, postOption(req.body))));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  const url = `${service}/receivable_invoice/submit/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
+// 撤销
 api.post('/revoke', async(req, res) => {
-  const url = `${service}/receivable_bill/check`;
-  // res.send(await fetchJsonByNode((req, url, postOption(req.body))));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  const url = `${service}/receivable_invoice/cancel/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
+// 受理
 api.post('/accept', async(req, res) => {
-  const url = `${service}/receivable_bill/check`;
-  // res.send(await fetchJsonByNode((req, url, postOption(req.body))));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  const url = `${service}/receivable_invoice/confirm/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
+// 开票
 api.post('/invoice', async(req, res) => {
-  const url = `${service}/receivable_bill/check`;
-  // res.send(await fetchJsonByNode((req, url, postOption(req.body))));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  const url = `${service}/receivable_invoice/open_invoice/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
 api.get('/detail/:id', async (req, res) => {
-  const url = `${service}/receivable_bill/${req.params.id}`;
-  // res.send(await fetchJsonByNode(req, url));
-  res.send({returnCode: 0, result: {
-    invoiceInfo:  [{
-      goodsName: 'aaaa',
-      chargeName: 'aaaaa',
-      price: 1,
-      itemCount: 1,
-      tax: 1,
-      taxAmount: 1.11,
-      netAmount: 1.11,
-      currency: 'ERP',
-      exchangeCurrency: 'ERP',
-      exchangeAmount: 1.11,
-      remark: 'asas'
-    }],
-    currencyList: [
-      {title: 'ERP', value: 'ERP'},
-      {title: 'USD', value: 'USD'},
-      {title: 'CAD', value: 'CAD'}
-    ]
-  }, returnMsg: 'Success'});
+  const url = `${service}/receivable_invoice/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
 });
 
 // 开户行下拉
@@ -141,6 +80,7 @@ api.post('/receivable_openingBank', async(req, res) => {
   })});
 });
 
+// 发票抬头下拉
 api.post('/invoiceHeaderInfo', async(req, res) => {
   const url = `${archiver_service}/CustomerInvoiceRequestDto/listByRelationId`;
   const params = {
@@ -156,39 +96,52 @@ api.post('/invoiceHeaderInfo', async(req, res) => {
   })});
 });
 
-// 获取费用信息可加入列表
+// 获取折合币种及汇率
+api.get('/currencyRate/:currency', async (req, res) => {
+  const url = `${archiver_service}/currency_type_rate/exchange_currency_rates//${req.params.currency}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
+// 获取费用信息可加入列表(加载弹框时的默认请求)
+api.get('/joinListById/:id', async (req, res) => {
+  const url = `${service}/receivable_invoice/can_join/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
+// 获取费用信息可加入列表(点击搜索的请求)
 api.post('/joinList', async (req, res) => {
   const url = `${service}/receivable_invoice/can_join/search`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({"returnCode":0,"errorCode":"0","returnMsg":"操作成功","result": {
-    data: [{"id":741,"incomeCode":"org-R-171206-0008","customerId":{"value":"0f4bc6df-9ddd-47c9-8580-bc9cfb8edfd2","title":"沃尔玛"},"billNumber":"org-RDB-180628-0002","logisticsOrderNumber":"org-LO-171206-0011","chargeGuid":{"value":"f76ebd547c41464b9b979a223ae7515f","title":"运费test"},"price":234,"chargeMeasureUnitGuid":"charge_unit_158","chargeNum":234,"amount":54756,"currencyTypeCode":"CNY","exchangeRate":1,"tax":7,"taxAmount":3582.17,"netAmount":51173.83}], returnTotalItem: 100
-  }});
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 // 加入费用信息
 api.post('/joinDetail', async (req, res) => {
-  const url = `${service}/receivable_bill_charge/batch/${req.body.id}`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  const url = `${service}/receivable_invoice/join/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 // 移除费用信息
 api.post('/removeDetail', async (req, res) => {
-  const url = `${service}/receivable_bill_charge/batch/${req.body.id}`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  const url = `${service}/receivable_invoice/remove/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
+// 变更汇率
+api.post('/changeRate', async (req, res) => {
+  const url = `${service}/receivable_invoice/change_rate/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
+});
+
+// 保存
 api.post('/save', async (req, res) => {
-  const url = `${service}/receivable_bill_charge/batch/${req.body.id}`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+  const url = `${service}/receivable_invoice`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
-api.post('/send', async (req, res) => {
-  const url = `${service}/receivable_bill_charge/batch/${req.body.id}`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
+// 提交
+api.post('/submit', async (req, res) => {
+  const url = `${service}/receivable_invoice/submit`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
 

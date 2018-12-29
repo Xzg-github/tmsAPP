@@ -77,7 +77,7 @@ class Total extends React.Component {
       style: { width: 60 }
     };
     return (
-      <div>
+      <div className={s.grayBg}>
         <Control {...selectProps}/>
         {totalKeys.map(({key, title}, index) => {
           if (typeof totalValues[key] !== 'undefined') {
@@ -112,15 +112,17 @@ class Total extends React.Component {
   render () {
     const {label, net, tax} = calTotalByCompany(this.props.items);
     return (
-      <Indent className={s.root} role='total'>
+      <div className={s.root} role='total'>
         {this.totalHead()}
-        <table>
-          <tbody>
-            {this.totalRow(label, tax, '含税总额')}
-            {this.totalRow(label, net, '净价总额')}
-          </tbody>
-        </table>
-      </Indent>
+        <Indent>
+          <table>
+            <tbody>
+              {this.totalRow(label, tax, '含税总额')}
+              {this.totalRow(label, net, '净价总额')}
+            </tbody>
+          </table>
+        </Indent>
+      </div>
     )
   }
 }

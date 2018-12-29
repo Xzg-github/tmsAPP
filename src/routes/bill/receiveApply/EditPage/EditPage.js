@@ -33,11 +33,11 @@ class EditPage extends React.Component {
   }
 
   toInvoice = () => {
-    const {invoiceInfoConfig, value, activeKey, onInvoiceChange, onInvoiceSelect} = this.props;
+    const {invoiceInfoConfig, value, activeKey, currencyList=[], onInvoiceChange, onInvoiceSelect} = this.props;
     const props = {
       cols: invoiceInfoConfig.cols,
       items: value[activeKey],
-      currencyList: value['currencyList'],
+      currencyList,
       onChange: onInvoiceChange.bind(null, activeKey),
       onSelect: onInvoiceSelect.bind(null, activeKey)
     };

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Indent, SuperTable, SuperToolbar, Search, ModalWithDrag, Title, SuperPagination} from '../../../../../components';
+import { Indent, SuperTable, Search, ModalWithDrag, Title} from '../../../../../components';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from '../../EditPage/EditPage.less';
 
@@ -23,7 +23,7 @@ class AddDialog extends React.Component {
   }
 
   toTable = () => {
-    const {cols, items=[], onCheck, tableTitle} = this.props;
+    const {cols, items=[], onCheck} = this.props;
     const props = {
       cols,
       items,
@@ -31,9 +31,7 @@ class AddDialog extends React.Component {
       callback: {onCheck}
     };
     return (<div className={s.marginTop}>
-      <Title title={tableTitle}/>
       <div className={s.margin}><SuperTable {...props}/></div>
-      <SuperPagination {...this.props}/>
     </div>)
   }
 

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Indent, SuperTable, ModalWithDrag, Search, SuperTitle, SuperPagination} from '../../../../../components';
+import { Indent, SuperTable, ModalWithDrag, Search, SuperTitle} from '../../../../../components';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './JoinDialog.less';
 
@@ -26,9 +26,7 @@ class JoinDialog extends React.Component {
       callback: {onCheck}
     }
     return (<div className={s.table}>
-      <SuperTitle {...{title: tableTitle}}/>
       <SuperTable {...props}/>
-      <SuperPagination {...this.props}/>
     </div>)
   }
 

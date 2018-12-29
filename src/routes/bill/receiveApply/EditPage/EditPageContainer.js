@@ -9,6 +9,7 @@ import execWithLoading from '../../../../standard-business/execWithLoading';
 import {updateOne} from '../../../../action-reducer/array';
 import showAddInvoiceDialog from '../../../config/customerInvoice/EditDialogContainer';
 import showChangeRateDialog from './ChangeRateDialog/ChangeRateDialog';
+import {getValue} from './InvoiceTable/InvoiceTable';
 
 const PARENT_STATE_PATH = ['receiveApply'];
 const STATE_PATH = ['receiveApply', 'edit'];
@@ -17,9 +18,11 @@ const URL_DETAIL = '/api/bill/receiveApply/detail';
 const URL_JION = '/api/bill/receiveApply/joinDetail';
 const URL_REMOVE = '/api/bill/receiveApply/removeDetail';
 const URL_SAVE = '/api/bill/receiveApply/save';
-const URL_SEND = '/api/bill/receiveApply/send';
+const URL_SUBMIT = '/api/bill/receiveApply/submit';
 const URL_RECEIVABLE_OPENINGBANK = `/api/bill/receiveApply/receivable_openingBank`;
 const URL_HEADER_INDO = `/api/bill/receiveApply/invoiceHeaderInfo`;
+const URL_CHANGE_RATE = `/api/bill/receiveApply/changeRate`;
+const URL_CURRENCY_RATE = `/api/bill/receiveApply/currencyRate`;
 
 
 const getSelfState = (rootState) => {
@@ -68,25 +71,22 @@ const formSearchActionCreator = (KEY, key, filter, control) => async (dispatch, 
 const checkActionCreator = (KEY, isAll, checked, rowIndex) => action.update({checked}, ['value', KEY], rowIndex);
 
 const joinActionCreator = (KEY) => async (dispatch, getState) => {
-  const {value, costInfoConfig, id} = getSelfState(getState());
+  const {costInfoConfig, id} = getSelfState(getState());
   const okResult = await showJoinDialog({...costInfoConfig.joinDialogConfig, id});
   if (okResult) {
-    const params = {incomeDetailIdList: okResult, id};
-    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_JION, postOption(params));
+    const params = {chargeList: okResult, id};
+    const {returnCode, result=[], returnMsg} = await helper.fetchJson(URL_JION, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    const oldItems = value[KEY] || [];
-    const newItems = oldItems.concat(okResult);
-    dispatch(action.assign({[KEY]: newItems}, 'value'));
+    dispatch(action.assign({[KEY]: result}, 'value'));
   }
 };
 
 const removeActionCreator = (KEY) => async (dispatch, getState) =>  {
-  const {value, id} = getSelfState(getState());
+  const {value} = getSelfState(getState());
   const checkList = value[KEY].filter(item => item.checked);
   if (checkList.length === 0) return showError('请勾选一条数据！');
-  const params = {incomeDetailIdList: checkList, id};
-  const {returnCode, result, returnMsg} = await helper.fetchJson(URL_REMOVE, postOption(params));
+  const {returnCode, result, returnMsg} = await helper.fetchJson(URL_REMOVE, postOption(checkList.map(o => o.id)));
   if (returnCode !== 0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
   const notCheckList = value[KEY].filter(item => !item.checked);
@@ -100,19 +100,18 @@ const changeExchangeRateActionCreator  = (KEY) => async (dispatch, getState) => 
   if (checkList.length === 0) return showError('请勾选一条数据！');
   const items = checkList.reduce((res, o) => {
     if (!res.find(it => it.currencyTypeCode === o.currencyTypeCode)) {
-      res.push({
-        currencyTypeCode: o.currencyTypeCode,
-        invoiceExchangeRate: o.invoiceExchangeRate
-      });
+      res.push({...o});
     }
     return res;
   }, []);
-  const onOk = (data=[]) => {
+  const onOk = async (data=[]) => {
+    const params = {ids: checkList.map(o => o.id), currencyList: data};
+    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_CHANGE_RATE, postOption(params));
+    if (returnCode !== 0) return showError(returnMsg);
+    showSuccessMsg(returnMsg);
     const newTableItems = tableItems.map(o => {
       const item = data.find(it => it.currencyTypeCode === o.currencyTypeCode);
-      if (item) {
-        o.invoiceExchangeRate = item.invoiceExchangeRate;
-      }
+      item && (o.invoiceExchangeRate = item.invoiceExchangeRate);
       return o;
     });
     dispatch(action.assign({[KEY]: newTableItems}, 'value'));
@@ -135,7 +134,8 @@ const closeActionCreator = () => (dispatch, getState) => {
 const saveActionCreator = () => async (dispatch, getState) => {
   execWithLoading(async () => {
     const {value} = getSelfState(getState());
-    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SAVE, postOption(...convert(value)));
+    const params = {...convert(value)};
+    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SAVE, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
     closeActionCreator()(dispatch, getState);
@@ -145,7 +145,8 @@ const saveActionCreator = () => async (dispatch, getState) => {
 const commitActionCreator = () => async (dispatch, getState) => {
   execWithLoading(async () => {
     const {value} = getSelfState(getState());
-    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SEND, postOption(...convert(value)));
+    const params = {...convert(value)};
+    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SUBMIT, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
     closeActionCreator()(dispatch, getState);
@@ -187,12 +188,15 @@ const onInvoiceChange = (KEY, keyName, keyValue, index) => action.update({[keyNa
 
 // 发票表格币种下拉值变化
 const onInvoiceSelect = (KEY, keyName, keyValue, index) => async (dispatch, getState) => {
-  const {value} = getSelfState(getState());
+  dispatch(action.update({[keyName]: keyValue}, ['value', KEY], index));
+  const {value, currencyList} = getSelfState(getState());
   const {price=0, itemCount=0} = value[KEY][0];
-  const {tax=0, value: val} = keyValue;
-  const exchangeAmount = Number(price * itemCount * tax).toFixed(2);
-  dispatch(action.update({[keyName]: val}, ['value', KEY], index));
-  dispatch(action.update({tax: tax, exchangeAmount}, ['value', KEY], 0));
+  const currencyItem = currencyList.find(o => o.value = keyValue);
+  const amount = price * itemCount * currencyItem.exchangeRate;
+  dispatch(action.update({
+    exchangeCurrency: keyValue,
+    exchangeAmount: amount
+  }, ['value', KEY], 0));
 };
 
 const onTabChangeActionCreator = (activeKey) => action.assign({activeKey});
@@ -201,10 +205,18 @@ const exitValidActionCreator = (KEY) => action.assign({valid: KEY});
 
 const buildEditPageState = async (config, itemData) => {
   const detailData = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
+  const {chargeList, invoice={}} = detailData;
+  const invoiceInfo = helper.getObject(invoice, config.invoiceInfoConfig.cols.map(o => o.key));
+  const rateList = getJsonResult(await fetchJson(`${URL_CURRENCY_RATE}/${invoiceInfo['currency']}`));
   return {
     ...config,
     ...itemData,
-    value: {...detailData},
+    currencyList: rateList.map(o => ({value: o.currencyTypeCode, title: o.currencyTypeCode, exchangeRate: o.exchangeRate})),
+    value: {
+      ...invoice,
+      costInfo: chargeList,
+      invoiceInfo: [invoiceInfo]
+    },
     status: 'page'
   };
 };
