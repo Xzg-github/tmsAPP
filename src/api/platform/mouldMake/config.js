@@ -7,8 +7,13 @@ const filters = [
   {key: 'modelName', title: '模板名称', type: 'text'}
 ];
 
+const addMenu = [
+  {key: 'model_type_email', title: '邮件模板'},
+  {key: 'model_type_signature', title: '签名'},
+];
+
 const buttons = [
-  {key: 'add', title: '新增', bsStyle: 'primary', sign: 'mouldMake_add', children: [], dropDown: true},
+  {key: 'add', title: '新增', bsStyle: 'primary', sign: 'mouldMake_add', menu: addMenu, dropDown: true},
   {key: 'copy', title: '复制', sign: 'mouldMake_copy'},
   {key: 'edit', title: '编辑', sign: 'mouldMake_edit'},
   {key: 'del', title: '删除', sign: 'mouldMake_del'},

@@ -93,9 +93,9 @@ class Dialog extends React.Component {
         closable={false}
         title={this.props.dialogType === 'add' ? '新增' : '编辑'}
         footer={
-          <div style={{textAlign: 'center'}}>
-            <Button size='small' onClick={() => this.onCancel()}>取消</Button>
-            <Button size='small' type='primary' onClick={() => this.onOk()}>保存</Button>
+          <div style={{textAlign: 'right'}}>
+            <Button size='default' onClick={() => this.onCancel()}>取消</Button>
+            <Button size='default' type='primary' onClick={() => this.onOk()}>保存</Button>
           </div>
         }
       >

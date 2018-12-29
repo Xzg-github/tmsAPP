@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import OrderPage from '../../../basic/fromOddDefine/components/OrderPage/OrderPage';
+import OrderPage from '../tenantRuleTypes/OrderPage/OrderPage';
 import helper, {fetchJson, getObject, postOption, showError} from '../../../../common/common';
 import {Action} from '../../../../action-reducer/action';
 import {getPathValue} from '../../../../action-reducer/helper';

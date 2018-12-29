@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import OrderPage from './OrderPage';
+import OrderPage from '../../../components/OrderPage';
 import {getObject, swapItems, fetchJson, showError,  getActions, showSuccessMsg} from '../../../common/common';
 import {fetchDictionary2, setDictionary} from '../../../common/dictionary';
 import {toFormValue} from '../../../common/check';
@@ -69,11 +69,11 @@ export const buildState = async () => {
   setDictionary(emailControls, data.result);
   setDictionary(signatureControls, data.result);
 
-  buttons.map(item => {
+/*  buttons.map(item => {
     if (item.key === 'add') {
       item.menu = helper1.createKeys(data.result.model_type, [['key', 'value'], ['title', 'title']]);
     }
-  });
+  });*/
 
   res = await search(URL_LIST, 0, config.index.pageSize, {});
   if(res.returnCode !=0){
