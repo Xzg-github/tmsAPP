@@ -80,16 +80,17 @@ const getOpenKeys = (sidebars) => {
   }, {});
 };
 
-const getPageTitles = (sidebars) => {
+const getPageTitles = (navigation, sidebars) => {
   return Object.keys(sidebars).reduce((result, key) => {
     const sidebarArr = sidebars[key];
+    const {title=''} = navigation.filter(nav => nav.key === key).pop() || {};
     sidebarArr.map(sidebar => {
       if (sidebar.children) {
         sidebar.children.map(item => {
-          result[item.key] = [sidebar.title, item.title];
+          result[item.key] = [title, sidebar.title, item.title];
         });
       }else {
-        result[sidebar.key] = [sidebar.title];
+        result[sidebar.key] = [title, sidebar.title];
       }
     });
     return result;
@@ -107,7 +108,7 @@ const calculate = (privilege, actions={}) => {
   const sidebars = getSidebars(NAV_ITEMS_NEW, SIDEBARS_NEW, privilege);
   const navigation = getNavItems(NAV_ITEMS_NEW, sidebars, privilege);
   const openKeys = getOpenKeys(sidebars);
-  const pageTitles = getPageTitles(sidebars);
+  const pageTitles = getPageTitles(navigation, sidebars);
   return {actions, sidebars, navigation, openKeys, pageTitles, privilege: toBool(privilege)};
 };
 

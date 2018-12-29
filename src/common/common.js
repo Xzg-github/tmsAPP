@@ -1,6 +1,7 @@
 import fetch from '../core/fetch';
 import {getPathValue} from '../action-reducer/helper';
 import message from 'antd/lib/message';
+import { Action } from '../action-reducer/action';
 
 /**
  * 功能：设置fetch的选项
@@ -445,6 +446,19 @@ const getRouteKey = () => {
   }
 };
 
+//获取当前页面标题，返回值：组成标题的字符串数组
+const getPageTitle = () => {
+  const layoutAction = new Action(['layout']);
+  const rootState = global.store.getState();
+  return rootState.layout.pageTitles[getRouteKey()];
+};
+
+//设置当前页面标题
+const setPageTitle = (titleArr=[]) => {
+  const layoutAction = new Action(['layout']);
+  global.store.dispatch(layoutAction.assign({[getRouteKey()]: titleArr}, 'pageTitles'));
+};
+
 const helper = {
   postOption,
   fetchJson,
@@ -477,7 +491,9 @@ const helper = {
   download,
   minMax,
   getButtons,
-  getRouteKey
+  getRouteKey,
+  getPageTitle,
+  setPageTitle
 };
 
 export {
