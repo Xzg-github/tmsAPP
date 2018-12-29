@@ -99,7 +99,7 @@ const editAction = async (dispatch, getState) => {
   }
   const buttons1 = [
     { key: "cancel", title: '关闭'},
-    { key: 'upload', title: '导入模板'},
+    { key: 'upload', title: '上传模板'},
     { key: 'save', title: '保存', bsStyle: 'primary'},
   ];
   const newConfig = key ? readOnlyConfig({...editConfig}, buttons1) : editConfig;
