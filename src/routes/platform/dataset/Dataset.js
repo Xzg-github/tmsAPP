@@ -208,14 +208,10 @@ class Dataset extends React.Component {
       case 'data_set':
         return (
           <div className={s.pageRoot}>
-            <div>
-              {this.renderSearch()}
-            </div>
-            <div className={s.tableContent}>
-              {this.renderSuperToolbar()}
-              {this.renderSuperTable()}
-              {this.renderSuperPagination()}
-            </div>
+            {this.renderSearch()}
+            {this.renderSuperToolbar()}
+            {this.renderSuperTable()}
+            {this.renderSuperPagination()}
             {
               (this.state.dialogType === 'edit' && this.props.editData.id && this.state.dialogState) ||
               (this.state.dialogType === 'add' && this.state.dialogState) ||
@@ -241,10 +237,7 @@ class Dataset extends React.Component {
         <div className={s.rootSon}>
           {this.renderSuperTag()}
         </div>
-        <div className={s.toPage}>
-          {this.toPage(activeKey,dataSet1)}
-        </div>
-
+        {this.toPage(activeKey,dataSet1)}
       </div>
     );
   }

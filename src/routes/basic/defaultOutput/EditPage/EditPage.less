@@ -3,30 +3,25 @@
 
 
 .root {
-  padding-top: 20px;
+  margin-top: @padding-horizontal;
+  position: relative;
 
-  > div {
-    padding-bottom: 10px;
+
+  > *:not(:last-child) {
+    margin-bottom: @padding-vertical;
   }
 
-}
+  [role='title'] > * {
+    margin-right: 5px;
+  }
 
-.toTitle {
-  padding-left: 0 !important;
-  border-bottom: none !important;
-}
-.title {
-  &:before {
-    display: inline-block;
-    content: '|';
-    color: #2196f3;
-    font-size: 12px;
-    font-weight: 700;
-    width: 3px;
-    height: 15px;
-    background-color: #2196f3;
-    margin-right: 3px;
-    line-height: 1.5;
-    margin-left: -4px;
+  [role='operation'] {
+    text-align: center;
+
+    > *:not(:last-child) {
+      margin-right: 20px;
+    }
   }
 }
+
+

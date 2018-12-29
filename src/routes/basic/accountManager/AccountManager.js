@@ -281,14 +281,10 @@ class AccountManager extends React.Component {
   renderPage = () => {
     return (
       <div className={s.root}>
-        <div>
           {this.renderSearch()}
-        </div>
-        <div className={s.tableContent}>
           {this.renderSuperToolbar()}
           {this.renderSuperTable()}
           {this.renderSuperPagination()}
-        </div>
         {this.state.allotRoleDialogState ? this.renderAllotRoleDialog() : null}
         {this.state.dataRoleDialogState && this.props.dataRoleList.length >= 0 ? this.renderDataRoleDialog() : null}
         {this.state.confirmDialogState ? this.renderConfirmDialog(): null}
