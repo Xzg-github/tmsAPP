@@ -9,7 +9,6 @@ import execWithLoading from '../../../../standard-business/execWithLoading';
 import {updateOne} from '../../../../action-reducer/array';
 import showAddInvoiceDialog from '../../../config/customerInvoice/EditDialogContainer';
 import showChangeRateDialog from './ChangeRateDialog/ChangeRateDialog';
-import {getValue} from './InvoiceTable/InvoiceTable';
 
 const PARENT_STATE_PATH = ['receiveApply'];
 const STATE_PATH = ['receiveApply', 'edit'];
