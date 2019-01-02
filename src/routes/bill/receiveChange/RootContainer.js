@@ -10,6 +10,7 @@ import {getStatus} from "../../../common/commonGetStatus";
 import {buildOrderPageState} from "../../../common/state";
 import {getPathValue} from "../../../action-reducer/helper";
 import {createCommonTabPage} from "../../../standard-business/createTabPage";
+import {jump} from '../../../components/Link';
 
 const STATE_PATH = ['receiveChange'];
 const action = new Action(STATE_PATH);
@@ -18,6 +19,40 @@ const URL_CONFIG = '/api/bill/receive_change/config';
 const CUSTOM_CONFIG = '/api/bill/receive_change/custom_config';
 const URL_LIST = '/api/bill/receive_change/list';
 const URL_CURRENCY = '/api/bill/receive_change/currency';
+const URL_TRANSPORTINFO = '/api/bill/receive_change/transportInfo';
+
+const getSelfState = (rootstate) => {
+  return getPathValue(rootstate, STATE_PATH);
+};
+
+const buildJumpState = (tabs, editConfig, value) => {
+  const newTabs = tabs.find(tab => tab.key === 'add') ? tabs : tabs.concat([{key: 'add', title: '新增'}]);
+  return {
+    ['add']: {...editConfig, value},
+    tabs: newTabs,
+    activeKey: 'add',
+    status: 'page'
+  }
+};
+
+// 其他页面调用改单新增界面
+const jumpToChange = async (item, dispatch, getState) => {
+  const {returnCode, returnMsg, result} = await fetchJson(`${URL_TRANSPORTINFO}/${item.id}`);
+  if (returnCode !== 0) return showError(returnMsg);
+  const value = {
+    costInfo: result.details,
+    transportOrderId: item.customerId || result.balanceId,
+    renewalMode: 'renewal_mode_001'
+  };
+  const {status, tabs=[], editConfig={}} = getSelfState(getState());
+  if (status !== 'page') {
+    dispatch(action.assign({isJump: true, jumpData: value}))
+  } else {
+    const payload = buildJumpState(tabs, editConfig, value);
+    dispatch(action.assign(payload));
+  }
+  jump('/bill/receive_change');
+};
 
 /**
  * @description 获取改单原因, 来自于系统字典responsible_party下级
@@ -56,11 +91,7 @@ const uniqueArrHanlder = (tableCols=[], customConfig=[]) => {
   }, []);
 };
 
-const getSelfState = (rootState) => {
-  return getPathValue(rootState, STATE_PATH);
-};
-
-const initActionCreator = () => async (dispatch) => {
+const initActionCreator = () => async (dispatch, getState) => {
   try{
     dispatch(action.assign({status: 'loading'}));
     const {index, editConfig, dicNames, tabs, activeKey} = getJsonResult(await fetchJson(URL_CONFIG));
@@ -85,6 +116,12 @@ const initActionCreator = () => async (dispatch) => {
 
     payload.tableCols = initTableCols('receiveChange', payload.tableCols);
     assignPrivilege(payload);
+
+    // 如果是从其它界面跳转来的
+    const {isJump, jumpData} = getSelfState(getState());
+    if (isJump) {
+      Object.assign(payload, buildJumpState(tabs, editConfig, jumpData));
+    }
 
     dispatch(action.create(payload));
   } catch (e) {
@@ -120,3 +157,4 @@ const actionCreators = {
 const UIComponent = EnhanceLoading(createCommonTabPage(OrderPageContainer, EditPageContainer));
 const Container = connect(mapStateToProps, actionCreators)(UIComponent);
 export default Container;
+export {jumpToChange};

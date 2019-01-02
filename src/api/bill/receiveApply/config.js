@@ -115,7 +115,7 @@ const invoiceInfoConfig = {
       otherProps: {disabled: true}},
     {key: 'itemCount', title: '数量', type: 'number',
       otherProps: {disabled: true}},
-    {key: 'tax', title: '税率', type: 'number', props: {real: true, precision: 2}},
+    {key: 'tax', title: '税率', type: 'number', props: {real: true, precision: 2, zero: true}},
     {key: 'taxAmount', title: '税额', type: 'number',
       otherProps: {disabled: true}},
     {key: 'netAmount', title: '净额', type: 'number',
@@ -124,7 +124,7 @@ const invoiceInfoConfig = {
       otherProps: {disabled: true}},
     {key: 'exchangeCurrency', title: '开票币种', type: 'text',
       otherProps: {disabled: true}},
-    {key: 'exchangeAmount', title: '折算金额', type: 'number', props: {real: true, precision: 2},
+    {key: 'exchangeAmount', title: '折算金额', type: 'number', props: {real: true, precision: 2, zero: true},
       otherProps: {prefix: '合计：', colSpan: 1, align: 'right',}},
     {key: 'remark', title: '备注', type: 'textarea', props: {real: true, precision: 2},
       otherProps: {colSpan: 1, addonBefore: '￥', align: 'left', type: 'number',}}

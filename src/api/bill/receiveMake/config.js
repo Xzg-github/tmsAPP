@@ -28,10 +28,10 @@ const btns = [
   {key: 'changeOrder', title: '改单', showInTab: ['2']},
   {key: 'createBill', title: '生成账单', showInTab: ['1'], menu: [
     {key: 'createBill_selection', title:'按选择'},
-    {key: 'createBill_waybillBalanceCompany', title:'按运单、结算单位'},
-    {key: 'createBill_waybillBalanceCompanyAndCurrency', title:'按运单、结算单位、币种'},
-    {key: 'createBill_waybillBalanceCompanyAndTax', title:'按运单、结算单位、税率'},
-    {key: 'createBill_waybillBalanceCompanyAndTaxAndCurrency', title:'按运单、结算单位、币种、税率'},
+    {key: 'createBill_balanceCompany', title:'按运单、结算单位'},
+    {key: 'createBill_balanceCompanyAndCurrency', title:'按运单、结算单位、币种'},
+    {key: 'createBill_balanceCompanyAndTax', title:'按运单、结算单位、税率'},
+    {key: 'createBill_balanceCompanyAndTaxAndCurrency', title:'按运单、结算单位、币种、税率'},
   ]},
   {key: 'config', title: '配置字段', showInTab: ['0', '1', '2']}
 ];

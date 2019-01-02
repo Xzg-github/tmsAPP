@@ -194,7 +194,7 @@ const onInvoiceSelect = (KEY, keyName, keyValue, index) => async (dispatch, getS
   const currencyItem = currencyList.find(o => o.value = keyValue);
   const amount = price * itemCount * currencyItem.exchangeRate;
   dispatch(action.update({
-    exchangeCurrency: keyValue,
+    currency: keyValue,
     exchangeAmount: amount
   }, ['value', KEY], 0));
 };

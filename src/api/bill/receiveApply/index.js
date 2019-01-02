@@ -59,6 +59,7 @@ api.post('/invoice', async(req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
+// 获取编辑界面详细信息
 api.get('/detail/:id', async (req, res) => {
   const url = `${service}/receivable_invoice/${req.params.id}`;
   res.send(await fetchJsonByNode(req, url));

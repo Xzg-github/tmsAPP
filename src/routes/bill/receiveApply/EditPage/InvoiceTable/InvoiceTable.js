@@ -93,8 +93,7 @@ class InvoiceTable extends React.Component {
     const {colSpan=0, prefix='', addonBefore='', align='center', select, type} = otherProps;
     const inputProps = {
       addonBefore,
-      // value: getValue(`${prefix}${value}`, type, props.precision),
-      value: `${prefix}${value}`,
+      value: getValue(`${prefix}${value}`, type, props.precision),
       disabled: !select,
       onChange: this.onChange(col.key, index),
       className: s[`input_${align}`]
@@ -107,14 +106,15 @@ class InvoiceTable extends React.Component {
 
   renderCell = (col, value, index) => {
     const {key, title, type, props={}, otherProps={}} = col;
+    const val = getValue(value, type, props.precision);
     const inputProps = {
       key, title, type,
       disabled: otherProps.disabled,
-      // value: getValue(value, type, props.precision),
-      value,
+      value: val,
       onChange: this.onChange(col.key, index),
     };
-    return type === 'number' ? <NumberInput {...{...inputProps, ...props}}/> : <Input {...inputProps}/>
+    const numberInputProps = {...inputProps, ...props, defaultValue: val};
+    return type === 'number' ? <NumberInput {...numberInputProps}/> : <Input {...inputProps}/>
   }
 
   getColumns = () => {
@@ -136,7 +136,7 @@ class InvoiceTable extends React.Component {
   getDataSource = () => {
     const {items=[]} = this.props;
     return items.length > 0 ? items.slice(0, 1).concat([{
-      chargeName: items[0].exchangeCurrency,
+      chargeName: items[0].currency,
       remark: items[0].exchangeAmount,
     }]).map((o, i) => ({...o, key: i})) : items;
   }

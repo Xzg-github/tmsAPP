@@ -136,13 +136,6 @@ api.post('/auditBatch', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
-// 生成结算单
-api.post('/createBill', async (req, res) => {
-  const url = `${charge_service}/receivable_bills`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: 'Success', returnMsg: '生成结算单成功！'});
-});
-
 // 应付明细批量新增
 api.post('/batchAdd', async (req, res) => {
   const url = `${tms_service}/transport_order/cost/details/batch`;
