@@ -77,7 +77,7 @@ const okActionCreator = () => async (dispatch, getState) => {
     dispatch(action.assign({valid: true}));
     return;
   }
-  const newValue = {...value, supplierId: -1};
+  const newValue = {...value, isOwner: 1};
   const body = helper.convert(newValue);
   const {returnCode, returnMsg} = await helper.fetchJson(URL_SAVE, helper.postOption(body));
   if (returnCode !== 0) {
