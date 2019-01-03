@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import {getObject} from '../../../../common/common';
-import {SuperToolbar, Card, SuperForm, Title, SuperTab2, SuperTable2} from '../../../../components';
+import {SuperToolbar, Indent, SuperForm, Title, SuperTab2, SuperTable2} from '../../../../components';
 import UploadFile from '../UploadFile/UploadFile';
 import ConfirmDialog from '../../../../components/ConfirmDialog';
 
@@ -54,7 +54,7 @@ class NewModel extends React.Component {
       onExitValid,
       valid
     };
-    return <div style ={{paddingLeft:'6px',marginTop: '5px',marginBottom: '10px'}}><SuperForm {...props} /></div>;
+    return <div style ={{paddingLeft:'15px',marginBottom: '10px'}}><SuperForm {...props} /></div>;
   };
   toForm1 = () => {
     const {controls1, state, onChange, onSearch, onExitValid, valid, CURRNT_TABLE_CODE} = this.props;
@@ -66,18 +66,18 @@ class NewModel extends React.Component {
       onExitValid,
       valid
     };
-    return <div style ={{paddingLeft:'6px',marginTop: '8px',marginBottom: '5px'}}><SuperForm {...props} /></div>;
+    return <div style ={{margin: '15px'}}><SuperForm {...props} /></div>;
   };
 
   toTable = (cols, items, callback) => { // 列表
     const option = { index: true, checkbox: true };
     const props = { cols, items, option, callback };
-    return <div style ={{paddingLeft:'6px',marginTop: '5px'}}><SuperTable2 {...props} /></div>;
+    return <div style ={{marginTop: '5px'}}><SuperTable2 {...props} /></div>;
   };
 
   toSuperToolbar = (buttons) => {
     const props = { buttons, callback: getObject(this.props, TOOLBAR_EVENTS) };
-    return <div  style ={{paddingLeft:'6px',marginTop: '10px'}}><SuperToolbar {...props} /></div>;
+    return <div  style ={{marginTop: '10px'}}><SuperToolbar {...props} /></div>;
   };
 
   toToolbar = (buttons) => {
@@ -118,9 +118,9 @@ class NewModel extends React.Component {
     const props = { buttons, size: 'default', callback: getObject(this.props, TOOLBAR_EVENTS) };
     if(value.url){
       return(
-        <div style = {{marginTop: '10px'}}>
+        <div style = {{marginTop: '15px'}}>
           <Title title="上传模板信息" />
-          <div style = {{marginTop: '6px',marginLeft: '6px', textAlign: 'left'}}>
+          <div style = {{marginTop: '10px',marginLeft: '15px', textAlign: 'left'}}>
             <SuperToolbar {...props} />
           </div>
         </div>
@@ -134,17 +134,16 @@ class NewModel extends React.Component {
     const events1 = { onContentChange, onCheck };
     return (
       <div>
-        <Card>
-          <Title title= '基本信息' />
-          {this.toForm()}
-          <Title title= 'Excel模板信息' />
+        <div style={{marginLeft: '15px', marginRight: '15px', marginBottom: '15px'}}><Title title= '基本信息' /></div>
+           <Indent>{this.toForm()}</Indent>
+        <Indent>
           {this.toTab()}
           {this.toForm1()}
           {this.toSuperToolbar(buttons)}
           {this.toTable(tableCols, state[CURRNT_TABLE_CODE].mapperList, events1)}
           {this.toShowButton(buttons2)}
           {this.toToolbar(buttons1)}
-        </Card>
+        </Indent>
         {this.toUploadFile(this.props)}
         {this.state.showConfirm && this.toConfirmDialog()}
       </div>

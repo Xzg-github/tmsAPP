@@ -3,16 +3,18 @@ import OrderPage from '../../../../components/OrderPage';
 import helper,{postOption, fetchJson, showError, showSuccessMsg, convert, getJsonResult, fuzzySearchEx, deepCopy} from '../../../../common/common';
 import {Action} from '../../../../action-reducer/action';
 import {getPathValue} from '../../../../action-reducer/helper';
-import { exportExcelFunc, commonExport } from '../../../../common/exportExcelSetting';
 import {search2} from '../../../../common/search';
 import showAddDialog from './AddDialog/AddDialogContainer';
 import {showOutputDialog} from '../../../../components/ModeOutput/ModeOutput';
 
-const STATE_PATH = ['receiveBill'];
+const STATE_PATH = ['receiveApply'];
 const action = new Action(STATE_PATH);
-const URL_LIST = '/api/bill/receiveBill/list';
-const URL_DELETE = '/api/bill/receiveBill/list';
-const URL_AUDIT_BATCH = '/api/bill/receiveBill/auditBatch';
+const URL_LIST = '/api/bill/receiveApply/list';
+const URL_DELETE = '/api/bill/receiveApply/delete';
+const URL_COMMIT = '/api/bill/receiveApply/commit';
+const URL_REVOKE = '/api/bill/receiveApply/revoke';
+const URL_ACCEPT = '/api/bill/receiveApply/accept';
+const URL_INVOICE = '/api/bill/receiveApply/invoice';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -38,12 +40,14 @@ const searchActionCreator = async (dispatch, getState) => {
 const resetActionCreator = action.assign({searchData: {}});
 
 const addActionCreator = async (dispatch, getState) => {
-  const {addConfig} = getSelfState(getState());
-  await showAddDialog(addConfig);
+  const {addDialogConfig} = getSelfState(getState());
+  const okResult = await showAddDialog(addDialogConfig);
+  okResult && searchActionCreator(dispatch, getState);
 };
 
-const setReadonlyTables = (tables=[]) => {
-  return tables.map(o => {
+const setReadonly = (arr=[]) => {
+  return arr.map(o => {
+    o.btns = [];
     o.cols = o.cols.filter(o => o.key !== 'checked').map(o => {
       if (o.key !== 'index') {
         o.type = 'readonly';
@@ -57,10 +61,12 @@ const setReadonlyTables = (tables=[]) => {
 // 弹出编辑页面
 const showEditPage = (dispatch, getState, item, readonly=false) => {
   const {tabs, editConfig} = getSelfState(getState());
-  const key = item['billNumber'];
+  const key = item['receivableInvoiceSysNumber'];
   if (helper.isTabExist(tabs, key)) return dispatch(action.assign({activeKey: key}));
   const config = deepCopy(editConfig);
-  readonly && (config.tables = setReadonlyTables(config.tables));
+  if (readonly) {
+    config.controls = setReadonly(config.controls);
+  }
   dispatch(action.add({key, title: key}, 'tabs'));
   dispatch(action.assign({[key]: {readonly, config, itemData: item}, activeKey: key}));
 };
@@ -69,13 +75,21 @@ const editActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const index = helper.findOnlyCheckedIndex(tableItems);
   if(index === -1) return showError('请勾选一条数据！');
-  showEditPage(dispatch, getState, tableItems[index]);
+  const item = tableItems[index];
+  if (item.statusType !== 'status_draft' && item.statusType !== 'status_handling_completed') {
+    return showError('只有草稿和已受理状态才能编辑！');
+  }
+  showEditPage(dispatch, getState, item);
 };
 
 // 双击编辑
 const doubleClickActionCreator = (index) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
-  showEditPage(dispatch, getState, tableItems[index]);
+  const item = tableItems[index];
+  if (item.statusType !== 'status_draft' && item.statusType !== 'status_handling_completed') {
+    return showError('只有草稿和已受理状态才能编辑！');
+  }
+  showEditPage(dispatch, getState, item);
 };
 
 // 查看
@@ -89,23 +103,65 @@ const deleteActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkList = tableItems.filter(o=> o.checked);
   if(checkList.length === 0) return showError('请勾选一条数据！');
-  if(checkList.find(o => o.statusType === "status_draft")) return showError('请选择草稿状态的数据！');
+  if(checkList.find(o => o.statusType !== "status_draft")) return showError('请选择草稿状态的数据！');
   const ids = checkList.map(o => o.id);
   const {returnCode, returnMsg, result} = await fetchJson(URL_DELETE, postOption(ids));
   if(returnCode !==0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
+  searchActionCreator(dispatch, getState);
 };
 
-// 审核
-const auditActionCreator = async (dispatch, getState) => {
+// 提交
+const commitActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkList = tableItems.filter(o=> o.checked);
-  if(!checkList.length) return showError('请勾选一条数据！');
-  if(checkList.find(o => o.statusType === "status_check_all_completed")) return showError('请取消已审核的记录！');
+  if(checkList.length === 0) return showError('请勾选一条数据！');
+  if(checkList.find(o => o.statusType !== "status_draft")) return showError('请选择草稿状态的数据！');
   const ids = checkList.map(o => o.id);
-  const {returnCode, returnMsg, result} = await fetchJson(URL_AUDIT_BATCH, postOption(ids));
+  const {returnCode, returnMsg, result} = await fetchJson(URL_COMMIT, postOption(ids));
   if(returnCode !==0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
+  searchActionCreator(dispatch, getState);
+};
+
+// 撤销
+const revokeActionCreator = async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const checkList = tableItems.filter(o=> o.checked);
+  if(checkList.length === 0) return showError('请勾选一条数据！');
+  if(checkList.find(o => o.statusType !== "status_handling_completed")) return showError('请选择已受理状态的数据！');
+  const ids = checkList.map(o => o.id);
+  const {returnCode, returnMsg, result} = await fetchJson(URL_REVOKE, postOption(ids));
+  if(returnCode !==0) return showError(returnMsg);
+  showSuccessMsg(returnMsg);
+  searchActionCreator(dispatch, getState);
+};
+
+// 受理
+const acceptActionCreator = async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const checkList = tableItems.filter(o=> o.checked);
+  if(checkList.length === 0) return showError('请勾选一条数据！');
+  if(checkList.find(o => o.statusType !== "status_handling_awaiting")) return showError('请选择待受理状态的数据！');
+  const ids = checkList.map(o => o.id);
+  const {returnCode, returnMsg, result} = await fetchJson(URL_ACCEPT, postOption(ids));
+  if(returnCode !==0) return showError(returnMsg);
+  showSuccessMsg(returnMsg);
+  searchActionCreator(dispatch, getState);
+};
+
+
+// 开票
+const invoiceActionCreator = async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const checkList = tableItems.filter(o=> o.checked);
+  if(checkList.length === 0) return showError('请勾选一条数据！');
+  if(checkList.find(o => o.statusType !== "status_handling_completed")) return showError('请选择已受理状态的数据！');
+  const ids = checkList.map(o => o.id);
+  const {returnCode, returnMsg, result} = await fetchJson(URL_INVOICE, postOption(ids));
+  if(returnCode !==0) return showError(returnMsg);
+  showSuccessMsg(returnMsg);
+  searchActionCreator(dispatch, getState);
 };
 
 // 输出
@@ -116,28 +172,17 @@ const outputActionCreator = async (dispatch, getState) => {
   showOutputDialog(checkList, 'receivable_pay');
 };
 
-// 查询导出
-const exportSearchActionCreator = (dispatch, getState) => {
-  const {tableCols, searchData} = getSelfState(getState());
-  commonExport(tableCols, '/tms-service/receivable_bill/batch', searchData);
-};
-
-// 页面导出
-const exportPageActionCreator = async (dispatch, getState) => {
-  const {tableCols, tableItems} = getSelfState(getState());
-  exportExcelFunc(tableCols, tableItems);
-};
-
 const toolbarActions = {
   reset: resetActionCreator,
   search: searchActionCreator,
   add: addActionCreator,
   edit: editActionCreator,
   delete: deleteActionCreator,
-  audit: auditActionCreator,
-  output: outputActionCreator,
-  exportSearch: exportSearchActionCreator,
-  exportPage: exportPageActionCreator
+  commit: commitActionCreator,
+  revoke: revokeActionCreator,
+  accept: acceptActionCreator,
+  invoice: invoiceActionCreator,
+  output: outputActionCreator
 };
 
 const clickActionCreator = (key) => {

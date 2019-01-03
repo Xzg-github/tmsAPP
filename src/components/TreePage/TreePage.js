@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { getObject } from '../../common/common';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './TreePage.less';
-import {SuperTable, SuperToolbar, SuperTree, Card, SuperTab} from '../index';
+import {SuperTable, SuperToolbar, SuperTree, Indent, SuperTab} from '../index';
 import {Input, Icon} from 'antd';
 const InputSearch = Input.Search;
 
@@ -57,7 +57,7 @@ class TreePage extends React.Component {
     return {
       cols: this.props.tableCols,
       items: this.props.tableItems,
-      maxHeight: 'calc(100vh - 114px)',
+      maxHeight: 'calc(100vh - 150px)',
       callback: getObject(this.props, TABLE_EVENTS)
     };
   };
@@ -81,7 +81,7 @@ class TreePage extends React.Component {
       items:this.props.indexTableItems || [],
       checkbox: false,
       index: false,
-      maxHeight: `calc(100vh - 160px)`,
+      maxHeight: `calc(100vh - 195px)`,
       callback: {
         onLink: this.props.onLink
       }
@@ -91,17 +91,17 @@ class TreePage extends React.Component {
   toTabContent = () => {
     const {activeKey = 'tree', onReload} = this.props;
     return activeKey === 'tree' ? (
-      <Card noPadding>
+      <Indent>
         <div><InputSearch {...this.getSearchProps()} />
           {onReload && <a onClick={onReload}><Icon type='reload'/></a>}
         </div>
         <SuperTree {...this.getTreeProps()} />
-      </Card>
+      </Indent>
     ) : (
-      <Card noPadding>
+      <Indent>
         <div><InputSearch {...this.getSearchProps()} /></div>
         <SuperTable {...this.getIndexTableProps()} />
-      </Card>
+      </Indent>
     )
   };
 
@@ -112,10 +112,10 @@ class TreePage extends React.Component {
           <SuperTab {...this.getTabProps()} />
           {this.toTabContent()}
         </div>
-        <Card>
+        <Indent>
           <SuperToolbar {...this.getToolbarProps()} />
           <SuperTable {...this.getTableProps()} />
-        </Card>
+        </Indent>
       </div>
     );
   };

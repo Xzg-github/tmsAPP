@@ -1,7 +1,7 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditPage.less';
-import {SuperTable2, Card, SuperForm, SuperTitle, SuperToolbar} from '../../../../components';
+import {SuperTable2, Indent, SuperForm, SuperTitle, SuperToolbar} from '../../../../components';
 
 class EditPage extends React.Component {
 
@@ -20,7 +20,7 @@ class EditPage extends React.Component {
       };
       return (<div key={i}>
         <div className={s.superTitle}><SuperTitle title={item.title}/></div>
-        <SuperForm {...props}/>
+        <Indent className={s.marginTop}><SuperForm {...props}/></Indent>
       </div>)
     });
   };
@@ -64,11 +64,11 @@ class EditPage extends React.Component {
 
   render() {
     return (
-      <Card className={s.root}>
+      <Indent className={s.root}>
         {this.toForm()}
         {this.toTable()}
         {this.toFooter()}
-      </Card>
+      </Indent>
     );
   }
 }

@@ -2,8 +2,10 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles'
 import s from './SuperTitle.less';
 import {Title, SuperToolbar} from '../index';
+import classNames from 'classnames';
 
 /**
+ * className：样式类
  * title: 标题
  * readonly：是否只读（是否显示按钮）
  * buttons: 按钮组（同supertoolbar）
@@ -13,6 +15,7 @@ import {Title, SuperToolbar} from '../index';
 
 class SuperTitle extends React.Component {
   static propTypes = {
+    className: PropTypes.string,
     title: PropTypes.string,
     readonly: PropTypes.bool,
     buttons: PropTypes.array,
@@ -21,9 +24,9 @@ class SuperTitle extends React.Component {
   }
 
   render() {
-    const {title='', readonly=false, buttons=[], size='small', onClick} = this.props;
+    const {className='', title='', readonly=false, buttons=[], size='small', onClick} = this.props;
     return (
-      <div className={s.root}>
+      <div className={classNames(s.root, className)}>
         <Title role='title' title={title} className={s[`title_${size}`]}>
           {!readonly && <SuperToolbar role='toolbar' {...{buttons, size, onClick}}/>}
         </Title>

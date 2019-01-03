@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditPage.less';
 import { getObject } from '../../../../common/common';
-import {SuperForm, SuperToolbar, SuperTable2, ModalWithDrag} from '../../../../components';
+import {SuperForm, SuperToolbar, SuperTable2, ModalWithDrag,Title} from '../../../../components';
 
 
 const TOOLBAR_EVENTS = ['onClick'];
@@ -99,7 +99,7 @@ class EditPage extends React.Component {
         <ModalWithDrag {...this.getProps()} >
           <SuperForm {...this.props} size={defaultSize} colNum={this.getColNumber()} />
           <div className={s.root}>
-            {this.toTitle(subTitle)}
+            <Title title="通知信息"/>
             <SuperToolbar {...toolbarProps} />
             <SuperTable2 {...tableProps} />
           </div>

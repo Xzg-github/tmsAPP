@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { getObject } from '../../../../common/common';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from '../../../../components/OrderPage/OrderPage.less';
-import {SuperTable,SuperToolbar, Card, SuperTab} from '../../../../components';
+import {SuperTable,SuperToolbar, Indent, SuperTab} from '../../../../components';
 
 const TOOLBAR_EVENTS = ['onClick'];
 const TABLE_EVENTS = ['onTableChange', 'onCheck', 'onDoubleClick', 'onLink'];
@@ -61,10 +61,10 @@ class OrderPage extends React.Component {
     return (
       <div className={s.root}>
         <SuperTab {...this.props}/>
-        <Card>
+        <Indent>
           {this.props.buttons.length > 0 ? this.toToolbar() : null}
           {this.toTable()}
-        </Card>
+        </Indent>
       </div>
     );
   };

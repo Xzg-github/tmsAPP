@@ -9,6 +9,7 @@ const URL_SAVE = '/api/config/customersArchives/';
 const URL_SALEMEN = '/api/config/customersArchives/salemen';
 const URL_CURRENCY = '/api/config/customersArchives/currency';
 const URL_DISTRICT = '/api/config/customersArchives/district_options';
+const URL_INSTITUTION = `/api/config/customersArchives/corporations`;
 
 const STATE_PATH = ['config', 'customersArchives', 'edit'];
 const action = new Action(STATE_PATH);
@@ -58,7 +59,7 @@ const changeActionCreator = (keyName, keyValue) => async (dispatch, getState) =>
 
 const searchActionCreator = (key, value) => async (dispatch, getState) => {
   const {controls} = getSelfState(getState());
-  let data, options;
+  let data, options, formIndex=1;
   switch (key) {
     case 'salesPersonId': {
       const option = helper.postOption({maxNumber: 20, filter: value});
@@ -72,11 +73,18 @@ const searchActionCreator = (key, value) => async (dispatch, getState) => {
        options = data.result;
        break;
     }
+    case 'institutionId': {
+      const option = helper.postOption({maxNumber: 20, filter: value});
+       data = await fetchJson(URL_INSTITUTION, option);
+       options = data.result;
+       formIndex = 0;
+       break;
+    }
     default: return;
   }
   if(data.returnCode !== 0) return showError(data.returnMsg);
   const cols = deepCopy(controls);
-  helper.setOptions(key, cols[1].data, options);
+  helper.setOptions(key, cols[formIndex].data, options);
   dispatch(action.assign({controls: cols}));
 };
 

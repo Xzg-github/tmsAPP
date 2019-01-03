@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import {Search, SuperTable, ModalWithDrag,SuperTable2,SuperToolbar} from '../../../components';
+import {Search, SuperTable, ModalWithDrag,SuperTable2,SuperToolbar,Title} from '../../../components';
 import helper from '../../../common/common';
 import s from './UserAddDialog.less';
 
@@ -260,7 +260,7 @@ class UserAddDialog extends React.Component {
         <div className={s.root}>
         {this.toSearch('tableItems')}
         {this.toTable(tableCols, JSON.parse(JSON.stringify(this.state.tableItems)), 'tableItems')}
-        {this.toTitle('临时邮件输入')}
+        <Title title="临时邮件输入"   role={'title'}/>
         {this.toBar()}
         {this.toTable2()}
         </div>

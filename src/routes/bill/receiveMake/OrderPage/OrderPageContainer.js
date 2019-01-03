@@ -6,8 +6,8 @@ import {getPathValue} from '../../../../action-reducer/helper';
 import {showImportDialog} from '../../../../common/modeImport';
 import { exportExcelFunc, commonExport } from '../../../../common/exportExcelSetting';
 import {showColsSetting} from '../../../../common/tableColsSetting';
-import {showConfirmDialog} from '../../../../common/showCofirmDialog';
 import {getNewTableData} from '../RootContainer';
+import {jumpToChange} from '../../receiveChange/RootContainer';
 
 const STATE_PATH = ['receiveMake'];
 const action = new Action(STATE_PATH);
@@ -16,7 +16,7 @@ const URL_CUSTOMER_SERVICE = '/api/bill/receiveMake/customerServiceId';
 const URL_CARMODE = '/api/bill/receiveMake/carModeId';
 const URL_DEPARTURE_DESTINATION = '/api/bill/receiveMake/departureDestination';
 const URL_AUDIT_BATCH = '/api/bill/receiveMake/auditBatch';
-const URL_CREATE_BILL = '/api/bill/receiveMake/createBill';
+const URL_CREATE_BILL = '/api/bill/receiveBill/createBill';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -121,23 +121,11 @@ const createBillActionCreator = (buildType) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkList = tableItems.filter(o=> o.checked);
   if(!checkList.length) return showError('请勾选一条数据！');
-  const incomeList = checkList.map(o=>{
-    return convert({
-      amount: o.amount,
-      customerDelegateCode: o.customerDelegateNumber,
-      customerId: o.customerGuid,
-      id: o.guid,
-      incomeCode: o.balanceNumber,
-      incomeType :0,
-      insertTime: o.insertDate,
-      logisticsOrderNumber: o.logisticsOrderGuid,
-      statusType: o.statusType,
-      tenantInstitutionId: o.tenantInstitutionId
-    })
-  });
-  const { returnCode, result, returnMsg } = await fetchJson(URL_CREATE_BILL, postOption({buildType, incomeList}));
+  const transportOrderIdList = checkList.map(o => o.id);
+  const params = {opType: buildType, transportOrderIdList};
+  const { returnCode, result, returnMsg } = await fetchJson(URL_CREATE_BILL, postOption(params));
   if(returnCode !== 0) return showError(returnMsg);
-  showSuccessMsg('生成账单成功！');
+  showSuccessMsg(returnMsg);
 };
 
 // 改单
@@ -145,8 +133,8 @@ const changeOrderActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const index = helper.findOnlyCheckedIndex(tableItems);
   const item = tableItems[index];
-  if (index === -1 || item.statusType !== "status_check_all_completed")  return helper.showError("请选择单条已整审信息改单！");
-  alert(`跳转到改单界面！\n参数：${{value: item.guid, title: item.balanceNumber}}`);
+  if (index === -1)  return helper.showError("请选择一条数据！");
+  return jumpToChange(item, dispatch, getState);
 };
 
 const importActionCreator = async (dispatch, getState) => showImportDialog('income_import');
@@ -188,8 +176,9 @@ const toolbarActions = {
 const clickActionCreator = (key) => {
   if (toolbarActions.hasOwnProperty(key)) {
     return toolbarActions[key];
-  } else if(key.includes('createBill')) {
-    return createBillActionCreator(key);
+  } else if(key.includes('createBill_')) {
+    const k = key.split('createBill_')[1];
+    return createBillActionCreator(k);
   } else {
     return {type: 'unknown'};
   }

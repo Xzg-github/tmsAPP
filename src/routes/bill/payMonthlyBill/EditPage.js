@@ -71,7 +71,7 @@ class EditPage extends React.Component {
   render() {
     const props = this.props;
     return (
-      <Card className={s.root}>
+      <Indent className={s.root}>
         <Title title="基本信息"/>
         <Indent>
           <SuperForm {...this.formProps( props,props.look)} />
@@ -86,7 +86,7 @@ class EditPage extends React.Component {
         <div style={{ textAlign: 'center' }} className= {s.botButton}>
           {props.look ? null :<SuperToolbar {...this.toolbarProps(props)} />}
         </div>
-      </Card>
+      </Indent>
     );
   }
 }

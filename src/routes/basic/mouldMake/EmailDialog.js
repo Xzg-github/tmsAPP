@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import {Button} from 'antd';
 import SuperForm from '../../../components/SuperForm';
 import {ModalWithDrag} from '../../../components';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import s from './EmaiDialog.less';
 
 const defaultSize = 'small';
 
@@ -83,4 +85,4 @@ class EmailDialog extends React.Component {
   }
 }
 
-export default EmailDialog;
+export default withStyles(s)(EmailDialog);

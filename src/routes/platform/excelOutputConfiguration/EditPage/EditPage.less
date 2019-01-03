@@ -1,15 +1,31 @@
 @import '../../../../components/variables.less';
 
 
+:global(.ant-modal-body) {
+  height:450px;
+  overflow:auto;
+}
+
 
 .root {
-  padding-top: 20px;
+  margin-top: @padding-horizontal;
+  position: relative;
 
-  > div {
-    padding-bottom: 10px;
+
+  > *:not(:last-child) {
+    margin-bottom: @padding-vertical;
   }
-  .table2{
 
+  [role='title'] > * {
+    margin-right: 5px;
+  }
+
+  [role='operation'] {
+    text-align: center;
+
+    > *:not(:last-child) {
+      margin-right: 20px;
+    }
   }
 
 }

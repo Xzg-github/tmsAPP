@@ -59,6 +59,7 @@ class OrderPage extends React.Component {
   };
 
   toToolbar = () => {
+    console.log(this.props.buttons);
     const option = { bsSize: 'small' };
     const props = {
       option,

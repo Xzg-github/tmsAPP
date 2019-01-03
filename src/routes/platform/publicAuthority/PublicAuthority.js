@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import withStyles from '../../../../node_modules/isomorphic-style-loader/lib/withStyles';
 import { getObject } from '../../../common/common';
 import s from './PublicAuthority.less';
-import {SuperTable, SuperForm, SuperToolbar, SuperTree, Card, SuperTab} from '../../../components';
+import {SuperTable, SuperForm, SuperToolbar, SuperTree, Indent, SuperTab} from '../../../components';
 import {Input} from 'antd';
 const InputSearch = Input.Search;
 
@@ -90,7 +90,7 @@ class PublicAuthority extends React.Component {
       cols: this.props.itemCols,
       items: this.props.tableItems,
       checkbox: false,
-      maxHeight: `calc(100vh - 215px)`,
+      maxHeight: `calc(100vh - 250px)`,
       callback: {
         onLink: this.props.onLink,
       }
@@ -142,7 +142,7 @@ class PublicAuthority extends React.Component {
       items:this.props.indexTableItems || [],
       checkbox: false,
       index: false,
-      maxHeight: `calc(100vh - 160px)`,
+      maxHeight: `calc(100vh - 195px)`,
       callback: {
         onLink: this.props.onLink
       }
@@ -152,15 +152,15 @@ class PublicAuthority extends React.Component {
   toTabContent = () => {
     const {activeKey = 'tree'} = this.props;
     return activeKey === 'tree' ? (
-      <Card noPadding>
+      <Indent>
         <div><InputSearch {...this.getSearchProps()} /></div>
         <SuperTree {...this.getTreeProps()} />
-      </Card>
+      </Indent>
     ) : (
-      <Card noPadding>
+      <Indent>
         <div><InputSearch {...this.getSearchProps()} /></div>
         <SuperTable {...this.getIndexTableProps()} />
-      </Card>
+      </Indent>
     )
   };
 
@@ -171,11 +171,11 @@ class PublicAuthority extends React.Component {
           <SuperTab {...this.getTabProps()} />
           {this.toTabContent()}
         </div>
-        <Card>
+        <Indent>
           {this.renderSuperForm()}
           {this.renderSuperToolbar()}
           {this.renderSuperTable()}
-        </Card>
+        </Indent>
       </div>
     );
   };

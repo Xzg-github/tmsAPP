@@ -11,7 +11,7 @@ const URL_EXCEL = '/api/basic/excelConfigLib/uploadExcelModel';
 const URL_OPTIONS = '/api/basic/excelConfigLib/options';
 const URL_MODEL_TYPE = '/api/basic/excelConfigLib/tenantModelType';
 const URL_MODEL_TYPE_ADD = '/api/basic/excelConfigLib/add';
-const URL_UPLOAD_EXCEL = '/api/proxy/integration_service/excelModel/importExcelContent';
+const URL_UPLOAD_EXCEL = '/api/proxy/integration_service/excelModelConfig/uploadExcelModel';
 const URL_EXCEL_MODEL= '/api/basic/excelConfigLib/selectExcelModel';
 
 const STATE_PATH = ['basic','excelConfigLib','edit'];

@@ -4,7 +4,6 @@ import {host} from '../../globalConfig';
 import  {search} from "../../helper";
 const tms_service = `${host}/tms-service`;
 const archiver_service = `${host}/archiver-service`;
-const charge_service = `${host}/charge_service`;
 const tenant_service = `${host}/tenant_service`;
 let api = express.Router();
 
@@ -86,14 +85,6 @@ api.post('/chargeItemId', async (req, res) => {
 api.post('/auditBatch', async (req, res) => {
   const url = `${tms_service}/transport_order/income/check/batch`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-  // res.send({returnCode: 0, result: 'Success', returnMsg: '整审成功！'});
-});
-
-// 生成结算单
-api.post('/createBill', async (req, res) => {
-  const url = `${charge_service}/receivable_bills`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, result: 'Success', returnMsg: '生成结算单成功！'});
 });
 
 // 应收明细批量新增

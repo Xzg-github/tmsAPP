@@ -94,4 +94,10 @@ api.post('/finance', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
+//获取归属法人下拉列表
+api.post('/corporations', async (req, res) => {
+  const url = `${host}/tenant-service/institution/legal_person/drop_list`;
+  res.send(await fetchJsonByNode(req, url, postOption({institutionName: req.body.filter, ...req.body})));
+});
+
 export default api;

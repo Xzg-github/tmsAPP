@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Total.less';
-import {Card, Control} from '../../../../../components';
+import {Indent, Control} from '../../../../../components';
 
 // const calTotal = (items) => {
 //   return items.reduce((result, item) => {
@@ -77,7 +77,7 @@ class Total extends React.Component {
       style: { width: 60 }
     };
     return (
-      <div>
+      <div className={s.grayBg}>
         <Control {...selectProps}/>
         {totalKeys.map(({key, title}, index) => {
           if (typeof totalValues[key] !== 'undefined') {
@@ -112,15 +112,17 @@ class Total extends React.Component {
   render () {
     const {label, net, tax} = calTotalByCompany(this.props.items);
     return (
-      <Card className={s.root} role='total'>
+      <div className={s.root} role='total'>
         {this.totalHead()}
-        <table>
-          <tbody>
-            {this.totalRow(label, tax, '含税总额')}
-            {this.totalRow(label, net, '净价总额')}
-          </tbody>
-        </table>
-      </Card>
+        <Indent>
+          <table>
+            <tbody>
+              {this.totalRow(label, tax, '含税总额')}
+              {this.totalRow(label, net, '净价总额')}
+            </tbody>
+          </table>
+        </Indent>
+      </div>
     )
   }
 }

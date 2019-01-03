@@ -28,10 +28,10 @@ const btns = [
   {key: 'changeOrder', title: '改单', showInTab: ['2']},
   {key: 'createBill', title: '生成账单', showInTab: ['1'], menu: [
     {key: 'createBill_selection', title:'按选择'},
-    {key: 'createBill_waybillBalanceCompany', title:'按运单、结算单位'},
-    {key: 'createBill_waybillBalanceCompanyAndCurrency', title:'按运单、结算单位、币种'},
-    {key: 'createBill_waybillBalanceCompanyAndTax', title:'按运单、结算单位、税率'},
-    {key: 'createBill_waybillBalanceCompanyAndTaxAndCurrency', title:'按运单、结算单位、币种、税率'},
+    {key: 'createBill_balanceCompany', title:'按运单、结算单位'},
+    {key: 'createBill_balanceCompanyAndCurrency', title:'按运单、结算单位、币种'},
+    {key: 'createBill_balanceCompanyAndTax', title:'按运单、结算单位、税率'},
+    {key: 'createBill_balanceCompanyAndTaxAndCurrency', title:'按运单、结算单位、币种、税率'},
   ]},
   {key: 'config', title: '配置字段', showInTab: ['0', '1', '2']}
 ];
@@ -82,20 +82,19 @@ const receiveCols = [
   {key: 'currency', title: '币种', dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率'},
   {key: 'tax', title: '税率'},
-  {key: 'taxType', title: '计税方式', dictionary: name.TAX_TYPE},
+  {key: 'taxRateWay', title: '计税方式', dictionary: name.TAX_TYPE},
   {key: 'taxAmount', title: '税额'},
   {key: 'netAmount', title: '净价'},
   {key: 'remark', title: '备注'},
   {key: 'isAdditional', title: '是否额外费用', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'statusType', title: '状态', dictionary: name.STATUS_TYPE},
+  {key: 'statusType', title: '状态', dictionary: 'status_type_01'},
   {key: 'relationNumber', title: '关联编码'},
   {key: 'chargeOrigin', title: '费用来源', dictionary: name.CHARGE_ORIGIN},
-  {key: 'sequence', title: '排序'},
   {key: 'institutionId', title: '费用归属机构'},
   {key: 'insertUser', title: '创建人'},
-  {key: 'insertDate', title: '创建时间'},
+  {key: 'inserTime', title: '创建时间'},
   {key: 'updateUser', title: '更新人'},
-  {key: 'updateDate', title: '更新时间'}
+  {key: 'updateTime', title: '更新时间'}
 ];
 
 // 明细界面应收工具条
@@ -122,22 +121,21 @@ const payCols = [
   {key: 'currencyTypeCode', title: '币种', dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率'},
   {key: 'tax', title: '税率'},
-  {key: 'taxType', title: '计税方式', dictionary: name.TAX_TYPE},
+  {key: 'taxRateWay', title: '计税方式', dictionary: name.TAX_TYPE},
   {key: 'taxAmount', title: '税额'},
   {key: 'netAmount', title: '净价'},
   {key: 'remark', title: '备注'},
   {key: 'isAdditional', title: '是否额外费用', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'statusType', title: '状态', dictionary: name.STATUS_TYPE},
+  {key: 'statusType', title: '状态', dictionary: 'status_type_01'},
   {key: 'relationNumber', title: '关联编码'},
   {key: 'chargeOrigin', title: '费用来源', dictionary: name.CHARGE_ORIGIN},
   {key: 'isExpense', title: '是否报销', dictionary: name.ZERO_ONE_TYPE},
   {key: 'isOutputValue', title: '是否产值', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'sequence', title: '排序'},
   {key: 'institutionId', title: '费用归属机构'},
   {key: 'insertUser', title: '创建人'},
-  {key: 'insertDate', title: '创建时间'},
+  {key: 'insertTime', title: '创建时间'},
   {key: 'updateUser', title: '更新人'},
-  {key: 'updateDate', title: '更新时间'}
+  {key: 'updateTime', title: '更新时间'}
 ];
 
 // 明细界面应付工具条
@@ -182,7 +180,7 @@ const receiveColsEdit = [
   {key: 'currency', title: '币种', type: 'select', required: true, dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率', type: 'readonly'},
   {key: 'remark', title: '备注', type: 'text'},
-  {key: 'statusType', title: '状态', type: 'readonly', dictionary: name.STATUS_TYPE}
+  {key: 'statusType', title: '状态', type: 'readonly', dictionary: 'status_type_01'}
 ];
 
 const payColsEdit = [
@@ -199,12 +197,12 @@ const payColsEdit = [
   {key: 'currency', title: '币种', type: 'select', dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率', type: 'number'},
   {key: 'tax', title: '税率', type: 'number'},
-  {key: 'taxType', title: '计税方式', type: 'select', dictionary: name.TAX_TYPE},
+  {key: 'taxRateWay', title: '计税方式', type: 'select', dictionary: name.TAX_TYPE},
   {key: 'taxAmount', title: '税额', type: 'number'},
   {key: 'netAmount', title: '净价', type: 'number'},
   {key: 'remark', title: '备注', type: 'text'},
   {key: 'isAdditional', title: '是否额外费用', type: 'select', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'statusType', title: '状态', type: 'select', dictionary: name.STATUS_TYPE},
+  {key: 'statusType', title: '状态', type: 'select', dictionary: 'status_type_01'},
   {key: 'relationNumber', title: '关联编码', type: 'text'},
   {key: 'chargeOrigin', title: '费用来源', type: 'select', dictionary: name.CHARGE_ORIGIN},
   {key: 'isExpense', title: '是否报销', type: 'select', dictionary: name.ZERO_ONE_TYPE},
@@ -212,9 +210,9 @@ const payColsEdit = [
   {key: 'sequence', title: '排序', type: 'text'},
   {key: 'institutionId', title: '费用归属机构', type: 'search'},
   {key: 'insertUser', title: '创建人', type: 'date'},
-  {key: 'insertDate', title: '创建时间', type: 'date'},
+  {key: 'insertTime', title: '创建时间', type: 'date'},
   {key: 'updateUser', title: '更新人', type: 'date'},
-  {key: 'updateDate', title: '更新时间', type: 'date'}
+  {key: 'updateTime', title: '更新时间', type: 'date'}
 ];
 
 const dialogBtnsPay = [

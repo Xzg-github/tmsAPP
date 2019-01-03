@@ -2,24 +2,29 @@
 
 .root {
   position: relative;
-  padding-top: @padding-vertical;
 
   > div{
     margin: 0 @padding-horizontal;
-    margin-bottom: @padding-vertical;
+    margin-bottom: @padding-vertical-lg;
   }
 
   :global(.ant-table-wrapper) {
-    margin-top: @padding-vertical;
-    margin-bottom: @padding-vertical;
+    margin-top: @padding-vertical-sm;
   }
 
-  .title {
-    margin: 10px 0 5px 0;
+  .marginBottomSM{
+    margin-bottom: @padding-vertical-sm !important;
+  }
+  .marginBottom{
+    margin-bottom: @padding-vertical !important;
+  }
+  .margin {
+    margin-top: @padding-vertical !important;
+    margin-bottom: @padding-vertical !important;
   }
 
   .tableInfo {
-    margin-left: 15px;
+    margin-left: @padding-vertical;
   }
 
   .footer {

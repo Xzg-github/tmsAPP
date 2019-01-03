@@ -74,7 +74,8 @@ const baseInfo = [
   {key: 'street', title: '街道', type: 'search', props: {noSearchWhenTypo: true}},
   {key: 'address', title: '详细地址', type: 'text', span: 2},
   {key: 'longitude', title: '经度', type: 'readonly'},
-  {key: 'latitude', title: '纬度', type: 'readonly'}
+  {key: 'latitude', title: '纬度', type: 'readonly'},
+  {key: 'institutionId', title: '归属法人', type: 'search', required: true}
 ];
 
 const cooperationInfo = [

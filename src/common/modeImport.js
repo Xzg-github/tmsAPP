@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import ModeImport from '../components/ModeImport';
 import {fetchJson, showError} from './common';
 
-const showImportDialog = async (modeCode, afterImportFunc = undefined, isDetail = false, indexId='', indexKey='') => {
+const showImportDialog = async (modeCode, afterImportFunc = undefined, isDetail = false, indexId='', indexKey='', modeValue) => {
   const url = '/api/config/modeinput/list';
   const {returnCode, result} = await fetchJson(`${url}?modelTypeCode=${modeCode}`);
   if(returnCode !== 0) {
@@ -38,6 +38,7 @@ const showImportDialog = async (modeCode, afterImportFunc = undefined, isDetail 
       progress: '  导入进度：'
     },
     modeCode,
+    modeValue,
     options,
     onOk,
     onCancel,

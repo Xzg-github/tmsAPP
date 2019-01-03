@@ -5,14 +5,13 @@ import {postOption, showError, showSuccessMsg, getJsonResult, convert, fuzzySear
 import {Action} from '../../../../../action-reducer/action';
 import {getPathValue} from '../../../../../action-reducer/helper';
 import showPopup from '../../../../../standard-business/showPopup';
-import { search, search2 } from '../../../../../common/search';
 import execWithLoading from '../../../../../standard-business/execWithLoading';
 
 const STATE_PATH = ['temp'];
 const action = new Action(STATE_PATH, false);
 
-const URL_LIST = '/api/bill/receiveBill/income_list';
-const URL_CREATE_BILL = '/api/bill/receiveBill/createBill';
+const URL_LIST = '/api/bill/receiveApply/income_list';
+const URL_ADD_APPLY = '/api/bill/receiveApply/addApply';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -23,9 +22,7 @@ const buildAddDialogState = (list, config, other={}) => {
     ...config,
     ...other,
     visible: true,
-    items: list.data,
-    maxRecords: list.returnTotalItem,
-    currentPage: 1,
+    items: list,
     searchData: {}
   }
 };
@@ -41,27 +38,33 @@ const formSearchActionCreator = (key, filter, control) => async (dispatch, getSt
 };
 
 const searchActionCreator = async (dispatch, getState) => {
-  const {searchData, currentPage, pageSize} = getSelfState(getState());
-  await search2(dispatch, action, URL_LIST, currentPage, pageSize, convert(searchData), {currentPage: 1}, undefined, false);
+  const {searchData={}} = getSelfState(getState());
+  if (!searchData['customerId'] || !searchData['tax']) return showError('结算单位与税率必填！');
+  const list = getJsonResult(await fetchJson(URL_LIST, postOption({maxNumber: 10, ...convert(searchData)})));
+  dispatch(action.assign({items: list}));
 };
 
 const resetActionCreator = action.assign({searchData: {}});
 
-// 生成账单
-const createBillActionCreator = (buildType) => async (dispatch, getState) => {
-  if (buildType !== 'close') {
-    const {items} = getSelfState(getState());
-    const checkList = items.filter(o=> o.checked);
-    if(!checkList.length) return showError('请勾选一条数据！');
-    execWithLoading(async () => {
-      const transportOrderIdList = checkList.map(o => convert(o));
-      const params = {opType: buildType, transportOrderIdList};
-      const { returnCode, result, returnMsg } = await fetchJson(URL_CREATE_BILL, postOption(params));
-      if(returnCode !== 0) return showError(returnMsg);
-      showSuccessMsg(returnMsg);
-    });
-  }
-  dispatch(action.assign({visible: false}));
+// 申请
+const onOkActionCreator = () => async (dispatch, getState) => {
+  const {items} = getSelfState(getState());
+  const checkList = items.filter(o=> o.checked);
+  if(!checkList.length) return showError('请勾选一条数据！');
+  execWithLoading(async () => {
+    const list = checkList.map(o => convert(o));
+    if (list.length === 0) return;
+    const params = {
+      currency: list[0]['currency'],
+      customerId: list[0]['customerId'],
+      tax: list[0]['tax'] || 0,
+      ids: list.map(o => o.id)
+    };
+    const { returnCode, result, returnMsg } = await fetchJson(URL_ADD_APPLY, postOption(params));
+    if(returnCode !== 0) return showError(returnMsg);
+    showSuccessMsg(returnMsg);
+    dispatch(action.assign({visible: false, okResult: true}));
+  });
 };
 
 const buttons = {
@@ -83,16 +86,6 @@ const checkActionCreator = (isAll, checked, rowIndex) => {
   return action.update({checked}, 'items', rowIndex);
 };
 
-const pageNumberActionCreator = (currentPage) => async (dispatch, getState) => {
-  const {searchData, pageSize} = getSelfState(getState());
-  await search2(dispatch, action, URL_LIST, currentPage, pageSize, convert(searchData), {currentPage}, undefined, false);
-};
-
-const pageSizeActionCreator = (pageSize, currentPage) => async (dispatch, getState) => {
-  const {searchData} = getSelfState(getState());
-  await search2(dispatch, action, URL_LIST, currentPage, pageSize, convert(searchData), {pageSize, currentPage}, undefined, false);
-};
-
 const mapStateToProps = (state) => getSelfState(state);
 
 const actionCreators = {
@@ -100,15 +93,14 @@ const actionCreators = {
   onClick: clickActionCreator,
   onChange: changeActionCreator,
   onSearch: formSearchActionCreator,
-  onPageNumberChange: pageNumberActionCreator,
-  onPageSizeChange: pageSizeActionCreator,
-  footerBtnClick: createBillActionCreator
+  onOk: onOkActionCreator
 };
 
 const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(AddDialog));
 export default async (params) => {
-  const list = getJsonResult(await search(URL_LIST, 0, params.pageSize, {}, false));
-  const payload = buildAddDialogState(list, params);
+  // 新增进去默认不发请求
+  // const list = getJsonResult(await fetchJson(URL_LIST, postOption({maxNumber: 10})));
+  const payload = buildAddDialogState([], params);
   global.store.dispatch(action.create(payload));
   await showPopup(Container, {status: 'page'}, true);
   const state = getSelfState(global.store.getState());

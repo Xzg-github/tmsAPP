@@ -26,7 +26,7 @@ class TabPage extends React.Component {
     const props = {
       cols: tableCols,
       items: tableItems,
-      maxHeight: 'calc(100vh - 156px)',
+      maxHeight: 'calc(100vh - 200px)',
       callback: getObject(this.props, ['onCheck', 'onDoubleClick'])
     };
     return <SuperTable {...props}/>;

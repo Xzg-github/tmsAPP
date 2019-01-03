@@ -1,7 +1,6 @@
 @import '../../../components/variables.less';
 
-@spacing: 2 * @padding-vertical + @header-height + 105px;
-@spacing2: 2 * @padding-vertical + @header-height + 60px;
+@spacing: 2 * @padding-vertical + @header-height + 75px;
 
 .root {
   overflow: hidden;
@@ -11,38 +10,39 @@
     width: 400px;
 
     > *:first-child {
-      margin: 10px;
+      margin-bottom: @padding-vertical;
     }
 
-    > *:last-child {
+    > [role='tree'] {
       height: 100%;
       overflow: auto;
+      border: 1px solid @default-line-color;
+
+      > ul:first-child {
+        height: calc(~'100vh - @{spacing}');
+      }
+    }
+
+    > [role='search'] {
+      height: 100%;
+      overflow: hidden;
 
       > div:first-child {
-        margin: 10px;
+        margin-bottom: @padding-vertical;
 
         > form {
-          width: 220px !important;
+          width: 195px !important;
         }
 
         [role='buttons'] {
-          width: 120px !important;
+          width: 150px !important;
         }
-      }
-
-      > div:last-child {
-        margin: 10px;
-        height: calc(~'100vh - @{spacing}');
-      }
-
-      > ul:first-child {
-        margin: 10px;
-        height: calc(~'100vh - @{spacing2}');
       }
     }
   }
 
   > *:last-child {
+    overflow: hidden;
     padding-top: 0;
   }
 }
