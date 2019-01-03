@@ -99,7 +99,7 @@ api.post('/invoiceHeaderInfo', async(req, res) => {
 
 // 获取折合币种及汇率
 api.get('/currencyRate/:currency', async (req, res) => {
-  const url = `${archiver_service}/currency_type_rate/exchange_currency_rates//${req.params.currency}`;
+  const url = `${archiver_service}/currency_type_rate/exchange_currency_rates/${req.params.currency}`;
   res.send(await fetchJsonByNode(req, url));
 });
 
@@ -130,6 +130,12 @@ api.post('/removeDetail', async (req, res) => {
 // 变更汇率
 api.post('/changeRate', async (req, res) => {
   const url = `${service}/receivable_invoice/change_rate/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
+});
+
+// 发票内容更新
+api.post('/updateInvoice', async (req, res) => {
+  const url = `${service}/receivable_invoice/change_content`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 

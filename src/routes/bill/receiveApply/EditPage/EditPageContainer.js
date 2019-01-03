@@ -22,6 +22,7 @@ const URL_RECEIVABLE_OPENINGBANK = `/api/bill/receiveApply/receivable_openingBan
 const URL_HEADER_INDO = `/api/bill/receiveApply/invoiceHeaderInfo`;
 const URL_CHANGE_RATE = `/api/bill/receiveApply/changeRate`;
 const URL_CURRENCY_RATE = `/api/bill/receiveApply/currencyRate`;
+const URL_UPDATE_INVOICE = '/api/bill/receiveApply/updateInvoice';
 
 
 const getSelfState = (rootState) => {
@@ -187,15 +188,16 @@ const onInvoiceChange = (KEY, keyName, keyValue, index) => action.update({[keyNa
 
 // 发票表格币种下拉值变化
 const onInvoiceSelect = (KEY, keyName, keyValue, index) => async (dispatch, getState) => {
-  dispatch(action.update({[keyName]: keyValue}, ['value', KEY], index));
-  const {value, currencyList} = getSelfState(getState());
-  const {price=0, itemCount=0} = value[KEY][0];
-  const currencyItem = currencyList.find(o => o.value = keyValue);
-  const amount = price * itemCount * currencyItem.exchangeRate;
-  dispatch(action.update({
+  const {value, id} = getSelfState(getState());
+  const params = {
+    id,
+    invoiceShowMode: 1,
+    isGetExchange: 1,
     currency: keyValue,
-    exchangeAmount: amount
-  }, ['value', KEY], 0));
+    tax: value[KEY][0]['tax']
+  };
+  const result = getJsonResult(await fetchJson(URL_UPDATE_INVOICE, postOption(params)));
+  dispatch(action.assign({invoiceInfo: [result]}, ['value']));
 };
 
 const onTabChangeActionCreator = (activeKey) => action.assign({activeKey});
