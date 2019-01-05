@@ -3,6 +3,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './TenantAuthorityDistribution.less';
 import Search from '../../../components/Search';
 import SuperTree from './components/SuperTree';
+import {Icon} from 'antd';
 
 
 class TenantAuthorityDistribution extends React.Component {
@@ -95,16 +96,8 @@ class TenantAuthorityDistribution extends React.Component {
             {this.renderPublicSuperTree()}
           </div>
           <div className={s.buttons}>
-            <img
-              src={require('../../../../public/arrow.png')}
-              onClick={() => {this.props.authorityMove('moveIn')}}
-              alt=""
-            />
-            <img
-              src={require('../../../../public/arrow.png')}
-              onClick={() => {this.props.authorityMove('moveOut')}}
-              alt="" className={s.arrow}
-            />
+            <Icon type="right-square"  onClick={() => {this.props.authorityMove('moveIn')}} style={{fontSize:28,color:'#01a4ff'}}/>
+            <Icon type="left-square"  onClick={() => {this.props.authorityMove('moveOut')}}style={{fontSize:28,color:'#01a4ff'}}/>
           </div>
           <div className={s.tenantAuthority}>
             {this.renderTenantSuperTree()}
