@@ -74,6 +74,7 @@ const rootReducer = combineReducers({
 
   //跟踪管控
   trackOrder: create('trackOrder'),
+  trackTransport: create('trackTransport'),
   fileManager: create('fileManager'),
 
   //计费与对帐
