@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import {Form, Button, Input, Select, Upload, Icon } from 'antd';
-import {fetchJson, showError} from '../../common/common';
+import {fetchJson, showError, download} from '../../common/common';
 import ModalWithDrag from '../ModalWithDrag';
 
 const Option = Select.Option;
@@ -56,7 +56,7 @@ class ModeImport extends React.Component {
       showError('获取下载地址失败');
       return;
     }
-    window.open(`/api/proxy/file-center-service/${result}`);
+    download(`/api/proxy/file-center-service/${result}`, 'file');
   };
 
   onHandleRemove = (file) => {
