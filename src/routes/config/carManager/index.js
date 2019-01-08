@@ -1,4 +1,5 @@
 import React from 'react';
+import Container from './CarManagerContainer';
 
 export default {
   path: '/car_manager',
@@ -6,7 +7,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <div>车辆管理</div>
+      component: <Container />
     };
   }
 }
