@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import {getObject} from '../../../common/common';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import SuperTab from  '../../../components/SuperTab';
-import s from './trackTransport.less';
+import s from './TrackTransport.less';
 import OrderPageContainer from './OrderPageContainer';
 import OrderInfoPageContainer from './OrderInfoPageContainer';
 
