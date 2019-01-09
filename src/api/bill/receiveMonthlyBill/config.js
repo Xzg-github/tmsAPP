@@ -16,7 +16,7 @@ const monthOptions = [
   {value:'9',title:'9'},
   {value:'10',title:'10'},
   {value:'11',title:'11'},
-  {value:'12',title:'12'},
+  {value:'12',title:'12'}
 ];
 
 const filters = [
@@ -29,10 +29,8 @@ const filters = [
   {key:"periodOfmonth",title:"归属月",type:"select",options:monthOptions},
   {key:"insertUser",title:"创建人",type:"search",searchType:'user'},
   {key:"insertTimeFrom",title:"创建时间",type:"date"},
-  {key:"insertTimeTo",title:"创建时间至",type:"date"},
-
+  {key:"insertTimeTo",title:"创建时间至",type:"date"}
 ];
-
 
 const tableCols = [
   {key:"statusType",title:"状态",dictionary:'status_type'},
@@ -47,21 +45,24 @@ const tableCols = [
   {key:"fallbackTime",title:"回退时间"},
   {key:"fileList",title:"附件"},
   {key:"fallbackUser",title:"回退用户"},
-  {key:"checkTime",title:"审核人员"},
+  {key:"checkUser",title:"审核人员"},
   {key:"remark",title:"详细说明"},
   {key:"insertTime",title:"创建时间"},
   {key:"insertUser",title:"创建用户"},
   {key:"updateTime",title:"更新时间"},
-  {key:"updateUser",title:"更新用户"},
+  {key:"updateUser",title:"更新用户"}
 ];
 
 const buttons = [
   {key:"add" ,title:"新增" , bsStyle: 'primary'},
   {key:"edit" ,title:"编辑" },
-  //{key:"del" ,title:"删除" },
+  // {key:"del" ,title:"删除" },
+  // {key: 'check', title: '审核'},
+  // {key: 'revoke', title: '撤销审核'},
   {key:"output" ,title:"输出" },
 ];
 
+//新增表单配置
 const controls = [
   {key: "customerId" , title: "结算单位" , type: "search",searchUrl:customer,required:true},
   {key: "currency" , title: "对帐币种" , type: "search" ,searchUrl:currency,required:true},
@@ -71,11 +72,13 @@ const controls = [
   {key: "remark" , title: "详细说明" , type: "textArea" ,span:2},
 ];
 
+//新增按钮配置
 const editButtons = [
   {key: 'close', title: '关闭', confirm: '是否确定关闭?'},
   {key: 'save', title: '保存'},
 ];
 
+//编辑 结算单列表配置
 const cols = [
   {key: 'customerId', title: '结算单位'},
   {key: 'orderNumber', title: '运单号'},
@@ -92,10 +95,10 @@ const cols = [
   {key: 'planPickupTime', title: '要求装货时间'},
   {key: 'planDeliveryTime', title: '要求卸货时间'},
   {key: 'carNumber', title: '车牌号'},
-  {key: 'driverName', title: '司机名称'},
+  {key: 'driverName', title: '司机名称'}
 ];
 
-
+//结算单列表 加入界面 Filter配置
 const addDialogFilters = [
   {key:"customerId",title:"结算单位",type:"readonly"},
   {key:"currency",title:"对帐币种",type:"readonly"},
@@ -104,12 +107,10 @@ const addDialogFilters = [
   {key:"planPickupTimeFrom",title:"装货时间",type:"date"},
   {key:"planPickupTimeTo",title:"装货时间至",type:"date"},
   {key:"insertTimeFrom",title:"创建时间",type:"date"},
-  {key:"insertTimeTo",title:"创建时间至",type:"date"},
-
+  {key:"insertTimeTo",title:"创建时间至",type:"date"}
 ];
 
-
-
+//结算单列表 编辑界面配置
 const editDialogCols = [
   {key: 'statusType', title: '状态',dictionary:'status_type'},
   {key: 'customerId', title: '结算单位'},
@@ -139,21 +140,21 @@ const editDialogCols = [
   {key: 'insertTime', title: '创建时间'},
   {key: 'insertUser', title: '创建人'},
   {key: 'updateTime', title: '更新时间'},
-  {key: 'updateUser', title: '更新人'},
+  {key: 'updateUser', title: '更新人'}
 ];
 
-
+//编辑界面 结算单列表 按钮
 const colsButtons = [
   {key: 'add', title: '加入',},
   {key: 'edit', title: '编辑'},
  // {key: 'import', title: '导入'},
-  {key: 'del', title: '删除'},
+  {key: 'del', title: '删除'}
 ];
 
-
+//结算单列表 编辑界面 按钮
 const editDialogBut = [
   {key: 'del', title: '删除', bsStyle: 'primary'},
-  {key: 'join', title: '加入费用'},
+  {key: 'join', title: '加入费用'}
 ];
 
 

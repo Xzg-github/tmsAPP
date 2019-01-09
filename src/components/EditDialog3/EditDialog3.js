@@ -1,10 +1,12 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import {Button} from 'antd';
 import SuperForm from '../SuperForm/SuperForm';
 import Title from '../Title/Title';
 import ModalWithDrag from '../ModalWithDrag/ModalWithDrag';
 import Indent from "../Indent";
+import s from './EditDialog3.less';
 
 const defaultSize = 'small';
 
@@ -110,7 +112,7 @@ class EditDialog3 extends React.Component {
     const {inset=true} = this.props;
     if (inset) {
       return (
-        <div>
+        <div className={s.root}>
           <div />
           {this.toContent()}
         </div>
@@ -121,4 +123,4 @@ class EditDialog3 extends React.Component {
   }
 }
 
-export default EditDialog3;
+export default withStyles(s)(EditDialog3);
