@@ -23,6 +23,11 @@ const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
 };
 
+const computedCount = (tagArr, tag) => {
+  const item = tagArr.find(o => o.tag == tag);
+  return item ? item.count : 0;
+};
+
 const getNewTableData = async (params, payload) => {
   const {tabKey, tabs2, currentPage, pageSize, filter} = params;
   let list, newTabs2;
@@ -32,9 +37,10 @@ const getNewTableData = async (params, payload) => {
     const options = {costTag: tabKey, ...filter};
     list = getJsonResult(await search(URL_LIST, itemFrom, itemTo, options, false));
     newTabs2 = deepCopy(tabs2).map(tab => {
-      const item = list.tags.find(o => o.tag == tab.key);
-      if (item) {
-        tab.title = `${tab.title.split(' ')[0]} (${item.count})`;
+      // 0:待明细整审,1:待整审,2:已整审
+      if (tab.key != '2') {
+        const count = computedCount(list.tags, tab.key);
+        tab.title = `${tab.title.split(' ')[0]} (${count})`;
       }
       return tab;
     });
