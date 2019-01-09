@@ -4,6 +4,7 @@ import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
 import {buildOrderTabPageState} from './OrderTabPageContainer';
 import Todo from './Todo';
+import {updateTable} from "../../../standard-business/OrderTabPage/createOrderTabPageContainer";
 
 const prefix = ['todo'];
 const action = new Action(prefix);
@@ -20,6 +21,11 @@ const initActionCreator = () => async (dispatch) => {
     return;
   }
   dispatch(action.create(state));
+};
+
+const refreshForHomeActionCreator = (key) => async (dispatch, getState) => {
+  dispatch(action.assign({activeKey: 'index', subActiveKey: key}));
+  return updateTable(dispatch, action, getSelfState(getState()));
 };
 
 const tabChangeActionCreator = (key) => {
@@ -44,6 +50,7 @@ const mapStateToProps = (state) => {
 
 const actionCreators = {
   onInit: initActionCreator,
+  onRefreshForHome: refreshForHomeActionCreator,
   onTabChange: tabChangeActionCreator,
   onTabClose: tabCloseActionCreator
 };

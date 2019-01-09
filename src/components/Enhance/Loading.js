@@ -37,7 +37,7 @@ const Enhance = Component => class extends React.Component {
           onInit && onInit(__home);
         } else if (__home) {
           if (status === 'page') {
-            onRefreshForHome && onRefreshForHome();
+            onRefreshForHome && onRefreshForHome(__home);
           } else if (status !== 'loading') {
             onInit && onInit(__home);
           }
