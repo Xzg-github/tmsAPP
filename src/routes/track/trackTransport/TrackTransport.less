@@ -1,0 +1,16 @@
+@import '../../../components/variables.less';
+
+.root {
+  height: inherit;
+
+  > *:first-child {
+    margin-bottom: @padding-vertical;
+    margin-left: @padding-horizontal;
+    margin-right: @padding-horizontal;
+  }
+
+  > div:nth-child(2) {
+    overflow: auto;
+    max-height: calc(~'100% - 10px');
+  }
+}
