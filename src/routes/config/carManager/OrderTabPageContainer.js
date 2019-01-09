@@ -38,7 +38,7 @@ const changeStateActionCreator = (tabKey) => async (dispatch, getState) => {
   const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
   if (checkedItems.length !== 1) return helper.showError(`请勾选一条记录`);
   if (true === await showChangeStateDialog(checkedItems[0].id)) {
-    return updateTable(dispatch, action, getSelfState(getState()), ['use', 'unuse', 'repair', 'accident', 'stop']);
+    return updateTable(dispatch, action, getSelfState(getState()), ['unuse', 'repair', 'accident']);
   }
 };
 
@@ -50,7 +50,7 @@ const clearActionCreator = (tabKey) => async (dispatch, getState) => {
   const {returnCode, returnMsg} = await helper.fetchJson(`/api/config/car_manager/clear/${checkedItems[0].id}`, 'post');
   if (returnCode !== 0) return helper.showError(returnMsg);
   helper.showSuccessMsg(`操作成功`);
-  return updateTable(dispatch, action, getSelfState(getState()));
+  return updateTable(dispatch, action, getSelfState(getState()), ['unuse']);
 };
 
 const buttons = {

@@ -21,7 +21,7 @@ const tableCols = [
   {key: 'gpsEquipmentBrand', title: 'GPS设备品牌'},
   {key: 'positionTime', title: '位置更新时间'},
   {key: 'totalOutputValue', title: '总产值'},
-  {key: 'firstTransportOrderId', title: '待执行运单'},
+  {key: 'firstTransportOrderId', title: '待执行运单', link: true},
   {key: 'lastFinishTime', title: '最后一单完成时间'},
   {key: 'reason', title: '变更说明'},
 ];
@@ -64,8 +64,7 @@ const config = {
   },
   buttons: { //各tab页签操作按钮
     use:[
-      {key: 'change', title: '变更状态', bsStyle: 'primary'},
-      {key: 'clear', title: '清空运单', confirm: '是否确认将勾选记录清空运单？'},
+      {key: 'clear', title: '清空运单', bsStyle: 'primary', confirm: '是否确认将勾选记录清空运单？'},
     ].concat(commonButtons),
     unuse: [
       {key: 'change', title: '变更状态', bsStyle: 'primary'},

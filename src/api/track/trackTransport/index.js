@@ -14,9 +14,8 @@ api.get('/config', async (req, res) => {
 
 //获取列表数据
 api.post('/list', async (req, res) => {
-  res.send({returnCode: 0, result: {data:[], returnTotalItem: 0}});
-  // const url = `${service}/transport_order/in_transport/list/search`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+  const url = `${service}/transport_order/in_transport/list/search`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 // //获取收发货地点

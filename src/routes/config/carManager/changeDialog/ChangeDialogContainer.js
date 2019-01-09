@@ -63,7 +63,8 @@ const buildDialogState = async (id) => {
     ]
   };
   const dic = await fetchAllDictionary();
-  setDictionary2(dic.result, config.controls);
+  const car_state = dic.result.car_state.filter(item => item.value !== 'car_state_user' && item.value !== 'car_state_stop');
+  setDictionary2({...dic.result, car_state}, config.controls);
   global.store.dispatch(action.create({
     ...config,
     value: {id},
