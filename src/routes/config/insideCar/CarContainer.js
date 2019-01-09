@@ -63,9 +63,9 @@ const searchActionCreator = (key,keyValue,keyControls) => async(dispatch,getStat
   const {controls,value} = getSelfState(getState());
   let json,id;
   if(key === 'driverId' ){//司机标识跟所属供应商联动
-    id =  -1;
+    id =  1;
     const body = {
-      supplierId:id,
+      isOwner:id,
       name:keyValue
     };
     json = await helper.fetchJson(keyControls.searchUrl,helper.postOption(body))
