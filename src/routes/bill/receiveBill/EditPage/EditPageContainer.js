@@ -92,12 +92,13 @@ const joinActionCreator = (KEY) => async (dispatch, getState) => {
     showSuccessMsg(returnMsg);
     const list = value[KEY] || [];
     const newItems = list.concat(resultItems);
+    dispatch(action.assign({amount: result.amount}, 'value'));
     dispatch(action.assign({[KEY]: newItems}, 'value'));
   };
   await showJoinDialog(params, onOk);
 };
 
-const removeActionCreator = (KEY) => async (dispatch, getState) =>  {
+const  removeActionCreator = (KEY) => async (dispatch, getState) =>  {
   const {value, id} = getSelfState(getState());
   const checkList = value[KEY].filter(item => item.checked);
   if (checkList.length === 0) return showError('请勾选一条数据！');
@@ -106,6 +107,7 @@ const removeActionCreator = (KEY) => async (dispatch, getState) =>  {
   if (returnCode !== 0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
   const notCheckList = value[KEY].filter(item => !item.checked);
+  dispatch(action.assign({amount: result.amount}, 'value'));
   dispatch(action.assign({[KEY]: notCheckList}, 'value'));
 };
 

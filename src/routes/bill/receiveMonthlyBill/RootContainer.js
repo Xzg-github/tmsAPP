@@ -8,6 +8,10 @@ import helper from '../../../common/common';
 import {search} from '../../../common/search';
 import {buildOrderPageState} from '../../../common/state';
 import {getDictionaryNames, fetchDictionary, setDictionary2,getStatus} from '../../../common/dictionary';
+import OrderPageContainer from './OrderPageContainer';
+import AddContainer from './AddTabContainer';
+import EditContainer from './EditTabContainer';
+
 
 
 const URL_CONFIG =  '/api/bill/receive_monthly_bill/config';
@@ -16,10 +20,6 @@ const URL_LIST = '/api/bill/receive_monthly_bill/list';//查询列表
 
 const STATE_PATH = ['receiveMonthlyBill'];
 const action = new Action(STATE_PATH);
-
-import OrderPageContainer from './OrderPageContainer';
-import AddContainer from './AddTabContainer';
-import EditContainer from './EditTabContainer';
 
 
 const getSelfState = (rootState) => {
@@ -118,8 +118,6 @@ const getComponent = (activeKey) => {
     return EditContainer
   }
 };
-
-
 
 const RootContainer = connect(mapStateToProps, actionCreators)(EnhanceLoading(createTabPage(getComponent)));
 export default RootContainer;

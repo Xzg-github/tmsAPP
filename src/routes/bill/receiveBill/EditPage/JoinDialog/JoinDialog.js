@@ -26,7 +26,7 @@ class JoinDialog extends React.Component {
   onOk = () => {
     const {onOk} = this.props;
     const {items} = this.state;
-    const checkList = items.filter(o => o.checked);
+    const checkList = items.filter(o => o.checked).map(o => ({...o, checked: false}));
     onOk && onOk(checkList);
     this.onCancel();
   }
