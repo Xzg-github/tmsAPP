@@ -3,7 +3,7 @@ import {EnhanceLoading} from '../../../components/Enhance';
 import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
 import {buildOrderPageState} from './OrderPageContainer';
-import trackTransport from './trackTransport';
+import TrackTransport from './TrackTransport';
 
 const prefix = ['trackTransport'];
 const action = new Action(prefix);
@@ -48,5 +48,5 @@ const actionCreators = {
   onTabClose: tabCloseActionCreator
 };
 
-const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(trackTransport));
+const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(TrackTransport));
 export default Container;
