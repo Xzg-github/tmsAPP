@@ -93,8 +93,9 @@ const editActionCreator = async (dispatch, getState) => {
 
 // 双击编辑
 const doubleClickActionCreator = (index) => async (dispatch, getState) => {
-  const {tableItems} = getSelfState(getState());
-  showEditPage(dispatch, getState, tableItems[index]);
+  const {tableItems, tabKey} = getSelfState(getState());
+  const isReadonly = tabKey === '2' ? true : false;
+  showEditPage(dispatch, getState, tableItems[index], isReadonly);
 };
 
 // 查看

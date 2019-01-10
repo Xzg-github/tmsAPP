@@ -3,10 +3,9 @@ import {EnhanceLoading} from '../../../components/Enhance';
 import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
 import {buildOrderTabPageState} from './OrderTabPageContainer';
-import Todo from './Todo';
-import {updateTable} from "../../../standard-business/OrderTabPage/createOrderTabPageContainer";
+import CarManager from './CarManager';
 
-const prefix = ['todo'];
+const prefix = ['carManager'];
 const action = new Action(prefix);
 
 const getSelfState = (rootState) => {
@@ -21,11 +20,6 @@ const initActionCreator = () => async (dispatch) => {
     return;
   }
   dispatch(action.create(state));
-};
-
-const refreshForHomeActionCreator = (key) => async (dispatch, getState) => {
-  dispatch(action.assign({activeKey: 'index', subActiveKey: key}));
-  return updateTable(dispatch, action, getSelfState(getState()));
 };
 
 const tabChangeActionCreator = (key) => {
@@ -50,10 +44,9 @@ const mapStateToProps = (state) => {
 
 const actionCreators = {
   onInit: initActionCreator,
-  onRefreshForHome: refreshForHomeActionCreator,
   onTabChange: tabChangeActionCreator,
   onTabClose: tabCloseActionCreator
 };
 
-const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(Todo));
+const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(CarManager));
 export default Container;

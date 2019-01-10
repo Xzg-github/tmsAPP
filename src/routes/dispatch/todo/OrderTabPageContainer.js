@@ -10,11 +10,11 @@ const STATE_PATH = ['todo'];
 const action = new Action(STATE_PATH);
 
 //根据页面需求覆写和扩展页面状态属性
-const buildOrderTabPageState = async () => {
+const buildOrderTabPageState = async (home) => {
   const urlConfig = '/api/dispatch/todo/config';
   const urlList = '/api/dispatch/todo/list';
   const statusNames = ['transport_order', 'order_type'];
-  return buildOrderTabPageCommonState(urlConfig, urlList, statusNames);
+  return buildOrderTabPageCommonState(urlConfig, urlList, statusNames, home);
 };
 
 const getSelfState = (rootState) => {

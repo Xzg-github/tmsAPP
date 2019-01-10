@@ -6,7 +6,9 @@ const prefix = '/track';
 
 const children = [
   require('./trackOrder').default,
+  require('./trackTransport').default,
   require('./fileManager').default,
+  require('./taskTotal').default,
   require('./interfaceLog').default,
 ];
 

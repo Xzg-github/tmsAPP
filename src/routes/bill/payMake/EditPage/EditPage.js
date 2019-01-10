@@ -14,7 +14,7 @@ class EditPage extends React.Component {
     const props = {
       ...prop,
       items: payItems.map(o => {
-      o.companyTitle = o.supplierId.title;
+      o.companyTitle = o.supplierId ? o.supplierId.title : '';
       return o;
     })};
     return (payItems.length > 0) && <Total {...props}/>

@@ -1,8 +1,8 @@
 import React from 'react';
-import Container from './CarManagerContainer';
+import Container from './TrackTransportContainer';
 
 export default {
-  path: '/car_manager',
+  path: '/track_transport',
 
   action() {
     return {

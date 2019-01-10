@@ -1,0 +1,46 @@
+@import '../../../../components/variables.less';
+
+.root {
+  position: relative;
+  display: inline-block;
+  background-color: @table-header-bg;
+  height: 100px;
+  vertical-align: top;
+  transition: all 0.1s;
+  border: 1px solid transparent;
+
+  [data-role='item'] {
+    display: inline-block;
+    height: inherit;
+    width: 100%;
+    padding-top: 25px;
+    text-align: center;
+
+    > :first-child {
+      display: block;
+      font-size: 20px;
+      color: #666;
+    }
+
+    > :last-child {
+      display: block;
+      color: #333;
+      margin-top: 8px;
+    }
+  }
+
+  &[data-status='normal']:hover {
+    background: white;
+    border: 1px solid @primary-color;
+  }
+
+  &[data-status='disabled'] {
+    [data-role='item'] {
+      cursor: default;
+
+      > span > span {
+        color: #bfbfbf;
+      }
+    }
+  }
+}

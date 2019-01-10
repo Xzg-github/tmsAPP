@@ -161,9 +161,10 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
  * 参数：urlConfig - [必需] 获取界面配置的url
  *       urlList - [必需] 获取列表数据的url
  *       statusNames - [可选] 需要获取的来自状态字典的表单状态下拉的表单类型值数组
+ *       home - [可选] 是否来自任务看板的跳转，当为任务看板跳转过来时，home的值为子页签subTabs的key值
 * 返回：成功返回初始化状态，失败返回空
 * */
-const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[]) => {
+const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[], home=false) => {
   try {
     //获取并完善config
     const config = helper.getJsonResult(await helper.fetchJson(urlConfig));
@@ -173,7 +174,10 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[]) 
     }
     setDictionary2(dic, config.filters, config.tableCols);
     //获取列表数据
-    const {subActiveKey, subTabs, isTotal, initPageSize, fixedFilters={}, searchDataBak={}, buttons={}} = config;
+    let {subActiveKey, subTabs, isTotal, initPageSize, fixedFilters={}, searchDataBak={}, buttons={}} = config;
+    if (home && subTabs.filter(item => item.key === home).length === 1) {
+      subActiveKey = home;
+    }
     const body = {
       itemFrom: 0,
       itemTo: initPageSize,
@@ -208,6 +212,7 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[]) 
       searchData:{},
       searchDataBak: {},
       ...config,
+      subActiveKey,
       urlList,
       pageSize,
       currentPage,

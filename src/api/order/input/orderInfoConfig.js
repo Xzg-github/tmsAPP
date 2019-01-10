@@ -102,7 +102,6 @@ const config = {
   buttons: [
     {key: 'save', title: '保存'},
     {key: 'commit', title: '提交'},
-    {key: 'new', title: '创建下一单'},
   ],
   tabs: [
     {key: 'addressList', title: '收发货地址'},

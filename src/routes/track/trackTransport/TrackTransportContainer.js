@@ -2,11 +2,10 @@ import { connect } from 'react-redux';
 import {EnhanceLoading} from '../../../components/Enhance';
 import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
-import {buildOrderTabPageState} from './OrderTabPageContainer';
-import Todo from './Todo';
-import {updateTable} from "../../../standard-business/OrderTabPage/createOrderTabPageContainer";
+import {buildOrderPageState} from './OrderPageContainer';
+import TrackTransport from './TrackTransport';
 
-const prefix = ['todo'];
+const prefix = ['trackTransport'];
 const action = new Action(prefix);
 
 const getSelfState = (rootState) => {
@@ -15,17 +14,12 @@ const getSelfState = (rootState) => {
 
 const initActionCreator = () => async (dispatch) => {
   dispatch(action.assign({status: 'loading'}));
-  const state = await buildOrderTabPageState();
+  const state = await buildOrderPageState();
   if (!state) {
     dispatch(action.assign({status: 'retry'}));
     return;
   }
   dispatch(action.create(state));
-};
-
-const refreshForHomeActionCreator = (key) => async (dispatch, getState) => {
-  dispatch(action.assign({activeKey: 'index', subActiveKey: key}));
-  return updateTable(dispatch, action, getSelfState(getState()));
 };
 
 const tabChangeActionCreator = (key) => {
@@ -50,10 +44,9 @@ const mapStateToProps = (state) => {
 
 const actionCreators = {
   onInit: initActionCreator,
-  onRefreshForHome: refreshForHomeActionCreator,
   onTabChange: tabChangeActionCreator,
   onTabClose: tabCloseActionCreator
 };
 
-const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(Todo));
+const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(TrackTransport));
 export default Container;

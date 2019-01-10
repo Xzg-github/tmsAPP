@@ -3,6 +3,7 @@ import {EnhanceLoading} from '../../../components/Enhance';
 import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
 import {buildOrderTabPageState} from './OrderTabPageContainer';
+import {updateTable} from '../../../standard-business/OrderTabPage/createOrderTabPageContainer';
 import Pending from './Pending';
 
 const prefix = ['pending'];
@@ -12,14 +13,19 @@ const getSelfState = (rootState) => {
   return getPathValue(rootState, prefix);
 };
 
-const initActionCreator = () => async (dispatch) => {
+const initActionCreator = (home) => async (dispatch) => {
   dispatch(action.assign({status: 'loading'}));
-  const state = await buildOrderTabPageState();
+  const state = await buildOrderTabPageState(home);
   if (!state) {
     dispatch(action.assign({status: 'retry'}));
     return;
   }
   dispatch(action.create(state));
+};
+
+const refreshForHomeActionCreator = (key) => async (dispatch, getState) => {
+  dispatch(action.assign({activeKey: 'index', subActiveKey: key}));
+  return updateTable(dispatch, action, getSelfState(getState()));
 };
 
 const tabChangeActionCreator = (key) => {
@@ -44,6 +50,7 @@ const mapStateToProps = (state) => {
 
 const actionCreators = {
   onInit: initActionCreator,
+  onRefreshForHome: refreshForHomeActionCreator,
   onTabChange: tabChangeActionCreator,
   onTabClose: tabCloseActionCreator
 };

@@ -43,7 +43,9 @@ const supervisor = [
 // 跟踪管控侧边栏
 const track = [
   {key: 'track_order'},     // 运单跟踪
+  {key: 'track_transport'},     // 在途跟踪
   {key: 'file_manager'},     // 文件管理
+  {key: 'task_total'},     // 任务看板
   {key: 'interface_log'},   //接口日志
 ];
 

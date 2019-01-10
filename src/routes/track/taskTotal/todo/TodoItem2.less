@@ -1,0 +1,46 @@
+@import '../../../../components/variables.less';
+
+.root {
+  position: relative;
+  display: inline-block;
+  background-color: @table-header-bg;
+  height: 50px;
+  vertical-align: top;
+  transition: all 0.1s;
+  border: 1px solid transparent;
+
+  [data-role='item'] {
+    display: inline-block;
+    height: inherit;
+    width: 100%;
+    padding-top: 10px;
+
+    > span:first-child {
+      line-height: 30px;
+      margin-left: @padding-horizontal;
+      color: #333;
+    }
+
+    > span:last-child {
+      float: right;
+      padding-right: @padding-horizontal;
+      font-size: 20px;
+      color: #666;
+    }
+  }
+
+  &[data-status='normal']:hover {
+    background: white;
+    border: 1px solid @primary-color;
+  }
+
+  &[data-status='disabled'] {
+    [data-role='item'] {
+      cursor: default;
+
+      > span {
+        color: #bfbfbf;
+      }
+    }
+  }
+}

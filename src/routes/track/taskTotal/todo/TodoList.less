@@ -1,0 +1,17 @@
+@import '../../../../components/variables.less';
+
+.root {
+  width: 50%;
+  overflow: hidden;
+  display: inline-block;
+
+  > :first-child {
+    background-color: white;
+    margin-bottom: @padding-vertical;
+  }
+
+  > div:not(:first-child) > * {
+    margin: 0 @padding-horizontal @padding-vertical 0;
+    width: 46%;
+  }
+}

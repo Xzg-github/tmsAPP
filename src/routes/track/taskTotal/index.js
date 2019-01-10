@@ -1,13 +1,13 @@
 import React from 'react';
-import Container from './PendingContainer';
+import Container from './TaskTotalContainer';
 
 export default {
-  path: '/pending',
+  path: '/task_total',
 
   action() {
     return {
       wrap: true,
-      component: <Container home/>
+      component: <Container />
     };
   }
 }

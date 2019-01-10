@@ -202,6 +202,7 @@ const name = {
   TRANSPORT_TYPE: 'transport_type', //运输方式
   RESPONSIBLE_PARTY: 'responsible_party', //责任方
   TASK_TYPE_FILE: 'task_type_file',  //文件任务
+  CAR_STATE: 'car_state', //车辆状态
 };
 
 export default name;
