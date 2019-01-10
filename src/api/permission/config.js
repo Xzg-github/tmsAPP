@@ -44,6 +44,7 @@ const supervisor = [
 const track = [
   {key: 'track_order'},     // 运单跟踪
   {key: 'file_manager'},     // 文件管理
+  {key: 'interface_log'},   //接口日志
 ];
 
 // 应收管理子菜单
