@@ -68,9 +68,6 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       }
       !isAppend && delete config.formSections.dispatchInfo; //非补录运单无派车信息组
       let buttons = [...config.buttons];
-      if (helper.getRouteKey() !== 'input') {
-        buttons = buttons.filter(item => item.key !== 'new');
-      }
       if (helper.getRouteKey() === 'complete') {
         buttons = buttons.filter(item => item.key === 'save');
       }
@@ -443,18 +440,17 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     }
     const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));
     if (returnCode !== 0) return helper.showError(returnMsg);
-    helper.showSuccessMsg('保存成功');
     if (!baseInfo.id) { //新增保存处理
       if (isAppend) { //新增补录运单
+        helper.showSuccessMsg('保存成功');
         dispatch(action.assign({id: result.id}, 'baseInfo'));
+        dispatch(action.update({type: 'readonly'}, ['formSections', 'baseInfo', 'controls'], {key: 'key', value: 'customerId'}));
       }else { //新增运单
-        dispatch(action.assign({id: result}, 'baseInfo'));
-        let [...pageTitle] = helper.getPageTitle();
-        pageTitle.pop();
-        pageTitle.push('编辑');
-        helper.setPageTitle(pageTitle);
+        helper.showSuccessMsg(`运单号：${result.orderNumber} 运单已保存至待办任务-待完善`);
+        return newActionCreator(dispatch, getState);
       }
-      dispatch(action.update({type: 'readonly'}, ['formSections', 'baseInfo', 'controls'], {key: 'key', value: 'customerId'}));
+    }else {
+      helper.showSuccessMsg('保存成功');
     }
   };
 
@@ -488,11 +484,13 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     const body = getSaveData(selfState);
     const method = baseInfo.id ? 'put' : 'post';
     const url = isAppend ? '/api/bill/append/commit' : '/api/order/input/commit';
-    const {returnCode, returnMsg} = await helper.fetchJson(url, helper.postOption(body, method));
+    const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));
     if (returnCode !== 0) return helper.showError(returnMsg);
-    helper.showSuccessMsg('提交成功');
     if (helper.getRouteKey() === 'input') {
+      helper.showSuccessMsg(`运单号：${result.orderNumber} 运单已提交至待办任务-待派发`);
       newActionCreator(dispatch, getState);
+    }else {
+      helper.showSuccessMsg('提交成功');
     }
     closeFunc && closeFunc();
   };
@@ -592,10 +590,6 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       activeKey: 'addressList'
     }));
     dispatch(action.update({type: 'search'}, ['formSections', 'baseInfo', 'controls'], {key: 'key', value: 'customerId'}));
-    let [...pageTitle] = helper.getPageTitle();
-    pageTitle.pop();
-    pageTitle.push('新增');
-    helper.setPageTitle(pageTitle);
   };
 
   const buttons = {
@@ -607,7 +601,6 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     delGoods: delGoodsActionCreator,
     save: saveActionCreator,
     commit: commitActionCreator,
-    new: newActionCreator, //创建下一单
   };
 
   const clickActionCreator = (key) => {
