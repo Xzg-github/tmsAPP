@@ -37,7 +37,6 @@ const pushLogConfig = {
   tableCols: [
     {key: 'interfaceType', title: '接口类别', dictionary: 'system_settings_interface'},
     {key: 'tag', title: '状态', options: pushTagOptions},
-    {key: 'id', title: '标识'},
     {key: 'showContent', title: '关键信息'},
     {key: 'reason', title: '失败原因'},
     {key: 'insertTime', title: '创建时间'},
