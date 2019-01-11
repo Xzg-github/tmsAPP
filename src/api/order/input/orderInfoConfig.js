@@ -78,7 +78,7 @@ const goodsCols = [
   {key: 'commodityUnit', title: '基本单位', type:'select', dictionary: 'commodity_unit'},
 ];
 
-const config = {
+const orderConfig = {
   formSections: {
     baseInfo: {key: 'baseInfo', title: '基本信息', controls: baseForm},
     dispatchInfo: {key: 'dispatchInfo', title: '派车信息', controls: dispatchForm}, //为补录运单时才展示该分组信息
@@ -110,6 +110,45 @@ const config = {
     {key: 'goodsList', title: '货物明细'},
   ],
   activeKey: 'addressList'
+};
+
+const trackConfig = {
+  section1: {
+    title: '运单状态',
+  },
+  section2: {
+    title: '车辆信息',
+    items: [
+      {key: 'supplierId', title: '供应商：', icon: 'pld-gongyingshang'},
+      {key: 'carNumber', title: '车辆：', icon: 'pld-cheliang1'},
+      {key: 'driverName', title: '司机：', icon: 'pld-siji'},
+      {key: 'driverMobilePhone', title: '电话：', icon: 'pld-dianhua'},
+    ]
+  },
+  section3: {
+    title: '司机任务',
+  },
+  section4: {
+    title: '更改记录',
+    cols: [
+      {key: 'keyName', title: '内容'},
+      {key: 'oldValue', title: '变更前值'},
+      {key: 'newValue', title: '变更后值'},
+      {key: 'remark', title: '说明'},
+      {key: 'insertUser', title: '变更人'},
+      {key: 'insertTime', title: '变更时间'},
+    ]
+  }
+};
+
+const config = {
+  ...orderConfig,
+  ...trackConfig,
+  topTabs: [
+    {key: 'order', title: '运单信息'},
+    {key: 'track', title: '在途信息'},
+  ],
+  topActiveKey: 'order',
 };
 
 export default config;
