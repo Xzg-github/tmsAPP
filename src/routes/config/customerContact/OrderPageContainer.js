@@ -76,8 +76,8 @@ const enableAction = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkedItems = tableItems.filter(item => item.checked);
   if (checkedItems.length === 0) return showError('请选择记录') ;
-  if(checkedItems.some(item => item.enabledType !== 'enabled_type_unenabled')){
-    return showError('只能启用未启用状态的记录!');
+  if(checkedItems.some(item => item.enabledType === 'enabled_type_enabled')){
+    return showError('包含已启用状态的记录!');
   }
   const ids = checkedItems.map(item => item.id);
   const {returnCode, returnMsg} = await fetchJson(`${URL_ENABLE}/enabled_type_enabled`, postOption(ids, 'put'));

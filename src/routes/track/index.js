@@ -9,6 +9,7 @@ const children = [
   require('./trackTransport').default,
   require('./fileManager').default,
   require('./taskTotal').default,
+  require('./interfaceLog').default,
 ];
 
 export default RouterHelper(prefix, title, children);

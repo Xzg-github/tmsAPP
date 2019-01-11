@@ -94,7 +94,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     const {baseInfo} = getSelfState(getState());
     const oldValue = baseInfo[key];
     let obj = {[key]: value, contactName: '', contactTelephone: '', contactEmail:'', salespersonId: '', customerServiceId: '',
-      departure:'', destination:'', goodsNumber:'', isSupervisor:'', route:''};
+      departure:'', destination:'', goodsNumber:'', isSupervisor:'', route:'', totalMileage:''};
     let url, data;
     if(value.value) {
       if (oldValue && oldValue.value === value.value) return;
@@ -294,6 +294,9 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
         }
       }
     }
+    if (changeKey === 'consigneeConsignorId') {
+      obj.totalMileage = '';
+    }
     return obj;
   };
 
@@ -417,6 +420,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
 
   //保存（不关闭当前页）
   const saveActionCreator = async (dispatch, getState) => {
+    await countActionCreator(dispatch, getState);
     const selfState = getSelfState(getState());
     const {baseInfo, isAppend} = selfState;
     if (!baseInfo.customerId) return helper.showError('请先填写客户');
@@ -465,6 +469,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
 
   //提交
   const commitActionCreator = async (dispatch, getState) => {
+    await countActionCreator(dispatch, getState);
     const selfState = getSelfState(getState());
     const {baseInfo, closeFunc, isAppend} = selfState;
     //校验数据
@@ -557,6 +562,17 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     dispatch(action.assign( await countBaseInfoData(items, 'consigneeConsignorId'), 'baseInfo'));
   };
 
+  //获取总里程数
+  const getTotalMileage = async (getState) => {
+    return Math.ceil(Math.random()*999);
+  };
+
+  //计算总里程
+  const countActionCreator = async (dispatch, getState) => {
+    const totalMileage = await getTotalMileage(getState) || '';
+    dispatch(action.assign({totalMileage}, 'baseInfo'));
+  };
+
   //新增货物明细
   const addGoodsActionCreator = (dispatch) => {
     dispatch(action.add({}, 'goodsList'));
@@ -585,6 +601,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     del: delActionCreator,
     up: upActionCreator,
     down: passActionCreator,
+    count: countActionCreator,
     addGoods: addGoodsActionCreator,
     delGoods: delGoodsActionCreator,
     save: saveActionCreator,

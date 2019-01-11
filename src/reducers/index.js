@@ -76,6 +76,7 @@ const rootReducer = combineReducers({
   trackOrder: create('trackOrder'),
   trackTransport: create('trackTransport'),
   fileManager: create('fileManager'),
+  interfaceLog: create('interfaceLog'),
   taskTotal: create('taskTotal'),
 
   //计费与对帐
