@@ -8,6 +8,7 @@ import {getPathValue} from '../../../action-reducer/helper';
 import {toFormValue} from "../../../common/check";
 import {commonExport, exportExcelFunc} from "../../../common/exportExcelSetting";
 import interfaceLog from './interfaceLog';
+import showCheckPage from './checkPage/checkPageContainer';
 
 const STATE_PATH = ['interfaceLog'];
 const action = new Action(STATE_PATH);
@@ -79,6 +80,18 @@ const redockActionCreator = async (dispatch, getState) => {
     : showError(returnMsg);
 };
 
+const checkedActionCreator = async (dispatch, getState) =>{
+  try {
+    const {pushLog, receivingLog, activeKey} = getSelfState(getState());
+    const tableItems = activeKey === 'pushLog' ? pushLog.tableItems : receivingLog.tableItems;
+    const checkedItem = tableItems.filter(item => item.checked);
+    if (checkedItem.length !== 1) return showError('请选择一条数据') ;
+    await showCheckPage(JSON.parse(checkedItem[0].content), '300px');
+  }catch (e) {
+    helper.showError('内容展示不是JSON对象');
+  }
+};
+
 // 查询导出
 const exportSearchActionCreator = (dispatch, getState) => {
   const {pushLog, receivingLog, activeKey} = getSelfState(getState());
@@ -102,6 +115,7 @@ const toolbarActions = {
   exportSearch: exportSearchActionCreator,
   exportPage: exportPageActionCreator,
   redock: redockActionCreator,
+  check: checkedActionCreator
 };
 
 const clickActionCreator = (key) => {
