@@ -1,6 +1,14 @@
 @import '../../../../components/variables.less';
 
+@green-color: green;
+
 .root {
+  > div:first-child {
+    margin: 0 @padding-horizontal @padding-vertical @padding-horizontal;
+  }
+}
+
+.order {
   position: relative;
 
   > * {
@@ -18,5 +26,48 @@
   > [role='toolbar']:last-child {
     margin-bottom: @padding-vertical-lg;
     text-align: center;
+  }
+}
+
+.track {
+  > * {
+    margin: 0 @padding-horizontal @padding-vertical @padding-horizontal;
+  }
+
+  [role='steps'] {
+    > div {
+      max-width: 16%;
+    }
+
+    :global(.ant-steps-main) {
+      display: block;
+    }
+  }
+
+  [role='info'] {
+    position: relative;
+    display: inline-block;
+    height: 50px;
+    vertical-align: top;
+    padding-top: 7px;
+    padding-right: 20px;
+    width: 25%;
+
+    > :global(.anticon) {
+      color: #AFAFAF;
+      font-size: 36px;
+      line-height: 36px;
+      vertical-align: top;
+      margin: 0 @padding-horizontal;
+    }
+
+    > span {
+      line-height: 36px;
+      color: #666;
+    }
+
+    > span:last-child {
+      color: #333;
+    }
   }
 }

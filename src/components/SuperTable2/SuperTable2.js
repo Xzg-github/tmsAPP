@@ -229,7 +229,11 @@ class SuperTable2 extends React.Component {
   };
 
   canReadonly = (type) => {
-    return !['index', 'checkbox', 'link', 'button', 'switch', 'custom'].includes(type);
+    if (type) {
+      return !['index', 'checkbox', 'link', 'button', 'switch', 'custom'].includes(type);
+    } else {
+      return false;
+    }
   };
 
   getColumns = (cols) => {

@@ -1,8 +1,10 @@
 import { connect } from 'react-redux';
 import OrderInfoPage from './OrderInfoPage';
 import {EnhanceLoading} from '../../../../components/Enhance';
+import execWithLoading from '../../../../standard-business/execWithLoading';
 import {fetchJson, getJsonResult} from "../../../../common/common";
 import {fetchAllDictionary, setDictionary2} from "../../../../common/dictionary";
+import moment from 'moment';
 import helper from "../../../../common/common";
 import { showAddCustomerFactoryDialog } from '../../../config/customerFactory/EditDialogContainer';
 import showAddCustomerContactDialog from '../../../config/customerContact/EditDialogContainer';
@@ -17,27 +19,12 @@ import showAddCustomerContactDialog from '../../../config/customerContact/EditDi
  *     isAppend - true为补录运单，默认false，为false且id不为空时跟据运单数据自动设置
  *     readonly - true为页面只读
  *     closeFunc - 页面为tab页且存在按钮操作时，操作完成后的关闭页面回调函数，无按钮操作时可无
+ *     pageType - 页面类型：1 - 仅运单信息  2 - 有运单信息和在途信息，默认新增运单or补录运单为1，编辑或查看非补录运单为2
  * }
  */
 const createOrderInfoPageContainer = (action, getSelfState) => {
 
-  const getCurrentDate = () => {
-    const date = new Date;
-    const d = date.getDate();
-    const dd = d < 10 ? `0${d}` : String(d);
-    const m = date.getMonth()+1;
-    const mm = m < 10 ? `0${m}` : String(m);
-    const yyyy = date.getFullYear().toString();
-    const h = date.getHours();
-    const hh = h < 10 ? `0${h}` : String(h);
-    const f = date.getMinutes();
-    const ff = f < 10 ? `0${f}` : String(f);
-    const s = date.getSeconds();
-    const ss = s < 10 ? `0${s}` : String(s);
-    return `${yyyy}-${mm}-${dd} ${hh}:${ff}:${ss}`;
-  };
-
-  const buildState = async ({id, readonly, closeFunc, isAppend = false}) => {
+  const buildState = async ({id, readonly, closeFunc, pageType, isAppend = false}) => {
     try {
       //获取并完善config
       let url = '/api/order/input/orderInfoConfig';
@@ -48,7 +35,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       });
       setDictionary2(dic, config.addressTable.cols, config.goodsTable.cols);
       //获取订单数据
-      let data = {baseInfo:{customerDelegateTime: getCurrentDate()}, addressList:[{pickupDeliveryType: '0'},{pickupDeliveryType: '1'}], goodsList:[]};
+      let data = {baseInfo:{customerDelegateTime: moment().format('YYYY-MM-DD HH:mm:ss')}, addressList:[{pickupDeliveryType: '0'},{pickupDeliveryType: '1'}], goodsList:[]};
       if (id) {
         url = `/api/order/input/info/${id}`;
         const {addressList=[], goodsList=[], ...baseInfo} = getJsonResult(await fetchJson(url));
@@ -78,6 +65,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
         readonly,
         isAppend,
         closeFunc,
+        pageType: pageType || (id && !isAppend) ? 2 : 1,
         valid:{},
         status: 'page'
       };
@@ -600,7 +588,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   //下一单
   const newActionCreator = (dispatch, getState) => {
     dispatch(action.assign({
-      baseInfo: {customerDelegateTime: getCurrentDate()},
+      baseInfo: {customerDelegateTime: moment().format('YYYY-MM-DD HH:mm:ss')},
       addressList:[{pickupDeliveryType: '0'}, {pickupDeliveryType: '1'}],
       goodsList:[],
       activeKey: 'addressList'
@@ -629,6 +617,48 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     }
   };
 
+  const topTabChangeActionCreator = (topActiveKey) => async (dispatch, getState) => {
+    dispatch(action.assign({topActiveKey}));
+    const {baseInfo, pageType, trackLoaded = false} = getSelfState(getState());
+    if (topActiveKey === 'track' && pageType === 2 && !trackLoaded) { //加载在途信息数据
+      execWithLoading(async () => {
+        let isOk = true;
+        let data = await helper.fetchJson(`/api/order/input/track_status/${baseInfo.id}`);
+        if (data.returnCode !== 0) {
+          helper.showError(`加载运单状态失败：${data.returnMsg}`);
+          isOk = false;
+        }else {
+          dispatch(action.assign({statusList: data.result}, ['section1']));
+        }
+
+        data = await helper.fetchJson(`/api/order/input/track_cars/${baseInfo.id}`);
+        if (data.returnCode !== 0) {
+          helper.showError(`加载车辆信息败：${data.returnMsg}`);
+          isOk = false;
+        }else {
+          dispatch(action.assign({carInfo: data.result}, ['section2']));
+        }
+
+        data = await helper.fetchJson(`/api/order/input/track_driver/${baseInfo.id}`);
+        if (data.returnCode !== 0) {
+          helper.showError(`加载司机任务失败：${data.returnMsg}`);
+          isOk = false;
+        }else {
+          dispatch(action.assign({taskList: data.result}, ['section3']));
+        }
+
+        data = await helper.fetchJson(`/api/order/input/track_change/${baseInfo.id}`);
+        if (data.returnCode !== 0) {
+          helper.showError(`加载更改记录失败：${data.returnMsg}`);
+          isOk = false;
+        }else {
+          dispatch(action.assign({items: data.result}, ['section4']));
+        }
+        isOk && dispatch(action.assign({trackLoaded: true}));
+      });
+    }
+  };
+
   const mapStateToProps = (state) => {
     return getSelfState(state);
   };
@@ -643,6 +673,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     onExitValid: exitValidActionCreator,
     onCheck: checkActionCreator,
     onTabChange: tabChangeActionCreator,
+    onTopTabChange: topTabChangeActionCreator,
     onClick: clickActionCreator,
   };
 

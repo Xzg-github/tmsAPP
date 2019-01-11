@@ -1,11 +1,12 @@
-import {PropTypes} from 'react';
+import React, {PropTypes} from 'react';
 import styles from './index.less';
 import JSONTree from 'react-json-tree';
 import theme from './theme';
+import withStyle from 'isomorphic-style-loader/lib/withStyles';
 
-function TestResult({ result }) {
+function TestResult({ result , containerHeight}) {
   return (
-    <div className={styles.testResult}>
+    <div className={styles.testResult} style={{height: containerHeight, overflow: 'auto'}}>
       <div className={styles.inner}>
         {result ? (
           <JSONTree
@@ -25,4 +26,4 @@ function TestResult({ result }) {
 TestResult.propTypes = {
   result: PropTypes.object
 };
-export default TestResult;
+export default withStyle(styles)(TestResult);
