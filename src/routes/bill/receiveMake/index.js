@@ -7,7 +7,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <RootContainer/>
+      component: <RootContainer home/>
     };
   }
 }

@@ -36,7 +36,8 @@ const dispatchForm = [
 ];
 
 const addForm = [
-  {key: 'route', title: '路线', type:'textArea', props: {readonly: true}, span: 4},
+  {key: 'route', title: '路线', type:'textArea', props: {readonly: true}, span: 3},
+  {key: 'totalMileage', title: '总里程', type: 'readonly'},
   {key: 'customerFactoryRemark', title: '装货注意事项', type:'textArea', span: 2},
   {key: 'dispatchRemark', title: '调度注意事项', type:'textArea', span: 2},
   {key: 'description', title: '附加说明', type:'textArea', span: 4},
@@ -90,6 +91,7 @@ const config = {
       {key: 'del', title: '删除'},
       {key: 'up', title: '上移'},
       {key: 'down', title: '下移'},
+      {key: 'count', title: '计算总里程'},
     ]
   },
   goodsTable: {

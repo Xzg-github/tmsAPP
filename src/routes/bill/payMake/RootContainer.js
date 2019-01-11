@@ -3,7 +3,7 @@ import {EnhanceLoading} from '../../../components/Enhance';
 import {createCommonTabPage} from '../../../standard-business/createTabPage';
 import OrderPageContainer from './OrderPage/OrderPageContainer';
 import EditPageContainer from './EditPage/EditPageContainer';
-import helper, {fetchJson, getJsonResult, showError, initTableCols, postOption, deepCopy} from '../../../common/common';
+import helper, {fetchJson, getJsonResult, showError, initTableCols, postOption, deepCopy, convert} from '../../../common/common';
 import {fetchDictionary, setDictionary} from '../../../common/dictionary';
 import {search} from '../../../common/search';
 import {Action} from '../../../action-reducer/action';
@@ -28,13 +28,13 @@ const computedCount = (tagArr, tag) => {
   return item ? item.count : 0;
 };
 
-const getNewTableData = async (params, payload) => {
+const getNewTableData = async (params, payload, home=false) => {
   const {tabKey, tabs2, currentPage, pageSize, filter} = params;
   let list, newTabs2;
   await execWithLoading(async () => {
     const itemFrom = (currentPage - 1) * pageSize;
     const itemTo = itemFrom + pageSize;
-    const options = {costTag: tabKey, ...filter};
+    const options = {costTag: home ? home : tabKey, ...filter};
     list = getJsonResult(await search(URL_LIST, itemFrom, itemTo, options, false));
     newTabs2 = deepCopy(tabs2).map(tab => {
       // 0:待明细整审,1:待整审,2:已整审
@@ -53,7 +53,7 @@ const getNewTableData = async (params, payload) => {
   }
 };
 
-const buildOrderPageState = async (config, other={}) => {
+const buildOrderPageState = async (config, other={}, home) => {
   const {tabKey, tabs2, btns} = config;
   const params = {
     tabKey,
@@ -67,9 +67,10 @@ const buildOrderPageState = async (config, other={}) => {
     searchData: {},
     searchDataBak: {},
     isRefresh: true,
-    buttons: btns.filter(o => o.showInTab.includes(tabKey))
+    buttons: btns.filter(o => o.showInTab.includes(tabKey)),
+    tabKey: home ? home : tabKey
   };
-  const payload = await getNewTableData(params, newState);
+  const payload = await getNewTableData(params, newState, home);
   return {
     ...config,
     ...other,
@@ -95,7 +96,7 @@ const uniqueArrHanlder = (tableCols=[], customConfig=[]) => {
   }, []);
 };
 
-const initActionCreator = () => async (dispatch) => {
+const initActionCreator = (home) => async (dispatch) => {
   try {
     dispatch(action.assign({status: 'loading'}));
     const {activeKey, tabs, index, editConfig, names} = getJsonResult(await fetchJson(URL_CONFIG));
@@ -107,7 +108,7 @@ const initActionCreator = () => async (dispatch) => {
     editConfig.receiveColsEdit = uniqueArrHanlder(editConfig.receiveColsEdit, receive_customConfig.controls);
     editConfig.payColsEdit = uniqueArrHanlder(editConfig.payColsEdit, pay_customConfig.controls);
 
-    const payload = await buildOrderPageState(index, {tabs, activeKey, editConfig, status: 'page'});
+    const payload = await buildOrderPageState(index, {tabs, activeKey, editConfig, status: 'page'}, home);
 
     // 获取币种、状态，设置字典
     const currencyList = getJsonResult(await fetchJson(URL_CURRENCY, postOption({currencyTypeCode: '', maxNumber: 65536})));
@@ -149,12 +150,20 @@ const tabCloseActionCreator = (key) => (dispatch, getState) => {
   }
 };
 
+const refreshForHomeActionCreator = (key) => async (dispatch, getState) => {
+  const {searchData, currentPage, pageSize, tabs2} = getSelfState(getState());
+  const params = {filter: convert(searchData), currentPage, pageSize, tabKey: key, tabs2};
+  const payload = await getNewTableData(params, {searchDataBak: searchData, currentPage: 1, tabKey: key});
+  dispatch(action.assign({...payload}));
+};
+
 const mapStateToProps = (state) => getSelfState(state);
 
 const actionCreators = {
   onInit: initActionCreator,
   onTabChange: tabChangeActionCreator,
-  onTabClose: tabCloseActionCreator
+  onTabClose: tabCloseActionCreator,
+  onRefreshForHome: refreshForHomeActionCreator,
 };
 
 const Component = EnhanceLoading(createCommonTabPage(OrderPageContainer, EditPageContainer));

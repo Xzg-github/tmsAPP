@@ -81,9 +81,11 @@ class Total extends React.Component {
         <Control {...selectProps}/>
         {totalKeys.map(({key, title}, index) => {
           if (typeof totalValues[key] !== 'undefined') {
+            const val = Number(totalValues[key]).toFixed(2);
+            const className = key === 'profit' && val < 0 ? s.red : '';
             return [
               <span key={key}>{`${title}:`}</span>,
-              <span key={index} data-role='money'>{Number(totalValues[key]).toFixed(2)}</span>
+              <span className={className} key={index} data-role='money'>{val}</span>
             ]
           }
         })}
