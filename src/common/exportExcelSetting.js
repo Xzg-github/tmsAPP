@@ -79,7 +79,7 @@ const exportExcelFunc = async (newCols, items, byFront=true) => {
  * @param pageResult 返回的结果是否为分页的结果，默认为true
  */
 const commonExport = async (tableCols=[], api='', searchData={}, isExcelReport=true, isFilter=true, method='post', pageResult=true) => {
-  let search = isFilter ? buildFilter(0, 65535, convert(searchData)) : convert(searchData);
+  let search = isFilter ? buildFilter(0, 65535, convert(searchData)) : {...convert(searchData), itemFrom: 0, itemTo: 65535};
   const params = {
     search: method.toLowerCase() == 'post' ? isExcelReport ? {...search, needPaging: 0} : search : {},
     gridConfig: exportGridConfigHandler(tableCols),
