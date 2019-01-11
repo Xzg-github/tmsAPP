@@ -34,6 +34,22 @@ api.get('/:ak/:address', async (req, res) => {
   res.send({returnCode: -1, returnMsg: '获取坐标失败'});
 });
 
+// 获取经纬度对应省市区
+api.get('/district/:ak/:lat/:lng', async (req, res) => {
+  const url = `http://api.map.baidu.com/geocoder/v2/?location=${req.params.lat},${req.params.lng}&output=json&ak=${req.params.ak}`;
+  const response = await fetch(url, {method: 'get'});
+  if (response.ok) {
+    const json = await response.json();
+    if (json.result && json.result.addressComponent) {
+      res.send({returnCode: 0, result: json.result.addressComponent});
+      return;
+    }
+  } else {
+    console.log(response.statusText);
+  }
+  res.send({returnCode: -1, returnMsg: '获取省、市、区失败'});
+});
+
 api.get('*', (req, res) => {
   http.request(options(req), proxy(res)).end();
 });

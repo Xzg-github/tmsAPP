@@ -18,16 +18,22 @@ api.post('/list', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
-// //获取收发货地点
-// api.get('/address/:id', async (req, res) => {
-//   const url = `${service}/transport_order_address/${req.params.id}`;
-//   res.send(await fetchJsonByNode(req, url));
-// });
-//
-// //位置更新
-// api.post('/update', async (req, res) => {
-//   const url = `${service}/transport_order/position`;
-//   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-// });
+//获取收发货地点
+api.get('/address/:id', async (req, res) => {
+  const url = `${service}/transport_order_address/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
+//位置更新
+api.post('/update', async (req, res) => {
+  const url = `${service}/transport_order/position`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+//获取最新位置
+api.get('/refresh_position', async (req, res) => {
+  const url = `${service}/car_manager/position`;
+  res.send(await fetchJsonByNode(req, url));
+});
 
 export default api;

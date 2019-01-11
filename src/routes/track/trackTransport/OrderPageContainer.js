@@ -1,7 +1,8 @@
-import createOrderPageContainer, {buildOrderPageCommonState} from '../../../standard-business/OrderPage/createOrderPageContainer';
+import createOrderPageContainer, {buildOrderPageCommonState, updateTable} from '../../../standard-business/OrderPage/createOrderPageContainer';
 import {getPathValue} from '../../../action-reducer/helper';
 import {Action} from "../../../action-reducer/action";
 import helper from "../../../common/common";
+import showUpdateDialog from "./update/UpdateDialog";
 
 const STATE_PATH = ['trackTransport'];
 const action = new Action(STATE_PATH);
@@ -43,18 +44,40 @@ const lineActionCreator = (dispatch, getState) => {
 };
 
 //位置更新
-const updateActionCreator = (dispatch, getState) => {
-
+const updateActionCreator = async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const checkedItems = tableItems.filter(item => item.checked === true);
+  if (checkedItems.length !== 1) {
+    helper.showError('请勾选一条记录');
+  } else {
+    if (true === await showUpdateDialog(checkedItems[0])) {
+      return updateTable(dispatch, action, getSelfState(getState()));
+    }
+  }
 };
 
 //更新为已完成
-const completeActionCreator = (dispatch, getState) => {
-
+const completeActionCreator = async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const checkedItems = tableItems.filter(item => item.checked === true);
+  if (checkedItems.length < 1) return helper.showError(`请先勾选记录`);
+  if (!checkedItems.every(item => item.statusType === 'status_in_transport')) return helper.showError(`只能操作运单状态为运输已开始的单`);
+  const ids = checkedItems.map(item => item.id);
+  const url = `/api/track/track_order/completed`;
+  const {returnCode, returnMsg} = await helper.fetchJson(url, helper.postOption(ids));
+  if (returnCode !== 0) return helper.showError(returnMsg);
+  helper.showSuccessMsg(`操作成功`);
+  return updateTable(dispatch, action, getSelfState(getState()));
 };
 
 //获取最新位置
-const refreshActionCreator = (dispatch, getState) => {
-
+const refreshActionCreator = async (dispatch, getState) => {
+  const {returnCode} = await helper.fetchJson(`/api/track/track_transport/refresh_position`);
+  if (returnCode !== 0) {
+    helper.showError(`操作失败`);
+  }else {
+    helper.showSuccessMsg(`操作成功`);
+  }
 };
 
 const buttons = {

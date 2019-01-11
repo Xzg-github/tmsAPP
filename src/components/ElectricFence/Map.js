@@ -52,6 +52,17 @@ export const getPoints = async (items) => {
   return result;
 };
 
+// 根据经纬度获取省、市、区
+export const getDistrict = async (lat, lng) => {
+  const url = `/api/proxy/district/${BAIDU_AK}/${lat}/${lng}`;
+  const json = await helper.fetchJson(url);
+  if (json.returnCode === 0) {
+    const {province, city, district} = json.result;
+    if (province && city && district) return {province, city, district};
+  }
+  return null;
+};
+
 const toBmapPoint = (point) => {
   return new BMap.Point(point.lng, point.lat);
 };
