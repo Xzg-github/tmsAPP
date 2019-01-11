@@ -142,16 +142,18 @@ const pageNumberActionCreator = (currentPage) => (dispatch, getState) => {
   const {pushLog, receivingLog, activeKey} = getSelfState(getState());
   const url = activeKey === 'pushLog' ? URL_LIST : URL_RLIST;
   const config = activeKey === 'pushLog' ? pushLog : receivingLog;
+  const searchDataBak = config.searchDataBak || {};
   const newState = {currentPage};
-  return search2(dispatch, action, url, currentPage, config.pageSize, config.searchDataBak, newState, [activeKey]);
+  return search2(dispatch, action, url, currentPage, config.pageSize, searchDataBak, newState, [activeKey]);
 };
 
 const pageSizeActionCreator = (pageSize, currentPage) => async (dispatch, getState) => {
   const {pushLog, receivingLog, activeKey} = getSelfState(getState());
   const url = activeKey === 'pushLog' ? URL_LIST : URL_RLIST;
   const config = activeKey === 'pushLog' ? pushLog : receivingLog;
+  const searchDataBak = config.searchDataBak || {};
   const newState = {pageSize, currentPage};
-  return search2(dispatch, action, url, currentPage, pageSize, config.searchDataBak, newState, [activeKey]);
+  return search2(dispatch, action, url, currentPage, pageSize, searchDataBak, newState, [activeKey]);
 };
 
 const tabChangeActionCreator = (key) => async (dispatch, getState) => {
@@ -182,7 +184,7 @@ const mapStateToProps = (state) => {
 };
 
 const Component = EnhanceLoading(interfaceLog);
-export default connect(mapStateToProps, actionCreators)(Component);;
+export default connect(mapStateToProps, actionCreators)(Component);
 
 
 
