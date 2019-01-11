@@ -56,6 +56,30 @@ api.get('/info/:id', async (req, res) => {
   res.send(await fetchJsonByNode(req, url));
 });
 
+//根据id获取在途信息-运单状态
+api.get('/track_status/:id', async (req, res) => {
+  const url = `${service}/transport_order_status/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
+//根据id获取在途信息-车辆信息
+api.get('/track_cars/:id', async (req, res) => {
+  const url = `${service}/transport_order/car/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
+//根据id获取在途信息-司机任务
+api.get('/track_driver/:id', async (req, res) => {
+  const url = `${service}/driver_task/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
+//根据id获取在途信息-更改记录
+api.get('/track_change/:id', async (req, res) => {
+  const url = `${host}/archiver-service/table_update_log/transport_order/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
 //根据客户id获取客户联系人下拉
 api.get('/options/customer_contacts', async (req, res) => {
   const url = `${host}/archiver-service/customer_contact/${req.query.filter}/drop_list/enabled_type_enabled`;

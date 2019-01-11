@@ -1,7 +1,10 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './OrderInfoPage.less';
-import {SuperTable2, SuperForm, Title, SuperToolbar, SuperTab2, Indent} from '../../../../components/index';
+import {Icon, Steps} from 'antd';
+import {SuperTable2, SuperForm, Title, SuperToolbar, SuperTab2, Indent, SuperTable} from '../../../../components/index';
+
+const Step = Steps.Step;
 
 class OrderInfoPage extends React.Component {
 
@@ -68,17 +71,115 @@ class OrderInfoPage extends React.Component {
     return <SuperToolbar {...props}/>;
   };
 
-  render() {
+  toOrderInfo = () => {
     const {formSections={}, buttons=[], activeKey, tabs, readonly, onTabChange} = this.props;
     const newTabs = tabs.map(tab => ({...tab, title: `${tab.title}(${this.props[tab.key].length})`}));
     return (
-      <div className={s.root}>
+      <div className={s.order}>
         {Object.keys(formSections).map(key => this.toFormSection(formSections[key]))}
         <SuperTab2 activeKey={activeKey} tabs={newTabs} onTabChange={onTabChange}/>
         {this.toContent()}
         {!readonly ? this.toFooter(buttons) : null}
       </div>
     );
+  };
+
+  toStatusSteps = ({statusList=[]}) => {
+    const status = { 0: 'wait', 1: 'finish', 2: 'error'};
+    return (
+      <Indent>
+        <Steps size='small' role='steps'>
+          {statusList.map((item, index) => {
+            const props = {
+              key: index,
+              title: item.statusName,
+              description: item.finishTime,
+              status: status[Number(item.taskStatus)]
+            };
+            return <Step {...props} />;
+          })}
+        </Steps>
+      </Indent>
+    );
+  };
+
+  toInfoItem = ({key, title, icon}, carInfo) => {
+    const info = typeof carInfo[key] === 'object' ? carInfo[key].title || '┅' : carInfo[key] || '┅';
+    return (
+      <span role="info" key={key}>
+        <Icon type={icon || 'picture'} />
+        <span>{title}</span>
+        <span>{info}</span>
+      </span>
+    );
+  };
+
+  toCarInfo = ({items, carInfo={}}) => {
+    return <Indent>{items.map(item => this.toInfoItem(item, carInfo))}</Indent>;
+  };
+
+  toTaskSteps = ({taskList=[]}) => {
+    const status = { 0: 'wait', 1: 'finish', 2: 'error'};
+    return (
+      <Indent>
+        <Steps size='small' role='steps'>
+          {taskList.map((item, index) => {
+            const props = {
+              key: index,
+              title: item.taskTypeName,
+              description: (<div><div>{item.finishTime}</div><div>{item.position}</div></div>),
+              status: status[Number(item.taskStatus)]
+            };
+            return <Step {...props} />;
+          })}
+        </Steps>
+      </Indent>
+    );
+  };
+
+  toChangeLogs = ({cols, items=[]}) => {
+    const props = {cols, items, checkbox: false};
+    return <Indent><SuperTable {...props} /></Indent>;
+  };
+
+  toTrackInfo = () => {
+    const {section1, section2, section3, section4} = this.props;
+    return (
+      <div className={s.track}>
+        <Title title={section1.title} />
+        {this.toStatusSteps(section1)}
+        <Title title={section2.title} />
+        {this.toCarInfo(section2)}
+        <Title title={section3.title} />
+        {this.toTaskSteps(section3)}
+        <Title title={section4.title} />
+        {this.toChangeLogs(section4)}
+      </div>
+    );
+  };
+
+  toTopContent = (topActiveKey) => {
+    if (topActiveKey === 'order') {
+      return this.toOrderInfo();
+    }else if (topActiveKey === 'track') {
+      return this.toTrackInfo();
+    }
+  };
+
+  render() {
+    const {topTabs, topActiveKey, pageType, onTopTabChange} = this.props;
+    if (pageType === 1) {
+      return this.toOrderInfo();
+    }else if (pageType === 2) {
+      return (
+        <div className={s.root}>
+          <SuperTab2 activeKey={topActiveKey} tabs={topTabs} onTabChange={onTopTabChange}/>
+          {this.toTopContent(topActiveKey)}
+        </div>
+      );
+    }else {
+      return null;
+    }
   }
 }
 
