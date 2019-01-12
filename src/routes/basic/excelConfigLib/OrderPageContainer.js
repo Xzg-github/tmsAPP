@@ -7,8 +7,8 @@ import {search2} from '../../../common/search';
 import {toFormValue} from "../../../common/check";
 //import {showImportDialog} from '../../../common/modeImport';
 import { searchAction, pageNumberAction} from './helper';
-import execWithLoading from '../../../standard-business/execWithLoading';
-import upload from './upload';
+//import execWithLoading from '../../../standard-business/execWithLoading';
+//import upload from './upload';
 
 const STATE_PATH = ['basic', 'excelConfigLib'];
 const URL_LIST = '/api/basic/excelConfigLib/list';
@@ -176,7 +176,7 @@ const delAction = async (dispatch, getState) => {
   }
 };
 
-// 导入测试
+/*// 导入测试
 const importAction =  async(dispatch,getState)=> {
   const {tableItems} = getSelfState(getState());
   const index = findOnlyCheckedIndex(tableItems);
@@ -198,7 +198,7 @@ const importAction =  async(dispatch,getState)=> {
       }
     });
   }
-};
+};*/
 
 //导入
 const importActionCreator = (dispatch, getState) => {
@@ -253,7 +253,7 @@ const toolbarActions = {
   edit: editAction,
   copyAdd: copyAddAction,
   delete: delAction,
-  import: importAction,
+ // import: importAction,
   generate: generateAction,
 };
 

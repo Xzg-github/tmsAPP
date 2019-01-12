@@ -69,10 +69,19 @@ class NewModel extends React.Component {
     return <div style ={{margin: '15px'}}><SuperForm {...props} /></div>;
   };
 
-  toTable = (cols, items, callback) => { // 列表
-    const option = { index: true, checkbox: true };
-    const props = { cols, items, option, callback };
-    return <div style ={{marginTop: '5px'}}><SuperTable2 {...props} /></div>;
+  toTable1 = () => {
+    const {tableCols, state, onContentChange, onExitValid, valid, CURRNT_TABLE_CODE, onCheck} = this.props;
+    const props = {
+      cols:tableCols,
+      items:state[CURRNT_TABLE_CODE].mapperList,
+      valid,
+      callback: {
+        onContentChange,
+        onCheck,
+        onExitValid
+      }
+    };
+    return <div style={{marginTop: '5px'}}><SuperTable2 {...props}/></div>
   };
 
   toSuperToolbar = (buttons) => {
@@ -129,9 +138,7 @@ class NewModel extends React.Component {
   };
 
   render() {
-    const { tableCols, buttons, buttons1,buttons2, state, CURRNT_TABLE_CODE} = this.props;
-    const { onContentChange: onContentChange, onCheck } = getObject(this.props, ['onContentChange', 'onCheck']);
-    const events1 = { onContentChange, onCheck };
+    const {buttons, buttons1,buttons2} = this.props;
     return (
       <div>
         <div style={{marginLeft: '15px', marginRight: '15px', marginBottom: '15px'}}><Title title= '基本信息' /></div>
@@ -140,7 +147,7 @@ class NewModel extends React.Component {
           {this.toTab()}
           {this.toForm1()}
           {this.toSuperToolbar(buttons)}
-          {this.toTable(tableCols, state[CURRNT_TABLE_CODE].mapperList, events1)}
+          {this.toTable1()}
           {this.toShowButton(buttons2)}
           {this.toToolbar(buttons1)}
         </Indent>
