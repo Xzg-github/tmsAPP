@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { Action } from '../../../../action-reducer/action';
-import { showError, fetchJson, postOption, showSuccessMsg, validValue} from '../../../../common/common';
+import { showError, fetchJson, postOption, showSuccessMsg, validValue, validArray} from '../../../../common/common';
 import NewModel from './NewModel';
 import {getPathValue} from '../../../../action-reducer/helper';
 import {updateTable} from '../OrderPageContainer';
@@ -147,13 +147,17 @@ const updatePage = (guid) => async (dispatch, getState) => {
 
 //保存
 const saveAction = async (dispatch, getState) => {
-  const {edit, value, modelCode, controls, controls1, state, CURRNT_TABLE_CODE} = getSelfState(getState());
+  const {edit, value, modelCode, controls, controls1, state, CURRNT_TABLE_CODE, tableCols} = getSelfState(getState());
   if (!validValue(controls, value)) {
     dispatch(action.assign({valid: true}));
     return;
   }
   if (!validValue(controls1, state[CURRNT_TABLE_CODE])) {
     dispatch(action.assign({valid: true}));
+    return;
+  }
+  if(!validArray(tableCols, state[CURRNT_TABLE_CODE].mapperList.filter(item => !item.hide))){
+    dispatch(action.assign( {valid: true, form: false}));
     return;
   }
 
@@ -241,7 +245,7 @@ const loadActionCreator = async (dispatch, getState) => {
         excelModelConfigSheetId: state[CURRNT_TABLE_CODE].id,
         fieldCode: key,
         id: '',
-        columnTitle: '',
+        columnTitle: subs[key].fieldTitle,    //列标题默认为字段名称
         tenantId: state[CURRNT_TABLE_CODE].mapperList.tenantId
       });
     }

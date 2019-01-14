@@ -9,7 +9,7 @@ const buttons = [
   { key: 'copyAdd', title: '复制新增' },
   { key: 'edit', title: '编辑' },
   { key: 'delete', title: '删除', confirm:'是否确定删除'},
-  { key: 'import', title: '上传导入模板' },
+  //{ key: 'import', title: '上传导入模板' },
   { key: 'generate', title: '生成导入模板'},
 ];
 
@@ -57,7 +57,7 @@ const modelSTableCols = [
   { key: 'checked', title: '', type: 'checkbox' },
   { key: 'demo', title: 'demo'},
   { key: 'fieldTitle', title: '字段名称', cellClick: true},
-  { key: 'columnTitle', title: '列标题', type: 'text'},
+  { key: 'columnTitle', title: '列标题', type: 'text', required:true},
   { key: 'require',title: '必填',type: 'select',options: [{ title: 'true', value: 'true' }, { title: 'false', value: 'false' }]},
   { key : 'prefix', title: '前缀追加', type: 'text'},
   { key : 'suffix', title: '后缀追加', type: 'text'},
@@ -70,7 +70,6 @@ const modelSTableCols = [
 
 const modelButtons = [
   { key: "cancel", title: '关闭'},
-  // { key: 'upload', title: '导入模板'},
   { key: 'save', title: '保存', bsStyle: 'primary'},
 ];
 
