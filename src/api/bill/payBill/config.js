@@ -33,7 +33,7 @@ const tableCols = [
   {key: 'statusType', title: '状态', dictionary: name.STATUS_TYPE},
   {key: 'billNumber', title: '账单号', link: true},
   {key: 'orderNumber', title: '运单订单'},
-  {key: 'payCustomerId', title: '付款单位'},
+  {key: 'receivableSupplierId', title: '收款单位'},
   {key: 'supplierId', title: '供应商'},
   {key: 'customerId', title: '委托客户'},
   {key: 'customerServiceId', title: '客服人员'},
