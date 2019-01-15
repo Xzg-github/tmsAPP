@@ -25,7 +25,7 @@ const okActionCreator = () => async (dispatch, getState) => {
     return;
   }
   dispatch(action.assign({confirmLoading: true}));
-  const body = {...items[checkedRows.pop()], transportOrderId: data.id};
+  const body = helper.convert({...items[checkedRows.pop()], transportOrderId: data.id});
   const {returnCode, returnMsg} = await helper.fetchJson(`/api/dispatch/todo/dispatch_driver`, helper.postOption(body));
   if (returnCode !== 0) {
     dispatch(action.assign({confirmLoading: false}));
