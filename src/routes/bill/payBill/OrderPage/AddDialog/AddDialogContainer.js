@@ -4,8 +4,9 @@ import {postOption, showError, showSuccessMsg, getJsonResult, convert, fuzzySear
 import {Action} from '../../../../../action-reducer/action';
 import {getPathValue} from '../../../../../action-reducer/helper';
 import showPopup from '../../../../../standard-business/showPopup';
-import { search, search2 } from '../../../../../common/search';
+import { search } from '../../../../../common/search';
 import execWithLoading from '../../../../../standard-business/execWithLoading';
+import {toTableItems} from "../../../../../common/orderAdapter";
 
 const STATE_PATH = ['temp'];
 const action = new Action(STATE_PATH, false);
@@ -26,6 +27,22 @@ const buildAddDialogState = (list, config, other={}) => {
     maxRecords: list.returnTotalItem,
     currentPage: 1,
     searchData: {}
+  }
+};
+
+const search2 = async (dispatch, action, url, currentPage, pageSize, filter, newState={}, path=undefined, hasFilter=true) => {
+  const from = (currentPage - 1) * pageSize;
+  const to = from + pageSize;
+  const {returnCode, returnMsg, result} = await search(url, from, to, filter, hasFilter);
+  if (returnCode === 0) {
+    const payload = {
+      ...newState,
+      items: toTableItems(result),
+      maxRecords: result.returnTotalItem
+    };
+    dispatch(action.assign(payload, path));
+  } else {
+    showError(returnMsg);
   }
 };
 
