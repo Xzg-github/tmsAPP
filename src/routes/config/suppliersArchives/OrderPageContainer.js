@@ -139,6 +139,7 @@ const disableActionCreator = (dispatch, getState) => ableActionCreator('enabled_
 const deleteActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkItems = tableItems.filter(o=>o.checked);
+  if (!checkItems.length) return showError('勾选一条记录!') ;
   if (checkItems.some(o => o.enabledType !== 'enabled_type_unenabled')) return showError('请选择未启用状态的数据！');
   const {returnCode, returnMsg} = await fetchJson(URL_DELETE, helper.postOption(checkItems.map(o=>o.id)));
   if (returnCode !== 0) return showError(returnMsg);

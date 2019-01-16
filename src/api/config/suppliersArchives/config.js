@@ -19,7 +19,7 @@ const buttons = [
   {key: 'suppliersArchives_edit', title: '编辑'},
   {key: 'suppliersArchives_enable', title: '启用'},
   {key: 'suppliersArchives_disable', title: '禁用'},
-  {key: 'suppliersArchives_delete', title: '删除'},
+  {key: 'suppliersArchives_delete', title: '删除', confirm: '确认删除?'},
   {key: 'suppliersArchives_import', title: '导入'},
   {key: 'suppliersArchives_export', title: '导出', menu:[
     { key: 'suppliersArchives_exportSearch', title: '查询导出'},
