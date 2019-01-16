@@ -8,7 +8,7 @@ const filters = [
   {key: 'customerDelegateCode', title: '委托号', type: 'text'},
   {key: 'customerId', title: '委托客户', type: 'search', searchType: 'customer_all'},
   {key: 'supplierId', title: '供应商', type: 'search', searchType: 'supplier_all'},
-  {key: 'payCustomerId', title: '付款单位', type: 'search', searchType: 'customer_all'},
+  {key: 'receivableSupplierId', title: '收款单位', type: 'search', searchType: 'supplier_all'},
   {key: 'insertTimeFrom', title: '创建时间', type: 'date'},
   {key: 'insertTimeTo', title: '到', type: 'date'},
   {key: 'customerServiceId', title: '客服人员', type: 'search', searchType: 'user'},
