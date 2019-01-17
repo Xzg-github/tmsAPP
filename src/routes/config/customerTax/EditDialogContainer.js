@@ -60,12 +60,12 @@ const clickActionCreator = (key) => {
 
 const changeActionCreator = (key, value) =>  {
   if (key === 'taxRate') {
-    if (value > 100) {
+    if (value >= 100) {
       value = null;
       showError('税率必须小于100');
     }
   }else if (key === 'oilRatio')  {
-    if (value > 100) {
+    if (value >= 100) {
       value = null;
       showError('油卡比例必须小于100');
     }
