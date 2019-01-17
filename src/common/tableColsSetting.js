@@ -1,6 +1,10 @@
 import SetColDialog from '../components/SetColDialog';
 import {fetchJson, postOption} from './common';
 import showPopup from '../standard-business/showPopup';
+import {getPathValue} from "../action-reducer/helper";
+import {Action} from '../action-reducer/action';
+
+const layoutAction = new Action(['layout']);
 
 const URL_SETTING = '/api/permission/table_cols_setting';
 
@@ -9,7 +13,6 @@ const options = [
   {title: '数值', value:'number'},
   {title: '无', value: 'noSort'}
 ];
-
 const KEYS = ['checked', 'index', 'title', 'sorter', 'hide', 'filter'];
 
 const showColsSetting = (cols, okFunc, code, keys=KEYS) => {
@@ -22,7 +25,12 @@ const showColsSetting = (cols, okFunc, code, keys=KEYS) => {
       sorter && sortKeys.push({key, sorter});
       filter && filterKeys.push(key);
     });
-    code && await fetchJson(URL_SETTING, postOption({code, config: {hideKeys, sortKeys, filterKeys, keysIndex}}));
+    const state = global.store.getState();
+    const path = ['layout', 'tableColsSetting', code];
+    const config = getPathValue(state, path) || {};
+    const newConfig = {...config, hideKeys, sortKeys, filterKeys, keysIndex};
+    global.store.dispatch(layoutAction.assign(newConfig, ['tableColsSetting', code]));
+    code && await fetchJson(URL_SETTING, postOption({code, config: newConfig}));
   };
   const props = {
     ok: '确定',
