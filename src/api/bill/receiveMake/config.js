@@ -92,7 +92,7 @@ const receiveCols = [
   {key: 'chargeOrigin', title: '费用来源', dictionary: name.CHARGE_ORIGIN},
   {key: 'institutionId', title: '费用归属机构'},
   {key: 'insertUser', title: '创建人'},
-  {key: 'inserTime', title: '创建时间'},
+  {key: 'insertTime', title: '创建时间'},
   {key: 'updateUser', title: '更新人'},
   {key: 'updateTime', title: '更新时间'}
 ];
@@ -118,7 +118,7 @@ const payCols = [
   {key: 'price', title: '单价'},
   {key: 'number', title: '数量'},
   {key: 'amount', title: '金额'},
-  {key: 'currencyTypeCode', title: '币种', dictionary: 'currency'},
+  {key: 'currency', title: '币种', dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率'},
   {key: 'tax', title: '税率'},
   {key: 'taxRateWay', title: '计税方式', dictionary: name.TAX_TYPE},
@@ -208,11 +208,11 @@ const payColsEdit = [
   {key: 'isExpense', title: '是否报销', type: 'select', dictionary: name.ZERO_ONE_TYPE},
   {key: 'isOutputValue', title: '是否产值', type: 'select', dictionary: name.ZERO_ONE_TYPE},
   {key: 'sequence', title: '排序', type: 'text'},
-  {key: 'institutionId', title: '费用归属机构', type: 'search'},
-  {key: 'insertUser', title: '创建人', type: 'date'},
-  {key: 'insertTime', title: '创建时间', type: 'date'},
-  {key: 'updateUser', title: '更新人', type: 'date'},
-  {key: 'updateTime', title: '更新时间', type: 'date'}
+  // {key: 'institutionId', title: '费用归属机构', type: 'search'},
+  // {key: 'insertUser', title: '创建人', type: 'text'},
+  // {key: 'insertTime', title: '创建时间', type: 'date'},
+  // {key: 'updateUser', title: '更新人', type: 'text'},
+  // {key: 'updateTime', title: '更新时间', type: 'date'}
 ];
 
 const dialogBtnsPay = [
