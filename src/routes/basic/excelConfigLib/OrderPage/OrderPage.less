@@ -1,0 +1,16 @@
+@import '../../../../components/variables';
+
+.root {
+  > * {
+    margin: 0 @padding-horizontal @padding-vertical @padding-horizontal;
+  }
+
+  > *:last-child {
+    margin-bottom: @padding-vertical-lg;
+  }
+
+  [role='toolbar'] {
+    margin-bottom: @padding-vertical-sm;
+  }
+}
+
