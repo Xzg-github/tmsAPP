@@ -96,8 +96,18 @@ const copyActionCreator = () => async (dispatch, getState) => {
   });
 };
 
+const isCanEdit = (isDoubleClick, rowIndex, items) => {
+  const item = items.filter(o => o.checked).find(o => o.statusType === 'status_check_completed');
+  const validItem = isDoubleClick ? items[rowIndex] : item ? item : {};
+  if (validItem.statusType === 'status_check_completed') {
+    showError('存在已审核费用，不可编辑！');
+    return true;
+  }
+};
+
 const editActionCreator = (isDoubleClick, rowIndex) => async (dispatch, getState) => {
   const state = deepCopy(getSelfState(getState()));
+  if (isCanEdit(isDoubleClick, rowIndex, state.receiveItems)) return;
   const resultItems = await showDialogType(state, 2, isDoubleClick, rowIndex);
   if (!resultItems) return;
   execWithLoading(async () => {
