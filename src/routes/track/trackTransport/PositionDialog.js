@@ -35,9 +35,8 @@ class PositionDialog extends React.Component {
     let pointsView = [], msg='';
     this.props.items.map(({latitude, longitude, carNumber='未知车牌'}) => {
       if (latitude && longitude) {
-        const point = new BMap.Point(latitude, longitude);
+        const point = new BMap.Point(longitude, latitude);
         pointsView.push(point);
-        this.map.centerAndZoom(point, 15);
         const marker = new BMap.Marker(point);        // 创建标注
         this.map.addOverlay(marker);                     // 将标注添加到地图中
         const opts = {
@@ -66,7 +65,7 @@ class PositionDialog extends React.Component {
   componentDidMount() {
     loadMapScript(async () => {
       const map = this.map = new BMap.Map("map");
-      let point = new BMap.Point(104.082684, 30.656319);
+      let point = new BMap.Point(114.082684, 22.656319);
       map.centerAndZoom(point, 15);
       map.enableScrollWheelZoom(true);
       map.addControl(new BMap.MapTypeControl());
