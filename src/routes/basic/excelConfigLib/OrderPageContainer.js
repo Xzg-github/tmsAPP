@@ -1,14 +1,11 @@
 import { connect } from 'react-redux';
 import { Action } from '../../../action-reducer/action';
-import OrderPage from '../../../components/OrderPage';
+import OrderPage from './OrderPage';
 import {getObject, showError, findOnlyCheckedIndex, fetchJson, showSuccessMsg} from '../../../common/common';
 import {getPathValue} from '../../../action-reducer/helper';
 import {search2} from '../../../common/search';
 import {toFormValue} from "../../../common/check";
-//import {showImportDialog} from '../../../common/modeImport';
 import { searchAction, pageNumberAction} from './helper';
-//import execWithLoading from '../../../standard-business/execWithLoading';
-//import upload from './upload';
 
 const STATE_PATH = ['basic', 'excelConfigLib'];
 const URL_LIST = '/api/basic/excelConfigLib/list';
@@ -17,6 +14,7 @@ const URL_EDIT_EXCEL = '/api/basic/excelConfigLib/selectExcelModel';
 const URL_EXCEL = '/api/basic/excelConfigLib/uploadExcelModel';
 const action = new Action(STATE_PATH);
 const URL_GENERATE = '/api/basic/excelConfigLib/generateExcelModel';
+const URL_UPLOAD_EXCEL = '/api/proxy/integration_service/excelModelConfig/uploadExcelModel';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -176,35 +174,6 @@ const delAction = async (dispatch, getState) => {
   }
 };
 
-/*// 导入测试
-const importAction =  async(dispatch,getState)=> {
-  const {tableItems} = getSelfState(getState());
-  const index = findOnlyCheckedIndex(tableItems);
-  if (index === -1) {
-    showError('请勾选一条记录');
-    return;
-  }
-  const id = tableItems[index].id;
-  const url = `/api/proxy/zuul/integration_service/excelModelConfig/uploadExcelModel`;
-  const start = await upload(url);
-  if (start) {
-    execWithLoading(async () => {
-      const sss = await start();
-      const {status, name, response={}} = sss;
-      if (status && response.returnCode === 0) {
-        showSuccessMsg(`[${name}]上传成功`);
-      } else {
-        showError(`[${name}]上传失败:${response.returnMsg}`);
-      }
-    });
-  }
-};*/
-
-//导入
-const importActionCreator = (dispatch, getState) => {
-  return showImportDialog('excelConfigLib');
-};
-
 //生成模板
 const generateAction = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
@@ -245,6 +214,57 @@ const onChangeActionCreator = (key, value) => async (dispatch) => {
   dispatch(action.assign({ [key]: value }, 'searchData'));
 };
 
+//显示导入模板
+const uploadAction = (dispatch, getState) => {
+  const {tableItems } = getSelfState(getState());
+  const index = findOnlyCheckedIndex(tableItems);
+  if (index === -1) {
+    showError('请勾选一条记录');
+    return;
+  }
+  dispatch(action.assign({ visible: true }));
+};
+
+//关闭导入模板
+const onCancel1Action = () => (dispatch, getState) => {
+  dispatch(action.assign({ visible: false }));
+};
+
+//上传
+const onUploadActionCreator = (file) => async (dispatch, getState) => {
+  const { value, tableItems } = getSelfState(getState());
+  const index = findOnlyCheckedIndex(tableItems);
+  const id = tableItems[index].id;
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('id', id);
+  let xhr;
+  if (window.XMLHttpRequest) { // code for all new browsers
+    xhr = new XMLHttpRequest();
+  } else if (window.ActiveXObject) { // code for IE5 and IE6
+    xhr = new window.ActiveXObject('Microsoft.XMLHTTP');
+  }
+  if (xhr !== null) {
+    xhr.onload = (event) => {
+      const { returnCode, returnMsg } = JSON.parse(xhr.responseText); // 服务器返回
+      if (returnCode !== 0) {
+        returnMsg && showError(returnMsg);
+        return;
+      }
+      returnMsg && showSuccessMsg(returnMsg);
+      dispatch(action.update({ checked: false }, 'tableItems', -1));
+    };
+    xhr.onabort = (event) => {
+      showError('上传失败');
+    };
+    xhr.open('post', URL_UPLOAD_EXCEL, true);  // true表示异步
+    xhr.withCredentials = true;
+    xhr.send(formData);
+  } else {
+    showError('Your browser does not support XMLHTTP.');
+  }
+};
+
 
 const toolbarActions = {
   search: onSearchActionCreator,
@@ -253,7 +273,7 @@ const toolbarActions = {
   edit: editAction,
   copyAdd: copyAddAction,
   delete: delAction,
- // import: importAction,
+  upload: uploadAction,
   generate: generateAction,
 };
 
@@ -267,7 +287,7 @@ const clickActionCreator = (key) => {
 };
 
 const mapStateToProps = (state) => {
-  return getObject(getSelfState(state), OrderPage.PROPS);
+  return getSelfState(state);
 };
 
 const actionCreators = {
@@ -277,6 +297,8 @@ const actionCreators = {
   onPageSizeChange: pageSizeActionCreator,
   onCheck: onCheckActionCreator,
   onLink: onLinkActionCreator,
+  onCancel: onCancel1Action,
+  onUpload: onUploadActionCreator,
 };
 
 const Container = connect(mapStateToProps, actionCreators)(OrderPage);

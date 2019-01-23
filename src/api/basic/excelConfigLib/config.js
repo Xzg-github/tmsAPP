@@ -9,7 +9,7 @@ const buttons = [
   { key: 'copyAdd', title: '复制新增' },
   { key: 'edit', title: '编辑' },
   { key: 'delete', title: '删除', confirm:'是否确定删除'},
-  //{ key: 'import', title: '上传导入模板' },
+  { key: 'upload', title: '上传导入模板' },
   { key: 'generate', title: '生成导入模板'},
 ];
 
