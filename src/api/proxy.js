@@ -34,6 +34,31 @@ api.get('/:ak/:address', async (req, res) => {
   res.send({returnCode: -1, returnMsg: '获取坐标失败'});
 });
 
+// 获取经纬度两点之间的里程(注意：不是百度经纬度坐标，类似于百度墨卡坐标)
+api.post('/distance', async (req, res) => {
+  let {ak, points} = req.body;
+  let distance = 0;
+  for(let i=0; i<points.length; i+=7){
+    let currentPoints = points.slice(i,i+7);
+    const origin = currentPoints.pop();
+    const destination = currentPoints.shift();
+    const waypoints = currentPoints.join(`|`);
+    const url = `http://api.map.baidu.com/directionlite/v1/driving?origin=${origin}&destination=${destination}&waypoints=${waypoints}&ak=${ak}`;
+    const response = await fetch(url, {method: 'get'});
+    if (response.ok) {
+      const json = await response.json();
+      if (json.status === 0) {
+        distance += Number(json.result.routes[0].distance);
+      }else {
+        return res.send({returnCode: json.status, returnMsg: json.message});
+      }
+    } else {
+      return res.send({returnCode: -1, returnMsg: '获取里程失败'});
+    }
+  }
+  res.send({returnCode: 0, result:distance});
+});
+
 // 获取经纬度对应省市区
 api.get('/district/:ak/:lat/:lng', async (req, res) => {
   const url = `http://api.map.baidu.com/geocoder/v2/?location=${req.params.lat},${req.params.lng}&output=json&ak=${req.params.ak}`;
