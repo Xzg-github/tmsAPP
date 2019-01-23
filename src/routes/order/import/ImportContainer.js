@@ -50,7 +50,7 @@ const searchActionCreator = (dispatch, getState) => {
 const importActionCreator = async (dispatch, getState) => {
   const {checkedRows, tableItems} = getSelfState(getState());
   if (checkedRows.length !== 1) return helper.showError(`请先选择一个模板`);
-  return showImportDialog('transport_import', undefined, false, '', '', tableItems[checkedRows.pop()].id);
+  return showImportDialog('transport_import', undefined, false, '', '', tableItems[checkedRows[0]].id);
 };
 
 const buttons = {
