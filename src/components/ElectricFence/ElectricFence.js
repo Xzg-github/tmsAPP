@@ -72,7 +72,11 @@ class ElectricFence extends React.Component {
       width: 910,
       maskClosable: false,
       onOk: this.onOk,
-      onCancel: this.onCancel
+      onCancel: this.onCancel,
+      bodyStyle: {
+        height: '450px',
+        overflow: 'auto'
+      }
     };
   };
 
