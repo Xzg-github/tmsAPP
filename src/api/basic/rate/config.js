@@ -17,8 +17,8 @@ const tableCols = [
 const buttons = [
   {key: 'add', title: '新增', bsStyle: 'primary', sign: 'rate_new'},
   {key: 'edit', title: '编辑', sign: 'rate_edit'},
-  {key: 'del', title: '失效', sign: 'rate_unactive'},
-  {key: 'active', title: '激活', sign: 'rate_active'}
+  {key: 'del', title: '失效', sign: 'rate_unactive', confirm: '是否确认使勾选记录失效？'},
+  {key: 'active', title: '激活', sign: 'rate_active', confirm: '是否确认使勾选记录激活？'}
 ];
 
 const controls = [
