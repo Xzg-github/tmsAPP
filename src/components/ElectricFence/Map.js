@@ -63,6 +63,17 @@ export const getDistrict = async (lat, lng) => {
   return null;
 };
 
+// 根据多点经纬度获取始发点到目的点的里程
+// 参数points = [`始发点纬度,始发点经度`,`途经点纬度,途经点经度`, ... ,`目的点纬度,目的点经度`]
+export const getDistance = async (points=[]) => {
+  if (points.length < 2) return;
+  const ak = '018n8KOIEDfSSs7oxBhNEzCAyGlh6nXO'; //pxj的临时ak 暂用
+  const json = await helper.fetchJson(`/api/proxy/distance`, helper.postOption({ak, points}));
+  if (json.returnCode === 0) {
+    return json.result;
+  }
+};
+
 const toBmapPoint = (point) => {
   return new BMap.Point(point.lng, point.lat);
 };

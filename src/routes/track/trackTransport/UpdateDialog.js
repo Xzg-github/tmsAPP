@@ -1,9 +1,9 @@
 import React from 'react';
 import {Input, DatePicker} from 'antd';
-import Map, {getDistrict} from '../../../../components/ElectricFence/Map';
-import ModalWithDrag from '../../../../components/ModalWithDrag';
-import showPopup from '../../../../standard-business/showPopup';
-import helper from '../../../../common/common';
+import Map, {getDistrict} from '../../../components/ElectricFence/Map';
+import ModalWithDrag from '../../../components/ModalWithDrag';
+import showPopup from '../../../standard-business/showPopup';
+import helper from '../../../common/common';
 import moment from 'moment';
 
 const Search = Input.Search;

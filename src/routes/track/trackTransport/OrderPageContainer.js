@@ -2,7 +2,9 @@ import createOrderPageContainer, {buildOrderPageCommonState, updateTable} from '
 import {getPathValue} from '../../../action-reducer/helper';
 import {Action} from "../../../action-reducer/action";
 import helper from "../../../common/common";
-import showUpdateDialog from "./update/UpdateDialog";
+import showUpdateDialog from "./UpdateDialog";
+import showPositionDialog from "./PositionDialog";
+import showLineDialog from "./LineDialog";
 
 const STATE_PATH = ['trackTransport'];
 const action = new Action(STATE_PATH);
@@ -35,12 +37,23 @@ const showOrderInfoPage = (dispatch, item, selfState, readonly) => {
 
 //查看位置
 const positionActionCreator = (dispatch, getState) => {
-
+  const {tableItems} = getSelfState(getState());
+  const checkedItems = tableItems.filter(item => item.checked === true);
+  if (checkedItems.length < 1) {
+    helper.showError('请先勾选记录');
+  }
+  return showPositionDialog(checkedItems);
 };
 
 //查看轨迹
 const lineActionCreator = (dispatch, getState) => {
-
+  const {tableItems} = getSelfState(getState());
+  const checkedItems = tableItems.filter(item => item.checked === true);
+  if (checkedItems.length !== 1) {
+    helper.showError('请勾选一条记录');
+  }else {
+    return showLineDialog(checkedItems[0]);
+  }
 };
 
 //位置更新

@@ -28,7 +28,7 @@ const menu = [
 const buttons = [
   {key: 'add', title: '新增', bsStyle: 'primary'},
   {key: 'edit', title: '编辑'},
-  {key: 'del', title: '删除'},
+  {key: 'del', title: '删除', confirm: '确认删除选中的记录?'},
   {key: 'export', title: '导出', menu}
 ];
 

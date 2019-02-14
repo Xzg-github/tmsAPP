@@ -8,6 +8,7 @@ import moment from 'moment';
 import helper from "../../../../common/common";
 import { showAddCustomerFactoryDialog } from '../../../config/customerFactory/EditDialogContainer';
 import showAddCustomerContactDialog from '../../../config/customerContact/EditDialogContainer';
+import {getDistance} from '../../../../components/ElectricFence/Map';
 
 /**
  * 功能：生成一个运单基本信息页面容器组件
@@ -304,15 +305,17 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     if (tableKey === 'addressList') {
       let data, url, obj;
       if (keyName === 'consigneeConsignorId') {
-        obj = {[keyName]: value, consigneeConsignorCode:'', consigneeConsignorShortName:'', contactName:'', contactTelephone:'', contactEmail:'', consigneeConsignorAddress:''};
+        obj = {[keyName]: value, consigneeConsignorCode:'', consigneeConsignorShortName:'', contactName:'', contactTelephone:'', contactEmail:'', consigneeConsignorAddress:'', longitude:'', latitude:''};
         if (value) {
           url = `/api/order/input/customer_factory_info/${value.value}`;
           data = await helper.fetchJson(url);
           if (data.returnCode === 0) {
-            const {name, shortName, code, address, customerFactoryContactList} = data.result || {};
+            const {name, shortName, code, address, customerFactoryContactList, longitude, latitude} = data.result || {};
             obj.consigneeConsignorCode = code || '';
             obj.consigneeConsignorShortName = shortName || name;
             obj.consigneeConsignorAddress = address || '';
+            obj.longitude = longitude || '';
+            obj.latitude = latitude || '';
             if (customerFactoryContactList.length === 1) {
               const {contactName, contactTelephone, contactEmail} = customerFactoryContactList[0];
               obj.contactName = contactName || '';
@@ -564,7 +567,15 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
 
   //获取总里程数
   const getTotalMileage = async (getState) => {
-    return Math.ceil(Math.random()*999);
+    const {addressList} = getSelfState(getState());
+    const points = addressList.filter(item => item.latitude && item.longitude).map(({longitude, latitude}) => {
+      return `${latitude},${longitude}`;
+    });
+    const distance = await getDistance(points) || '';
+    if (!distance){
+      helper.showError(`计算总里程失败`);
+    }
+    return distance;
   };
 
   //计算总里程

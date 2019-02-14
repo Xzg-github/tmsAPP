@@ -45,7 +45,7 @@ const formSearchActionCreator = (KEY, key, filter, control) => async (dispatch, 
   if (control.searchType) {
     result = getJsonResult(await fuzzySearchEx(filter, control));
   } else {
-    const supplierId = value['supplierId'].value;
+    const supplierId = value['receivableSupplierId'].value;
     switch (key) {
       case 'currency': {
         result = getJsonResult(await fetchJson(URL_CURRENCY, postOption({currencyTypeCode: filter, maxNumber: 65536})));

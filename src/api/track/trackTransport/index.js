@@ -18,12 +18,6 @@ api.post('/list', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
-//获取收发货地点
-api.get('/address/:id', async (req, res) => {
-  const url = `${service}/transport_order_address/${req.params.id}`;
-  res.send(await fetchJsonByNode(req, url));
-});
-
 //位置更新
 api.post('/update', async (req, res) => {
   const url = `${service}/transport_order/position`;
@@ -34,6 +28,19 @@ api.post('/update', async (req, res) => {
 api.get('/refresh_position', async (req, res) => {
   const url = `${service}/car_manager/position`;
   res.send(await fetchJsonByNode(req, url));
+});
+
+//获取收发货地点
+api.get('/address/:id', async (req, res) => {
+  const url = `${service}/transport_order_address/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
+//获取轨迹播放坐标点
+api.post('/line_points', async (req, res) => {
+  res.send({returnCode: 0, result: [
+      "22.597445,114.008669", "22.648502,114.025144", "22.676383,114.039805"
+    ]});
 });
 
 export default api;

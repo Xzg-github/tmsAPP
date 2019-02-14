@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles'
 import s from './SuperTitle.less';
-import {Title, SuperToolbar} from '../index';
+import Title from '../Title';
+import SuperToolbar from '../SuperToolbar';
 import classNames from 'classnames';
 
 /**

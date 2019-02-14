@@ -88,6 +88,8 @@ const createOrderPageContainer = (urls, statePath, unique, importCode) => {
       } else {
         showError(returnMsg);
       }
+    }else {
+      showError(`请勾选一条记录`);
     }
   };
 
@@ -104,6 +106,8 @@ const createOrderPageContainer = (urls, statePath, unique, importCode) => {
       } else {
         showError(returnMsg);
       }
+    }else {
+      showError(`请勾选一条记录`);
     }
   };
 

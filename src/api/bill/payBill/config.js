@@ -41,9 +41,9 @@ const tableCols = [
   {key: 'customerDelegateTime', title: '委托日期'},
   {key: 'customerHeaderInformation', title: '客户抬头'},
   {key: 'currency', title: '币种'},
-  {key: 'customerContact', title: '联系人名称'},
-  {key: 'customerContactPhone', title: '联系人电话'},
-  {key: 'customerContactFax', title: '联系人传真'},
+  {key: 'supplierContact', title: '联系人名称'},
+  {key: 'supplierContactPhone', title: '联系人电话'},
+  {key: 'supplierContactFax', title: '联系人传真'},
   {key: 'amount', title: '含税金额'},
   {key: 'taxAmount', title: '税额'},
   {key: 'fallbackReason', title: '回退原因'},
@@ -63,7 +63,7 @@ const index = {
 //EditPage BaseInfo FormComponent Config
 const baseInfo = [
   {key: 'orderNumber', title: '运单订单', type: 'readonly'},
-  {key: 'supplierId', title: '收款单位', type: 'search', searchType: 'supplier_all', required: true},
+  {key: 'receivableSupplierId', title: '收款单位', type: 'search', searchType: 'supplier_all', required: true},
   {key: 'currency', title: '币种', type: 'search', required: true},
   {key: 'supplierContact', title: '联系人名称', type: 'search'},
   {key: 'supplierContactPhone', title: '联系人电话', type: 'text'},
