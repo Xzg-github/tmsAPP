@@ -40,9 +40,9 @@ const pushLogConfig = {
     {key: 'showContent', title: '关键信息'},
     {key: 'reason', title: '失败原因'},
     {key: 'insertTime', title: '创建时间'},
-    {key: 'insertUser', title: '创建用户'},
+    {key: 'insertUserName', title: '创建用户'},
     {key: 'updateTime', title: '更新时间'},
-    {key: 'updateUser', title: '更新用户'}
+    {key: 'updateUserName', title: '更新用户'}
   ],
   pageSize,
   pageSizeType,
@@ -74,14 +74,14 @@ const receivingConfig = {
       ]}
   ],
   tableCols: [
-    {key: 'interfaceType', title: '接口类别', dictionary: 'system_settings_interface'},
+    {key: 'receiveInterfaceType', title: '接口类别', dictionary: 'system_settings_interface'},
     {key: 'tag', title: '状态', options: receivingTagOptions},
     {key: 'showContent', title: '关键信息'},
     {key: 'reason', title: '失败原因'},
     {key: 'insertTime', title: '创建时间'},
-    {key: 'insertUser', title: '创建用户'},
+    {key: 'insertUserName', title: '创建用户'},
     {key: 'updateTime', title: '更新时间'},
-    {key: 'updateUser', title: '更新用户'}
+    {key: 'updateUserName', title: '更新用户'}
   ],
   pageSize,
   pageSizeType,
