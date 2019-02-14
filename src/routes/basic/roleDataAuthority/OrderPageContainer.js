@@ -45,6 +45,7 @@ const addAction = (dispatch, getState) => {
   const payload = buildEditDialogState(editConfig, {}, [], false);
   payload.data= editConfig.data;
   payload.merge= editConfig.merge;
+  helper.setOptions('content', payload.tableCols, []);
   dispatch(action.assign(payload, 'edit'));
 };
 
@@ -165,6 +166,9 @@ const editAction = async (dispatch, getState) => {
     const newData = helper.getObjectExclude(tableItems[index], ['checked']);
     const payload = buildEditDialogState(editConfig, newData, getEdit(result, data), true, index);
     payload.tableItems = getoption(getEdit(result, data), data, merge);
+    if (payload.tableItems.find(o => o['content'])) {
+      helper.setOptions('content', payload.tableCols, merge.supply);
+    }
     payload.data = data;
     payload.merge = editConfig.merge;
     dispatch(action.assign(payload, 'edit'));
@@ -181,6 +185,9 @@ const doubleClickActionCreator = (rowIndex) => async (dispatch, getState) => {
   const {result} = await fetchJson(`${URL_ONE}/${item.id}`);
   const payload = buildEditDialogState(editConfig, tableItems[rowIndex], getEdit(result, data), false);
   payload.tableItems = getoption(getEdit(result, data), data, merge);
+  if (payload.tableItems.find(o => o['content'])) {
+    helper.setOptions('content', payload.tableCols, merge.supply);
+  }
   payload.data = data;
   payload.merge = editConfig.merge;
   dispatch(action.assign(payload, 'edit'));
