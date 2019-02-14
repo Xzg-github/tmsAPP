@@ -136,6 +136,12 @@ api.post('/auditBatch', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
+// 整审检查
+api.post('/auditCheck', async (req, res) => {
+  const url = `${tms_service}/transport_order/cost/check/preparing`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
 // 应付明细批量新增
 api.post('/batchAdd', async (req, res) => {
   const url = `${tms_service}/transport_order/cost/details/batch`;
