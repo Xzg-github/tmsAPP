@@ -87,6 +87,12 @@ api.post('/auditBatch', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
+// 整审检查
+api.post('/auditCheck', async (req, res) => {
+  const url = `${tms_service}/transport_order/income/check/preparing`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
 // 应收明细批量新增
 api.post('/batchAdd', async (req, res) => {
   const url = `${tms_service}/transport_order/income/details/batch`;

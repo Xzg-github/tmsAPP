@@ -29,6 +29,9 @@ const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, ge
       payload['amount'] = '';
       break;
     }
+    case 'currency': {
+      payload['exchangeRate'] = '';
+    }
     default: break;
   }
   dispatch(action.update(payload, 'items', index));

@@ -187,7 +187,7 @@ const payColsEdit = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
   {key: 'isTransferReceivables', title: '是否转应收', type: 'select', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'transportOrderId', title: '运单订单标识', type: 'search'},
+  // {key: 'transportOrderId', title: '运单订单标识', type: 'search'},
   {key: 'customerId', title: '结算单位', type: 'search'},
   {key: 'chargeItemId', title: '费用名称', type: 'search'},
   {key: 'chargeUnit', title: '计量单位', type: 'select', dictionary: name.CHARGE_UNIT},
