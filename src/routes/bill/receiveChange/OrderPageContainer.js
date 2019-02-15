@@ -247,13 +247,13 @@ const checkActionCreator = (isAll, checked, rowIndex) => {
 const pageNumberActionCreator = (currentPage) => (dispatch, getState) => {
   const {pageSize, searchDataBak={}} = getSelfState(getState());
   const newState = {currentPage};
-  return search2(dispatch, action, URL_LIST, currentPage, pageSize, searchDataBak, newState);
+  return search2(dispatch, action, URL_LIST, currentPage, pageSize, searchDataBak, newState, undefined, false);
 };
 
 const pageSizeActionCreator = (pageSize, currentPage) => async (dispatch, getState) => {
   const {searchDataBak={}} = getSelfState(getState());
   const newState = {pageSize, currentPage};
-  return search2(dispatch, action, URL_LIST, currentPage, pageSize, searchDataBak, newState);
+  return search2(dispatch, action, URL_LIST, currentPage, pageSize, searchDataBak, newState, undefined, false);
 };
 
 const linkActionCreator = (key, rowIndex, item) => async (dispatch, getState) => {
