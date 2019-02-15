@@ -164,11 +164,17 @@ const strikeBalanceAction = (Key) => (dispatch, getState) => {
   const {value} = getSelfState(getState());
   if (!value[Key]) return showError('请选择一条记录');
   const checkAndValidItem = value[Key].reduce((result, item) => {
-    item.checked && item.id && result.push(item);
+    item.checked && item.id && item.readonly && result.push(item);
     item.checked = false;
     return result;
   }, []);
   if (checkAndValidItem.length !== 1) return showError('请选择一条可冲账的记录');
+  //单条费用只能冲账一次
+  const strikeList = value[Key].reduce((result, item) => {
+    item.copyId && item.copyId === checkAndValidItem[0].id && result.push(item);
+    return result;
+  }, []);
+  if (strikeList.length !== 0) return showError('当前记录已冲账!');
   const targetItem  = deepCopy(checkAndValidItem[0]);
   ['price', 'amount', 'taxAmount', 'netAmount'].forEach( item => {
     targetItem[item] = -targetItem[item];
