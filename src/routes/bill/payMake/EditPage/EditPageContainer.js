@@ -32,8 +32,9 @@ const getSelfState = (rootState) => {
 const currencyChangeActionCreator = (value, isRefresh=false) => async (dispatch, getState) => {
   const {activeCurrency, id} = getSelfState(getState());
   if (activeCurrency !== value || isRefresh) {
-    const totalValues = getJsonResult(await helper.fetchJson(`${URL_TOTAL}/${id}/${value}`));
-    dispatch(action.assign({activeCurrency: value, totalValues}));
+    const {returnCode, result, returnMsg} = await helper.fetchJson(`${URL_TOTAL}/${id}/${value}`);
+    if (returnCode !== 0) return showError(returnMsg);
+    dispatch(action.assign({activeCurrency: value, totalValues: result}));
   }
 };
 
