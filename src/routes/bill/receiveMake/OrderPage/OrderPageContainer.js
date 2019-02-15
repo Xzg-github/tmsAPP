@@ -8,6 +8,7 @@ import { exportExcelFunc, commonExport } from '../../../../common/exportExcelSet
 import {showColsSetting} from '../../../../common/tableColsSetting';
 import {getNewTableData} from '../RootContainer';
 import {jumpToChange} from '../../receiveChange/RootContainer';
+import {showConfirmDialog} from '../../../../common/showCofirmDialog';
 
 const STATE_PATH = ['receiveMake'];
 const action = new Action(STATE_PATH);
@@ -17,6 +18,7 @@ const URL_CARMODE = '/api/bill/receiveMake/carModeId';
 const URL_DEPARTURE_DESTINATION = '/api/bill/receiveMake/departureDestination';
 const URL_AUDIT_BATCH = '/api/bill/receiveMake/auditBatch';
 const URL_CREATE_BILL = '/api/bill/receiveBill/createBill';
+const URL_AUDIT_CHECK = '/api/bill/receiveMake/auditCheck';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -111,10 +113,14 @@ const auditActionCreator = async (dispatch, getState) => {
   if(!checkList.length) return showError('请勾选一条数据！');
   if(checkList.find(o => o.statusType === "status_check_all_completed")) return showError('请取消已审核的记录！');
   const ids = checkList.map(o => o.id);
-  const {returnCode, result, returnMsg} = await fetchJson(URL_AUDIT_BATCH, postOption(ids));
-  if (returnCode !== 0) return showError(returnMsg);
-  showSuccessMsg(returnMsg);
-  afterEdit(dispatch, getState);
+  const auditFunc = async () => {
+    const {returnCode, result, returnMsg} = await fetchJson(URL_AUDIT_BATCH, postOption(ids));
+    if (returnCode !== 0) return showError(returnMsg);
+    showSuccessMsg(returnMsg);
+    afterEdit(dispatch, getState);
+  };
+  const checkResult = await fetchJson(URL_AUDIT_CHECK, postOption(ids));
+  showConfirmDialog(checkResult.result, auditFunc);
 };
 
 // 生成账单
