@@ -77,14 +77,16 @@ const configActionCreator = async (dispatch, getState) => {
 const revokeActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const idList = tableItems.reduce((result, item) => {
-    item.checked && item.statusType === 'status_submit_completed' && result.push(item.id);
+    item.checked &&
+    (item.statusType === 'status_submit_completed' || item.statusType === 'status_check_not_passed' ) &&
+    result.push(item.id);
     return result;
   }, []);
   if (idList.length && idList.length === tableItems.filter(item => item.checked).length) {
     const {returnCode, returnMsg} = await fetchJson(URL_REVOKE, postOption(idList));
     return returnCode === 0 ? updateTable(dispatch, getState) : showError(returnMsg);
   }else {
-    return showError('请选择已提交状态的记录!');
+    return showError('请选择已提交或审核不通过状态的记录!');
   }
 };
 
