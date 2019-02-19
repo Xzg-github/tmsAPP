@@ -8,6 +8,7 @@ import showJoinDialog from './JoinDialog/JoinDialog';
 import execWithLoading from '../../../../standard-business/execWithLoading';
 import {updateOne} from '../../../../action-reducer/array';
 import {showAddCustomerFactoryDialog} from '../../../config/customerFactory/EditDialogContainer';
+import {toCapitalization} from '../../receiveApply/EditPage/InvoiceTable/InvoiceTable';
 
 const PARENT_STATE_PATH = ['receiveBill'];
 const STATE_PATH = ['receiveBill', 'edit'];
@@ -21,6 +22,7 @@ const URL_SEND = '/api/bill/receiveBill/send';
 const URL_CURRENCY = `/api/bill/receiveMake/currency`;
 const URL_CONTACTS = `/api/bill/receiveBill/cunstomer_contacts`;
 const URL_HEADER_INDO = `/api/bill/receiveBill/consignee_consignor`;
+const URL_RATE = `/api/bill/receiveBill/rate`;
 
 
 const getSelfState = (rootState) => {
@@ -28,13 +30,44 @@ const getSelfState = (rootState) => {
   return parent[parent.activeKey];
 };
 
+/**
+ * @description 获取tableItems中的单价、数量、折合汇率计算结算金额
+ * @param {[Object]} tableItems
+ * @return {string}
+ */
+const toSum = (tableItems) => {
+  const sum = tableItems.reduce((sum, item) => {
+    let { billExchangeRate = 1, price = 0, number = 0 } = item;
+    if (!(billExchangeRate && price && number)) {
+      sum += 0;
+      return sum;
+    }
+    sum += parseFloat(billExchangeRate) * 100 * parseFloat(price) * number;
+    return sum;
+  }, 0);
+
+  return (sum / 100).toFixed(2);
+};
+
 const changeActionCreator = (KEY, keyName, keyValue) => async (dispatch, getState) =>  {
+  const state = getSelfState(getState());
   let payload = {[keyName]: keyValue};
   if (keyValue && keyName === 'customerHeaderInformation') {
     payload['customerAddress'] = keyValue.address;
   } else if (keyValue && keyName === 'customerContact') {
     payload['customerContactPhone'] = keyValue.contactMobile;
     payload['customerContactFax'] = keyValue.contactFax;
+  } else if (keyValue && keyName === 'currency') {
+    const rateList = getJsonResult(await fetchJson(URL_RATE));
+    state.value.chargeList.map(item => {
+      const curr = rateList.filter(rate => rate['currency'] === keyValue.value && rate['currencyTypeCode'] === item.currency);
+      curr.length ? item.billExchangeRate = curr[0].billExchangeRate : item.billExchangeRate = 0;
+    });
+    const amount = toSum(state.value.chargeList);
+    const amountCapital = toCapitalization(amount);
+    payload['chargeList'] = state.value.chargeList;
+    payload['amount'] = amount;
+    payload['amountCapital'] = amountCapital;
   }
   dispatch(action.assign(payload, 'value'));
 };
@@ -127,8 +160,17 @@ const closeActionCreator = () => (dispatch, getState) => {
 
 const saveActionCreator = () => async (dispatch, getState) => {
   execWithLoading(async () => {
-    const {value} = getSelfState(getState());
-    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SAVE, postOption({...convert(value)}));
+    const {value, controls} = getSelfState(getState());
+    const invalidFormItem = controls.find(control => {
+      return !helper.validValue(control.data, value || {});
+    });
+    if (invalidFormItem) {
+      dispatch(action.assign({valid: invalidFormItem.key}));
+      return showError('请填写必填项');
+    }
+    value['customerContact'] = value['customerContact'].title;
+    value['customerHeaderInformation'] = value['customerHeaderInformation'].title;
+    const {returnCode, returnMsg} = await helper.fetchJson(URL_SAVE, postOption({...convert(value)}));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
     closeActionCreator()(dispatch, getState);
@@ -137,8 +179,15 @@ const saveActionCreator = () => async (dispatch, getState) => {
 
 const sendActionCreator = () => async (dispatch, getState) => {
   execWithLoading(async () => {
-    const {value} = getSelfState(getState());
-    const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SEND, postOption({...convert(value)}));
+    const {value,controls} = getSelfState(getState());
+    const invalidFormItem = controls.find(control => {
+      return !helper.validValue(control.data, value || {});
+    });
+    if (invalidFormItem) {
+      dispatch(action.assign({valid: invalidFormItem.key}));
+      return showError('请填写必填项');
+    }
+    const {returnCode, returnMsg} = await helper.fetchJson(URL_SEND, postOption({...convert(value)}));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
     closeActionCreator()(dispatch, getState);
