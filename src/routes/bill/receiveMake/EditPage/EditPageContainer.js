@@ -21,7 +21,7 @@ const URL_BATCH_DELETE = '/api/bill/receiveMake/batchDelete';
 const URL_BATCH_AUDIT = '/api/bill/receiveMake/batchAudit';
 const URL_STRIKEBALANCE = '/api/bill/receiveMake/strikeBalance';
 const URL_AUTO_BILLING = '/api/bill/receiveMake/autoBilling';
-const URL_CURRENCY = `/api/bill/receiveMake/currencyTypeCode`;
+const URL_CURRENCY = `/api/bill/receiveMake/customerCurrency`;
 
 
 const getSelfState = (rootState) => {
@@ -195,8 +195,12 @@ const convertActionCreator = () => async (dispatch, getState) => {
   const state = deepCopy(getSelfState(getState()));
   const resultItems = await showDialogType(state, 3);
   if (!resultItems) return;
+  const costDetailIds = resultItems.map(o => o.id);
   execWithLoading(async () => {
-    const params = {id: state.id, incomeDetails: resultItems.map(o => {
+    const params = {
+      id: state.id,
+      costDetailIds,
+      incomeDetails: resultItems.map(o => {
       delete o.transportOrderId;
       delete o.id;
       return o;
@@ -204,7 +208,13 @@ const convertActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_ADD, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}));
+    const newPayItems = deepCopy(state.payItems).map(o => {
+      if (costDetailIds.includes(o.id)) {
+        o['isTransferReceivables'] = '1';
+      }
+      return o;
+    });
+    dispatch(action.assign({receiveItems: result, payItems: newPayItems}));
     await afterEdit(dispatch, getState);
   });
 };
@@ -245,8 +255,8 @@ const checkActionCreator = (isPay, isAll, checked, rowIndex) => (dispatch, getSt
   let {payItems} = getSelfState(getState());
   isAll && (rowIndex = -1);
   if (isPay) {
-    if ((isAll && payItems.find(o => o.isTransferReceivables == "true_false_type_true")) ||
-      (!isAll && payItems[rowIndex].isTransferReceivables == "true_false_type_true")) {
+    if ((isAll && payItems.find(o => o.isTransferReceivables == "1")) ||
+      (!isAll && payItems[rowIndex].isTransferReceivables == "1")) {
       return showError("所选数据中有已转应付的数据！");
     }
   }
@@ -264,14 +274,14 @@ const tableChangeActionCreator = (isPay, sortInfo, filterInfo) => (dispatch, get
 const buildEditPageState = async (config, itemData, isReadonly) => {
   const data = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
   const {incomeDetails=[], costDetails=[]} = data;
-  const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}`));
-  const totalValues = getJsonResult(await fetchJson(`${URL_TOTAL}/${itemData.id}/${currency}`));
+  const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${itemData.customerId.value}`));
+  const totalValues = getJsonResult(await fetchJson(`${URL_TOTAL}/${itemData.id}/${currency.balanceCurrency}`));
   return {
     ...config,
     ...itemData,
     receiveButtons: isReadonly ? [] : config.receiveButtons,
     payButtons: isReadonly ? [] : config.payButtons,
-    activeCurrency: currency,
+    activeCurrency: currency.balanceCurrency,
     totalValues,
     receiveItems: incomeDetails,
     payItems: costDetails,
