@@ -39,6 +39,12 @@ api.get('/currencyTypeCode', async (req, res) => {
   res.send(await fetchJsonByNode(req, url));
 });
 
+// 根据委托客户获取结算单位币种
+api.get('/customerCurrency/:id', async (req, res) => {
+  const url = `${archiver_service}/customer/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
 // 获取客户下拉
 api.post('/customerId', async (req, res) => {
   const url = `${archiver_service}/customer/drop_list/enabled_type_enabled`;
