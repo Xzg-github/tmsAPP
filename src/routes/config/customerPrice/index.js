@@ -1,4 +1,5 @@
 import React from 'react';
+import Container from './RootContainer';
 
 export default {
   path: '/customer_price',
@@ -6,7 +7,7 @@ export default {
   action() {
     return {
       wrap: true,
-      component: <div>客户价格</div>
+      component: <Container/>
     };
   }
 }

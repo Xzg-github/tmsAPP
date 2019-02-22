@@ -112,7 +112,8 @@ const rootReducer = combineReducers({
   carManager: create('carManager'),
   corporation: create('corporation', false),
   bank: create('bank', false),
-  position: create('position', false)
+  position: create('position', false),
+  customerPrice: create('customerPrice'),
 });
 
 export default rootReducer;

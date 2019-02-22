@@ -62,7 +62,7 @@ api.use('/inside_factory', insideFactory);
 api.use('/inside_car', insideCar);
 api.use('/insideDriver', insideDriver);
 api.use('/insideSupervisor', insideSupervisor);
-api.use('/customer_price', customerPrice);
+api.use('/customerPrice', customerPrice);
 api.use('/supplier_price', supplierPrice);
 api.use('/supplier_tax', supplierTax);
 api.use('/customer_service', customerService);

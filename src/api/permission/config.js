@@ -117,8 +117,8 @@ const inside_mgr = [
 
 // 价格管理子菜单
 const price_mgr = [
-  {key: 'customer_price'},      // 客户价格
-  {key: 'supplier_price'},      // 供应商价格
+  {key: 'customer_price'},      // 客户报价
+  {key: 'supplier_price'},      // 供应商报价
 ];
 
 // 扩展功能子菜单
