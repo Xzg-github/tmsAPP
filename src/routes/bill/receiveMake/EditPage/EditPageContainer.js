@@ -22,6 +22,7 @@ const URL_BATCH_AUDIT = '/api/bill/receiveMake/batchAudit';
 const URL_STRIKEBALANCE = '/api/bill/receiveMake/strikeBalance';
 const URL_AUTO_BILLING = '/api/bill/receiveMake/autoBilling';
 const URL_CURRENCY = `/api/bill/receiveMake/customerCurrency`;
+const URL_CURRENCY_CODE = `/api/bill/receiveMake/currencyTypeCode`;
 
 
 const getSelfState = (rootState) => {
@@ -40,7 +41,7 @@ const currencyChangeActionCreator = (value, isRefresh=false) => async (dispatch,
 
 const showDialogType = async (state, type=0, isDoubleClick=false, rowIndex=0) => {
   // type: 0: 新增, 1: 复制新增, 2: 编辑, 3: 转应收
-  const {customerId, receiveColsEdit, receiveItems, payColsEdit, payItems, dialogBtnsReceive, dialogBtnsPay, activeCurrency} = state;
+  const {customerId, receiveColsEdit, receiveItems, payColsEdit, payItems, dialogBtnsReceive, dialogBtnsPay, balanceCurrency} = state;
   let items = type === 3 ? payItems : type === 0 ? [] : receiveItems;
   isDoubleClick && (items[rowIndex]['checked'] = true);
   const checkList = items.filter(o => o.checked).map(son => ({...son, checked: false}));
@@ -50,7 +51,7 @@ const showDialogType = async (state, type=0, isDoubleClick=false, rowIndex=0) =>
   const newCols = type === 3 ? payColsEdit : helper.initTableCols(configKey, receiveColsEdit);
   const params = {
     configKey,
-    activeCurrency,
+    balanceCurrency,
     dialogType: type,
     title: titleArr[type],
     items: checkList.map(o => {
@@ -274,14 +275,16 @@ const tableChangeActionCreator = (isPay, sortInfo, filterInfo) => (dispatch, get
 const buildEditPageState = async (config, itemData, isReadonly) => {
   const data = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
   const {incomeDetails=[], costDetails=[]} = data;
+  const currencyTypeCode = getJsonResult(await helper.fetchJson(URL_CURRENCY_CODE, 'get'));
   const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${itemData.customerId.value}`));
-  const totalValues = getJsonResult(await fetchJson(`${URL_TOTAL}/${itemData.id}/${currency.balanceCurrency}`));
+  const totalValues = getJsonResult(await fetchJson(`${URL_TOTAL}/${itemData.id}/${currencyTypeCode}`));
   return {
     ...config,
     ...itemData,
     receiveButtons: isReadonly ? [] : config.receiveButtons,
     payButtons: isReadonly ? [] : config.payButtons,
-    activeCurrency: currency.balanceCurrency,
+    activeCurrency: currencyTypeCode,
+    balanceCurrency: currency.balanceCurrency,
     totalValues,
     receiveItems: incomeDetails,
     payItems: costDetails,
