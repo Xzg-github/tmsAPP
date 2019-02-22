@@ -15,6 +15,8 @@ const URL_CUSTOMER = '/api/bill/receiveMake/customerId';
 const URL_CHARGE_NAME = '/api/bill/receiveMake/chargeItemId';
 const URL_SUPPLIER = '/api/bill/payMake/supplierId';
 const URL_GET_COST = '/api/bill/receiveMake/getCost';
+const URL_CURRENCY = `/api/bill/receiveMake/customerCurrency`;
+const URL_CURRENCY_SUPPLIER = `/api/bill/payMake/supplierCurrency`;
 
 
 const getSelfState = (rootState) => {
@@ -22,6 +24,7 @@ const getSelfState = (rootState) => {
 };
 
 const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, getState) =>{
+  const {customerId, supplierId} = getSelfState(getState());
   let payload = {[keyName]: keyValue}, index = rowIndex;
   switch (keyName) {
     case 'price':
@@ -31,8 +34,18 @@ const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, ge
     }
     case 'currency': {
       payload['exchangeRate'] = '';
+      break;
     }
-    default: break;
+    case 'customerId': {
+      const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${keyValue.value}`));
+      payload['currency'] = currency ? currency.balanceCurrency : undefined;
+      break;
+    }
+    case 'supplierId': {
+      const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY_SUPPLIER}/${keyValue.value}`));
+      payload['currency'] = currency ? currency.balanceCurrency : undefined;
+      break;
+    }
   }
   dispatch(action.update(payload, 'items', index));
 };
@@ -57,10 +70,10 @@ const searchActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, ge
 };
 
 const addActionCreator = () => async (dispatch, getState) => {
-  const {customerId, supplierId, items, activeCurrency} = getSelfState(getState());
+  const {customerId, supplierId, items, balanceCurrency} = getSelfState(getState());
   items.push({
     checked: false,
-    currency: activeCurrency,
+    currency: balanceCurrency,
     customerId,
     supplierId
   });
@@ -86,7 +99,7 @@ const delActionCreator = () => async (dispatch, getState) =>{
 };
 
 const getActionCreator = () => async (dispatch, getState) => {
-  const {customerId, supplierId, items, activeCurrency, dialogType} = getSelfState(getState());
+  const {customerId, supplierId, items, balanceCurrency, dialogType} = getSelfState(getState());
   const id = customerId ? customerId.value : supplierId ? supplierId.value : '';
   const {returnCode, result, returnMsg} = await helper.fetchJson(`${URL_GET_COST}/${id}`);
   if (returnCode !== 0) return showError(returnMsg);
@@ -95,7 +108,7 @@ const getActionCreator = () => async (dispatch, getState) => {
     const list = resultList.map(o => {
       return {
         checked: false,
-        currency: activeCurrency,
+        currency: balanceCurrency,
         customerId,
         supplierId,
         chargeItemId: o
