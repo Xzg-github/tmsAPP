@@ -34,9 +34,15 @@ api.post('/currency', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
-// 根据结算单位获取结算币种（主币种）
+// 获取主币种
 api.get('/currencyTypeCode', async (req, res) => {
   const url = `${archiver_service}/charge/tenant_currency_type/main_currency`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
+// 根据供应商获取结算单位币种
+api.get('/supplierCurrency/:id', async (req, res) => {
+  const url = `${archiver_service}/supplier/${req.params.id}`;
   res.send(await fetchJsonByNode(req, url));
 });
 
