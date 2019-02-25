@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import OrderPage from '../../../components/OrderPage';
-import helper,{getObject, swapItems} from '../../../common/common';
+import helper, {fetchJson, getObject, postOption, showError, swapItems} from '../../../common/common';
 import {toFormValue,hasSign} from '../../../common/check';
 import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
@@ -15,6 +15,7 @@ const STATE_PATH =  ['payMonthlyBill'];
 
 const URL_LIST = '/api/bill/pay_monthly_bill/list';//查询列表
 const URL_ONE = '/api/bill/pay_monthly_bill/one';//根据ID获取单条数据
+const URL_DELETE = '/api/bill/pay_monthly_bill/delete'
 
 
 const action = new Action(STATE_PATH);
@@ -90,7 +91,19 @@ const searchClickActionCreator = async (dispatch, getState) => {
   return search2(dispatch, action, URL_LIST, 1, pageSize, toFormValue(searchData), newState,tabKey);
 };
 
-
+const deleteActionCreator = async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const idList = tableItems.reduce((result, item) => {
+    item.checked && item.statusType === 'status_draft' && result.push(item.id);
+    return result;
+  }, []);
+  if (idList.length === tableItems.filter(item => item.checked).length) {
+    const {returnCode, returnMsg} = await fetchJson(URL_DELETE, postOption(idList));
+    return returnCode === 0 ? updateTable(dispatch, getState) : showError(returnMsg);
+  }else {
+    return showError('请选择草稿状态的记录!');
+  }
+};
 
 
 const toolbarActions = {
@@ -98,7 +111,8 @@ const toolbarActions = {
   reset: resetActionCreator,
   add:addActionCreator,
   edit:editActionCreator,
-  output:outputActionCreator
+  output:outputActionCreator,
+  del: deleteActionCreator
 };
 
 const clickActionCreator = (key) => {
