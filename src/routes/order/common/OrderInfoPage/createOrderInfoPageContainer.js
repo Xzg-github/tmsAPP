@@ -509,9 +509,13 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     }
     let newList = addressList.filter(item => item.checked !== true);
     if (newList.length === 0) {
-      newList = [{}, {}];
+      newList = [{pickupDeliveryType: '0'},{pickupDeliveryType: '1'}];
     }else if (newList.length === 1) {
-      newList.push({});
+      if (Number(newList[0].pickupDeliveryType || 1) === 0) { //剩下的记录是发货的
+        newList.push({pickupDeliveryType: '1'});
+      }else {
+        newList.unshift({pickupDeliveryType: '0'});
+      }
     }
     dispatch(action.assign({addressList: newList}));
     dispatch(action.assign( await countBaseInfoData(newList, 'consigneeConsignorId'), 'baseInfo'));
