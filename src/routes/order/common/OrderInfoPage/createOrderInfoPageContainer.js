@@ -353,7 +353,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       let data, url;
       if (keyName === 'consigneeConsignorId') {
         url = `/api/order/input/customer_factory_drop_list`;
-        data = await helper.fetchJson(url, helper.postOption({customerId: baseInfo.customerId.value, name: value}));
+        data = await helper.fetchJson(url, helper.postOption({customerId: baseInfo.customerId.value, name: value, isAll: 1}));
         if (data.returnCode === 0) {
           let options = data.result || [];
           const existValueIds = addressList.map(item => item[keyName] ? item[keyName].value : '');
