@@ -32,7 +32,6 @@ const initActionCreator = () => async (dispatch) => {
     dictionary['status_type'] = getJsonResult(await getStatus('customer_price'));
     setDictionary(payload.filters, dictionary);
     setDictionary(payload.tableCols, dictionary);
-    // setDictionary(payload.editConfig.controls, dictionary);
     payload.buttons = dealActions(payload.buttons, 'customer_price');
     dispatch(action.create(payload));
   } catch (e) {

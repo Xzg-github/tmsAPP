@@ -2,69 +2,48 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditPage.less';
 import {SuperTable, SuperTab2, Indent, SuperToolbar} from '../../../../components';
-// import Total from '../../receiveMake/EditPage/Total/Total';
-// import {createOrderInfo} from '../../receiveMake/EditPage/OrderInfoPage/OrderInfoPageContainer';
 
 class EditPage extends React.Component {
 
-  // toTotal = () => {
-  //   const {payItems=[], ...prop} = this.props;
-  //   const props = {
-  //     ...prop,
-  //     items: payItems.map(o => {
-  //     o.companyTitle = o.supplierId ? o.supplierId.title : '';
-  //     return o;
-  //   })};
-  //   return (payItems.length > 0) && <Total {...props}/>
-  // }
+  toSuperTab = () => {
+    const {tabs, activeKey, onTabChange} = this.props;
+    const props = {tabs, activeKey, onTabChange};
+    return <div className={s.superTab}><SuperTab2 {...props}/></div>
+  }
 
-  // toToolbar = () => {
-  //   const {payButtons, onClick, isReadonly} = this.props;
-  //   const props = {buttons: payButtons, onClick};
-  //   return isReadonly ? null : <SuperToolbar {...props}/>;
-  // }
+  toContract = () => {
+    return '合同'
+  }
 
-  // toTable = () => {
-  //   const {payItems, payCols, isReadonly, onTableChange, payFilterInfo} = this.props;
-  //   const callback = {onTableChange};
-  //   !isReadonly && (callback.onDoubleClick = this.props.onDoubleClick);
-  //   !isReadonly && (callback.onCheck = this.props.onCheck);
-  //   return <SuperTable {...{items: payItems, cols: payCols, callback, checkbox: !isReadonly, ...payFilterInfo}} />
-  // }
+  toFreight = () => {
+    return '运费'
+  }
 
-  // toSuperTab = () => {
-  //   const {tabs, activeKey, onTabChange} = this.props;
-  //   return <SuperTab2 {...{tabs, activeKey, onTabChange}} />
-  // }
+  toExtraCharge = () => {
+    return '附加费'
+  }
 
-  // toCostInfo = () => {
-  //   return (
-  //     <Indent>
-  //       {this.toTotal()}
-  //       {this.toToolbar()}
-  //       {this.toTable()}
-  //     </Indent>
-  //   )
-  // }
 
-  // toTabContent = () => {
-  //   const {activeKey} = this.props;
-  //   switch (activeKey) {
-  //     case 'index': {
-  //       return this.toCostInfo()
-  //     }
-  //     case 'orderInfo': {
-  //       return <OrderInfoContainer/>
-  //     }
-  //   }
-  // }
+  toTabContent = () => {
+    const {activeKey} = this.props;
+    switch (activeKey) {
+      case 'index': {
+        return this.toContract()
+      }
+      case 'freight': {
+        return this.toFreight()
+      }
+      case 'extraCharge': {
+        return this.toExtraCharge()
+      }
+    }
+  }
 
   render() {
     return (
       <Indent className={s.root}>
-        {/* <div className={s.marginBottom}>{this.toSuperTab()}</div>
-        {this.toTabContent()} */}
-        <h1>编辑页面</h1>
+        {this.toSuperTab()}
+        {this.toTabContent()}
       </Indent>
     );
   }

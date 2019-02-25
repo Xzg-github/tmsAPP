@@ -2,44 +2,24 @@ import {connect} from 'react-redux';
 import OrderPage from '../../../components/OrderPage';
 import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
-import helper, {getObject, fetchJson, postOption, showError, showSuccessMsg, getJsonResult} from '../../../common/common';
+import helper, {fetchJson, postOption, showError, showSuccessMsg, getJsonResult} from '../../../common/common';
 import {search2} from '../../../common/search';
 import {showImportDialog} from '../../../common/modeImport';
-import {exportExcelFunc, commonExport} from '../../../common/exportExcelSetting';
-import {showColsSetting} from '../../../common/tableColsSetting';
+import {exportExcelFunc} from '../../../common/exportExcelSetting';
 import {toFormValue} from "../../../common/check";
 
 const STATE_PATH = ['customerPrice'];
 const URL_LIST = '/api/config/customerPrice/list';
 const URL_CUSTOMER = '/api/config/customerPrice/customer';
 const URL_USER = '/api/config/customerPrice/user';
-
-const URL_ABLE = '/api/config/customerPrice/able';
-const URL_SALEMEN = '/api/config/customerPrice/salemen';
-const URL_DETAIL = '/api/config/customerPrice/detail';
 const URL_DELETE = '/api/config/customerPrice/delete';
+const URL_ABLE = '/api/config/customerPrice/able';
 
 const action = new Action(STATE_PATH);
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
 };
-
-// const buildEditPageState = (config={}, data, edit) => {
-//   const EDIT_DIALOG = ['config', 'size', 'controls'];
-//   return {
-//     edit,
-//     ...getObject(config, EDIT_DIALOG),
-//     title: edit ? config.edit : config.add,
-//     value: helper.getObjectExclude(data, ['checked']),
-//     options: {}
-//   };
-// };
-
-// const updateTable = async (dispatch, getState) => {
-//   const {currentPage, pageSize, searchDataBak={}} = getSelfState(getState());
-//   return search2(dispatch, action, URL_LIST, currentPage, pageSize, toFormValue(searchDataBak))
-// };
 
 const resetActionCreator = (dispatch) => {
   dispatch(action.assign({searchData: {}}));
@@ -71,7 +51,44 @@ const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
   dispatch(action.update({options}, 'filters', index));
 };
 
+// const buildEditPageState = (config={}, data, edit) => {
+//   const EDIT_DIALOG = ['config', 'size', 'controls'];
+//   return {
+//     edit,
+//     ...helper.getObject(config, EDIT_DIALOG),
+//     title: edit ? config.edit : config.add,
+//     value: helper.getObjectExclude(data, ['checked']),
+//     options: {}
+//   };
+// };
+
+// const updateTable = async (dispatch, getState) => {
+//   const {currentPage, pageSize, searchDataBak={}} = getSelfState(getState());
+//   return search2(dispatch, action, URL_LIST, currentPage, pageSize, toFormValue(searchDataBak))
+// };
+
+/**
+ *
+ * @param {number} type [0: 新增, 1: 复制新增, 2: 编辑]
+ */
+const showEditPage = (dispatch, getState, type=0) => {
+  const {editConfig} = getSelfState(getState());
+  const arr = [{title: '新增', key: 'newAdd'}, {title: '复制新增', key: 'copyAdd'}];
+  const payload = {
+    ...editConfig,
+    type,
+    title: type
+  };
+  dispatch(action.assign(payload));
+};
+
 const addActionCreator = (dispatch, getState) => {
+  // const {editConfig} = getSelfState(getState());
+  // const payload = buildEditDialogState(editConfig, {}, false);
+  // dispatch(action.assign(payload, 'edit'));
+};
+
+const copyActionCreator = (dispatch, getState) => {
   // const {editConfig} = getSelfState(getState());
   // const payload = buildEditDialogState(editConfig, {}, false);
   // dispatch(action.assign(payload, 'edit'));
@@ -96,12 +113,23 @@ const editAction = async (isDbClick, dispatch, getState, rowIndex=0) => {
   // dispatch(action.assign(payload, 'edit'));
 };
 
-// 编辑
 const editActionCreator = async (dispatch, getState) => {
   // editAction(false, dispatch, getState);
 };
+
 const doubleClickActionCreator = (rowIndex) => async (dispatch, getState) => {
   // editAction(true, dispatch, getState, rowIndex);
+};
+
+const deleteActionCreator = async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const checkItems = tableItems.filter(o=>o.checked);
+  if(checkItems.length < 1) return showError('请勾选一条数据！');
+  if (checkItems.some(o => o.statusType !== 'enabled_type_unenabled')) return showError('请选择未启用状态的数据！');
+  const {returnCode, returnMsg} = await fetchJson(URL_DELETE, postOption(checkItems.map(o => o.id)));
+  if (returnCode !== 0) return showError(returnMsg);
+  showSuccessMsg(returnMsg);
+  await searchActionCreator(dispatch, getState);
 };
 
 const ableActionCreator = async (type='enabled_type_enabled', dispatch, getState) => {
@@ -115,52 +143,58 @@ const ableActionCreator = async (type='enabled_type_enabled', dispatch, getState
   }
   const params = {
     ids: checkItems.map(o=>o.id),
-    type
+    enabledType: type
   };
-  const {returnCode, returnMsg} = await fetchJson(`${URL_ABLE}`, helper.postOption(params));
+  const {returnCode, returnMsg} = await fetchJson(`${URL_ABLE}`, postOption(params));
   if (returnCode !== 0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
-  searchActionCreator(dispatch, getState);
+  await searchActionCreator(dispatch, getState);
 };
 
-// 启用
 const enableActionCreator = (dispatch, getState) => ableActionCreator('enabled_type_enabled', dispatch, getState);
 
-// 禁用
 const disableActionCreator = (dispatch, getState) => ableActionCreator('enabled_type_disabled', dispatch, getState);
 
-// 删除
-const deleteActionCreator = async (dispatch, getState) => {
+const importActionCreator = () => showImportDialog('customer_import');
+
+const exportActionCreator = async (dispatch, getState) => {
+  const {tableCols, tableItems} = getSelfState(getState());
+  exportExcelFunc(tableCols, tableItems);
+};
+
+const refreshActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkItems = tableItems.filter(o=>o.checked);
   if(checkItems.length < 1) return showError('请勾选一条数据！');
-  if (checkItems.some(o => o.enabledType !== 'enabled_type_unenabled')) return showError('请选择未启用状态的数据！');
-  const {returnCode, returnMsg} = await fetchJson(URL_DELETE, helper.postOption(checkItems.map(o=>o.id)));
-  if (returnCode !== 0) return showError(returnMsg);
-  showSuccessMsg(returnMsg);
-  searchActionCreator(dispatch, getState);
+  const {returnCode, result, returnMsg} = await fetchJson(`${URL_REFRESH}/${checkItems[0].customerId.value}`);
+  if (returnCode !== 0) showError(returnMsg);
+  console.log(result)
 };
-
-// 导入
-const importActionCreator = () => showImportDialog('customer_import');
 
 const toolbarActions = {
   reset: resetActionCreator,
   search: searchActionCreator,
   add: addActionCreator,
+  copy: copyActionCreator,
   edit: editActionCreator,
-  // enable: enableActionCreator,
-  // disable: disableActionCreator,
   delete: deleteActionCreator,
+  enable: enableActionCreator,
+  disable: disableActionCreator,
   import: importActionCreator,
+  export: exportActionCreator,
 };
 
 const clickActionCreator = (key) => {
-  // const k = key.split('_')[1] || key;
   if (toolbarActions.hasOwnProperty(key)) {
     return toolbarActions[key];
   } else {
     return {type: 'unknown key'};
+  }
+};
+
+const linkActionCreator = (key, rowIndex, item) => async (dispatch, getState) => {
+  if (key === 'fileList') {
+    window.open(item.fileUrl);
   }
 };
 
@@ -180,13 +214,14 @@ const pageSizeActionCreator = (pageSize, currentPage) => async (dispatch, getSta
 };
 
 const mapStateToProps = (state) => {
-  return getObject(getSelfState(state), OrderPage.PROPS);
+  return helper.getObject(getSelfState(state), OrderPage.PROPS);
 };
 
 const actionCreators = {
   onClick: clickActionCreator,
   onChange: changeActionCreator,
   onSearch: formSearchActionCreator,
+  onLink: linkActionCreator,
   onCheck: checkActionCreator,
   onDoubleClick: doubleClickActionCreator,
   onPageNumberChange: pageNumberActionCreator,

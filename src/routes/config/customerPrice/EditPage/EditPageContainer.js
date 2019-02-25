@@ -9,6 +9,7 @@ import { exportExcelFunc, commonExport } from '../../../../common/exportExcelSet
 import { showColsSetting } from '../../../../common/tableColsSetting';
 // import showFinanceDialog from './financeDialog';
 import {toFormValue} from "../../../../common/check";
+import {fetchDictionary, setDictionary, getStatus} from '../../../../common/dictionary';
 
 const STATE_PATH = ['customerPrice', 'edit'];
 const URL_LIST = '/api/config/customerPrice/list';
@@ -17,6 +18,7 @@ const URL_SALEMEN = '/api/config/customerPrice/salemen';
 const URL_DETAIL = '/api/config/customerPrice/detail';
 const URL_DELETE = '/api/config/customerPrice/delete';
 const URL_FINANANCIAL = '/api/basic/user/name';
+const URL_REFRESH = '/api/config/customerPrice/refresh';
 
 const action = new Action(STATE_PATH);
 
@@ -224,11 +226,22 @@ const pageSizeActionCreator = (pageSize, currentPage) => async (dispatch, getSta
   return search2(dispatch, action, URL_LIST, currentPage, pageSize, searchData, newState);
 };
 
+const initActionCreator = async (dispatch, getState) => {
+  try {
+    dispatch(action.assign({status: 'loading'}));
+
+  } catch (e) {
+    helper.showError(e.message);
+    dispatch(action.assign({status: 'retry'}));
+  }
+};
+
 const mapStateToProps = (state) => {
   return getObject(getSelfState(state), OrderPage.PROPS);
 };
 
 const actionCreators = {
+  onInit: initActionCreator,
   // onClick: clickActionCreator,
   // onChange: changeActionCreator,
   // onSearch: formSearchActionCreator,
