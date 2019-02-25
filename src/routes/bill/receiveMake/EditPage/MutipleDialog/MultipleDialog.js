@@ -15,8 +15,9 @@ class MultipleDialog extends React.Component {
   }
 
   toToolbar = () => {
-    const {buttons, onClick} = this.props;
-    return <SuperToolbar {...{buttons, onClick}}/>
+    const {buttons, onClick, dialogType} = this.props;
+    const btns = buttons.filter(o => o.showIn ? o.showIn.includes(dialogType): true);
+    return <SuperToolbar {...{buttons: btns, onClick}}/>
   }
 
   toTable = () => {

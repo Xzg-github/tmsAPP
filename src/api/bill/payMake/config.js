@@ -133,11 +133,11 @@ const totalKeys = [
 ];
 
 const dialogBtnsPay = [
-  {key: "add", title: "新增", bsStyle: 'primary'},
-  {key: "copy", title: "复制"},
-  {key: "del", title: "移除", confirm: '是否确定删除所有选中项？'},
-  {key: "get", title: "获取费用项"},
-  {key: "config", title: "配置字段"},
+  {key: "add", title: "新增", bsStyle: 'primary', showIn: [0]},
+  {key: "copy", title: "复制", showIn: [0, 1]},
+  {key: "del", title: "移除", confirm: '是否确定删除所有选中项？', showIn: [0, 1]},
+  {key: "get", title: "获取费用项", showIn: [0]},
+  {key: "config", title: "配置字段", showIn: [0]},
 ];
 
 const payColsEdit = [

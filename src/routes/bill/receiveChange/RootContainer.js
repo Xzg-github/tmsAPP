@@ -41,7 +41,8 @@ const jumpToChange = async (item, dispatch, getState) => {
   if (returnCode !== 0) return showError(returnMsg);
   const value = {
     costInfo: result.details,
-    transportOrderId: item.customerId || result.balanceId,
+    balanceId: item.customerId || result.balanceId,
+    transportOrderId: item.orderNumber,
     renewalMode: 'renewal_mode_001'
   };
   const {status, tabs=[], editConfig={}} = getSelfState(getState());
