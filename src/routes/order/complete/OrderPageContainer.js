@@ -33,6 +33,7 @@ const showOrderInfoPage = (dispatch, item, selfState, readonly) => {
   }
 };
 
+//撤销任务
 const revokeActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const ids = tableItems.filter(item => item.checked === true).map(item => item.id);
@@ -43,13 +44,19 @@ const revokeActionCreator = async (dispatch, getState) => {
   return updateTable(dispatch, action, getSelfState(getState()));
 };
 
+//运单更改
 const changeActionCreator = async (dispatch, getState) => {
   const selfState = getSelfState(getState());
   const items = selfState.tableItems.filter(item => item.checked === true);
   if (items.length !== 1) return helper.showError(`请勾选一条记录`);
+  const orderTypeArr = ['status_waiting_delivery', 'status_waiting_check', 'status_completed_check'];
+  if(!orderTypeArr.includes(items[0].orderType)) {
+    return helper.showError(`只能更改任务状态为待派单、待确认、已确认的单`);
+  }
   return showOrderInfoPage(dispatch, items[0], selfState, false);
 };
 
+//取消运单
 const cancelActionCreator = async (dispatch, getState) => {
   const selfState = getSelfState(getState());
   const items = selfState.tableItems.filter(item => item.checked === true);

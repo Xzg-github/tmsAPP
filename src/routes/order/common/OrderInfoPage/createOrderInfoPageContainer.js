@@ -572,8 +572,8 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       return `${latitude},${longitude}`;
     });
     const distance = await getDistance(points) || '';
-    if (!distance){
-      helper.showError(`计算总里程失败`);
+    if (!distance){ //暂不提示失败
+      // helper.showError(`计算总里程失败`);
     }
     return distance;
   };
