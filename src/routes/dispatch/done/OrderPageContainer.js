@@ -47,6 +47,7 @@ const changeActionCreator = async (dispatch, getState) => {
   const selfState = getSelfState(getState());
   const items = selfState.tableItems.filter(item => item.checked === true);
   if (items.length !== 1) return helper.showError(`请勾选一条记录`);
+  if (items[0].orderType !== 'status_completed_check') return helper.showError(`只能操作任务状态为已确认的运单`);
   if (true === await showChangeDialog(items[0])) {
     return updateTable(dispatch, action, getSelfState(getState()));
   }
