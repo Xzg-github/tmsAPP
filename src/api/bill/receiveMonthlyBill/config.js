@@ -44,7 +44,7 @@ const tableCols = [
   {key:"fallbackReason",title:"回退原因"},
   {key:"fallbackTime",title:"回退时间"},
   {key:"fileList",title:"附件"},
-  {key:"fallbackUser",title:"回退用户"},
+  {key:"fallbackU  {key:\"del\" ,title:\"删除\" },ser",title:"回退用户"},
   {key:"checkUser",title:"审核人员"},
   {key:"remark",title:"详细说明"},
   {key:"insertTime",title:"创建时间"},
@@ -56,7 +56,7 @@ const tableCols = [
 const buttons = [
   {key:"add" ,title:"新增" , bsStyle: 'primary'},
   {key:"edit" ,title:"编辑" },
-  // {key:"del" ,title:"删除" },
+
   // {key: 'check', title: '审核'},
   // {key: 'revoke', title: '撤销审核'},
   {key:"output" ,title:"输出" },

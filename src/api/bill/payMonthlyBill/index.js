@@ -40,7 +40,11 @@ api.post('/add', async (req, res) => {
   res.send(await fetchJsonByNode(req,url,postOption(req.body)));
 });
 
-
+//批量删除
+api.post('/delete', async (req, res) => {
+  const url = `${service}/payable_month_bill/batch`;
+  res.send(await fetchJsonByNode(req, url,postOption(req.body, 'delete')));
+});
 
 
 /*-------------结算单位-------------*/
