@@ -90,5 +90,11 @@ api.post('/send', async (req, res) => {
   res.send({returnCode: 0, result: 'Success', returnMsg: 'Success'});
 });
 
+//获取汇率
+api.get('/rate', async (req, res) => {
+  const url = `${archiver_service}/currency_type_rate/list`;
+  res.send(await fetchJsonByNode(req, url));
+});
+
 
 export default api;
