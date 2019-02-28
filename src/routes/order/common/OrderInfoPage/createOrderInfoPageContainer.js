@@ -353,7 +353,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       let data, url;
       if (keyName === 'consigneeConsignorId') {
         url = `/api/order/input/customer_factory_drop_list`;
-        data = await helper.fetchJson(url, helper.postOption({customerId: baseInfo.customerId.value, name: value}));
+        data = await helper.fetchJson(url, helper.postOption({customerId: baseInfo.customerId.value, name: value, isAll: 1}));
         if (data.returnCode === 0) {
           let options = data.result || [];
           const existValueIds = addressList.map(item => item[keyName] ? item[keyName].value : '');
@@ -423,30 +423,32 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
 
   //保存（不关闭当前页）
   const saveActionCreator = async (dispatch, getState) => {
-    await countActionCreator(dispatch, getState);
-    const selfState = getSelfState(getState());
-    const {baseInfo, isAppend} = selfState;
-    if (!baseInfo.customerId) return helper.showError('请先填写客户');
-    const body = getSaveData(selfState);
-    const method = baseInfo.id ? 'put' : 'post';
-    let url = helper.getRouteKey() === 'input' ? '/api/order/input' : '/api/order/complete/change';
-    if (selfState.isAppend) {
-      url = '/api/bill/append';
-    }
-    const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));
-    if (returnCode !== 0) return helper.showError(returnMsg);
-    if (!baseInfo.id) { //新增保存处理
-      if (isAppend) { //新增补录运单
-        helper.showSuccessMsg('保存成功');
-        dispatch(action.assign({id: result.id}, 'baseInfo'));
-        dispatch(action.update({type: 'readonly'}, ['formSections', 'baseInfo', 'controls'], {key: 'key', value: 'customerId'}));
-      }else { //新增运单
-        helper.showSuccessMsg(`运单号：${result.orderNumber} 运单已保存至待办任务-待完善`);
-        return newActionCreator(dispatch, getState);
+    execWithLoading(async () => {
+      await countActionCreator(dispatch, getState);
+      const selfState = getSelfState(getState());
+      const {baseInfo, isAppend} = selfState;
+      if (!baseInfo.customerId) return helper.showError('请先填写客户');
+      const body = getSaveData(selfState);
+      const method = baseInfo.id ? 'put' : 'post';
+      let url = helper.getRouteKey() === 'input' ? '/api/order/input' : '/api/order/complete/change';
+      if (selfState.isAppend) {
+        url = '/api/bill/append';
       }
-    }else {
-      helper.showSuccessMsg('保存成功');
-    }
+      const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));
+      if (returnCode !== 0) return helper.showError(returnMsg);
+      if (!baseInfo.id) { //新增保存处理
+        if (isAppend) { //新增补录运单
+          helper.showSuccessMsg('保存成功');
+          dispatch(action.assign({id: result.id}, 'baseInfo'));
+          dispatch(action.update({type: 'readonly'}, ['formSections', 'baseInfo', 'controls'], {key: 'key', value: 'customerId'}));
+        }else { //新增运单
+          helper.showSuccessMsg(`运单号：${result.orderNumber} 运单已保存至待办任务-待完善`);
+          return newActionCreator(dispatch, getState);
+        }
+      }else {
+        helper.showSuccessMsg('保存成功');
+      }
+    });
   };
 
   //校验数据
@@ -472,23 +474,25 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
 
   //提交
   const commitActionCreator = async (dispatch, getState) => {
-    await countActionCreator(dispatch, getState);
-    const selfState = getSelfState(getState());
-    const {baseInfo, closeFunc, isAppend} = selfState;
-    //校验数据
-    if (!checkData(selfState, dispatch)) return;
-    const body = getSaveData(selfState);
-    const method = baseInfo.id ? 'put' : 'post';
-    const url = isAppend ? '/api/bill/append/commit' : '/api/order/input/commit';
-    const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));
-    if (returnCode !== 0) return helper.showError(returnMsg);
-    if (helper.getRouteKey() === 'input') {
-      helper.showSuccessMsg(`运单号：${result.orderNumber} 运单已提交至待办任务-待派发`);
-      newActionCreator(dispatch, getState);
-    }else {
-      helper.showSuccessMsg('提交成功');
-    }
-    closeFunc && closeFunc();
+    execWithLoading(async () => {
+      await countActionCreator(dispatch, getState);
+      const selfState = getSelfState(getState());
+      const {baseInfo, closeFunc, isAppend} = selfState;
+      //校验数据
+      if (!checkData(selfState, dispatch)) return;
+      const body = getSaveData(selfState);
+      const method = baseInfo.id ? 'put' : 'post';
+      const url = isAppend ? '/api/bill/append/commit' : '/api/order/input/commit';
+      const {returnCode, returnMsg, result} = await helper.fetchJson(url, helper.postOption(body, method));
+      if (returnCode !== 0) return helper.showError(returnMsg);
+      if (helper.getRouteKey() === 'input') {
+        helper.showSuccessMsg(`运单号：${result.orderNumber} 运单已提交至待办任务-待派发`);
+        newActionCreator(dispatch, getState);
+      }else {
+        helper.showSuccessMsg('提交成功');
+      }
+      closeFunc && closeFunc();
+    });
   };
 
   //增加收发货地址

@@ -143,7 +143,7 @@ const buildDialogState = async (data) => {
       {key: 'newDriverId', title: '新司机', type: 'search', props:{searchWhenClick: true}, required: true},
       {key: 'driverMobilePhone', title: '司机电话', type: 'readonly'},
       {key: 'newDriverMobilePhone', title: '新司机电话', type: 'readonly'},
-      {key: 'trackingInformation', title: '变更原因', type: 'textArea', span: 2},
+      {key: 'trackingInformation', title: '变更原因', type: 'textArea', span: 2, required: true},
     ],
     hideControls: Number(data.ownerCarTag) === 1 ? [] : ['newSupplierId']
   };
