@@ -2,7 +2,6 @@ import {pageSize, pageSizeType, description, searchConfig} from '../../globalCon
 import name from '../../dictionary/name';
 
 const filters = [
-  {key: 'customerId', title: '所属客户', type: 'search'},
   {key: 'name', title: '名称', type: 'text'},
   {key: 'code', title: '编码', type: 'text'},
   {key: 'shortName', title: '简称', type: 'text'},
@@ -13,7 +12,6 @@ const filters = [
 const tableCols = [
   {key: 'name', title: '名称', required: true},
   {key: 'enabledType', title: '状态', dictionary: name.ENABLED_TYPE, required: true},
-  {key: 'customerId', title: '所属客户', required: true},
   {key: 'shortName', title: '简称'},
   {key: 'englishName', title: '英文名称'},
   {key: 'code', title: '编码'},
