@@ -228,7 +228,7 @@ const buildEditPageState = async (config, itemData, readonly) => {
     ...config,
     ...itemData,
     readonly,
-    value: {...formValue, costInfo, customerAddress: customerInfomation[0].address, orderNumber: itemData.orderNumber},
+    value: {...formValue, costInfo, customerAddress: customerInfomation[0] ? customerInfomation[0].address : '', orderNumber: itemData.orderNumber},
     status: 'page'
   };
 };
