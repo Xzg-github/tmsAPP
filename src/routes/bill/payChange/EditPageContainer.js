@@ -212,7 +212,7 @@ const saveAction = () => async (dispatch, getState) => {
       title: helper.convert(getObjectExclude(value, ['costInfo'])),
       detail: convert(value['costInfo'])
     };
-    const {returnCode, retrunMsg, result} = await fetchJson(URL_ADDSAVE, postOption(saveData));
+    const {returnCode, returnMsg, result} = await fetchJson(URL_ADDSAVE, postOption(saveData));
     if (returnCode === 0) {
       helper.showSuccessMsg('保存成功');
       controls[0].data.forEach(item => {
@@ -229,14 +229,14 @@ const saveAction = () => async (dispatch, getState) => {
       dispatch(action.assign({['costInfo']: tableItems, ...result.title}, 'value'));
       return updateTable(dispatch, getState);
     }else {
-      return showError(retrunMsg);
+      return showError(returnMsg);
     }
   }else {
     const saveData = {
       title: helper.convert(getObjectExclude(value, ['costInfo'])),
       detail: convert(value['costInfo'])
     };
-    const {returnCode, retrunMsg, result} = await fetchJson(URL_EDITSAVE, postOption(saveData, 'put'));
+    const {returnCode, returnMsg, result} = await fetchJson(URL_EDITSAVE, postOption(saveData, 'put'));
     if (returnCode === 0) {
       helper.showSuccessMsg('保存成功');
       const {from=0, to=0} = result;
@@ -247,7 +247,7 @@ const saveAction = () => async (dispatch, getState) => {
       dispatch(action.assign({['costInfo']: tableItems, ...result.title}, 'value'));
       return updateTable(dispatch, getState);
     } else {
-      return showError(retrunMsg);
+      return showError(returnMsg);
     }
   }
 };
