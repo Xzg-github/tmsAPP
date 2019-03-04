@@ -6,7 +6,7 @@ const filters = [
   {key: 'supplierId', title: '车主', type:'search', required:true, searchUrl:SUPPLIER},
   {key: 'institutionId', title: '归属机构', type:'search'},
   {key: 'supervisorName', title: '监理姓名', type: 'text'},
-  {key: 'active', title: '状态', type: 'select', dictionary: name.ENABLED_TYPE}
+  {key: 'enabledType', title: '状态', type: 'select', dictionary: name.ENABLED_TYPE}
 ];
 
 

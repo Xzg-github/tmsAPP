@@ -212,6 +212,7 @@ const convertActionCreator = () => async (dispatch, getState) => {
     const newPayItems = deepCopy(state.payItems).map(o => {
       if (costDetailIds.includes(o.id)) {
         o['isTransferReceivables'] = '1';
+        o['checked'] = false;
       }
       return o;
     });

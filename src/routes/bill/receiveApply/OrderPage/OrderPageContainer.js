@@ -64,7 +64,13 @@ const showEditPage = (dispatch, getState, item, readonly=false) => {
   const key = item['receivableInvoiceSysNumber'];
   if (helper.isTabExist(tabs, key)) return dispatch(action.assign({activeKey: key}));
   const config = deepCopy(editConfig);
-  if (readonly) {
+  if (item.statusType !== 'status_handling_completed') {
+    // 如果是已受理状态，发票号、发票代码、开票日期为可编辑，否则设为只读
+    config.controls[0].cols[0].type = 'readonly';
+    config.controls[0].cols[1].type = 'readonly';
+    config.controls[0].cols[2].type = 'readonly';
+  }
+  if (readonly || item.statusType !== 'status_handling_completed') {
     config.controls = setReadonly(config.controls);
   }
   dispatch(action.add({key, title: key}, 'tabs'));

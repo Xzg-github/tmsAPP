@@ -5,7 +5,7 @@ const SUPPLIER = '/api/config/supplier_car/search/trailer'; //供应商托车行
 const filters = [
   {key: 'supplierId', title: '所属供应商',type:'search'},
   {key: 'supervisorName', title: '监理姓名', type: 'text'},
-  {key: 'active', title: '状态', type: 'select', dictionary: name.ENABLED_TYPE}
+  {key: 'enabledType', title: '状态', type: 'select', dictionary: name.ENABLED_TYPE}
 ];
 
 

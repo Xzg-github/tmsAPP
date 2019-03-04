@@ -74,9 +74,9 @@ const invoiceShowModeOptions = [
 ];
 
 const baseInfo = [
-  {key: 'receivableInvoiceNumber', title: '发票号', type: 'readonly'},
-  {key: 'receivableInvoiceCode', title: '发票代码', type: 'readonly'},
-  {key: 'invoiceTime', title: '开票日期', type: 'readonly'},
+  {key: 'receivableInvoiceNumber', title: '发票号', type: 'text'},
+  {key: 'receivableInvoiceCode', title: '发票代码', type: 'text'},
+  {key: 'invoiceTime', title: '开票日期', type: 'date'},
   {key: 'billNumber', title: '账单号', type: 'readonly'},
   {key: 'invoiceShowMode', title: '发票显示方式', type: 'select', options: invoiceShowModeOptions},
   {key: 'invoiceCategory', title: '发票种类', type: 'select', dictionary: name.INVOICE_CATEGORY},
@@ -95,9 +95,9 @@ const goodsInfo = [
   {key: 'addressPhone', title: '地址', type: 'readonly'},
   {key: 'openingBank', title: '开户行', type: 'readonly'},
   {key: 'accountNumber', title: '银行账号', type: 'readonly'},
-  {key: 'isPost', title: '是否寄发票', type: 'readonly', dictionary: name.ZERO_ONE},
-  {key: 'postAddress', title: '寄送地址', type: 'readonly'},
-  {key: 'isThirdPartyAgreement', title: '是否第三方协议', type: 'readonly', dictionary: name.ZERO_ONE}
+  {key: 'isPost', title: '是否寄发票', type: 'select', dictionary: name.ZERO_ONE},
+  {key: 'postAddress', title: '寄送地址', type: 'text'},
+  {key: 'isThirdPartyAgreement', title: '是否第三方协议', type: 'select', dictionary: name.ZERO_ONE}
 ];
 
 const controls = [

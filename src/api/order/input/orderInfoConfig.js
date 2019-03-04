@@ -131,6 +131,7 @@ const trackConfig = {
   section4: {
     title: '更改记录',
     cols: [
+      {key: 'typeName', title: '类型'},
       {key: 'keyName', title: '内容'},
       {key: 'oldValue', title: '变更前值'},
       {key: 'newValue', title: '变更后值'},
