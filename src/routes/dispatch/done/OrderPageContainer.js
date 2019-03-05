@@ -12,7 +12,7 @@ const buildOrderPageState = async () => {
   const urlConfig = '/api/dispatch/done/config';
   const urlList = '/api/dispatch/done/list';
   const statusNames = ['transport_order', 'order_type'];
-  return buildOrderPageCommonState(urlConfig, urlList, statusNames);
+  return buildOrderPageCommonState(urlConfig, urlList, statusNames, true);
 };
 
 const getSelfState = (rootState) => {

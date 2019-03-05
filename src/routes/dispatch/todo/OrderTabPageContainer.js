@@ -14,7 +14,7 @@ const buildOrderTabPageState = async (home) => {
   const urlConfig = '/api/dispatch/todo/config';
   const urlList = '/api/dispatch/todo/list';
   const statusNames = ['transport_order', 'order_type'];
-  return buildOrderTabPageCommonState(urlConfig, urlList, statusNames, home);
+  return buildOrderTabPageCommonState(urlConfig, urlList, statusNames, home, true);
 };
 
 const getSelfState = (rootState) => {

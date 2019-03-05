@@ -38,7 +38,7 @@ class OrderTabPage extends React.Component {
   };
 
   onHandleClick = (key) => {
-    const {subActiveKey, onClick, onClickReset, onClickSearch, onConfig, onWebExport, onAllExport} = this.props;
+    const {subActiveKey, onClick, onClickReset, onClickSearch, onClickSort, onConfig, onWebExport, onAllExport} = this.props;
     switch (key) {
       case 'reset': {
         onClickReset();
@@ -46,6 +46,10 @@ class OrderTabPage extends React.Component {
       }
       case 'search': {
         onClickSearch();
+        break;
+      }
+      case 'sort': {
+        onClickSort();
         break;
       }
       case 'config': {
@@ -66,8 +70,9 @@ class OrderTabPage extends React.Component {
   };
 
   toSearch = () => {
-    const {filters, searchConfig, searchData, onChange, onSearch} = this.props;
+    const {filters, searchConfig, searchData, isSort, onChange, onSearch} = this.props;
     const props = {
+      isSort,
       filters,
       data: searchData,
       config: searchConfig,

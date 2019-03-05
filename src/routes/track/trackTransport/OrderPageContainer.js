@@ -14,7 +14,7 @@ const buildOrderPageState = async () => {
   const urlConfig = '/api/track/track_transport/config';
   const urlList = '/api/track/track_transport/list';
   const statusNames = ['transport_order', 'order_type'];
-  return buildOrderPageCommonState(urlConfig, urlList, statusNames);
+  return buildOrderPageCommonState(urlConfig, urlList, statusNames, true);
 };
 
 const getSelfState = (rootState) => {

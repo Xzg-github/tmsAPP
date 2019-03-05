@@ -5,6 +5,7 @@ import {search2} from '../../common/search';
 import {showColsSetting} from '../../common/tableColsSetting';
 import {fetchAllDictionary, setDictionary2, getStatus} from "../../common/dictionary";
 import {exportExcelFunc, commonExport} from '../../common/exportExcelSetting';
+import showFilterSortDialog from "../../common/filtersSort";
 
 /**
  * 功能：生成一个公共的列表页面容器组件
@@ -29,6 +30,13 @@ const createOrderPageContainer = (action, getSelfState, actionCreatorsEx={}) => 
     const {pageSize, searchData, urlList} = getSelfState(getState());
     const newState = {searchDataBak: searchData, currentPage: 1, sortInfo:{}, filterInfo:{}};
     return search2(dispatch, action, urlList, 1, pageSize, searchData, newState, undefined, false);
+  };
+
+  //点击排序按钮
+  const sortActionCreator = () => async (dispatch, getState) => {
+    const {filters} = getSelfState(getState());
+    const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+    newFilters && dispatch(action.assign({filters: newFilters}));
   };
 
   const resetActionCreator = () => (dispatch) => {
@@ -87,6 +95,7 @@ const createOrderPageContainer = (action, getSelfState, actionCreatorsEx={}) => 
     //可覆写的响应
     onClickReset: resetActionCreator,     //点击重置按钮
     onClickSearch: searchActionCreator,   //点击搜索按钮
+    onClickSort: sortActionCreator,   //点击排序按钮
     onConfig: configActionCreator,        //点击配置字段按钮
     onWebExport: webExportActionCreator, //点击页面导出按钮
     onAllExport: allExportActionCreator, //点击查询导出按钮
@@ -111,9 +120,10 @@ const createOrderPageContainer = (action, getSelfState, actionCreatorsEx={}) => 
  * 参数：urlConfig - [必需] 获取界面配置的url
  *       urlList - [必需] 获取列表数据的url
  *       statusNames - [可选] 需要获取的来自状态字典的表单状态下拉的表单类型值数组
+ *       isSort - [可选] 是否需要查询排序
 * 返回：成功返回初始化状态，失败返回空
 * */
-const buildOrderPageCommonState = async (urlConfig, urlList, statusNames=[]) => {
+const buildOrderPageCommonState = async (urlConfig, urlList, statusNames=[], isSort=false) => {
   try {
     //获取并完善config
     const config = helper.getJsonResult(await helper.fetchJson(urlConfig));
@@ -138,8 +148,10 @@ const buildOrderPageCommonState = async (urlConfig, urlList, statusNames=[]) => 
       searchDataBak: {},
       ...config,
       urlList,
+      isSort,
       maxRecords: data.returnTotalItem || data.returnTotalItems,
       tableCols: helper.initTableCols(helper.getRouteKey(), config.tableCols),
+      filters: helper.initFilters(helper.getRouteKey(), config.filters),
       tableItems: data.data || [],
       sortInfo: {},
       filterInfo: {},

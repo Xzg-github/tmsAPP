@@ -12,7 +12,7 @@ const buildOrderTabPageState = async () => {
   const urlConfig = '/api/bill/append/config';
   const urlList = '/api/bill/append/list';
   const statusNames = ['transport_order', 'order_type'];
-  return buildOrderTabPageCommonState(urlConfig, urlList, statusNames);
+  return buildOrderTabPageCommonState(urlConfig, urlList, statusNames, false, true);
 };
 
 const getSelfState = (rootState) => {

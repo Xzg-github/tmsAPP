@@ -22,7 +22,8 @@ const paginationConfig = {
 const searchConfig = {
   search: '搜索',
   more: '更多',
-  reset: '重置'
+  reset: '重置',
+  sort: '排序'
 };
 
 // 是否放开权限代码
