@@ -34,15 +34,15 @@ const changeActionCreator = (key, value) => action.assign({[key]: value}, 'searc
 
 const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
   const {filters} = getSelfState(getState());
-  let result;
+  let result, params = {maxNumber: 20, filter: value};
   switch (key) {
     case 'customerId':
     case 'balanceCompany': {
-       result = getJsonResult(await fetchJson(URL_CUSTOMER, postOption({maxNumber: 20, filter: value})));
+       result = getJsonResult(await fetchJson(URL_CUSTOMER, postOption(params)));
        break;
     }
     case 'insertUser': {
-      result = getJsonResult(await fetchJson(URL_USER, postOption({maxNumber: 20, filter: value})));
+      result = getJsonResult(await fetchJson(URL_USER, postOption(params)));
       break;
    }
   }
@@ -51,74 +51,55 @@ const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
   dispatch(action.update({options}, 'filters', index));
 };
 
-// const buildEditPageState = (config={}, data, edit) => {
-//   const EDIT_DIALOG = ['config', 'size', 'controls'];
-//   return {
-//     edit,
-//     ...helper.getObject(config, EDIT_DIALOG),
-//     title: edit ? config.edit : config.add,
-//     value: helper.getObjectExclude(data, ['checked']),
-//     options: {}
-//   };
-// };
-
-// const updateTable = async (dispatch, getState) => {
-//   const {currentPage, pageSize, searchDataBak={}} = getSelfState(getState());
-//   return search2(dispatch, action, URL_LIST, currentPage, pageSize, toFormValue(searchDataBak))
-// };
+const updateTable = async (dispatch, getState) => {
+  const {currentPage, pageSize, searchData={}} = getSelfState(getState());
+  return search2(dispatch, action, URL_LIST, currentPage, pageSize, toFormValue(searchData))
+};
 
 /**
- *
+ * 打开新增、复制新增、编辑页面
  * @param {number} type [0: 新增, 1: 复制新增, 2: 编辑]
  */
-const showEditPage = (dispatch, getState, type=0) => {
-  const {editConfig} = getSelfState(getState());
-  const arr = [{title: '新增', key: 'newAdd'}, {title: '复制新增', key: 'copyAdd'}];
+const showEditPage = (dispatch, getState, editType=0, key, title, item={}) => {
+  const {editConfig, tabs} = getSelfState(getState());
+  const KEY = helper.genTabKey(key, tabs);
+  const newTabs = tabs.concat({key: KEY, title});
   const payload = {
-    ...editConfig,
-    type,
-    title: type
+    ...helper.deepCopy(editConfig),
+    ...item,
+    editType
   };
-  dispatch(action.assign(payload));
+  dispatch(action.assign({[KEY]: payload, tabs: newTabs, activeKey: KEY}));
 };
 
-const addActionCreator = (dispatch, getState) => {
-  // const {editConfig} = getSelfState(getState());
-  // const payload = buildEditDialogState(editConfig, {}, false);
-  // dispatch(action.assign(payload, 'edit'));
+const addActionCreator = async (dispatch, getState) => {
+  showEditPage(dispatch, getState, 0, 'add', '新增');
 };
 
-const copyActionCreator = (dispatch, getState) => {
-  // const {editConfig} = getSelfState(getState());
-  // const payload = buildEditDialogState(editConfig, {}, false);
-  // dispatch(action.assign(payload, 'edit'));
+const copyActionCreator = async (dispatch, getState) => {
+  showEditPage(dispatch, getState, 1, 'copyAdd', '复制新增');
 };
 
-const editAction = async (isDbClick, dispatch, getState, rowIndex=0) => {
-  // const {tableItems, editConfig, customConfig} = getSelfState(getState());
-  // const index = isDbClick ? rowIndex : helper.findOnlyCheckedIndex(tableItems);
-  // if (index === -1) return showError('请勾选一条数据！');
-  // // if(tableItems[index]['enabledType'] !== 'enabled_type_unenabled'){
-  // //   return showError('只能编辑未启用状态记录');
-  // // }
-  // const id = tableItems[index].id;
-  // const {returnCode, returnMsg, result} = await fetchJson(`${URL_DETAIL}/${id}`);
-  // if (returnCode !== 0) return showError(returnMsg);
-  // if (customConfig.controls && customConfig.controls.length > 0) {
-  //   editConfig.controls.push({
-  //     key: 'otherInfo', title: '其他信息', data: customConfig.controls
-  //   });
-  // }
-  // const payload = buildEditDialogState(editConfig, result, true);
-  // dispatch(action.assign(payload, 'edit'));
+const isCanEdit = (item) => {
+  if(item['enabledType'] !== 'enabled_type_unenabled'){
+    showError('只能编辑未启用状态记录');
+    return false;
+  }
+  return true;
 };
 
 const editActionCreator = async (dispatch, getState) => {
-  // editAction(false, dispatch, getState);
+  const {tableItems} = getSelfState(getState());
+  const index = helper.findOnlyCheckedIndex(tableItems);
+  if (index === -1) return showError('请勾选一条数据！');
+  const item = tableItems[index];
+  isCanEdit(item) && showEditPage(dispatch, getState, 2, 'edit', item.customerPriceCode, item);
 };
 
 const doubleClickActionCreator = (rowIndex) => async (dispatch, getState) => {
-  // editAction(true, dispatch, getState, rowIndex);
+  const {tableItems} = getSelfState(getState());
+  const item = tableItems[rowIndex];
+  isCanEdit(item) && showEditPage(dispatch, getState, 2, 'edit', item.customerPriceCode, item);
 };
 
 const deleteActionCreator = async (dispatch, getState) => {
@@ -160,15 +141,6 @@ const importActionCreator = () => showImportDialog('customer_import');
 const exportActionCreator = async (dispatch, getState) => {
   const {tableCols, tableItems} = getSelfState(getState());
   exportExcelFunc(tableCols, tableItems);
-};
-
-const refreshActionCreator = async (dispatch, getState) => {
-  const {tableItems} = getSelfState(getState());
-  const checkItems = tableItems.filter(o=>o.checked);
-  if(checkItems.length < 1) return showError('请勾选一条数据！');
-  const {returnCode, result, returnMsg} = await fetchJson(`${URL_REFRESH}/${checkItems[0].customerId.value}`);
-  if (returnCode !== 0) showError(returnMsg);
-  console.log(result)
 };
 
 const toolbarActions = {
@@ -228,12 +200,6 @@ const actionCreators = {
   onPageSizeChange: pageSizeActionCreator,
 };
 
-// 编辑完成后的动作
-// const afterEditActionCreator = (isOk=false ,dispatch, getState) => {
-//   dispatch(action.assign({edit: undefined}));
-//   isOk && searchActionCreator(dispatch, getState);
-// };
-
 const Container = connect(mapStateToProps, actionCreators)(OrderPage);
 export default Container;
-// export {afterEditActionCreator, updateTable};
+export {updateTable};

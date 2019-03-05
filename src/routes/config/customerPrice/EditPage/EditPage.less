@@ -2,20 +2,21 @@
 
 .root {
   margin: @padding-vertical @padding-horizontal;
+  height: calc(~'100% - 10px');
 
   :global(.pld-card) {
     margin: 0;
   }
 
-  > :last-child {
-    overflow: auto;
-
-    > *:not(:last-child) {
-      margin-bottom: @padding-vertical-sm;
-    }
+  .container{
+    height: calc(~'100% - 90px');
   }
 
-  .superTab {
+  .table{
+    margin: @padding-vertical 0;
+  }
 
+  .footer {
+    text-align: center;
   }
 }

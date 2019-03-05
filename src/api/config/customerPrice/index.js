@@ -40,7 +40,8 @@ api.post('/list', async (req, res) => {
 				"updateTime": "2019-02-21",
 				"updateUser": {"value": "更新人员", "title": "名称"},
 				"lockStatus": "0",
-				"statusType": "enabled_type_unenabled"
+        "statusType": "enabled_type_unenabled",
+        'enabledType': 'enabled_type_unenabled'
       }
     ],
     returnTotalItem: 100
@@ -77,6 +78,19 @@ api.get('/refresh/:id', async (req, res) => {
   const url = `${archiver_service}/customer_price_master/${req.params.id}`;
   // res.send(await fetchJsonByNode(req, url));
   res.send({returnCode: 0, returnMsg: 'Success', result: []});
+});
+
+api.get('/detail/:id', async (req, res) => {
+  const url = `${archiver_service}/customer_price/${req.params.id}`;
+  // res.send(await fetchJsonByNode(req, url));
+  res.send({returnCode: 0, returnMsg: 'Success', result: {
+    fileList: [{
+      uid: '-1',
+      name: 'xxx.png',
+      status: 'done',
+      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    }],
+  }});
 });
 
 export default api;
