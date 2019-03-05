@@ -59,6 +59,7 @@ const rootReducer = combineReducers({
   //运输订单
   input: create('input', false),
   import: create('import'),
+  accept: create('accept'),
   pending: create('pending'),
   complete: create('complete'),
   all: create('all'),

@@ -22,6 +22,7 @@ const NAV_ITEMS = [
 const order = [
   {key: 'input'},     // 运单录入
   {key: 'import'},    // 运单导入
+  {key: 'accept'},    // 接入运单
   {key: 'pending'},   // 待办任务
   {key: 'complete'},  // 已办任务
   {key: 'all'},       // 运输汇总
