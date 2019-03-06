@@ -70,8 +70,11 @@ const showEditPage = (dispatch, getState, item, readonly=false) => {
     config.controls[0].cols[1].type = 'readonly';
     config.controls[0].cols[2].type = 'readonly';
   }
-  if (readonly || item.statusType !== 'status_handling_completed') {
+  if (readonly || item.statusType === 'status_handling_awaiting') {
     config.controls = setReadonly(config.controls);
+  }
+  if (item.statusType === 'status_handling_completed') {
+    config.controls[0].cols[6].type = 'readonly';
   }
   dispatch(action.add({key, title: key}, 'tabs'));
   dispatch(action.assign({[key]: {readonly, config, itemData: item}, activeKey: key}));

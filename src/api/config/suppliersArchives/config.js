@@ -85,7 +85,7 @@ const cooperationInfo = [
   {key: 'contractStartTime', title: '合同生效日期', type: 'date', rule: {type: '<', key: 'contractEndTime'}},
   {key: 'contractEndTime', title: '合同终止日期', type: 'date', rule: {type: '>', key: 'contractStartTime'}},
   {key: 'purchasePersonId', title: '采购人员', type: 'search'},
-  {key: 'balanceCurrency', title: '结算币种', type: 'search'},
+  {key: 'balanceCurrency', title: '结算币种', type: 'search', required: true},
   {key: 'balanceWay', title: '结算方式', type: 'select', dictionary: name.BALANCE_WAY},
   {key: 'creditDays', title: '结算天数', type: 'number'},
   {key: 'creditMoney', title: '信用额度', type: 'number'},
