@@ -2,7 +2,10 @@ import { Upload, Icon, Modal } from 'antd';
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './PictureWall.less';
-import { Card } from '../../../../../components';
+import { Card } from '../../../../../../components';
+import helper from '../../../../../../common/common';
+
+const FORMATS = ['image/jpeg', 'image/gif', 'image/bmp', 'image/jpg', 'image/png', 'image/tiff', 'image/gif', 'image/pcx', 'image/tga', 'image/exif', 'image/fpx', 'image/svg', 'image/psd', 'image/cdr', 'image/pcd', 'image/dxf', 'image/ufo', 'image/eps', 'image/ai', 'image/raw', 'image/WMF'];
 
 class PicturesWall extends React.Component {
   constructor(props) {
@@ -30,6 +33,20 @@ class PicturesWall extends React.Component {
     });
   }
 
+  beforeUpload = (file) => {
+    if (!FORMATS.includes(file.type)) {
+      // 限制图片格式
+      helper.showError('请上传正确的图片格式！');
+      return false;
+    }
+    if (file.size / 1024 / 1024 >= 5) {
+      // 限制图片大小
+      helper.showError('图片大小不能超过5M！');
+      return false;
+    }
+    return true;
+  }
+
   toUploadBotton = () => {
     return <div>
       <Icon type="plus" />
@@ -42,16 +59,18 @@ class PicturesWall extends React.Component {
     const { fileList=[], uploadText, handleImgChange } = this.props;
     const props = {
       listType: 'picture-card',
+      multiple: true,
       fileList,
-      action: '//jsonplaceholder.typicode.com/posts/',
+      action: '/api/proxy/zuul/tms-service/file/upload/document',
       onPreview: this.handlePreview,
-      onChange: handleImgChange
+      onChange: handleImgChange,
+      beforeUpload: this.beforeUpload
     };
     return (
       <div className={s.root}>
         <div className={s.text}>{uploadText}</div>
         <Upload {...props}>
-          {fileList.length >= 5 ? null : this.toUploadBotton()}
+          {fileList.length >= 10 ? null : this.toUploadBotton()}
         </Upload>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <Card><img className={s.previewImage} alt={previewImageAltText} src={previewImage}/></Card>

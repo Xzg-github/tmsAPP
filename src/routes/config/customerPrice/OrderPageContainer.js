@@ -62,7 +62,10 @@ const updateTable = async (dispatch, getState) => {
  */
 const showEditPage = (dispatch, getState, editType=0, key, title, item={}) => {
   const {editConfig, tabs} = getSelfState(getState());
-  const KEY = helper.genTabKey(key, tabs);
+  const KEY = editType === 2 ? key : helper.genTabKey(key, tabs);
+  if ( editType === 2 && helper.isTabExist(tabs, KEY)) {
+    return dispatch(action.assign({activeKey: KEY}));
+  }
   const newTabs = tabs.concat({key: KEY, title});
   const payload = {
     ...helper.deepCopy(editConfig),
@@ -93,13 +96,13 @@ const editActionCreator = async (dispatch, getState) => {
   const index = helper.findOnlyCheckedIndex(tableItems);
   if (index === -1) return showError('请勾选一条数据！');
   const item = tableItems[index];
-  isCanEdit(item) && showEditPage(dispatch, getState, 2, 'edit', item.customerPriceCode, item);
+  isCanEdit(item) && showEditPage(dispatch, getState, 2, `edit_${item.id}`, item.customerPriceCode, item);
 };
 
 const doubleClickActionCreator = (rowIndex) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const item = tableItems[rowIndex];
-  isCanEdit(item) && showEditPage(dispatch, getState, 2, 'edit', item.customerPriceCode, item);
+  isCanEdit(item) && showEditPage(dispatch, getState, 2, `edit_${item.id}`, item.customerPriceCode, item);
 };
 
 const deleteActionCreator = async (dispatch, getState) => {
@@ -136,7 +139,7 @@ const enableActionCreator = (dispatch, getState) => ableActionCreator('enabled_t
 
 const disableActionCreator = (dispatch, getState) => ableActionCreator('enabled_type_disabled', dispatch, getState);
 
-const importActionCreator = () => showImportDialog('customer_import');
+const importActionCreator = () => showImportDialog('customer_price_ import');
 
 const exportActionCreator = async (dispatch, getState) => {
   const {tableCols, tableItems} = getSelfState(getState());
