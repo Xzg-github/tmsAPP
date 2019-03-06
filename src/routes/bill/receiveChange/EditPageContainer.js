@@ -209,7 +209,7 @@ const saveAction = () => async (dispatch, getState) => {
     dispatch(action.assign({valid: invalidTableItem.key}));
     return showError('请填写必填项');
   }
-  if (CURRENT_KEY === 'add') {
+  if (CURRENT_KEY === 'add' && !value.flag) {
     const saveData = {
       title: helper.convert(getObjectExclude(value, ['costInfo'])),
       detail: convert(value['costInfo'])
@@ -228,7 +228,7 @@ const saveAction = () => async (dispatch, getState) => {
         return index < pos ? Object.assign(item, {readonly: true}) : item;
       });
       dispatch(action.assign({controls}));
-      dispatch(action.assign({['costInfo']: tableItems, ...result.title}, 'value'));
+      dispatch(action.assign({['costInfo']: tableItems, ...result.title, flag: true}, 'value'));
       return updateTable(dispatch, getState);
     }else {
       return showError(returnMsg);
