@@ -3,6 +3,7 @@ import OrderTabPage from './OrderTabPage';
 import helper, {showError} from '../../common/common';
 import {search} from '../../common/search';
 import {showColsSetting} from '../../common/tableColsSetting';
+import showFilterSortDialog from "../../common/filtersSort";
 import {fetchAllDictionary, setDictionary2, getStatus} from "../../common/dictionary";
 import {exportExcelFunc, commonExport} from '../../common/exportExcelSetting';
 
@@ -63,6 +64,13 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
     }, {});
     const newState = {searchDataBak: searchData, isRefresh};
     return mySearch(dispatch, action, selfState, 1, pageSize[subActiveKey], searchData, newState);
+  };
+
+  //点击排序按钮
+  const sortActionCreator = () => async (dispatch, getState) => {
+    const {filters} = getSelfState(getState());
+    const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+    newFilters && dispatch(action.assign({filters: newFilters}));
   };
 
   const resetActionCreator = () => (dispatch) => {
@@ -136,6 +144,7 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
     //可覆写的响应
     onClickReset: resetActionCreator,     //点击重置按钮
     onClickSearch: searchActionCreator,   //点击搜索按钮
+    onClickSort: sortActionCreator,     //点击排序按钮
     onConfig: configActionCreator,        //点击配置字段按钮
     onWebExport: webExportActionCreator, //点击页面导出按钮
     onAllExport: allExportActionCreator, //点击查询导出按钮
@@ -162,9 +171,10 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
  *       urlList - [必需] 获取列表数据的url
  *       statusNames - [可选] 需要获取的来自状态字典的表单状态下拉的表单类型值数组
  *       home - [可选] 是否来自任务看板的跳转，当为任务看板跳转过来时，home的值为子页签subTabs的key值
+ *       isSort - [可选] 是否需要查询排序
 * 返回：成功返回初始化状态，失败返回空
 * */
-const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[], home=false) => {
+const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[], home=false, isSort=false) => {
   try {
     //获取并完善config
     const config = helper.getJsonResult(await helper.fetchJson(urlConfig));
@@ -214,6 +224,7 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[], 
       ...config,
       subActiveKey,
       urlList,
+      isSort,
       pageSize,
       currentPage,
       maxRecords,
@@ -221,6 +232,7 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[], 
       tableItems,
       buttons: finalButtons,
       tableCols: helper.initTableCols(helper.getRouteKey(), config.tableCols),
+      filters: isSort ? helper.initFilters(helper.getRouteKey(), config.filters) : config.filters,
       sortInfo: {},
       filterInfo: {},
       status: 'page'

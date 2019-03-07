@@ -42,7 +42,7 @@ const jumpToChange = async (item, dispatch, getState) => {
   const costInfo = result.details.map(item => {
     item.readonly= 'readonly';
     return item;
-  })
+  });
   const value = {
     costInfo,
     balanceId: item.customerId || result.balanceId,
@@ -53,7 +53,9 @@ const jumpToChange = async (item, dispatch, getState) => {
   if (status !== 'page') {
     dispatch(action.assign({isJump: true, jumpData: value}))
   } else {
-    const payload = buildJumpState(tabs, editConfig, value);
+    const config = helper.deepCopy(editConfig);
+    config.controls[0].data[1].type = 'readonly';
+    const payload = buildJumpState(tabs, config, value);
     dispatch(action.assign(payload));
   }
   jump('/bill/receive_change');

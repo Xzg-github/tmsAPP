@@ -27,6 +27,13 @@ const createRoute = (path, load) => {
   return {path, children: [], action: createAction(load)};
 };
 
+const loadShortcut = (resolve, context, params) => {
+  require.ensure([], (require) => {
+    const route = require('./shortcut').default;
+    dispatch(context, params, route, resolve);
+  }, 'shortcut');
+};
+
 const loadOrder = (resolve, context, params) => {
   require.ensure([], (require) => {
     const route = require('./order').default;
@@ -98,6 +105,7 @@ export default {
   children: [
     require('./login').default,
     require('./home').default,
+    createRoute('/shortcut', loadShortcut),
     createRoute('/order', loadOrder),
     createRoute('/dispatch', loadDispatch),
     createRoute('/supervisor', loadSupervisor),

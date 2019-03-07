@@ -2,14 +2,15 @@ import createOrderTabPageContainer, {buildOrderTabPageCommonState, updateTable} 
 import {getPathValue} from '../../../action-reducer/helper';
 import {Action} from "../../../action-reducer/action";
 import helper from "../../../common/common";
+import showPrompt from "../common/PromptDialog";
 
-const STATE_PATH = ['trackOrder'];
+const STATE_PATH = ['accept'];
 const action = new Action(STATE_PATH);
 
 //根据页面需求覆写和扩展页面状态属性
 const buildOrderTabPageState = async () => {
-  const urlConfig = '/api/track/track_order/config';
-  const urlList = '/api/track/track_order/list';
+  const urlConfig = '/api/order/accept/config';
+  const urlList = '/api/order/accept/list';
   const statusNames = ['transport_order', 'order_type'];
   return buildOrderTabPageCommonState(urlConfig, urlList, statusNames, false, true);
 };
@@ -25,38 +26,47 @@ const showOrderInfoPage = (dispatch, item, selfState) => {
   } else {
     const payload = {
       id: item.id,
-      readonly: true,
+      readonly: true
     };
     dispatch(action.add({key, title: key}, 'tabs'));
     dispatch(action.assign({[key]: payload, activeKey: key}));
   }
 };
 
-//运输已开始
-const startedActionCreator = (tabKey) => async (dispatch, getState) => {
+//接单
+const acceptActionCreator = (tabKey) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
-  const ids = tableItems[tabKey].filter(item => item.checked === true).map(item => item.id);
-  if (ids.length < 1) return helper.showError(`请先勾选记录`);
-  const {returnCode, returnMsg} = await helper.fetchJson(`/api/track/track_order/started`, helper.postOption(ids));
-  if (returnCode !== 0) return helper.showError(returnMsg);
-  helper.showSuccessMsg('操作成功');
-  return updateTable(dispatch, action, getSelfState(getState()), ['transport']);
+  const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
+  if (checkedItems.length !== 1) return helper.showError(`请先勾选记录`);
+  const url = `/api/order/accept/accept`;
+  const body = { list: checkedItems.map(item => ({id: item.id, customerDelegateCode: item.customerDelegateCode})), status: 1};
+  const {returnCode, returnMsg} = await helper.fetchJson(url, helper.postOption(body));
+  if (returnCode !== 0) {
+    return helper.showError(returnMsg);
+  }
+  return updateTable(dispatch, action, getSelfState(getState()));
 };
 
-//运输已完成
-const completedActionCreator = (tabKey) => async (dispatch, getState) => {
+//拒单
+const rejectActionCreator = (tabKey) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
-  const ids = tableItems[tabKey].filter(item => item.checked === true).map(item => item.id);
-  if (ids.length < 1) return helper.showError(`请先勾选记录`);
-  const {returnCode, returnMsg} = await helper.fetchJson(`/api/track/track_order/completed`, helper.postOption(ids));
-  if (returnCode !== 0) return helper.showError(returnMsg);
-  helper.showSuccessMsg('操作成功');
-  return updateTable(dispatch, action, getSelfState(getState()), ['complete', 'sign']);
+  const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
+  if (checkedItems.length !== 1) return helper.showError(`请先勾选记录`);
+  const value = await showPrompt('拒单', '拒单原因', '是否执行拒单？拒单后将不能再进行执行！');
+  if(value) {
+    const url = `/api/order/accept/reject`;
+    const body = { list: checkedItems.map(item => ({id: item.id, customerDelegateCode: item.customerDelegateCode})), status: 2, remark: value};
+    const {returnCode, returnMsg} = await helper.fetchJson(url, helper.postOption(body));
+    if (returnCode !== 0) {
+      return helper.showError(returnMsg);
+    }
+    return updateTable(dispatch, action, getSelfState(getState()), ['reject']);
+  }
 };
 
 const buttons = {
-  started: startedActionCreator,
-  completed: completedActionCreator,
+  accept: acceptActionCreator,
+  reject: rejectActionCreator,
 };
 
 const clickActionCreator = (tabKey, key) => {
@@ -68,11 +78,12 @@ const clickActionCreator = (tabKey, key) => {
   }
 };
 
-// 查看
 const doubleClickActionCreator = (tabKey, index) => (dispatch, getState) => {
-  const selfState = getSelfState(getState());
-  const item = selfState.tableItems[tabKey][index];
-  return showOrderInfoPage(dispatch, item, selfState);
+  if (tabKey === 'completing') {
+    const selfState = getSelfState(getState());
+    const item = selfState.tableItems[tabKey][index];
+    return showOrderInfoPage(dispatch, item, selfState);
+  }
 };
 
 // 查看

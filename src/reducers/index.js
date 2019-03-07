@@ -56,9 +56,13 @@ const rootReducer = combineReducers({
   platform,
   message,
 
+  //快捷设置
+  shortcutSet: create('shortcutSet', false),
+
   //运输订单
   input: create('input', false),
   import: create('import'),
+  accept: create('accept'),
   pending: create('pending'),
   complete: create('complete'),
   all: create('all'),
