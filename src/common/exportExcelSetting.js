@@ -40,13 +40,14 @@ const exportExcelFunc = async (newCols, items, byFront=true) => {
     for(let v in o) {
       if(typeof o[v] == 'object'){
         o[v] = o[v].title;
+      } else {
+        hasDictionaryData.map(a=>{
+          if(a.key == v){
+            const value = a.options.filter(b=>b.value == o[v]);
+            o[v] = value.length > 0 ? value[0].title : '';
+          }
+        });
       }
-      hasDictionaryData.map(a=>{
-        if(a.key == v){
-          const value = a.options.filter(b=>b.value == o[v]);
-          o[v] = value.length > 0 ? value[0].title : '';
-        }
-      });
     }
     return o;
   });

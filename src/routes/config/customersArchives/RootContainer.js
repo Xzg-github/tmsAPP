@@ -42,7 +42,7 @@ const initActionCreator = () => async (dispatch) => {
     index.tableCols = uniqueArrHanlder(index.tableCols, customConfig.controls);
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}));
     const dictionary = getJsonResult(await fetchDictionary(names));
-    const salemen = getJsonResult(await fetchJson(URL_SALEMEN, postOption({maxNumber: 20, filter: ''})));
+    const salemen = getJsonResult(await fetchJson(URL_SALEMEN, postOption({maxNumber: 65536, filter: ''})));
     const country = getJsonResult(await fetchJson(URL_DISTRICT, postOption({maxNumber: 300, districtType: 2})));
     const payload = buildOrderPageState(list, index, {editConfig: edit, customConfig, finance, status: 'page'});
     helper.setOptions('country', payload.tableCols, country);

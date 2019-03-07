@@ -128,7 +128,7 @@ const outputActionCreator = async (dispatch, getState) => {
 // 查询导出
 const exportSearchActionCreator = (dispatch, getState) => {
   const {tableCols, searchData} = getSelfState(getState());
-  commonExport(tableCols, '/tms-service/pay_bill/batch', searchData);
+  commonExport(tableCols, '/tms-service/pay_bill/search', searchData);
 };
 
 // 页面导出
