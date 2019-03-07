@@ -63,7 +63,7 @@ const index = {
 //EditPage BaseInfo FormComponent Config
 const baseInfo = [
   {key: 'orderNumber', title: '运单订单', type: 'readonly'},
-  {key: 'receivableSupplierId', title: '收款单位', type: 'search', searchType: 'supplier_all', required: true},
+  {key: 'receivableSupplierId', title: '收款单位', type: 'readonly', required: true},
   {key: 'currency', title: '币种', type: 'search', required: true},
   {key: 'supplierContact', title: '联系人名称', type: 'search'},
   {key: 'supplierContactPhone', title: '联系人电话', type: 'text'},
