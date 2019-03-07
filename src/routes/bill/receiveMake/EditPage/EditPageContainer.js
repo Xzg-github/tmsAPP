@@ -88,6 +88,7 @@ const copyActionCreator = () => async (dispatch, getState) => {
     const params = {id: state.id, incomeDetails: resultItems.map(o => {
       delete o.transportOrderId;
       delete o.id;
+      delete o.isBilled;
       return o;
     })};
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_ADD, postOption(params));
@@ -257,7 +258,7 @@ const checkActionCreator = (isPay, isAll, checked, rowIndex) => (dispatch, getSt
   let {payItems} = getSelfState(getState());
   isAll && (rowIndex = -1);
   if (isPay) {
-    if ((isAll && payItems.find(o => o.isTransferReceivables == "1")) ||
+    if ((isAll && checked && payItems.find(o => o.isTransferReceivables == "1")) ||
       (!isAll && payItems[rowIndex].isTransferReceivables == "1")) {
       return showError("所选数据中有已转应付的数据！");
     }
