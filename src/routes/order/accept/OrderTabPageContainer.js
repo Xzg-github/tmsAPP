@@ -2,6 +2,7 @@ import createOrderTabPageContainer, {buildOrderTabPageCommonState, updateTable} 
 import {getPathValue} from '../../../action-reducer/helper';
 import {Action} from "../../../action-reducer/action";
 import helper from "../../../common/common";
+import showPrompt from "../common/PromptDialog";
 
 const STATE_PATH = ['accept'];
 const action = new Action(STATE_PATH);
@@ -38,7 +39,7 @@ const acceptActionCreator = (tabKey) => async (dispatch, getState) => {
   const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
   if (checkedItems.length !== 1) return helper.showError(`请先勾选记录`);
   const url = `/api/order/accept/accept`;
-  const body = checkedItems.map(item => item.id);
+  const body = { list: checkedItems.map(item => ({id: item.id, customerDelegateCode: item.customerDelegateCode})), status: 1};
   const {returnCode, returnMsg} = await helper.fetchJson(url, helper.postOption(body));
   if (returnCode !== 0) {
     return helper.showError(returnMsg);
@@ -51,13 +52,16 @@ const rejectActionCreator = (tabKey) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
   if (checkedItems.length !== 1) return helper.showError(`请先勾选记录`);
-  const url = `/api/order/accept/reject`;
-  const body = checkedItems.map(item => item.id);
-  const {returnCode, returnMsg} = await helper.fetchJson(url, helper.postOption(body));
-  if (returnCode !== 0) {
-    return helper.showError(returnMsg);
+  const value = await showPrompt('拒单', '拒单原因', '是否执行拒单？拒单后将不能再进行执行！');
+  if(value) {
+    const url = `/api/order/accept/reject`;
+    const body = { list: checkedItems.map(item => ({id: item.id, customerDelegateCode: item.customerDelegateCode})), status: 2, remark: value};
+    const {returnCode, returnMsg} = await helper.fetchJson(url, helper.postOption(body));
+    if (returnCode !== 0) {
+      return helper.showError(returnMsg);
+    }
+    return updateTable(dispatch, action, getSelfState(getState()), ['reject']);
   }
-  return updateTable(dispatch, action, getSelfState(getState()), ['reject']);
 };
 
 const buttons = {

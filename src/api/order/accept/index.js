@@ -13,22 +13,20 @@ api.get('/config', async (req, res) => {
 
 //获取列表数据
 api.post('/list', async (req, res) => {
-  const url = `${service}/transport_order/pending_task_list/search`;
+  const url = `${service}/transport_order/extend_list/search`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 //接单
 api.post('/accept', async (req, res) => {
-  res.send({returnCode: 0});
-  // const url = `${service}/transport_order/send`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+  const url = `${service}/transport_order/receipt_reject`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 //拒单
 api.post('/reject', async (req, res) => {
-  res.send({returnCode: 0});
-  // const url = `${service}/transport_order/send`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+  const url = `${service}/transport_order/receipt_reject`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 export default api;

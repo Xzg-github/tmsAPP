@@ -14,8 +14,14 @@ const NAV_ITEMS = [
   {key: 'bill', icon: 'pld-feiyong'},         // 计费与对帐
   {key: 'config', icon: 'pld-dangan'},        // 档案管理
   {key: 'platform', icon: 'pld-pingtai'},     // 平台管理
+  {key: 'shortcut', icon: 'rocket'},      // 快捷菜单
   {key: 'basic', icon: 'pld-setting'},        // 设置
   {key: 'message', icon: 'pld-message'},      // 消息通知
+];
+
+// 快捷菜单侧边栏
+const shortcut = [
+  {key: 'shortcut_set'} //快捷设置
 ];
 
 // 运输订单侧边栏
@@ -253,7 +259,7 @@ const message = [
 
 // 所有侧边栏
 const SIDEBARS = {
-  order, dispatch, supervisor, track, bill, basic, config, platform, message
+  shortcut, order, dispatch, supervisor, track, bill, basic, config, platform, message
 };
 
 export {NAV_ITEMS, SIDEBARS};
