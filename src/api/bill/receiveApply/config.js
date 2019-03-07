@@ -80,7 +80,7 @@ const baseInfo = [
   {key: 'billNumber', title: '账单号', type: 'readonly'},
   {key: 'invoiceShowMode', title: '发票显示方式', type: 'select', options: invoiceShowModeOptions},
   {key: 'invoiceCategory', title: '发票种类', type: 'select', dictionary: name.INVOICE_CATEGORY},
-  {key: 'institutionId', title: '法人主体（结算区域）', type: 'readonly'},
+  {key: 'institutionId', title: '法人主体（结算区域）', type: 'search'},
   {key: 'receivableOpeningBank', title: '法人开户行', type: 'search'},
   {key: 'receivableAccountNumber', title: '法人银行账号', type: 'text'},
   {key: 'enterpriseSignature', title: '企业签章', type: 'readonly'},

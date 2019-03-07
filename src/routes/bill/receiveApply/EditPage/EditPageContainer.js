@@ -23,6 +23,7 @@ const URL_HEADER_INDO = `/api/bill/receiveApply/invoiceHeaderInfo`;
 const URL_CHANGE_RATE = `/api/bill/receiveApply/changeRate`;
 const URL_CURRENCY_RATE = `/api/bill/receiveApply/currencyRate`;
 const URL_UPDATE_INVOICE = '/api/bill/receiveApply/updateInvoice';
+const URL_INSTITUTION = '/api/bill/receiveApply/institutionId';
 
 
 const getSelfState = (rootState) => {
@@ -57,6 +58,10 @@ const formSearchActionCreator = (KEY, key, filter, control) => async (dispatch, 
       }
       case 'invoiceHeaderInformation': {
         result = getJsonResult(await fetchJson(URL_HEADER_INDO, postOption({filter, maxNumber: 65536})));
+        break;
+      }
+      case 'institutionId': {
+        result = getJsonResult(await fetchJson(URL_INSTITUTION, postOption({filter, maxNumber: 65536})));
         break;
       }
     }

@@ -151,5 +151,11 @@ api.post('/submit', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
+// 获取法人主体下拉
+api.post('/institutionId', async (req, res) => {
+  const url = `${host}/tenant-service/institution/legal_person/drop_list`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
 
 export default api;
