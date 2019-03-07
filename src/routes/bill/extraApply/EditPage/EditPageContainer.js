@@ -18,6 +18,7 @@ const URL_SAVE = '/api/bill/extraApply/save';
 const URL_COMMIT = '/api/bill/extraApply/commit';
 const URL_REVIEW = '/api/bill/extraApply/review';
 const URL_ENDCASE = '/api/bill/extraApply/endCase';
+const URL_CURRENCY = `/api/bill/payMake/supplierCurrency`;
 
 
 const getSelfState = (rootState) => {
@@ -72,6 +73,11 @@ const tableSearchActionCreator = (KEY, rowIndex, key, filter) => async (dispatch
 };
 
 const onContentChangeActionCreator = (KEY, rowIndex, keyName, keyValue) => async (dispatch, getState) =>  {
+  if (keyName === 'balanceId') {
+    const res = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${keyValue.value}`));
+    const currency = res ? res.balanceCurrency : undefined;
+    dispatch(action.update({currency}, ['value', KEY], rowIndex));
+  }
   dispatch(action.update({[keyName]: keyValue}, ['value', KEY], rowIndex));
 };
 

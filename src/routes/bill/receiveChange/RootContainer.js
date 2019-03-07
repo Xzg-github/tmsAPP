@@ -39,8 +39,12 @@ const buildJumpState = (tabs, editConfig, value) => {
 const jumpToChange = async (item, dispatch, getState) => {
   const {returnCode, returnMsg, result} = await fetchJson(`${URL_TRANSPORTINFO}/${item.id}`);
   if (returnCode !== 0) return showError(returnMsg);
+  const costInfo = result.details.map(item => {
+    item.readonly= 'readonly';
+    return item;
+  });
   const value = {
-    costInfo: result.details,
+    costInfo,
     balanceId: item.customerId || result.balanceId,
     transportOrderId: {value: item.id, title: item.orderNumber},
     renewalMode: 'renewal_mode_001'
@@ -49,7 +53,9 @@ const jumpToChange = async (item, dispatch, getState) => {
   if (status !== 'page') {
     dispatch(action.assign({isJump: true, jumpData: value}))
   } else {
-    const payload = buildJumpState(tabs, editConfig, value);
+    const config = helper.deepCopy(editConfig);
+    config.controls[0].data[1].type = 'readonly';
+    const payload = buildJumpState(tabs, config, value);
     dispatch(action.assign(payload));
   }
   jump('/bill/receive_change');
@@ -121,7 +127,9 @@ const initActionCreator = () => async (dispatch, getState) => {
     // 如果是从其它界面跳转来的
     const {isJump, jumpData} = getSelfState(getState());
     if (isJump) {
-      Object.assign(payload, buildJumpState(tabs, editConfig, jumpData));
+      const config = helper.deepCopy(editConfig);
+      config.controls[0].data[1].type = 'readonly';
+      Object.assign(payload, buildJumpState(tabs, config, jumpData));
     }
 
     dispatch(action.create(payload));
