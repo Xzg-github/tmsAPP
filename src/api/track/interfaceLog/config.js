@@ -74,7 +74,7 @@ const receivingConfig = {
       ]}
   ],
   tableCols: [
-    {key: 'receiveInterfaceType', title: '接口类别', dictionary: 'system_settings_interface'},
+    {key: 'receiveInterfaceType', title: '接口类别', dictionary: 'receive_interface_type'},
     {key: 'tag', title: '状态', options: receivingTagOptions},
     {key: 'showContent', title: '关键信息'},
     {key: 'reason', title: '失败原因'},
