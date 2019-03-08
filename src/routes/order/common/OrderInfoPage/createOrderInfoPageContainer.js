@@ -2,13 +2,14 @@ import { connect } from 'react-redux';
 import OrderInfoPage from './OrderInfoPage';
 import {EnhanceLoading} from '../../../../components/Enhance';
 import execWithLoading from '../../../../standard-business/execWithLoading';
-import {fetchJson, getJsonResult} from "../../../../common/common";
+import {fetchJson, getJsonResult, showError} from "../../../../common/common";
 import {fetchAllDictionary, setDictionary2} from "../../../../common/dictionary";
 import moment from 'moment';
 import helper from "../../../../common/common";
 import { showAddCustomerFactoryDialog } from '../../../config/customerFactory/EditDialogContainer';
 import showAddCustomerContactDialog from '../../../config/customerContact/EditDialogContainer';
 import {getDistance} from '../../../../components/ElectricFence/Map';
+import showUploadDialog from '../uploadDialog/UploadDialogContainer';
 
 /**
  * 功能：生成一个运单基本信息页面容器组件
@@ -399,6 +400,10 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     }
   };
 
+  const attachActionCreator = (fileList=[]) => async () => {
+    return showUploadDialog(fileList);
+  };
+
   const exitValidActionCreator = (key) => {
     return action.assign({[key]: false}, 'valid');
   };
@@ -636,6 +641,44 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     }
   };
 
+  const FORMATS1 = ['.jpeg', '.gif', '.bmp', '.jpg', '.png', '.tiff', '.gif', '.pcx', '.tga', '.exif', '.fpx', '.svg', '.psd', '.cdr', '.pcd', '.dxf', '.ufo', '.eps', '.ai', '.raw', '.WMF'];
+  const URL_DOWNLOAD= '/api/track/file_manager/download';  // 点击下载
+  const formatDisplayList =  async (originFileList=[]) => {
+    let fileList = [], uid = 0;
+    for(let item of originFileList) {
+      let fileItem = {};
+      if(item.fileFormat ==='id'){
+        const { result, returnMsg, returnCode }  = await fetchJson(`${URL_DOWNLOAD}/${item.fileUrl}`);
+        if (returnCode !== 0) {
+          showError(returnMsg);
+          return;
+        }
+        fileItem.url = `/api/proxy/file-center-service/${result[item.fileUrl]}`;
+      }
+      if (FORMATS1.indexOf(item.fileName.substr(item.fileName.lastIndexOf('.'))) !== -1) {
+        fileItem.type = 'image/jpeg';
+      }else {
+        fileItem.thumbUrl = '/default.png';
+      }
+      fileItem.status='done';
+      fileItem.name = item.fileName;
+      fileItem.uid = ++uid;
+      fileItem.response = { returnCode: 0, result: item.fileUrl };
+      fileItem.fileFormat = item.fileFormat;
+      fileList.push(fileItem);
+    }
+    return fileList;
+  };
+
+  const getFileListInfo = async (taskList=[]) => {
+    let newList = [];
+    for(let item of taskList) {
+      const fileInfoList = await formatDisplayList(item.fileListDtos) || [];
+      newList.push({...item, fileInfoList});
+    }
+    return newList;
+  };
+
   const topTabChangeActionCreator = (topActiveKey) => async (dispatch, getState) => {
     dispatch(action.assign({topActiveKey}));
     const {baseInfo, pageType, trackLoaded = false} = getSelfState(getState());
@@ -663,7 +706,8 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
           helper.showError(`加载司机任务失败：${data.returnMsg}`);
           isOk = false;
         }else {
-          dispatch(action.assign({taskList: data.result}, ['section3']));
+          const taskList = await getFileListInfo(data.result);
+          dispatch(action.assign({taskList}, ['section3']));
         }
 
         data = await helper.fetchJson(`/api/order/input/track_change/${baseInfo.id}`);
@@ -694,6 +738,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     onTabChange: tabChangeActionCreator,
     onTopTabChange: topTabChangeActionCreator,
     onClick: clickActionCreator,
+    onAttach: attachActionCreator
   };
 
   return connect(mapStateToProps, actionCreators)(EnhanceLoading(OrderInfoPage));
