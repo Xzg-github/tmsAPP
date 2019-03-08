@@ -14,12 +14,14 @@ class ShortcutSet extends React.Component {
   };
 
   toTable = () => {
-    const {tableCols, tableItems, onCheck} = this.props;
+    const {tableCols, tableItems, onCheck, onTableChange, filterInfo} = this.props;
     const props = {
+      filterInfo,
       cols: tableCols,
       items: tableItems,
       callback: {
-        onCheck
+        onCheck,
+        onTableChange,
       },
       maxHeight: `calc(100vh - 140px)`
     };

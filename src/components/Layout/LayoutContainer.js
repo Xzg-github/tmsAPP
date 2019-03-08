@@ -69,7 +69,7 @@ const getShortcutSidebars = ({sidebars, tableColsSetting={}, privilege={}}) => {
   let [...shortcut] = sidebars.shortcut;
   if (tableColsSetting.shortcut && tableColsSetting.shortcut.shortcuts) {
     const shortcuts = tableColsSetting.shortcut.shortcuts.filter(item => privilege[item.key] === true);
-    shortcut = shortcut.concat(shortcuts);
+    shortcut = shortcuts.concat(shortcut);
   }
   return shortcut;
 };
@@ -82,6 +82,10 @@ const initActionCreator = () => async (dispatch) => {
     const payload = Object.assign(result, {tableColsSetting, status: 'page'});
     payload.messageCount = await getUreadCount();
     payload.sidebars && payload.sidebars.shortcut && (payload.sidebars.shortcut = getShortcutSidebars(payload)); //初始化快捷菜单的侧边栏数据
+    const index = payload.navigation.findIndex(item => item.key === 'shortcut');
+    if (index !== -1 && payload.sidebars.shortcut) {
+      payload.navigation[index].href = payload.sidebars.shortcut[0].href;
+    }
     dispatch(action.create(payload));
     // 获取到权限后，再次引发路由，以保证没有该页面的权限时显示404的页面
     if (window.location.pathname === '/') {

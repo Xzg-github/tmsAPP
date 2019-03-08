@@ -12,9 +12,9 @@ const layoutAction = new Action(['layout']);
 
 const initActionCreator = () => async (dispatch, getState) => {
   const tableCols = [
-    {key: 'first', title: '一级菜单'},
-    {key: 'second', title: '二级菜单'},
-    {key: 'third', title: '三级菜单'},
+    {key: 'first', title: '一级菜单', filter: true},
+    {key: 'second', title: '二级菜单', filter: true},
+    {key: 'third', title: '三级菜单', filter: true},
   ];
   const buttons = [
     {key: 'add', title: '添加快捷菜单', bsStyle: 'primary'},
@@ -35,6 +35,7 @@ const initActionCreator = () => async (dispatch, getState) => {
     tableCols,
     tableItems,
     buttons,
+    filterInfo: {},
     status: 'page'
   };
   dispatch(action.create(payload));
@@ -46,7 +47,7 @@ const getSelfState = (rootState) => {
 
 const updateSidebar = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
-  const shortcut = [{key: 'shortcut_set', title: '快捷设置', href: '/shortcut/shortcut_set'}].concat(tableItems);
+  const shortcut = tableItems.concat([{key: 'shortcut_set', title: '快捷设置', href: '/shortcut/shortcut_set'}]);
   dispatch(layoutAction.assign({shortcut}, ['sidebars']));
   const URL_SETTING = '/api/permission/table_cols_setting';
   await helper.fetchJson(URL_SETTING, helper.postOption({code:'shortcut', config: {shortcuts: tableItems}}));
@@ -151,6 +152,10 @@ const checkActionCreator = (isAll, checked, rowIndex) => {
   return action.update({checked}, 'tableItems', rowIndex);
 };
 
+const tableChangeActionCreator = (sortInfo, filterInfo) => {
+  return action.assign({filterInfo});
+};
+
 const mapStateToProps = (state) => {
   return getSelfState(state);
 };
@@ -159,6 +164,7 @@ const actionCreators = {
   onInit: initActionCreator,
   onClick: clickActionCreator,
   onCheck: checkActionCreator,
+  onTableChange: tableChangeActionCreator
 };
 
 export default connect(mapStateToProps, actionCreators)(EnhanceLoading(ShortcutSet));

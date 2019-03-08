@@ -9,7 +9,8 @@ class AddDialog extends React.Component {
     super(props);
     this.state = {
       visible: true,
-      tableItems: props.tableItems
+      tableItems: props.tableItems,
+      filterInfo: {}
     }
   }
 
@@ -32,11 +33,13 @@ class AddDialog extends React.Component {
 
   toTable = () => {
     const props = {
+      filterInfo: this.state.filterInfo,
       items: this.state.tableItems,
       cols: this.props.tableCols,
       maxHeight: '500px',
       callback: {
-        onCheck: this.onHandleCheck
+        onCheck: this.onHandleCheck,
+        onTableChange: (sortInfo, filterInfo) => {this.setState({filterInfo})}
       }
     };
     return <SuperTable {...props} />;
