@@ -646,7 +646,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   const formatDisplayList =  async (originFileList=[]) => {
     let fileList = [], uid = 0;
     for(let item of originFileList) {
-      if (!item || item.fileUrl || item.fileName) continue;
+      if (!item || !item.fileUrl || !item.fileName) continue;
       let fileItem = {};
       if(item.fileFormat ==='id'){
         const { result, returnMsg, returnCode }  = await fetchJson(`${URL_DOWNLOAD}/${item.fileUrl}`);
@@ -655,6 +655,8 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
           return;
         }
         fileItem.url = `/api/proxy/file-center-service/${result[item.fileUrl]}`;
+      }else {
+        fileItem.url = item.fileUrl;
       }
       if (FORMATS1.indexOf(item.fileName.substr(item.fileName.lastIndexOf('.'))) !== -1) {
         fileItem.type = 'image/jpeg';
