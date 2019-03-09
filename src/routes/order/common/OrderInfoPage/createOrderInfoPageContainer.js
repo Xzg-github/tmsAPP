@@ -646,6 +646,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
   const formatDisplayList =  async (originFileList=[]) => {
     let fileList = [], uid = 0;
     for(let item of originFileList) {
+      if (!item || item.fileUrl || item.fileName) continue;
       let fileItem = {};
       if(item.fileFormat ==='id'){
         const { result, returnMsg, returnCode }  = await fetchJson(`${URL_DOWNLOAD}/${item.fileUrl}`);
