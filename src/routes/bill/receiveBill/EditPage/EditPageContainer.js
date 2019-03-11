@@ -61,11 +61,8 @@ const changeActionCreator = (KEY, keyName, keyValue) => async (dispatch, getStat
     const rateList = getJsonResult(await fetchJson(URL_RATE));
     state.value.chargeList.map(item => {
       const curr = rateList.filter(rate => rate['currency'] === keyValue.value && rate['currencyTypeCode'] === item.currency);
-      if(curr.length) {
-        item.billExchangeRate = curr[0].billExchangeRate ;
-      } else{
-        return showError('汇率为空，请在档案维护汇率');
-      }
+      curr.length ? item.billExchangeRate = curr[0].billExchangeRate : item.billExchangeRate = 0;
+      item.billExchangeRate === 0 && showError('汇率为空，请在档案维护汇率');
     });
     const amount = toSum(state.value.chargeList);
     const amountCapital = toCapitalization(amount);
@@ -172,6 +169,10 @@ const saveActionCreator = () => async (dispatch, getState) => {
       dispatch(action.assign({valid: invalidFormItem.key}));
       return showError('请填写必填项');
     }
+    const invalidTableItem = value.chargeList.every(currentItem => {
+      return currentItem.billExchangeRate !== 0;
+    });
+    if (!invalidTableItem) return showError('汇率为空，请在档案维护汇率');
     value['customerContact'] = value['customerContact'].title;
     value['customerHeaderInformation'] = value['customerHeaderInformation'].title;
     const {returnCode, returnMsg} = await helper.fetchJson(URL_SAVE, postOption({...convert(value)}));
@@ -191,6 +192,10 @@ const sendActionCreator = () => async (dispatch, getState) => {
       dispatch(action.assign({valid: invalidFormItem.key}));
       return showError('请填写必填项');
     }
+    const invalidTableItem = value.chargeList.every(currentItem => {
+      return currentItem.billExchangeRate !== 0;
+    });
+    if (!invalidTableItem) return showError('汇率为空，请在档案维护汇率');
     const {returnCode, returnMsg} = await helper.fetchJson(URL_SEND, postOption({...convert(value)}));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
