@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
-import { Indent, SuperForm, ModalWithDrag} from '../../../../../../components';
+import { Indent, SuperForm, ModalWithDrag} from '../../../../components';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from '../Freight.less';
+import s from './EditDialog.less';
 
 class EditDialog extends React.Component {
 
@@ -24,7 +24,7 @@ class EditDialog extends React.Component {
       onSearch,
       onExitValid,
       checkable,
-      onCheckItem
+      onCheckItem,
     };
     return <SuperForm {...props}/>
   }

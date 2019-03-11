@@ -16,7 +16,7 @@ api.get('/config', async (req, res) => {
 
 // 主列表数据
 api.post('/list', async (req, res) => {
-  const url = `${tms_service}/customer_price/list/search`;
+  const url = `${tms_service}/customer_price_master/list/search`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
   res.send({returnCode: 0, returnMsg: 'Success', result: mockData.list})
 });
@@ -25,6 +25,27 @@ api.post('/list', async (req, res) => {
 api.post('/customer', async (req, res) => {
   const url = `${archiver_service}/customer/drop_list`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+// 始发地、目的地下拉
+api.post('/district', async (req, res) => {
+  const url = `${archiver_service}/consignee_consignor/drop_list`;
+  const params = {...req.body, name: req.body.filter};
+  res.send(await fetchJsonByNode(req, url, postOption(params)));
+});
+
+// 收发货人下拉
+api.post('/consignor', async (req, res) => {
+  const url = `${archiver_service}/archiver/district/drop_list`;
+  const params = {...req.body, districtName: req.body.filter};
+  res.send(await fetchJsonByNode(req, url, postOption(params)));
+});
+
+// 车型下拉
+api.post('/carMode', async (req, res) => {
+  const url = `${archiver_service}/car_mode/drop_list`;
+  const params = {...req.body, carMode: req.body.filter};
+  res.send(await fetchJsonByNode(req, url, postOption(params)));
 });
 
 // 用户下拉

@@ -11,7 +11,9 @@ const URL_ADD = '/api/config/customerPrice/freightAdd';
 const URL_EDIT = '/api/config/customerPrice/freightEdit';
 const URL_CUSTOMER = '/api/config/customerPrice/customer';
 const URL_CAOMODE = '/api/config/customerPrice/carMode';
-const URL_CHARGEITEM = '/api/config/customerPrice/changeItem';
+const URL_CHARGEITEM = '/api/config/customerPrice/chargeItem';
+const URL_CURRENCY = '/api/config/customerPrice/currency';
+const URL_BATCHEDIT = '/api/config/customerPrice/freightBatchEdit';
 
 const Container = createFreightContainer({
   PATH: ACITON_PATH,
@@ -26,7 +28,9 @@ const Container = createFreightContainer({
     editSave: URL_EDIT,
     search_customer: URL_CUSTOMER,
     search_carMode: URL_CAOMODE,
-    search_chargeItem: URL_CHARGEITEM
+    search_chargeItem: URL_CHARGEITEM,
+    search_currency: URL_CURRENCY,
+    batchEdit: URL_BATCHEDIT
   },
   IMPORT_CODE: 'customer_price_master_import_detail'
 });

@@ -34,6 +34,7 @@ import corporation from './corporation';
 import bank from './bank';
 import customerInvoice from './customerInvoice';
 import position from './position';
+import customerPriceDetail from './customerPriceDetail';
 
 let api = express.Router();
 api.use('/dataset', apiDataSet);
@@ -71,5 +72,6 @@ api.use('/corporation', corporation);
 api.use('/bank', bank);
 api.use('/customer_invoice', customerInvoice);
 api.use('/position', position);
+api.use('/customerPriceDetail', customerPriceDetail);
 
 export default api;

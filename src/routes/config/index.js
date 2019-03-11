@@ -34,6 +34,7 @@ const children = [
   require('./chargeItem').default,
 
   require('./customerPrice').default,
+  require('./customerPriceDetail').default,
   require('./supplierPrice').default,
 
   require('./position').default

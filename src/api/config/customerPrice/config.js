@@ -157,6 +157,13 @@ const freight = {
     {key: 'kilometre', title: '公里数（KM）', type: 'number'},
     {key: 'remark', title: '备注', type: 'text'},
   ],
+  batchEditControls: [
+    {key: 'standardPrice', title: '基本运费', type: 'text'},
+    {key: 'returnPrice', title: '返空费', type: 'text'},
+    {key: 'currency', title: '币种', type: 'search'},
+    {key: 'chargeUnit', title: '计量单位', type: 'select', dictionary: name.CHARGE_UNIT},
+    {key: 'numberSource', title: '数量源', type: 'select', dictionary: name.NUMBER_SOURCE},
+  ],
   currentPage: 1,
   pageSize,
   pageSizeType,
@@ -215,6 +222,13 @@ const extraCharge = {
     {key: 'numberSource', title: '数量源', type: 'select', dictionary: name.NUMBER_SOURCE, required: true},
     {key: 'remark', title: '备注', type: 'text'},
   ],
+  batchEditControls: [
+    {key: 'standardPrice', title: '基本运费', type: 'text'},
+    {key: 'returnPrice', title: '返空费', type: 'text'},
+    {key: 'currency', title: '币种', type: 'search'},
+    {key: 'chargeUnit', title: '计量单位', type: 'select', dictionary: name.CHARGE_UNIT},
+    {key: 'numberSource', title: '数量源', type: 'select', dictionary: name.NUMBER_SOURCE},
+  ],
   currentPage: 1,
   pageSize,
   pageSizeType,
@@ -234,7 +248,7 @@ const editConfig = {
 
 const config = {
   activeKey: 'index',
-  tabs: [{key: 'index', title: '客户报价列表'}],
+  tabs: [{key: 'index', title: '客户报价列表', close: false}],
   index,
   editConfig,
   names: [

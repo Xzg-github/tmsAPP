@@ -366,7 +366,7 @@ class SuperForm extends React.Component {
     return (
       <Col span={span * factor} key={control.key}>
         {checkable && <Checkbox className={s.checkbox} onChange={onCheckItem.bind(this,control)} checked={control.checked} />}
-        <FormItem {...itemProps} className={checkable && s.formItemWithCheckbox}>
+        <FormItem {...itemProps} className={checkable ? s.formItemWithCheckbox : ''}>
           {this.toControl(controlProps, control)}
         </FormItem>
       </Col>

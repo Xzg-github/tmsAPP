@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
-import {EnhanceLoading} from '../../../../../../components/Enhance';
+import {EnhanceLoading} from '../../../../components/Enhance';
 import EditDialog from './EditDialog';
-import helper, {fetchJson, postOption, showError, getJsonResult, deepCopy, convert}from '../../../../../../common/common';
-import {Action} from '../../../../../../action-reducer/action';
-import {getPathValue} from '../../../../../../action-reducer/helper';
-import showPopup from '../../../../../../standard-business/showPopup';
+import helper, {fetchJson, postOption, showError, getJsonResult, deepCopy, convert}from '../../../../common/common';
+import {Action} from '../../../../action-reducer/action';
+import {getPathValue} from '../../../../action-reducer/helper';
+import showPopup from '../../../../standard-business/showPopup';
 
 const STATE_PATH = ['temp'];
 const action = new Action(STATE_PATH, false);
@@ -52,7 +52,8 @@ const okActionCreator = (afterClose) => async (dispatch, getState) => {
     if (checkList.some(o => helper.isEmpty2(value[o]))) return showError('勾选的数据为必填！');
   }
   const url = type < 2 ? DIALOG_API.newAdd : type === 2 ? DIALOG_API.editSave: DIALOG_API.batchEdit;
-  const {returnCode, result, returnMsg} = await fetchJson(url, postOption(convert(value)));
+  const params = helper.getObject(convert(value), controls.map(o => o.key));
+  const {returnCode, result, returnMsg} = await fetchJson(url, postOption(params));
   if (returnCode !== 0) return showError(returnMsg);
   helper.showSuccessMsg(returnMsg);
   dispatch(action.assign({okResult: result}));
@@ -89,7 +90,7 @@ const buildState = async (config={}) => {
     controls,
     value,
     DIALOG_API,
-    checkable: type === 3,
+    checkable: type === 3
   }
 };
 

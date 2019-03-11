@@ -60,7 +60,24 @@ const createFreightContainer = (config) => {
     result && await afterEdit(dispatch, pageSize);
   };
 
-  const doubleClickActionCreator = () => editActionCreator;
+  const doubleClickActionCreator = (rowIndex) => async (dispatch, getState) => {
+    const {controls, pageSize, items} = getSelfState(getState());
+    const value = items[rowIndex];
+    if (value['enabledType'] !== 'enabled_type_unenabled') {
+      return showError('只能编辑未启用状态记录！');
+    }
+    const result = await showEditDialog({type: 2, controls, value, DIALOG_API});
+    result && await afterEdit(dispatch, pageSize);
+  };
+
+  const batchActionCreator = async (dispatch, getState) => {
+    const {batchEditControls, pageSize, items} = getSelfState(getState());
+    const index = helper.findOnlyCheckedIndex(items);
+    if (index === -1) return showError('请勾选一条数据！');
+    const value = items[index];
+    const result = await showEditDialog({type: 3, controls: batchEditControls, value, DIALOG_API});
+    result && await afterEdit(dispatch, pageSize);
+  };
 
   const deleteActionCreator = async (dispatch, getState) => {
     const {items} = getSelfState(getState());
@@ -117,6 +134,7 @@ const createFreightContainer = (config) => {
     add: addActionCreator,
     copy: copyActionCreator,
     edit: editActionCreator,
+    batchEdit: batchActionCreator,
     enable: enableActionCreator,
     disable: disableActionCreator,
     delete: deleteActionCreator,
@@ -196,6 +214,8 @@ const URL_ADD = '/api/config/customerPrice/freightAdd';
 const URL_EDIT = '/api/config/customerPrice/freightEdit';
 const URL_CUSTOMER = '/api/config/customerPrice/customer';
 const URL_CAOMODE = '/api/config/customerPrice/carMode';
+const URL_CURRENCY = '/api/config/customerPrice/currency';
+const URL_BATCHEDIT = '/api/config/customerPrice/freightBatchEdit';
 
 const Container = createFreightContainer({
   PATH: ACITON_PATH,
@@ -209,7 +229,9 @@ const Container = createFreightContainer({
     newAdd: URL_ADD,
     editSave: URL_EDIT,
     search_customer: URL_CUSTOMER,
-    search_carMode: URL_CAOMODE
+    search_carMode: URL_CAOMODE,
+    search_currency: URL_CURRENCY,
+    batchEdit: URL_BATCHEDIT
   },
   IMPORT_CODE: 'customer_price_master_import_detail'
 });
