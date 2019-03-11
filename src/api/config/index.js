@@ -35,6 +35,7 @@ import bank from './bank';
 import customerInvoice from './customerInvoice';
 import position from './position';
 import customerPriceDetail from './customerPriceDetail';
+import supplierPriceDetail from './supplierPriceDetail';
 
 let api = express.Router();
 api.use('/dataset', apiDataSet);
@@ -64,7 +65,7 @@ api.use('/inside_car', insideCar);
 api.use('/insideDriver', insideDriver);
 api.use('/insideSupervisor', insideSupervisor);
 api.use('/customerPrice', customerPrice);
-api.use('/supplier_price', supplierPrice);
+api.use('/supplierPrice', supplierPrice);
 api.use('/supplier_tax', supplierTax);
 api.use('/customer_service', customerService);
 api.use('/car_manager', carManager);
@@ -73,5 +74,6 @@ api.use('/bank', bank);
 api.use('/customer_invoice', customerInvoice);
 api.use('/position', position);
 api.use('/customerPriceDetail', customerPriceDetail);
+api.use('/supplierPriceDetail', supplierPriceDetail);
 
 export default api;

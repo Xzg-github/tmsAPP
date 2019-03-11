@@ -11,9 +11,9 @@ import {search} from '../../../common/search';
 import {fetchDictionary, setDictionary, getStatus} from '../../../common/dictionary';
 import {dealActions} from '../../../common/check';
 
-const STATE_PATH = ['customerPriceDetail'];
-const URL_CONFIG = '/api/config/customerPriceDetail/config';
-const URL_LIST = '/api/config/customerPriceDetail/list';
+const STATE_PATH = ['supplierPriceDetail'];
+const URL_CONFIG = '/api/config/supplierPriceDetail/config';
+const URL_LIST = '/api/config/supplierPriceDetail/list';
 
 const action = new Action(STATE_PATH);
 
@@ -27,7 +27,7 @@ const initActionCreator = () => async (dispatch) => {
     const {activeKey, tabs, index, editConfig, names} = getJsonResult(await fetchJson(URL_CONFIG));
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}));
     let dictionary = getJsonResult(await fetchDictionary(names));
-    dictionary['status_type'] = getJsonResult(await getStatus('customer_price_detail'));
+    dictionary['status_type'] = getJsonResult(await getStatus('customer_price'));
     const payload = {
       activeKey, tabs,
       ...index,
@@ -48,7 +48,7 @@ const initActionCreator = () => async (dispatch) => {
     setDictionary(payload.extraCharge.controls, dictionary);
     setDictionary(payload.extraCharge.controls, dictionary);
     setDictionary(payload.extraCharge.batchEditControls, dictionary);
-    payload.buttons = dealActions(payload.buttons, 'customer_price_detail');
+    payload.buttons = dealActions(payload.buttons, 'supplier_price_detail');
     dispatch(action.create(payload));
   } catch (e) {
     helper.showError(e.message);

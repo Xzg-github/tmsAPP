@@ -1,19 +1,19 @@
 import {connect} from 'react-redux';
 import OrderPageContainer from './OrderPageContainer';
-import EditPageContainer from './EditPageContainer';
+import EditPageContainer from './EditPage/EditPageContainer';
 import {EnhanceLoading} from '../../../components/Enhance';
 import {createCommonTabPage} from '../../../standard-business/createTabPage';
 import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
-import {toTableItems} from '../../../common/state';
+import {buildOrderPageState} from '../../../common/state';
 import helper, {fetchJson, getJsonResult} from '../../../common/common';
 import {search} from '../../../common/search';
 import {fetchDictionary, setDictionary, getStatus} from '../../../common/dictionary';
 import {dealActions} from '../../../common/check';
 
-const STATE_PATH = ['customerPriceDetail'];
-const URL_CONFIG = '/api/config/customerPriceDetail/config';
-const URL_LIST = '/api/config/customerPriceDetail/list';
+const STATE_PATH = ['supplierPrice'];
+const URL_CONFIG = '/api/config/supplierPrice/config';
+const URL_LIST = '/api/config/supplierPrice/list';
 
 const action = new Action(STATE_PATH);
 
@@ -26,29 +26,19 @@ const initActionCreator = () => async (dispatch) => {
     dispatch(action.assign({status: 'loading'}));
     const {activeKey, tabs, index, editConfig, names} = getJsonResult(await fetchJson(URL_CONFIG));
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}));
+    const other = {activeKey, tabs, editConfig, status: 'page'};
+    const payload = buildOrderPageState(list, index, other);
     let dictionary = getJsonResult(await fetchDictionary(names));
-    dictionary['status_type'] = getJsonResult(await getStatus('customer_price_detail'));
-    const payload = {
-      activeKey, tabs,
-      ...index,
-      maxRecords: list.returnTotalItem,
-      currentPage: 1,
-      tableItems: toTableItems(list),
-      searchData: {},
-      extraCharge: editConfig,
-      dictionary,
-      status: 'page'
-    };
+    dictionary['status_type'] = getJsonResult(await getStatus('supplier_price'));
     setDictionary(payload.filters, dictionary);
     setDictionary(payload.tableCols, dictionary);
-    setDictionary(payload.controls, dictionary);
-    setDictionary(payload.batchEditControls, dictionary);
-    setDictionary(payload.extraCharge.filters, dictionary);
-    setDictionary(payload.extraCharge.tableCols, dictionary);
-    setDictionary(payload.extraCharge.controls, dictionary);
-    setDictionary(payload.extraCharge.controls, dictionary);
-    setDictionary(payload.extraCharge.batchEditControls, dictionary);
-    payload.buttons = dealActions(payload.buttons, 'customer_price_detail');
+    setDictionary(payload.editConfig.freight.cols, dictionary);
+    setDictionary(payload.editConfig.freight.controls, dictionary);
+    setDictionary(payload.editConfig.freight.batchEditControls, dictionary);
+    setDictionary(payload.editConfig.extraCharge.cols, dictionary);
+    setDictionary(payload.editConfig.extraCharge.controls, dictionary);
+    setDictionary(payload.editConfig.extraCharge.batchEditControls, dictionary);
+    payload.buttons = dealActions(payload.buttons, 'supplier_price');
     dispatch(action.create(payload));
   } catch (e) {
     helper.showError(e.message);

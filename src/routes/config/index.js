@@ -36,6 +36,7 @@ const children = [
   require('./customerPrice').default,
   require('./customerPriceDetail').default,
   require('./supplierPrice').default,
+  require('./supplierPriceDetail').default,
 
   require('./position').default
 ];

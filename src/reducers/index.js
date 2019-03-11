@@ -118,6 +118,7 @@ const rootReducer = combineReducers({
   bank: create('bank', false),
   position: create('position', false),
   customerPriceDetail: create('customerPriceDetail'),
+  supplierPriceDetail: create('supplierPriceDetail'),
 });
 
 export default rootReducer;

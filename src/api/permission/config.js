@@ -126,7 +126,8 @@ const inside_mgr = [
 const price_mgr = [
   {key: 'customer_price'},             // 客户报价
   {key: 'customer_price_detail'},      // 客户报价明细
-  {key: 'supplier_price'},            // 供应商报价
+  {key: 'supplier_price'},             // 供应商报价
+  {key: 'supplier_price_detail'},      // 供应商报价明细
 ];
 
 // 扩展功能子菜单

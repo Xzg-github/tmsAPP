@@ -2,7 +2,7 @@ import React from 'react';
 import Container from './RootContainer';
 
 export default {
-  path: '/supplier_price',
+  path: '/supplier_price_detail',
 
   action() {
     return {
