@@ -37,9 +37,9 @@ api.post('/chargeItemId', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
-// 运单号下拉(0:待审核)
+// 运单号下拉
 api.post('/transportOrderId', async (req, res) => {
-  const url = `${tms_service}/transport_order/cost/drop_list/0`;
+  const url = `${tms_service}/transport_order/cost/drop_list/extra_charge`;console.log(url)
   const params = {...req.body, orderNumber: req.body.filter};
   res.send(await fetchJsonByNode(req, url, postOption(params)));
 });
