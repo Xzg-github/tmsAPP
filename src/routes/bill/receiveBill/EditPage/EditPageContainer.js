@@ -61,7 +61,11 @@ const changeActionCreator = (KEY, keyName, keyValue) => async (dispatch, getStat
     const rateList = getJsonResult(await fetchJson(URL_RATE));
     state.value.chargeList.map(item => {
       const curr = rateList.filter(rate => rate['currency'] === keyValue.value && rate['currencyTypeCode'] === item.currency);
-      curr.length ? item.billExchangeRate = curr[0].billExchangeRate : item.billExchangeRate = 0;
+      if(curr.length) {
+        item.billExchangeRate = curr[0].billExchangeRate ;
+      } else{
+        return showError('汇率为空，请在档案维护汇率');
+      }
     });
     const amount = toSum(state.value.chargeList);
     const amountCapital = toCapitalization(amount);

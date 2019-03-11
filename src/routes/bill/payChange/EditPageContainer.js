@@ -13,7 +13,7 @@ const STATE_PARENT_PATH = ['payChange'];
 const action = new Action(STATE_PATH);
 let CURRENT_KEY;
 
-const URL_TRANSPORTORDER = '/api/bill/receive_change/searchTransportOrderNum';
+const URL_TRANSPORTORDER = '/api/bill/pay_change/searchTransportOrderNum';
 const URL_CUSTOMER = '/api/bill/payMake/supplierId';
 const URL_CHARGE_NAME = '/api/bill/receiveMake/chargeItemId';
 const URL_TRANSINFO = '/api/bill/pay_change/transportInfo';
@@ -121,7 +121,9 @@ const priceOrNumChange = (tableKey, rowIndex, keyName, keyValue) => (dispatch, g
 const contentChangeActionCreator = (tableKey, rowIndex, keyName, keyValue) =>{
   if (keyName === 'price' || keyName === 'number') {
     return priceOrNumChange(tableKey, rowIndex, keyName, keyValue);
-  } else {
+  } else if (keyName === 'balanceId') {
+    return action.update({[keyName]: keyValue, currency: keyValue.balanceCurrency}, ['value', tableKey], rowIndex);
+  }else {
     return action.update({[keyName]: keyValue}, ['value', tableKey], rowIndex);
   }
 };
