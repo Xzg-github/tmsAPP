@@ -80,6 +80,10 @@ const changeActionCreator = (key, value) => async (dispatch, getState) => {
           if (data.returnCode === 0) {
             obj.driverMobilePhone = data.result.driverMobilePhone;
           }
+          if (data.result.enabledType !== 'enabled_type_enabled') {
+            obj.driverId = '';
+            obj.driverMobilePhone = '';
+          }
         }
       }
       break;
