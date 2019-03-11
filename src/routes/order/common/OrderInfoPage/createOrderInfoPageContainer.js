@@ -53,7 +53,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
         };
         isAppend = !!baseInfo.supplementType; //设置是否为补录运单
         config.formSections.baseInfo.controls = config.formSections.baseInfo.controls.map(item => item.key === 'customerId' ? {...item, type: 'readonly'} : item);
-        isAppend && (config.formSections.dispatchInfo.controls = config.formSections.dispatchInfo.controls.map(item => item.key === 'taskTypeCode' ? {...item, key: 'taskTypeName'} : item));
+        isAppend && readonly && (config.formSections.dispatchInfo.controls = config.formSections.dispatchInfo.controls.map(item => item.key === 'taskTypeCode' ? {...item, key: 'taskTypeName'} : item));
       }
       !isAppend && delete config.formSections.dispatchInfo; //非补录运单无派车信息组
       let buttons = [...config.buttons];
