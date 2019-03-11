@@ -118,6 +118,16 @@ class OrderInfoPage extends React.Component {
     return <Indent>{items.map(item => this.toInfoItem(item, carInfo))}</Indent>;
   };
 
+  toDescription = (item) => {
+    return (
+      <div>
+        <div>{item.finishTime}</div>
+        <div>{item.position}</div>
+        {item.fileInfoList.length > 0 && <div><img style={{with: 80, height: 80}} src={item.fileInfoList[0].url} onClick={this.props.onAttach.bind(null, item.fileInfoList)} /></div>}
+      </div>
+    );
+  };
+
   toTaskSteps = ({taskList=[]}) => {
     const status = { 0: 'wait', 1: 'finish', 2: 'error'};
     return (
@@ -127,7 +137,7 @@ class OrderInfoPage extends React.Component {
             const props = {
               key: index,
               title: item.taskTypeName,
-              description: (<div><div>{item.finishTime}</div><div>{item.position}</div></div>),
+              description: this.toDescription(item),
               status: status[Number(item.taskStatus)]
             };
             return <Step {...props} />;

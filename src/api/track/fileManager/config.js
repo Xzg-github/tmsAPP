@@ -12,10 +12,10 @@ const filters = [
   {key: 'transportType', title: '运输方式', type: 'select', dictionary: 'transport_type'},
   {key: 'departure', title: '始发地', type: 'search', searchType:'charge_place'},
   {key: 'destination', title: '目的地', type: 'search', searchType:'charge_place'},
-  {key: 'planPickupTimeFrom', title: '要求装货时间', type: 'date', props: {showTime: true}},
-  {key: 'planPickupTimeTo', title: '至', type: 'date', props: {showTime: true}},
-  {key: 'insertTimeFrom', title: '创建时间', type: 'date', props: {showTime: true}},
-  {key: 'insertTimeTo', title: '至', type: 'date', props: {showTime: true}}
+  {key: 'planPickupTimeFrom', title: '要求装货时间开始', type: 'date', props: {showTime: true}},
+  {key: 'planPickupTimeTo', title: '要求装货时间至', type: 'date', props: {showTime: true}},
+  {key: 'insertTimeFrom', title: '创建时间开始', type: 'date', props: {showTime: true}},
+  {key: 'insertTimeTo', title: '创建时间至', type: 'date', props: {showTime: true}}
 ];
 
 const tableCols = [

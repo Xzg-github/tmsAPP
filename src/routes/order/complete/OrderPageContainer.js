@@ -12,7 +12,7 @@ const buildOrderPageState = async () => {
   const urlConfig = '/api/order/complete/config';
   const urlList = '/api/order/complete/list';
   const statusNames = ['transport_order', 'order_type'];
-  const state = await buildOrderPageCommonState(urlConfig, urlList, statusNames);
+  const state = await buildOrderPageCommonState(urlConfig, urlList, statusNames, true);
   if (state) { //去掉搜索条件中任务状态和运单状态不符合当前模块的下拉值
     let index = state.filters.findIndex(item => item.key === 'orderType');
     const orderTypeArr = ['status_waiting_perfect', 'status_waiting_send', 'status_cancel_completed', 'status_check_all_completed']; //不符合的任务状态-待完善、待派发、已取消、已整审

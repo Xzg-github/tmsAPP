@@ -344,6 +344,31 @@ const initTableCols = (code, cols=[]) => {
   }
 };
 
+/**
+ * 功能：(不修改原数组参数) 初始化查询条件配置
+ *  filters：[必须]，对象数组，查询条件的filters配置参数
+ *  code：[必须]，字符串，用于标识具体页面位置的查询条件配置
+ * 返回值：返回初始化后的filters
+ */
+const initFilters = (code, filters=[]) => {
+  if (!code || !global.store) {
+    return filters;
+  } else {
+    const state = global.store.getState();
+    const path = ['layout', 'tableColsSetting', code];
+    const config = getPathValue(state, path) || {};
+    const {filtersIndex=[]} = config;
+    let [...newFilters] = filters;
+    const addFilters = newFilters.filter(item => !filtersIndex.includes(item.key));
+    let resFilters = [];
+    filtersIndex.map(key => {
+      const index = newFilters.findIndex(item => item.key === key);
+      index !== -1 && resFilters.push(newFilters[index]);
+    });
+    return resFilters.concat(addFilters);
+  }
+};
+
 const myToFixed = (value, precision=0, zero = false) => {
   value = Number(value).toFixed(precision);
   value = String(value);
@@ -483,6 +508,7 @@ const helper = {
   setOptions,
   getActions,
   initTableCols,
+  initFilters,
   myToFixed,
   formatTime,
   openWindowByPostRequest,
@@ -521,6 +547,7 @@ export {
   setOptions,
   getActions,
   initTableCols,
+  initFilters,
   myToFixed,
   formatTime,
   deepCopy,

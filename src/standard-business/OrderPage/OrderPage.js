@@ -46,7 +46,7 @@ class OrderPage extends React.Component {
   };
 
   onHandleClick = (key) => {
-    const {onClick, onClickReset, onClickSearch, onConfig, onWebExport, onAllExport} = this.props;
+    const {onClick, onClickReset, onClickSearch, onConfig, onWebExport, onAllExport, onClickSort} = this.props;
     switch (key) {
       case 'reset': {
         onClickReset();
@@ -54,6 +54,10 @@ class OrderPage extends React.Component {
       }
       case 'search': {
         onClickSearch();
+        break;
+      }
+      case 'sort': {
+        onClickSort();
         break;
       }
       case 'config': {
@@ -74,8 +78,9 @@ class OrderPage extends React.Component {
   };
 
   toSearch = () => {
-    const {filters, searchConfig, searchData} = this.props;
+    const {filters, searchConfig, searchData, isSort} = this.props;
     const props = {
+      isSort,
       filters,
       data: searchData,
       config: searchConfig,

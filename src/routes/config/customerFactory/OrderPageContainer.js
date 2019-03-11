@@ -136,8 +136,8 @@ const importActionCreator = () => {
 
 //导出
 const exportActionCreator =(dispatch,getState)=>{
-  const {tableItms, searchData} = getSelfState(getState());
-  return exportExcelFunc(tableItms, searchData);
+  const {tableCols, tableItems} = getSelfState(getState());
+  return exportExcelFunc(tableCols, tableItems);
 };
 
 const toolbarActions = {

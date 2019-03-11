@@ -11,7 +11,7 @@ const buildOrderTabPageState = async () => {
   const urlConfig = '/api/track/track_order/config';
   const urlList = '/api/track/track_order/list';
   const statusNames = ['transport_order', 'order_type'];
-  return buildOrderTabPageCommonState(urlConfig, urlList, statusNames);
+  return buildOrderTabPageCommonState(urlConfig, urlList, statusNames, false, true);
 };
 
 const getSelfState = (rootState) => {

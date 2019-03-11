@@ -168,10 +168,10 @@ const exportSearchActionCreator =(dispatch,getState)=>{
   commonExport(tableCols, '/archiver-service/customer/list/search', searchData);
 };
 
-// 页面导出
-const exportPageActionCreator =(dispatch,getState)=>{
+//导出
+const exportActionCreator =(dispatch,getState)=>{
   const {tableCols, tableItems} = getSelfState(getState());
-  exportExcelFunc(tableCols, tableItems);
+  return exportExcelFunc(tableCols, tableItems);
 };
 
 // 配置字段
@@ -193,7 +193,7 @@ const toolbarActions = {
   delete: deleteActionCreator,
   import: importActionCreator,
   exportSearch: exportSearchActionCreator,
-  exportPage :exportPageActionCreator,
+  exportPage :exportActionCreator,
   finance: financeActionCreator,
   config: configActionCreator
 };

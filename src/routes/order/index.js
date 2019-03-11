@@ -7,6 +7,7 @@ const prefix = '/order';
 const children = [
   require('./input').default,
   require('./import').default,
+  require('./accept').default,
   require('./pending').default,
   require('./complete').default,
   require('./all').default,

@@ -22,10 +22,12 @@ const TYPE = [
  * search: 搜索按钮的标题
  * more：更多按钮的标题
  * reset：重置按钮的标题
+ * sort：排序按钮的标题
  */
 const ConfigType = {
   search: PropTypes.string.isRequired,
   reset: PropTypes.string.isRequired,
+  sort: PropTypes.string,
   more: PropTypes.string
 };
 
@@ -33,20 +35,19 @@ const ConfigType = {
  * key: 唯一标识一个表单元素
  * title：表单元素旁边的标题
  * type：表单元素的类型
- * require: 是否必填的 * 展示
  * props：传递给表单元素的额外属性
  */
 const FilterType = {
   key: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   type: PropTypes.oneOf(TYPE).isRequired,
-  required: PropTypes.bool,
   options: PropTypes.array,
   props: PropTypes.object
 };
 
 /**
  * data：传递给filters的默认值，为key:value的形式，此处的key为FilterType中的key
+ * isSort：是否需要排序按钮，默认false，当设置为true时，onClick函数需要实现key为sort的响应函数
  * onClick：按钮点击事件，原型为func(key)
  * onChange：表单控件内容改变时触发，原型为func(key, value)
  * onSearch：search控件发出的事件，原型为func(key, value)
@@ -56,6 +57,7 @@ class Search extends React.Component {
     config: PropTypes.shape(ConfigType).isRequired,
     filters: PropTypes.arrayOf(PropTypes.shape(FilterType)).isRequired,
     data: PropTypes.object,
+    isSort: PropTypes.bool,
     getContainer: PropTypes.func,
     onClick: PropTypes.func,
     onChange: PropTypes.func,
@@ -105,9 +107,15 @@ class Search extends React.Component {
       <div role='buttons'>
         {this.toButton('search', {ref: 'search', type: 'primary'})}
         {this.toButton('reset')}
+        {this.isSort() ? this.toButton('sort') : null}
         {this.isMore() ? this.toMore() : null}
       </div>
     );
+  };
+
+  isSort = () => {
+    const {config, colNum=defaultColNum, filters, isSort=false} = this.props;
+    return isSort && config.sort && (filters.length > colNum);
   };
 
   isMore = () => {
@@ -204,9 +212,7 @@ class Search extends React.Component {
 
   toCol = (span, control) => {
     const factor = control.span || 1;
-    const title = control.required ?
-      <span>{control.title}<span className={s.requiredMark}>*</span></span> :
-      <span>{control.title}</span>;
+    const title = <span>{control.title}</span>;
     return (
       <Col span={span * factor} key={control.key}>
         <FormItem label={title}>

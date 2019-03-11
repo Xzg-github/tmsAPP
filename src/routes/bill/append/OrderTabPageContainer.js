@@ -12,7 +12,7 @@ const buildOrderTabPageState = async () => {
   const urlConfig = '/api/bill/append/config';
   const urlList = '/api/bill/append/list';
   const statusNames = ['transport_order', 'order_type'];
-  return buildOrderTabPageCommonState(urlConfig, urlList, statusNames);
+  return buildOrderTabPageCommonState(urlConfig, urlList, statusNames, false, true);
 };
 
 const getSelfState = (rootState) => {
@@ -95,11 +95,11 @@ const clickActionCreator = (tabKey, key) => {
   }
 };
 
-// 查看
+// 编辑
 const doubleClickActionCreator = (tabKey, index) => (dispatch, getState) => {
   const selfState = getSelfState(getState());
   const item = selfState.tableItems[tabKey][index];
-  return showOrderInfoPage(dispatch, item, selfState, true);
+  return showOrderInfoPage(dispatch, item, selfState, false);
 };
 
 // 查看
