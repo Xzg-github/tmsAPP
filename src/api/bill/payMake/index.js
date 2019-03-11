@@ -67,7 +67,8 @@ api.post('/carModeId', async (req, res) => {
 // 获取始发地、目的地下拉
 api.post('/departureDestination', async (req, res) => {
   const url = `${archiver_service}/archiver/district/drop_list`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+  const params = {...req.body, districtName: req.body.filter};
+  res.send(await fetchJsonByNode(req, url, postOption(params)));
 });
 
 // 获取供应商下拉
