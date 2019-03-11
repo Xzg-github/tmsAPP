@@ -45,7 +45,7 @@ const jumpToChange = async (item, dispatch, getState) => {
   });
   const value = {
     costInfo,
-    balanceId: item.customerId || result.balanceId,
+    balanceId: item.supplierId || result.balanceId,
     transportOrderId: {value: item.id, title: item.orderNumber},
     renewalMode: 'renewal_mode_001'
   };

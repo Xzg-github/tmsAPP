@@ -121,6 +121,8 @@ const priceOrNumChange = (tableKey, rowIndex, keyName, keyValue) => (dispatch, g
 const contentChangeActionCreator = (tableKey, rowIndex, keyName, keyValue) =>{
   if (keyName === 'price' || keyName === 'number') {
     return priceOrNumChange(tableKey, rowIndex, keyName, keyValue);
+  }else if (keyName === 'balanceId') {
+    return action.update({[keyName]: keyValue, currency: keyValue.balanceCurrency}, ['value', tableKey], rowIndex);
   } else {
     return action.update({[keyName]: keyValue}, ['value', tableKey], rowIndex);
   }
