@@ -3,7 +3,7 @@ import {postOption, fetchJsonByNode} from '../../../common/common';
 import {host} from '../../globalConfig';
 
 let api = express.Router();
-const service = `${host}/archiver-service-yule`;
+const service = `${host}/archiver-service`;
 const URL_LIST = `${service}/supervisor_info/supplier_list/search`;
 const URL_DEL = `${service}/supervisor_info/batch`;
 const URL_SAVE = `${service}/supervisor_info`;
