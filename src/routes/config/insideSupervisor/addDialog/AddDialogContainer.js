@@ -48,18 +48,16 @@ const exitValidActionCreator = () => {
 
 //输入框搜索
 const formSearchActionCreator = (key, title, keyControls) => async (dispatch, getState) => {
-  const {controls, value} = getSelfState(getState());
+  const {controls} = getSelfState(getState());
   let data, body;
   if(key === 'institutionId') {                                                     //归属机构
     body = {institutionName: title};
     data = await helper.fetchJson(URL_ALL_INSTITUTION, helper.postOption(body));
   }else if(key === 'factoryId'){
-    if(value.supplierId){
-      body = {customerId: '-1', name: title};
-      data = await helper.fetchJson(URL_ALL_SITE, helper.postOption(body));
-    }
+      body = {customerId: -1, name: title};
+      data = await helper.fetchJson(URL_ALL_SITE, helper.postOption(body));debugger
   }else if(key === 'driverId'){
-    body = { supplierId: -1, name: title};
+    body = { isOwner: 1, name: title};
     data = await helper.fetchJson(URL_ALL_DRIVER, helper.postOption(body));
   }else{
     data = await helper.fuzzySearchEx(title, keyControls);

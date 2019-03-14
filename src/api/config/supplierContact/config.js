@@ -69,7 +69,7 @@ const controls = [
   {key: 'contactNativePlace', title: '籍贯', type: 'text'},
   {key: 'contactBirthday', title: '生日', type: 'date'},
   {key: 'enabledType', title: '状态', type: 'select', dictionary: name.ENABLED_TYPE},
-  {key: 'isDefault', title: '是否默认', type: 'radioGroup', dictionary: name.ZERO_ONE_TYPE}
+  {key: 'isDefault', title: '是否默认', type: 'radioGroup', dictionary: name.ZERO_ONE_TYPE, required: true}
 ];
 
 const edit = {
