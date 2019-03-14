@@ -1,0 +1,17 @@
+@import '../../../components/variables.less';
+
+.root {
+  > div {
+    > div {
+      margin: 0 0 @padding-vertical 0;
+    }
+  }
+
+  :global(.ant-checkbox-group) {
+    margin-left: 8px;
+
+    > label {
+      margin-bottom: 8px;
+    }
+  }
+}

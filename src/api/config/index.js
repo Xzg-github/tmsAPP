@@ -34,6 +34,7 @@ import corporation from './corporation';
 import bank from './bank';
 import customerInvoice from './customerInvoice';
 import position from './position';
+import customerTask from './customerTask';
 
 let api = express.Router();
 api.use('/dataset', apiDataSet);
@@ -70,6 +71,7 @@ api.use('/car_manager', carManager);
 api.use('/corporation', corporation);
 api.use('/bank', bank);
 api.use('/customer_invoice', customerInvoice);
+api.use('/customer_task', customerTask);
 api.use('/position', position);
 
 export default api;
