@@ -15,7 +15,10 @@ const STATE_PATH =  ['payMonthlyBill'];
 
 const URL_LIST = '/api/bill/pay_monthly_bill/list';//查询列表
 const URL_ONE = '/api/bill/pay_monthly_bill/one';//根据ID获取单条数据
-const URL_DELETE = '/api/bill/pay_monthly_bill/delete'
+const URL_DELETE = '/api/bill/pay_monthly_bill/delete';
+const URL_SEND = '/api/bill/pay_monthly_bill/send';
+const URL_CHECK = '/api/bill/pay_monthly_bill/check';
+const URL_REVOKE = '/api/bill/pay_monthly_bill/cancel';
 
 
 const action = new Action(STATE_PATH);
@@ -105,6 +108,50 @@ const deleteActionCreator = async (dispatch, getState) => {
   }
 };
 
+const sendActionCreator = async (dispatch, getState) =>{
+  const {tableItems} = getSelfState(getState());
+  const idList = tableItems.reduce((result, item) => {
+    item.checked && (item.statusType === 'status_draft' || item.statusType === 'status_fall_back_completed') && result.push(item.id);
+    return result;
+  }, []);
+  if (idList.length === tableItems.filter(item => item.checked).length) {
+    const {returnCode, returnMsg} = await fetchJson(URL_SEND, postOption(idList));
+    return returnCode === 0 ? updateTable(dispatch, getState) : showError(returnMsg);
+  }else {
+    return showError('请选择草稿或已回退状态的记录!');
+  }
+};
+
+const reconciliationActionCreator = async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const idList = tableItems.reduce((result, item) => {
+    item.checked && item.statusType !== 'status_completed'  && result.push(item.id);
+    return result;
+  }, []);
+  if (idList.length === tableItems.filter(item => item.checked).length) {
+    const {returnCode, returnMsg} = await fetchJson(URL_CHECK, postOption(idList));
+    return returnCode === 0 ? updateTable(dispatch, getState) : showError(returnMsg);
+  }else {
+    return showError('包含已完成状态的记录!');
+  }
+};
+
+
+
+const cancelActionCreator = async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const idList = tableItems.reduce((result, item) => {
+    item.checked && item.statusType === 'status_completed'  && result.push(item.id);
+    return result;
+  }, []);
+  if (idList.length === tableItems.filter(item => item.checked).length) {
+    const {returnCode, returnMsg} = await fetchJson(URL_REVOKE, postOption(idList));
+    return returnCode === 0 ? updateTable(dispatch, getState) : showError(returnMsg);
+  }else {
+    return showError('请选择已完成状态的记录!');
+  }
+};
+
 
 const toolbarActions = {
   search: searchClickActionCreator,
@@ -112,7 +159,10 @@ const toolbarActions = {
   add:addActionCreator,
   edit:editActionCreator,
   output:outputActionCreator,
-  del: deleteActionCreator
+  del: deleteActionCreator,
+  send: sendActionCreator,
+  check: reconciliationActionCreator,
+  revoke: cancelActionCreator
 };
 
 const clickActionCreator = (key) => {

@@ -56,9 +56,10 @@ const tableCols = [
 const buttons = [
   {key:"add" ,title:"新增" , bsStyle: 'primary'},
   {key:"edit" ,title:"编辑" },
-
-  // {key: 'check', title: '审核'},
-  // {key: 'revoke', title: '撤销审核'},
+  {key: 'del', title: '删除', confirm: '确认删除?'},
+  {key: 'send', title: '发送', confirm: '确认发送?'},
+  {key: 'check', title: '对账'},
+  {key: 'revoke', title: '撤销', confirm: '确认撤销?'},
   {key:"output" ,title:"输出" },
 ];
 
