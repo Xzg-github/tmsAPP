@@ -46,6 +46,24 @@ api.post('/delete', async (req, res) => {
   res.send(await fetchJsonByNode(req, url,postOption(req.body, 'delete')));
 });
 
+//批量发送
+api.post('/send', async (req, res) => {
+  const url = `${service}/payable_month_bill/send`;
+  res.send(await fetchJsonByNode(req, url,postOption(req.body)));
+});
+
+//批量对账
+api.post('/check', async (req, res) => {
+  const url = `${service}/payable_month_bill/reconciliation`;
+  res.send(await fetchJsonByNode(req, url,postOption(req.body)));
+});
+
+//批量撤销
+api.post('/cancel', async (req, res) => {
+  const url = `${service}/payable_month_bill/cancel`;
+  res.send(await fetchJsonByNode(req, url,postOption(req.body)));
+});
+
 
 /*-------------结算单位-------------*/
 
