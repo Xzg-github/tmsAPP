@@ -26,6 +26,12 @@ api.post('/send_code', async (req, res) => {
   res.send(await fetchJsonByNode(req, url));
 });
 
+// 校验验证码
+api.put('/verify_code', async (req, res) => {
+  const url = `${host}/auth-center-provider/password/resetting/checkSecurityCode`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
+});
+
 // 重置密码
 api.put('/reset', async (req, res) => {
   const url = `${host}/auth-center-provider/password/resetting/doReset/${req.body.type}`;

@@ -8,6 +8,7 @@ import GVerify from './gVerify';
 
 const Step = Steps.Step;
 const URL_SEND_CODE = '/api/password/send_code';
+const URL_VERIFY_CODE = '/api/password/verify_code';
 const URL_RESET = '/api/password/reset';
 
 function isEmail(str){
@@ -80,7 +81,7 @@ function Step2(props) {
         <Input placeholder={label[2]} name='code' value={props.code} onChange={props.onChange}/>
         <Button disabled={props.time > 0} onClick={() => props.onClick('send')}>{title}</Button>
       </div>
-      <div><Button type='primary' onClick={props.next} disabled={!props.code}>下一步</Button></div>
+      <div><Button type='primary' onClick={props.next} disabled={!props.code || props.code.length !== 6}>下一步</Button></div>
     </div>
   );
 }
@@ -167,7 +168,17 @@ class FindPassword extends React.Component {
     if (!this.state.codeId) {
       helper.showError(this.state.time === 0 ? '请先发送验证码' : '请重新发送验证码');
     } else {
-      this.setState({step: 2});
+      execWithLoading(async () => {
+        const mode = this.state.mode;
+        const body = {id: this.state.codeId, recipient: this.state[mode].account, text: this.state.code};
+        const option = helper.postOption(body, 'put');
+        const json = await helper.fetchJson(URL_VERIFY_CODE, option);
+        if (json.returnCode !== 0) {
+          helper.showError(json.returnMsg);
+        } else {
+          this.setState({step: 2});
+        }
+      });
     }
   };
 

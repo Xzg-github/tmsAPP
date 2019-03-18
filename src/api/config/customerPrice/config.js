@@ -21,7 +21,7 @@ const buttons = [
   {key: 'add', title: '新增', bsStyle: 'primary', sign: 'customerPrice_add'},
   {key: 'copy', title: '复制新增', sign: 'customerPrice_copy'},
   {key: 'edit', title: '编辑', sign: 'customerPrice_edit'},
-  {key: 'delete', title: '删除', sign: 'customerPrice_delete'},
+  {key: 'delete', title: '删除', sign: 'customerPrice_delete', confirm: '是否删除所选数据？'},
   {key: 'enable', title: '启用', sign: 'customerPrice_enable'},
   {key: 'disable', title: '禁用', sign: 'customerPrice_disable'},
   {key: 'import', title: '导入', sign: 'customerPrice_import'},
@@ -69,7 +69,7 @@ const tabs2 = [
 const contract = {
   controls: [
     {key: 'customerId', title: '客户', type: 'search', required: true},
-    {key: 'contractNumber', title: '合同号', type: 'text'},
+    {key: 'contractCode', title: '合同号', type: 'text'},
     {key: 'startTime', title: '有效开始日期', type: 'date', required: true, rule: {type: '<', key: 'endTime'}},
     {key: 'endTime', title: '有效结束日期', type: 'date', required: true, rule: {type: '>', key: 'startTime'}},
     {key: 'balanceCompany', title: '结算单位', type: 'search'},

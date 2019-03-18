@@ -16,6 +16,7 @@ const children = [
   require('./customerCost').default,
   require('./customerService').default,
   require('./customerInvoice').default,
+  require('./customerTask').default,
 
   require('./suppliersArchives').default,
   require('./supplierContact').default,

@@ -20,6 +20,7 @@ class PicturesWall extends React.Component {
   static propTypes = {
     fileList: PropTypes.array,
     handleImgChange: PropTypes.func,
+    handleImgRemove: PropTypes.func,
     uploadText: PropTypes.string,
   }
 
@@ -56,7 +57,7 @@ class PicturesWall extends React.Component {
 
   render() {
     const { previewVisible, previewImage, previewImageAltText } = this.state;
-    const { fileList=[], uploadText, handleImgChange } = this.props;
+    const { fileList=[], uploadText, handleImgChange, handleImgRemove } = this.props;
     const props = {
       listType: 'picture-card',
       multiple: true,
@@ -64,6 +65,7 @@ class PicturesWall extends React.Component {
       action: '/api/proxy/zuul/tms-service/file/upload/document',
       onPreview: this.handlePreview,
       onChange: handleImgChange,
+      onRemove: handleImgRemove,
       beforeUpload: this.beforeUpload
     };
     return (

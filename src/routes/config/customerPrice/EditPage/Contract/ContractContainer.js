@@ -5,15 +5,18 @@ import {EnhanceLoading} from '../../../../../components/Enhance';
 import {getPathValue} from '../../../../../action-reducer/helper';
 import helper, {getJsonResult, postOption, fetchJson, showError, showSuccessMsg} from '../../../../../common/common';
 import execWithLoading from '../../../../../standard-business/execWithLoading';
-import {updateTable} from '../../OrderPageContainer';
+import {afterEdit} from '../../OrderPageContainer';
 
 const PARENT_PATH = ['customerPrice'];
 const STATE_PATH = ['customerPrice', 'edit'];
 
 const URL_DETAIL = '/api/config/customerPrice/detail';
 const URL_CUSTOMER = '/api/config/customerPrice/customer';
-const URL_SAVE_NEWADD = '/api/config/customerPrice/contractSave';
+const URL_SAVE_NEWADD = '/api/config/customerPrice/contractAdd';
+const URL_SAVE_EDIT = '/api/config/customerPrice/contractSave';
 const URL_SAVE_COMMIT = '/api/config/customerPrice/contractCommit';
+const URL_DEL_FILE = '/api/track/file_manager/upload_del';
+const URL_DOWNLOAD= '/api/track/file_manager/download';
 
 const action = new Action(STATE_PATH);
 const PATH = 'contract';  // PATH与tab页签的key值一致
@@ -52,12 +55,25 @@ const saveActionCreator = async (dispatch, getState) => {
     if (!helper.validValue(controls, value)) {
       return dispatch(action.assign({valid: true}, [PATH]));
     }
-    const url = editType === 2 ? URL_SAVE_COMMIT : URL_SAVE_NEWADD;
-    const params = {fileList, value};
+    const url = editType === 2 ? URL_SAVE_EDIT : URL_SAVE_NEWADD;
+    const {item} = getParentState(getState());
+    const files = fileList.map(o => {
+      return {
+        fileFormat: o.fileFormat || 'id',
+        fileName: o.name,
+        fileUrl: o.fileUrl || o.response.result,
+        url: o.url
+      }
+    });
+    const params = {
+      ...helper.getObject(helper.convert(value), controls.map(o => o.key)),
+      id: editType === 2 ? item.id : null,
+      fileList: files,
+    };
     const {returnCode, returnMsg} = await fetchJson(url, helper.postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    await updateTable();
+    await afterEdit(dispatch, getState);
   });
 };
 
@@ -67,11 +83,24 @@ const commitActionCreator = async (dispatch, getState) => {
     if (!helper.validValue(controls, value)) {
       return dispatch(action.assign({valid: true}, [PATH]));
     }
-    const params = {fileList, value};
+    const {item} = getParentState(getState());
+    const files = fileList.map(o => {
+      return {
+        fileFormat: o.fileFormat || 'id',
+        fileName: o.name,
+        fileUrl: o.fileUrl || o.response.result,
+        url: o.url
+      }
+    });
+    const params = {
+      ...helper.getObject(helper.convert(value), controls.map(o => o.key)),
+      id: item.id,
+      fileList: files,
+    };
     const {returnCode, returnMsg} = await fetchJson(URL_SAVE_COMMIT, helper.postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    await updateTable();
+    await afterEdit(dispatch, getState);
   });
 };
 
@@ -92,26 +121,65 @@ const onExitValidActionCreator = () => async (dispatch, getState) => {
   dispatch(action.assign({valid: false}, [PATH]));
 };
 
-const handleImgChange = (data) => async (dispatch, getState) => {
+const handleImgChange = (data={}) => async (dispatch, getState) => {
+  const {file, fileList} = data;
+  if (!file) return;
+  const list = fileList.filter(o => o.status);
   // 控制最多上传10个
-  const list = data.fileList.filter(o => o.status);
-  const fileList = list.length > 10 ? list.slice(0, 10) : list;
-  dispatch(action.assign({fileList}, [PATH]));
+  let newList = list.length > 10 ? list.slice(0, 10) : list;
+  if (file.response && file.response.returnCode !== 0) {
+    helper.showError(`上传失败，${file.response.returnMsg || ''}`);
+    newList = fileList.filter(item => item.uid !== file.uid);
+  }
+  if (file.status === 'done') {
+    const locationUrl = getJsonResult(await fetchJson(`${URL_DOWNLOAD}/${file.response.result}`));
+    fileList.forEach(item => {
+      if (item.uid === file.uid) {
+        item.url = `/api/proxy/zuul/file-center-service/${locationUrl[file.response.result]}`;
+      }
+    });
+  }
+  dispatch(action.assign({fileList: newList}, [PATH]));
+};
+
+const handleImgRemove = (file) => async (dispatch, getState) => {
+  // 删除文件服务中心的远程文件
+  if (file.response.returnCode === 0) {
+    const {returnCode, result, returnMsg} = await fetchJson(`${URL_DEL_FILE}/${[file.response.result]}`, 'delete');
+    returnCode === 0 ? showSuccessMsg(returnMsg) : showError(returnMsg);
+  }
 };
 
 const initActionCreator = () => async (dispatch, getState) => {
   try {
     dispatch(action.assign({status: 'loading'}, [PATH]));
-    const {id, tabs, editType} = getParentState(getState());
-    const data = getJsonResult(await fetchJson(`${URL_DETAIL}/${id}`));
-    const {fileList=[], total={}, ...other} = data;
-    const newTabs = tabs.map(tab => {
-      (tab.key === 'freight') && (tab.title = `${tab.title}（${total.masterTotal || 0}）`);
-      (tab.key === 'extraCharge') && (tab.title = `${tab.title}（${total.additionalTotal || 0}）`);
-      return tab;
-    });
-    dispatch(action.assign({tabs: newTabs}));
-    const payload = {editType, fileList, ...other, status: 'page'};
+    const {item={}, tabs, editType} = getParentState(getState());
+    let state = {};
+    if (editType === 2) {
+      const data = getJsonResult(await fetchJson(`${URL_DETAIL}/${item.id}`));
+      const {total={}, fileList=[], ...other={}} = data;
+      state = {
+        fileList: fileList.map((file, index) => {
+          return {
+            ...file,
+            uid: index,
+            fileFormat: 'id',
+            name: file.fileName,
+            status: 'done'
+          }
+        }),
+        value: other
+      };
+      const newTabs = tabs.map(tab => {
+        (tab.key === 'freight') && (tab.title = `${tab.title}（${total.masterTotal || 0}）`);
+        (tab.key === 'extraCharge') && (tab.title = `${tab.title}（${total.additionalTotal || 0}）`);
+        return tab;
+      });
+      dispatch(action.assign({tabs: newTabs}));
+    } else {
+      state = item;
+    }
+  const payload = {editType, ...state, status: 'page'};
     dispatch(action.assign(payload, [PATH]));
   } catch (e) {
     helper.showError(e.message);
@@ -129,7 +197,8 @@ const actionCreators = {
   onChange: changeActionCreator,
   onSearch: formSearchActionCreator,
   onExitValid: onExitValidActionCreator,
-  handleImgChange
+  handleImgChange,
+  handleImgRemove
 };
 
 const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(Contract));

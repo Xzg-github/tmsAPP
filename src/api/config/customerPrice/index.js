@@ -3,7 +3,6 @@ import {postOption, fetchJsonByNode} from '../../../common/common';
 import {host} from '../../globalConfig';
 import mockData from './mock';
 
-const tms_service = `${host}/tms-service`;
 const archiver_service = `${host}/archiver-service`;
 const tenant_service = `${host}/tenant-service`;
 
@@ -16,9 +15,8 @@ api.get('/config', async (req, res) => {
 
 // 主列表数据
 api.post('/list', async (req, res) => {
-  const url = `${tms_service}/customer_price/list/search`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, returnMsg: 'Success', result: mockData.list})
+  const url = `${archiver_service}/customer_price/list/search`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 // 客户下拉
@@ -39,42 +37,43 @@ api.post('/user', async (req, res) => {
 
 // 删除
 api.post('/delete', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master/batch`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
-  res.send({returnCode: 0, returnMsg: 'Success', result: 'Success'});
+  const url = `${archiver_service}/customer_price/batch/delete`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
 });
 
 // 启用/禁用
 api.post('/able', async (req, res) => {
   const url = `${archiver_service}/customer_price_master/batch/${req.body.enabledType}`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-  res.send({returnCode: 0, returnMsg: 'Success', result: 'Success'});
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
 // 获取编辑界面合同信息数据
 api.get('/detail/:id', async (req, res) => {
-  const url = `${archiver_service}/customer_price/${req.params.id}`;
-  // res.send(await fetchJsonByNode(req, url));
-  res.send({returnCode: 0, returnMsg: 'Success', result: mockData.detail});
+  const url = `${archiver_service}/customer_price/search/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url));
 });
 
 // 新增合同信息保存
-api.post('/contractSave', async (req, res) => {
-  const url = `${archiver_service}/customer_price`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, returnMsg: 'Success', result: 'Success'});
+api.post('/contractAdd', async (req, res) => {
+  const url = `${archiver_service}/customer_price/add`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
-// 编辑合同信息保存或提交
+// 编辑合同信息保存
+api.post('/contractSave', async (req, res) => {
+  const url = `${archiver_service}/customer_price/save`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
+});
+
+// 编辑合同信息提交
 api.post('/contractCommit', async (req, res) => {
-  const url = `${archiver_service}/customer_price`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-  res.send({returnCode: 0, returnMsg: 'Success', result: 'Success'});
+  const url = `${archiver_service}/customer_price/submit`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
 // 获取编辑界面运费信息数据
 api.post('/freightDetail', async (req, res) => {
-  const url = `${archiver_service}/customer_price/${req.params.id}`;
+  const url = `${archiver_service}/customer_price_master/${req.params.id}`;
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
   res.send({returnCode: 0, returnMsg: 'Success', result: mockData.freightDetail});
 });

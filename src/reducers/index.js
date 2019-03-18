@@ -102,6 +102,7 @@ const rootReducer = combineReducers({
   customerCost: create('customerCost', false),
   customerService: create('customerService', false),
   customerInvoice: create('customerInvoice', false),
+  customerTask: create('customerTask', false),
   supplierContact: create('supplierContact', false),
   supplierCar: create('supplierCar', false),
   supplierDriver: create('supplierDriver', false),

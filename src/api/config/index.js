@@ -34,8 +34,12 @@ import corporation from './corporation';
 import bank from './bank';
 import customerInvoice from './customerInvoice';
 import position from './position';
+<<<<<<< HEAD
 import customerPriceDetail from './customerPriceDetail';
 import supplierPriceDetail from './supplierPriceDetail';
+=======
+import customerTask from './customerTask';
+>>>>>>> 60ae6d956595782439585cb1947b8eed4949c7c5
 
 let api = express.Router();
 api.use('/dataset', apiDataSet);
@@ -72,6 +76,7 @@ api.use('/car_manager', carManager);
 api.use('/corporation', corporation);
 api.use('/bank', bank);
 api.use('/customer_invoice', customerInvoice);
+api.use('/customer_task', customerTask);
 api.use('/position', position);
 api.use('/customerPriceDetail', customerPriceDetail);
 api.use('/supplierPriceDetail', supplierPriceDetail);

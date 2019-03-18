@@ -14,6 +14,7 @@ const URL_CUSTOMER = '/api/config/customerPrice/customer';
 const URL_USER = '/api/config/customerPrice/user';
 const URL_DELETE = '/api/config/customerPrice/delete';
 const URL_ABLE = '/api/config/customerPrice/able';
+const URL_DOWNLOAD= '/api/track/file_manager/download';
 
 const action = new Action(STATE_PATH);
 
@@ -51,8 +52,11 @@ const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
   dispatch(action.update({options}, 'filters', index));
 };
 
-const updateTable = async (dispatch, getState) => {
-  const {currentPage, pageSize, searchData={}} = getSelfState(getState());
+const afterEdit = async (dispatch, getState, isUpdate=true) => {
+  const {activeKey, tabs, currentPage, pageSize, searchData={}} = getSelfState(getState());
+  const newTabs = tabs.filter(o => o.key !== activeKey);
+  dispatch(action.assign({activeKey: 'index', tabs: newTabs, [activeKey]: null}));
+  if (!isUpdate) return;
   return search2(dispatch, action, URL_LIST, currentPage, pageSize, toFormValue(searchData))
 };
 
@@ -69,7 +73,7 @@ const showEditPage = (dispatch, getState, editType=0, key, title, item={}) => {
   const newTabs = tabs.concat({key: KEY, title});
   const payload = {
     ...helper.deepCopy(editConfig),
-    ...item,
+    item,
     editType
   };
   dispatch(action.assign({[KEY]: payload, tabs: newTabs, activeKey: KEY}));
@@ -80,7 +84,11 @@ const addActionCreator = async (dispatch, getState) => {
 };
 
 const copyActionCreator = async (dispatch, getState) => {
-  showEditPage(dispatch, getState, 1, 'copyAdd', '复制新增');
+  const {tableItems} = getSelfState(getState());
+  const index = helper.findOnlyCheckedIndex(tableItems);
+  if (index === -1) return showError('请勾选一条数据！');
+  const item = tableItems[index];
+  showEditPage(dispatch, getState, 1, 'copyAdd', '复制新增', item);
 };
 
 const isCanEdit = (item) => {
@@ -169,7 +177,13 @@ const clickActionCreator = (key) => {
 
 const linkActionCreator = (key, rowIndex, item) => async (dispatch, getState) => {
   if (key === 'fileList') {
-    window.open(item.fileUrl);
+    if(item.fileFormat === 'id'){
+      const {returnCode, result, returnMsg} = await helper.fetchJson(`${URL_DOWNLOAD}/${item.fileUrl}`);
+      if (returnCode !== 0) return helper.showError(returnMsg);
+      helper.download(`/api/proxy/zuul/file-center-service/${result[item.fileUrl]}`,'file');
+    }else {
+      helper.download(item.fileUrl, 'file');
+    }
   }
 };
 
@@ -205,4 +219,4 @@ const actionCreators = {
 
 const Container = connect(mapStateToProps, actionCreators)(OrderPage);
 export default Container;
-export {updateTable};
+export {afterEdit};

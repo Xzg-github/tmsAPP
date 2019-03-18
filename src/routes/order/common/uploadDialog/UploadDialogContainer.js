@@ -11,19 +11,18 @@ const createContainer = (statePath, afterEditActionCreator) => {
     return getPathValue(rootState, statePath);
   };
 
-  const previewActionCreator = (file) => {
-    return action.assign({
-      previewImage: file.url || file.thumbUrl,
-      previewVisible: true,
-    });
-  };
-
-  const closePreviewActionCreator = () => {
-    return action.assign({previewVisible: false});
-  };
-
   const cancelActionCreator = () => {
     return afterEditActionCreator();
+  };
+
+  const preActionCreator = () => (dispatch, getState) => {
+    const {pictureIndex} = getSelfState(getState());
+    pictureIndex && dispatch(action.assign({pictureIndex: pictureIndex-1}));
+  };
+
+  const nextActionCreator = () => (dispatch, getState) => {
+    const {pictureIndex, previewImage} = getSelfState(getState());
+    (previewImage.length-1 > pictureIndex) && dispatch(action.assign({pictureIndex: pictureIndex+1}));
   };
 
   const mapStateToProps = (state) => {
@@ -32,8 +31,8 @@ const createContainer = (statePath, afterEditActionCreator) => {
 
   const actionCreators = {
     onCancel: cancelActionCreator,
-    onPreview: previewActionCreator,
-    onClosePreview: closePreviewActionCreator
+    onPre: preActionCreator,
+    onNext: nextActionCreator
   };
 
   return connect(mapStateToProps, actionCreators)(UploadDialog);
@@ -41,10 +40,8 @@ const createContainer = (statePath, afterEditActionCreator) => {
 
 const showUploadDialog = async (fileList) => {
   const props =  {
-    title: '附件查看',
-    fileList: fileList,
-    previewVisible: false,
-    previewImage: ''
+    previewImage: fileList.map(item => {return item.url || item.thumbUrl;}),
+    pictureIndex: 0
   };
   showDialog(createContainer, props);
 };

@@ -86,7 +86,7 @@ const config = {
       {key: 'del', title: '删除', confirm: '删除！是否确认删除所有勾选运单？'},
     ].concat(commonButtons),
     sending: [
-      {key: 'send', title: '任务派发', bsStyle: 'primary'},
+      {key: 'send', title: '任务制作', bsStyle: 'primary'},
     ].concat(commonButtons),
   }
 };
