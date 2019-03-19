@@ -52,7 +52,7 @@ const controls = [
   {key: 'supervisorMobilePhone', title: '手机号码', type: 'text', required: true},
   {key: 'shortNumber', title: '短号', type: 'text', required: true},
   {key: 'idCardNumber', title: '监理身份证号码', type: 'text'},
-  {key: 'factoryId', title: '所属站点', type: 'search'},
+  {key: 'consigneeConsignorId', title: '所属站点', type: 'search'},
   {key: 'driverId', title: '所属司机', type: 'search'},
   {key: 'otherRemark', title: '其他说明', type: 'text'},
   {key: 'attribute1', title: '备用1', type: 'text'},
