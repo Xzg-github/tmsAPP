@@ -98,6 +98,7 @@ const customer_mgr = [
   {key: 'customer_tax'},        // 税率档案
   {key: 'customer_cost'},       // 习惯费用项
   {key: 'customer_invoice'},       // 开票档案
+  {key: 'customer_task'},       // 任务库
 ];
 
 // 供应商管理子菜单

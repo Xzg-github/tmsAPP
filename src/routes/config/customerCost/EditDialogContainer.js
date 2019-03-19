@@ -89,7 +89,9 @@ export default (config, data, isEdit) => {
     controls: config.controls,
     title: isEdit ? config.edit : config.add,
     value: data,
-    size: 'middle'
+    size: 'middle',
+    inset: false,
+    container: true
   };
   global.store.dispatch(action.create(props));
   const Container = connect(mapStateToProps, actionCreators)(EditDialog);
