@@ -53,7 +53,7 @@ const formSearchActionCreator = (key, title, keyControls) => async (dispatch, ge
   if(key === 'institutionId') {                                                     //归属机构
     body = {institutionName: title};
     data = await helper.fetchJson(URL_ALL_INSTITUTION, helper.postOption(body));
-  }else if(key === 'factoryId'){
+  }else if(key === 'consigneeConsignorId'){
       body = {customerId: -1, name: title};
       data = await helper.fetchJson(URL_ALL_SITE, helper.postOption(body));debugger
   }else if(key === 'driverId'){
