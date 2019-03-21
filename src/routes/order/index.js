@@ -11,6 +11,7 @@ const children = [
   require('./pending').default,
   require('./complete').default,
   require('./all').default,
+  require('../track/trackOrder').default,
 ];
 
 export default RouterHelper(prefix, title, children);

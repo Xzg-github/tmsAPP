@@ -30,14 +30,15 @@ const order = [
   {key: 'import'},    // 运单导入
   {key: 'accept'},    // 接入运单
   {key: 'pending'},   // 待办任务
-  {key: 'complete'},  // 已办任务
-  {key: 'all'},       // 运输汇总
+  {key: 'complete'},  // 执行中任务
+  {key: 'track_order'},     // 运单跟踪
+  {key: 'all'},       // 历史查询
 ];
 
 // 车辆调度侧边栏
 const dispatch = [
   {key: 'todo'},          // 待办任务
-  {key: 'done'},          // 已办任务
+  {key: 'done'},          // 执行中任务
 ];
 
 // 监理任务侧边栏
@@ -49,7 +50,6 @@ const supervisor = [
 
 // 跟踪管控侧边栏
 const track = [
-  {key: 'track_order'},     // 运单跟踪
   {key: 'track_transport'},     // 在途跟踪
   {key: 'file_manager'},     // 文件管理
   {key: 'task_total'},     // 任务看板
