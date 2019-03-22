@@ -104,7 +104,8 @@ const buildDialogState = async (data, type) => {
     let value = [];
     if (data.taskList) {
       data.taskList.map(item => {
-        value = value.concat(item.subList);
+        const currentValue = item.subList.filter(item => item.isCheck === 1).map(item => item.dictionaryCode);
+        value = value.concat(currentValue);
       })
     }
     const titles = ['新增', '编辑', '查看'];
