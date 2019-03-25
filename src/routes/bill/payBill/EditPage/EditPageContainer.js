@@ -194,8 +194,9 @@ const sendActionCreator = () => async (dispatch, getState) => {
       return currentItem.billExchangeRate !== 0;
     });
     if (!invalidTableItem) return showError('汇率为空，请在档案维护汇率');
-    value['customerContact'] = value['customerContact'].title;
-    value['customerHeaderInformation'] = value['customerHeaderInformation'].title;
+    if (value['supplierHeaderInformation']) {
+      value['supplierHeaderInformation'] = value['customerHeaderInformation'].title;
+    }
     const {returnCode, returnMsg} = await helper.fetchJson(URL_SEND, postOption({...convert(value)}));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
