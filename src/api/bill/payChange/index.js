@@ -131,4 +131,40 @@ api.get('/mainCurrency/:id', async (req, res) => {
   res.send(data);
 });
 
+//税额改单 SuperTable2费用名称onSearch事件接口
+api.post('/tax', async (req, res) => {
+  const url = `${archiver_service}/charge_item/search/tax_list`;
+  const {returnCode, result, returnMsg} = await fetchJsonByNode(req, url, postOption(req.body));
+  if (returnCode === 0) {
+    const transResult = result.data.reduce((result, item) => {
+      result.push({
+        value: item.id,
+        title: item.chargeName
+      })
+      return result
+    },[]);
+    res.send({returnCode, result: transResult});
+  } else {
+    res.send({returnCode, returnMsg});
+  }
+});
+
+//净额改单 SuperTable2费用名称onSearch事件接口
+api.post('/net', async (req, res) => {
+  const url = `${archiver_service}/charge_item/search/net_list`;
+  const {returnCode, result, returnMsg} = await fetchJsonByNode(req, url, postOption(req.body));
+  if (returnCode === 0) {
+    const transResult = result.data.reduce((result, item) => {
+      result.push({
+        value: item.id,
+        title: item.chargeName
+      })
+      return result
+    },[]);
+    res.send({returnCode, result: transResult});
+  } else {
+    res.send({returnCode, returnMsg});
+  }
+});
+
 export default api;

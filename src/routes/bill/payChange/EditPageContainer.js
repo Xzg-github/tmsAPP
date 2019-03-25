@@ -23,6 +23,8 @@ const URL_COMMIT =  '/api/bill/pay_change/commit';
 const URL_AUDIT = '/api/bill/pay_change/audit';
 const URL_REJECT = '/api/bill/pay_change/reject';
 const URL_CURRENCY = '/api/bill/pay_change/mainCurrency';
+const URL_TAX = '/api/bill/pay_change/tax';
+const URL_NET = '/api/bill/pay_change/net';
 
 const getSelfState = (rootstate) => {
   const parentState = getPathValue(rootstate, STATE_PARENT_PATH);
@@ -50,16 +52,22 @@ const formSearchActionCreator = (formKey, key, filter) => async(dispatch, getSta
 };
 
 //SuperTable2 onSearch事件 参考应收费用明细
-const searchActionCreator = (tableKey, rowIndex, key, value) => async (dispatch, getState) => {
-  const {tables} = getSelfState(getState());
-  let options, params = {maxNumber: 65536, filter: value};
+const searchActionCreator = (tableKey, rowIndex, key, tablevalue) => async (dispatch, getState) => {
+  const {tables, value} = getSelfState(getState());
+  const chargeItemURLObject = {
+    renewal_mode_001: URL_CHARGE_NAME,
+    renewal_mode_002: URL_TAX,
+    renewal_mode_003: URL_NET
+  };
+  const changeType = value['renewalMode'];
+  let options, params = {maxNumber: 65536, filter: tablevalue};
   switch (key){
     case 'balanceId': {
       options = getJsonResult(await fetchJson(URL_CUSTOMER, postOption(params)));
       break;
     }
     case 'chargeItemId': {
-      options = getJsonResult(await fetchJson(URL_CHARGE_NAME, postOption(params)));
+      options = getJsonResult(await fetchJson(chargeItemURLObject[changeType], postOption(params)));
       break;
     }
     default: return;
