@@ -7,16 +7,6 @@ import moment from 'moment';
 
 const BAIDU_AK = '018n8KOIEDfSSs7oxBhNEzCAyGlh6nXO';
 
-const getPoints = async (data) => {
-  const url = `/api/track/track_transport/line_points`;
-  const {returnCode, result, returnMsg} = await helper.fetchJson(url, helper.postOption(data));
-  if (returnCode !== 0) {
-    helper.showError(returnMsg);
-    return;
-  }
-  return result;
-};
-
 const createScript = (id, url) => {
   return new Promise(resolve => {
     if (document.getElementById(id)) {
@@ -62,6 +52,7 @@ class LineDialog extends React.Component {
           ],
           {strokeColor:"blue", strokeWeight:6, strokeOpacity:0.5}
         );
+        polyline.disableMassClear();
         this.map.addOverlay(polyline);
       }
     });
@@ -88,6 +79,7 @@ class LineDialog extends React.Component {
       pointsView.push(point);
       const marker = new BMap.Marker(point);        // 创建标注
       marker.addEventListener("click", this.openWindow.bind(this, info));
+      marker.disableMassClear();
       this.map.addOverlay(marker);                     // 将标注添加到地图中
       const opts = {
         position : point,    // 指定文本标注所在的地理位置
@@ -101,6 +93,7 @@ class LineDialog extends React.Component {
         lineHeight : "20px",
         fontFamily:"微软雅黑"
       });
+      label.disableMassClear();
       this.map.addOverlay(label);
     });
     this.map.setViewport(pointsView);
@@ -124,11 +117,11 @@ class LineDialog extends React.Component {
     arr.map((item, index) => {
       if (index !== length-1) {
         const point = item.split(',');
-        const latitude = point[0];
-        const longitude = point[1];
+        const latitude = point[1];
+        const longitude = point[0];
         const point2 = arr[index+1].split(',');
-        const latitude2 = point2[0];
-        const longitude2 = point2[1];
+        const latitude2 = point2[1];
+        const longitude2 = point2[0];
         const polyline = new BMap.Polyline([
             new BMap.Point(longitude, latitude),
             new BMap.Point(longitude2, latitude2)
@@ -142,11 +135,11 @@ class LineDialog extends React.Component {
 
   toRedLineMarkers = (arr) => {
     const point1 = arr[0].split(',');
-    const latitude = point1[0];
-    const longitude = point1[1];
+    const latitude = point1[1];
+    const longitude = point1[0];
     const point2 = arr[arr.length-1].split(',');
-    const latitude2 = point2[0];
-    const longitude2 = point2[1];
+    const latitude2 = point2[1];
+    const longitude2 = point2[0];
     let pointsView = [];
     //起点
     let point = new BMap.Point(longitude, latitude);
@@ -196,6 +189,7 @@ class LineDialog extends React.Component {
       helper.showError(`请先填写时间`);
       return;
     }
+    this.map.clearOverlays();
     const {returnCode, result, returnMsg} = await helper.fetchJson(url, helper.postOption(body));
     if (returnCode !== 0) return helper.showError(returnMsg);
     if (result.length < 2) return helper.showError(`暂无轨迹信息`);
