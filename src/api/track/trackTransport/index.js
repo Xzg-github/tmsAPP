@@ -38,9 +38,11 @@ api.get('/address/:id', async (req, res) => {
 
 //获取轨迹播放坐标点
 api.post('/line_points', async (req, res) => {
-  res.send({returnCode: 0, result: [
-      "22.597445,114.008669", "22.648502,114.025144", "22.676383,114.039805"
-    ]});
+  const url = `${host}/mq-service/gis/trajectory`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+  // res.send({returnCode: 0, result: [
+  //     "22.597445,114.008669", "22.648502,114.025144", "22.676383,114.039805"
+  //   ]});
 });
 
 export default api;
