@@ -291,6 +291,8 @@ export default async (data={}) => {
       msg += `${item.consigneeConsignorName};`;
     })
   }
-  const value = helper.getObject(data, ['id', 'carNumber', 'carModeId', 'gpsSimNumber', 'gpsEquipmentBrand', 'startTime', 'endTime']);
+  let value = helper.getObject(data, ['id', 'carNumber', 'carModeId', 'gpsSimNumber', 'gpsEquipmentBrand', 'startTime', 'endTime']);
+  value.startTime = data.planPickupTime;
+  value.endTime = moment().format('YYYY-MM-DD HH:mm:ss');
   return showPopup(LineDialog, {value, addressList: result, msg});
 };
