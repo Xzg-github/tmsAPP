@@ -41,23 +41,6 @@ class LineDialog extends React.Component {
     this.onClick = this.onClick.bind(this);
   }
 
-  toBlueLine = () => {
-    const {addressList} = this.props;
-    const length = addressList.length;
-    addressList.map(({latitude, longitude}, index) => {
-      if (index !== length-1) {
-        const polyline = new BMap.Polyline([
-            new BMap.Point(longitude, latitude),
-            new BMap.Point(addressList[index+1].longitude, addressList[index+1].latitude)
-          ],
-          {strokeColor:"blue", strokeWeight:6, strokeOpacity:0.5}
-        );
-        polyline.disableMassClear();
-        this.map.addOverlay(polyline);
-      }
-    });
-  };
-
   openWindow = (info, {point}) => {
     const type = ['发货点', '收货点', '收发货点'];
     const windowOpts = {
@@ -107,8 +90,7 @@ class LineDialog extends React.Component {
       map.enableScrollWheelZoom(true);
       map.addControl(new BMap.MapTypeControl());
       map.addControl(new BMap.NavigationControl());
-      !this.props.msg && this.toBlueLine();
-      !this.props.msg && this.toMarkers();
+      this.toMarkers();
     });
   }
 
@@ -281,12 +263,10 @@ export default async (data={}) => {
   let msg = '';
   if (returnCode !== 0) {
     return helper.showError(returnMsg);
-  }else if (result.length < 2) {
-    msg = `收发货地址信息不完整，无法形成轨迹`;
   }
   const invalidAddressList = result.filter(item => !item.latitude || !item.longitude);
   if (invalidAddressList.length > 0) {
-    msg = `以下收发货地址经纬度信息缺失，无法形成轨迹：`;
+    msg = `以下收发货地址经纬度信息缺失，无法形成标记：`;
     invalidAddressList.map(item => {
       msg += `${item.consigneeConsignorName};`;
     })
