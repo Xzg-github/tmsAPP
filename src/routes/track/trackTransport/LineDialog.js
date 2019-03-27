@@ -91,6 +91,7 @@ class LineDialog extends React.Component {
       map.addControl(new BMap.MapTypeControl());
       map.addControl(new BMap.NavigationControl());
       this.toMarkers();
+      this.onClick();
     });
   }
 
