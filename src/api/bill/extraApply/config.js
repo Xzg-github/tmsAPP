@@ -7,7 +7,7 @@ const filters = [
   {key: 'customerDelegateCode', title: '客户委托号', type: 'text'},
   {key: 'supplierId', title: '供应商', type: 'search', searchType: 'supplier'},
   {key: 'carNumber', title: '车牌号', type: 'text'},
-  {key: 'statusType', title: '运单状态', type: 'select', dictionary: name.STATUS_TYPE},
+  {key: 'statusType', title: '状态', type: 'select', dictionary: name.STATUS_TYPE},
   {key: 'insertUser', title: '创建人', type: 'search', searchType: 'user'},
   {key: 'waitCheckUser', title: '待审核人', type: 'search', searchType: 'user'},
   {key: 'insertTimeFrom', title: '创建时间', type: 'date'},
