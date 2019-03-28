@@ -149,10 +149,10 @@ const checkValid = (dispatch, getState) => {
 const saveActionCreator = () => async (dispatch, getState) => {
   if (checkValid(dispatch, getState)) return;
   execWithLoading(async () => {
-    const {value, editType, chargeFrom} = getSelfState(getState());
+    const {value, statusType, chargeFrom} = getSelfState(getState());
     const {payChargeList=[], receiveChargeList=[], ...extraCharge} = value;
-    // type: 0:新增, 1:编辑, 2:编辑（费用来源不为空（外部系统接入））
-    const type = editType > 0 ? chargeFrom ? 2 : 1: 0;
+    // type: 0:新增、编辑（待提交） 1:编辑（应收待提交）, 2:编辑（费用来源不为空（外部系统接入））
+    const type = chargeFrom ? 2 : statusType === 'status_receive_check_awaiting' ? 1: 0;
     const list = type === 1 ? receiveChargeList : payChargeList;
     const params = {
       type,
