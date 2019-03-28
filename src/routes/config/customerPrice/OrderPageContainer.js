@@ -92,10 +92,11 @@ const copyActionCreator = async (dispatch, getState) => {
 };
 
 const isCanEdit = (item) => {
-  if(item['enabledType'] !== 'enabled_type_unenabled'){
-    showError('只能编辑未启用状态记录');
-    return false;
-  }
+  // 主列表去掉启用未启用的判断
+  // if(item['enabledType'] !== 'enabled_type_unenabled'){
+  //   showError('只能编辑未启用状态记录');
+  //   return false;
+  // }
   return true;
 };
 
@@ -117,7 +118,7 @@ const deleteActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkItems = tableItems.filter(o=>o.checked);
   if(checkItems.length < 1) return showError('请勾选一条数据！');
-  if (checkItems.some(o => o.statusType !== 'enabled_type_unenabled')) return showError('请选择未启用状态的数据！');
+  // if (checkItems.some(o => o.statusType !== 'enabled_type_unenabled')) return showError('请选择未启用状态的数据！');
   const {returnCode, returnMsg} = await fetchJson(URL_DELETE, postOption(checkItems.map(o => o.id)));
   if (returnCode !== 0) return showError(returnMsg);
   showSuccessMsg(returnMsg);
@@ -128,11 +129,11 @@ const ableActionCreator = async (type='enabled_type_enabled', dispatch, getState
   const {tableItems} = getSelfState(getState());
   const checkItems = tableItems.filter(o=>o.checked);
   if(checkItems.length < 1) return showError('请勾选一条数据！');
-  if(type === 'enabled_type_enabled') {
-    if (checkItems.some(o=> o.enabledType === 'enabled_type_enabled')) return showError('请选择未启用或禁用状态的数据！');
-  } else if(type === 'enabled_type_disabled') {
-    if (checkItems.some(o=> o.enabledType !== 'enabled_type_enabled')) return showError('请选择已启用状态的数据！');
-  }
+  // if(type === 'enabled_type_enabled') {
+  //   if (checkItems.some(o=> o.enabledType === 'enabled_type_enabled')) return showError('请选择未启用或禁用状态的数据！');
+  // } else if(type === 'enabled_type_disabled') {
+  //   if (checkItems.some(o=> o.enabledType !== 'enabled_type_enabled')) return showError('请选择已启用状态的数据！');
+  // }
   const params = {
     ids: checkItems.map(o=>o.id),
     enabledType: type

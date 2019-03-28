@@ -29,70 +29,77 @@ const createFreightContainer = (config) => {
 
   const {PATH, API, DIALOG_API, IMPORT_CODE} = config;
 
-  const afterEdit = async (dispatch, pageSize) => {
+  const afterEdit = async (dispatch, pageSize, getState) => {
     await search2(dispatch, action, API.list, 1, pageSize, {}, {currentPage: 1}, [PATH]);
+    if (getState) {
+      const {tabs} = getParentState(getState());
+      const {tableItems} = getSelfState(getState());
+      const index = tabs.findIndex(o => o.key === PATH);
+      const title = tabs[index].title.replace(/(\d+)/, tableItems.length);
+      dispatch(action.update({title}, 'tabs', index));
+    }
   };
 
   const addActionCreator = async (dispatch, getState) => {
-    const {controls, pageSize} = getSelfState(getState());
-    const result = await showEditDialog({type: 0, controls, DIALOG_API});
-    result && await afterEdit(dispatch, pageSize);
+    const {controls, pageSize, customerPriceId} = getSelfState(getState());
+    const result = await showEditDialog({type: 0, customerPriceId, controls, DIALOG_API});
+    result && await afterEdit(dispatch, pageSize, getState);
   };
 
   const copyActionCreator = async (dispatch, getState) => {
-    const {controls, pageSize, items} = getSelfState(getState());
-    const index = helper.findOnlyCheckedIndex(items);
+    const {controls, pageSize, tableItems, customerPriceId} = getSelfState(getState());
+    const index = helper.findOnlyCheckedIndex(tableItems);
     if (index === -1) return showError('请勾选一条数据！');
-    const value = items[index];
-    const result = await showEditDialog({type: 1, controls, value, DIALOG_API});
-    result && await afterEdit(dispatch, pageSize);
+    const value = tableItems[index];
+    const result = await showEditDialog({type: 1, customerPriceId, controls, value, DIALOG_API});
+    result && await afterEdit(dispatch, pageSize, getState);
   };
 
   const editActionCreator = async (dispatch, getState) => {
-    const {controls, pageSize, items} = getSelfState(getState());
-    const index = helper.findOnlyCheckedIndex(items);
+    const {controls, pageSize, tableItems, customerPriceId} = getSelfState(getState());
+    const index = helper.findOnlyCheckedIndex(tableItems);
     if (index === -1) return showError('请勾选一条数据！');
-    const value = items[index];
+    const value = tableItems[index];
     if (value['enabledType'] !== 'enabled_type_unenabled') {
       return showError('只能编辑未启用状态记录！');
     }
-    const result = await showEditDialog({type: 2, controls, value, DIALOG_API});
+    const result = await showEditDialog({type: 2, customerPriceId, controls, value, DIALOG_API});
     result && await afterEdit(dispatch, pageSize);
   };
 
   const doubleClickActionCreator = (rowIndex) => async (dispatch, getState) => {
-    const {controls, pageSize, items} = getSelfState(getState());
-    const value = items[rowIndex];
+    const {controls, pageSize, tableItems, customerPriceId} = getSelfState(getState());
+    const value = tableItems[rowIndex];
     if (value['enabledType'] !== 'enabled_type_unenabled') {
       return showError('只能编辑未启用状态记录！');
     }
-    const result = await showEditDialog({type: 2, controls, value, DIALOG_API});
+    const result = await showEditDialog({type: 2, customerPriceId, controls, value, DIALOG_API});
     result && await afterEdit(dispatch, pageSize);
   };
 
   const batchActionCreator = async (dispatch, getState) => {
-    const {batchEditControls, pageSize, items} = getSelfState(getState());
-    const index = helper.findOnlyCheckedIndex(items);
+    const {batchEditControls, pageSize, tableItems} = getSelfState(getState());
+    const index = helper.findOnlyCheckedIndex(tableItems);
     if (index === -1) return showError('请勾选一条数据！');
-    const value = items[index];
-    const result = await showEditDialog({type: 3, controls: batchEditControls, value, DIALOG_API});
+    const value = tableItems[index];
+    const result = await showEditDialog({type: 3, customerPriceId, controls: batchEditControls, value, DIALOG_API});
     result && await afterEdit(dispatch, pageSize);
   };
 
   const deleteActionCreator = async (dispatch, getState) => {
-    const {items} = getSelfState(getState());
-    const checkItems = items.filter(o => o.checked);
+    const {tableItems, pageSize} = getSelfState(getState());
+    const checkItems = tableItems.filter(o => o.checked);
     if(checkItems.length < 1) return showError('请勾选一条数据！');
     if (checkItems.some(o => o.enabledType !== 'enabled_type_unenabled')) return showError('请选择未启用状态的数据！');
     const {returnCode, returnMsg} = await fetchJson(API.delete, postOption(checkItems.map(o=>o.id)));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    await afterEdit(dispatch, getState);
+    await afterEdit(dispatch, pageSize, getState);
   };
 
   const ableActionCreator = async (type='enabled_type_enabled', dispatch, getState) => {
-    const {items} = getSelfState(getState());
-    const checkItems = items.filter(o=>o.checked);
+    const {tableItems, pageSize} = getSelfState(getState());
+    const checkItems = tableItems.filter(o=>o.checked);
     if(checkItems.length < 1) return showError('请勾选一条数据！');
     if(type === 'enabled_type_enabled') {
       if (checkItems.some(o=> o.enabledType === 'enabled_type_enabled')) return showError('请选择未启用或禁用状态的数据！');
@@ -106,7 +113,7 @@ const createFreightContainer = (config) => {
     const {returnCode, returnMsg} = await fetchJson(API.able, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    await afterEdit(dispatch, getState);
+    await afterEdit(dispatch, pageSize);
   };
 
   const enableActionCreator = async (dispatch, getState) => ableActionCreator('enabled_type_enabled', dispatch, getState);
@@ -116,17 +123,17 @@ const createFreightContainer = (config) => {
   const importActionCreator = () => showImportDialog(IMPORT_CODE);
 
   const exportActionCreator = async (dispatch, getState)=>{
-    const {cols, items} = getSelfState(getState());
-    exportExcelFunc(cols, items);
+    const {cols, tableItems} = getSelfState(getState());
+    exportExcelFunc(cols, tableItems);
   };
 
   const refreshActionCreator = async (dispatch, getState) => {
     execWithLoading(async () => {
-      const {id} = getSelfState(getState());
+      const {id, pageSize} = getSelfState(getState());
       const {returnCode, returnMsg} = await fetchJson(`${API.refresh}/${id}`);
       if (returnCode !== 0) return showError(returnMsg);
       showSuccessMsg(returnMsg);
-      await afterEdit(dispatch, getState);
+      await afterEdit(dispatch, pageSize);
     });
   };
 
@@ -153,7 +160,7 @@ const createFreightContainer = (config) => {
 
   const checkActionCreator = (isAll, checked, rowIndex) => async (dispatch, getState) => {
     isAll && (rowIndex = -1);
-    dispatch(action.update({checked}, [PATH, 'items'], rowIndex));
+    dispatch(action.update({checked}, [PATH, 'tableItems'], rowIndex));
   };
 
   const pageNumberActionCreator = (currentPage) => (dispatch, getState) => {
@@ -171,12 +178,13 @@ const createFreightContainer = (config) => {
   const initActionCreator = () => async (dispatch, getState) => {
     try {
       dispatch(action.assign({status: 'loading'}, [PATH]));
-      const {id, editType} = getParentState(getState());
+      const {item={}, editType} = getParentState(getState());
       const {pageSize} = getSelfState(getState());
-      const list = getJsonResult(await search(API.list, 0, pageSize, {id}));
+      const list = getJsonResult(await search(API.list, 0, pageSize, {}));
       const payload = {
         editType,
-        items: list.data,
+        customerPriceId: item.id,
+        tableItems: list.data,
         maxRecords: list.returnTotalItem,
         status: 'page'
       };
@@ -216,6 +224,8 @@ const URL_CUSTOMER = '/api/config/customerPrice/customer';
 const URL_CAOMODE = '/api/config/customerPrice/carMode';
 const URL_CURRENCY = '/api/config/customerPrice/currency';
 const URL_BATCHEDIT = '/api/config/customerPrice/freightBatchEdit';
+const URL_DISTRICT = '/api/config/customerPrice/district';
+const URL_CONSIGNOR = '/api/config/customerPrice/consignor';
 
 const Container = createFreightContainer({
   PATH: ACITON_PATH,
@@ -231,7 +241,9 @@ const Container = createFreightContainer({
     search_customer: URL_CUSTOMER,
     search_carMode: URL_CAOMODE,
     search_currency: URL_CURRENCY,
-    batchEdit: URL_BATCHEDIT
+    batchEdit: URL_BATCHEDIT,
+    search_district: URL_DISTRICT,
+    search_consignor: URL_CONSIGNOR
   },
   IMPORT_CODE: 'customer_price_master_import_detail'
 });

@@ -13,12 +13,43 @@ const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
 };
 
-const changeActionCreator = (keyName, keyValue) => action.assign({[keyName]: keyValue}, 'value');
+const changeActionCreator = (keyName, keyValue) => async (dispatch, getState) => {
+  const {controls, value} = getSelfState(getState());
+  let payload = {[keyName]: keyValue};
+  switch (keyName) {
+    case 'departureType': {
+      payload['departure'] = '';
+      const index = controls.findIndex(item => item.key === 'departure');
+      dispatch(action.update({options: []}, ['controls'], index));
+      break;
+    }
+    case 'destinationType': {
+      payload['destination'] = '';
+      const index = controls.findIndex(item => item.key === 'destination');
+      dispatch(action.update({options: []}, ['controls'], index));
+      break;
+    }
+  }
+  dispatch(action.assign(payload, 'value'));
+};
 
-const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
-  const {controls, DIALOG_API} = getSelfState(getState());
-  let result = [], params = {maxNumber: 20, filter: value};
-  switch (key) {
+const getDistrict = async (type, DIALOG_API, filter) => {
+  if (type === '1') {
+    // 行政区域
+    return getJsonResult(await fetchJson(DIALOG_API.search_district, postOption({districtName: filter, maxNumber: 20})));
+  } else if (type === '2') {
+    // 行政区域
+    return getJsonResult(await fetchJson(DIALOG_API.search_consignor, postOption({name: filter})));
+  } else {
+    showError('请选择地点类别！');
+    return [];
+  }
+};
+
+const formSearchActionCreator = (keyName, keyValue) => async (dispatch, getState) => {
+  const {controls, DIALOG_API, value} = getSelfState(getState());
+  let result = [], params = {maxNumber: 20, filter: keyValue};
+  switch (keyName) {
     case 'customerId': {
        result = getJsonResult(await fetchJson(DIALOG_API.search_customer, postOption(params)));
        break;
@@ -35,13 +66,21 @@ const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
       result = getJsonResult(await fetchJson(DIALOG_API.search_currency, postOption(params)));
       break;
     }
+    case 'departure': {
+      result = await getDistrict(value['departureType'], DIALOG_API, keyValue);
+      break;
+    }
+    case 'destination': {
+      result = await getDistrict(value['destinationType'], DIALOG_API, keyValue);
+      break;
+    }
   }
-  const index = controls.findIndex(item => item.key === key);
+  const index = controls.findIndex(item => item.key === keyName);
   dispatch(action.update({options: result}, ['controls'], index));
 };
 
 const okActionCreator = (afterClose) => async (dispatch, getState) => {
-  const {type, controls, value, DIALOG_API} = getSelfState(getState());
+  const {type, customerPriceId, controls, value, DIALOG_API} = getSelfState(getState());
   if(!helper.validValue(controls, value)) {
     dispatch(action.assign({valid: true}));
     return showError('请填写必填项！');
@@ -52,10 +91,11 @@ const okActionCreator = (afterClose) => async (dispatch, getState) => {
     if (checkList.some(o => helper.isEmpty2(value[o]))) return showError('勾选的数据为必填！');
   }
   const url = type < 2 ? DIALOG_API.newAdd : type === 2 ? DIALOG_API.editSave: DIALOG_API.batchEdit;
-  const {returnCode, result, returnMsg} = await fetchJson(url, postOption(convert(value)));
+  const params = postOption({...convert(value), customerPriceId});
+  const {returnCode, result, returnMsg} = await fetchJson(url, params);
   if (returnCode !== 0) return showError(returnMsg);
   helper.showSuccessMsg(returnMsg);
-  dispatch(action.assign({okResult: result}));
+  dispatch(action.assign({okResult: true}));
   afterClose();
 };
 
@@ -81,13 +121,14 @@ const actionCreators = {
 };
 
 const buildState = async (config={}) => {
-  const {type=0, controls=[], value={}, DIALOG_API} = deepCopy(config);
+  const {type=0, customerPriceId='', controls=[], value={}, DIALOG_API} = deepCopy(config);
   const titleArr = ['新增', '复制新增', '编辑', '批量修改'];
   return {
     type,
     title: titleArr[type],
     controls,
     value,
+    customerPriceId,
     DIALOG_API,
     checkable: type === 3,
   }

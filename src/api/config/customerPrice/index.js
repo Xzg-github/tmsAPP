@@ -1,9 +1,8 @@
 import express from 'express';
 import {postOption, fetchJsonByNode} from '../../../common/common';
 import {host} from '../../globalConfig';
-import mockData from './mock';
 
-const archiver_service = `${host}/archiver-service`;
+const archiver_service = `${host}/archiver-service-djh`;
 const tenant_service = `${host}/tenant-service`;
 
 let api = express.Router();
@@ -43,8 +42,8 @@ api.post('/delete', async (req, res) => {
 
 // 启用/禁用
 api.post('/able', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master/batch/${req.body.enabledType}`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
+  const url = `${archiver_service}/customer_price/batch/${req.body.enabledType}`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body.ids, 'put')));
 });
 
 // 获取编辑界面合同信息数据
@@ -71,32 +70,28 @@ api.post('/contractCommit', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
-// 获取编辑界面运费信息数据
+// 获取编辑界面运费列表数据
 api.post('/freightDetail', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master/${req.params.id}`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, returnMsg: 'Success', result: mockData.freightDetail});
+  const url = `${archiver_service}/customer_price_master/list/search`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 // 新增运费信息保存
 api.post('/freightAdd', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-  res.send({returnCode: 0, returnMsg: 'Success', result: 'Success'});
+  const url = `${archiver_service}/customer_price_master/add`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 // 编辑运费信息保存
 api.post('/freightEdit', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-  res.send({returnCode: 0, returnMsg: 'Success', result: 'Success'});
+  const url = `${archiver_service}/customer_price_master/save`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
 // 批量编辑运费信息保存
 api.post('/freightBatchEdit', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-  res.send({returnCode: 0, returnMsg: 'Success', result: 'Success'});
+  const url = `${archiver_service}/customer_price_master/batch/update`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
 // 车型下拉
@@ -116,6 +111,18 @@ api.post('/chargeItem', async (req, res) => {
 // 获取币种下拉
 api.post('/currency', async (req, res) => {
   const url = `${archiver_service}/charge/tenant_currency_type/drop_list`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+// 获取起运地、目的地下拉（行政区域）
+api.post('/district', async (req, res) => {
+  const url = `${archiver_service}/archiver/district/drop_list`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+// 获取起运地、目的地下拉（收发货人）
+api.post('/consignor', async (req, res) => {
+  const url = `${archiver_service}/consignee_consignor/drop_list`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 

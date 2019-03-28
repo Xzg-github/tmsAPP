@@ -42,7 +42,7 @@ const tableCols = [
   {key: 'insertInstitution', title: '创建机构'},
   {key: 'updateTime', title: '更新时间'},
   {key: 'updateUser', title: '更新人员'},
-  {key: 'enableType', title: '是否启用', dictionary: name.ZERO_ONE_TYPE},
+  // {key: 'enableType', title: '是否启用', dictionary: name.ZERO_ONE_TYPE},
   {key: 'statusType', title: '状态', dictionary: 'status_type'},
 ];
 
@@ -87,11 +87,6 @@ const businessTypeOptions = [
   {title: '发货人', value: '2'},
 ];
 
-const departureOptions = [
-  {title: '来自行政区域档案', value: '1'},
-  {title: '来自于合同客户', value: '2'},
-];
-
 const destinationTypeOptions = [
   {title: '目的地', value: '1'},
   {title: '收货人', value: '2'},
@@ -119,9 +114,9 @@ const freight = {
     {key: 'customerPriceId', title: '客户报价标识'},
     {key: 'businessType', title: '运输类型', dictionary: name.BUSINESS_TYPE},
     {key: 'departureType', title: '起发地类别', options: businessTypeOptions},
-    {key: 'departure', title: '起运地', options: departureOptions},
+    {key: 'departure', title: '起运地'},
     {key: 'destinationType', title: '目的地类别', options: destinationTypeOptions},
-    {key: 'destination', title: '目的地', options: destinationTypeOptions},
+    {key: 'destination', title: '目的地'},
     {key: 'isReturn', title: '是否返程', dictionary: name.ZERO_ONE_TYPE},
     {key: 'carModeId', title: '车型'},
     {key: 'fuelType', title: '燃油种类', dictionary: name.FUEL_TYPE},
@@ -142,9 +137,9 @@ const freight = {
     {key: 'customerId', title: '客户', type: 'search', required: true},
     {key: 'contractNumber', title: '客户合同号', type: 'text'},
     {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
-    {key: 'departure', title: '起运地', type: 'select', required: true, options: departureOptions},
+    {key: 'departure', title: '起运地', type: 'search', required: true},
     {key: 'destinationType', title: '目的地类别', type: 'select', required: true, options: destinationTypeOptions},
-    {key: 'destination', title: '目的地', type: 'select', required: true, options: destinationTypeOptions},
+    {key: 'destination', title: '目的地', type: 'search', required: true},
     {key: 'businessType', title: '运输类型', type: 'select', dictionary: name.BUSINESS_TYPE},
     {key: 'isReturn', title: '是否返程', type: 'select', dictionary: name.ZERO_ONE_TYPE},
     {key: 'carModeId', title: '车型', type: 'search'},
@@ -190,9 +185,9 @@ const extraCharge = {
     {key: 'customerPriceId', title: '客户报价标识'},
     {key: 'businessType', title: '运输类型', dictionary: name.BUSINESS_TYPE},
     {key: 'departureType', title: '起发地类别', options: businessTypeOptions},
-    {key: 'departure', title: '起运地', options: departureOptions},
+    {key: 'departure', title: '起运地'},
     {key: 'destinationType', title: '目的地类别', options: destinationTypeOptions},
-    {key: 'destination', title: '目的地', options: destinationTypeOptions},
+    {key: 'destination', title: '目的地'},
     {key: 'carModeId', title: '车型'},
     {key: 'chargeItemId', title: '费用项', required: true},
     {key: 'price', title: '价格', required: true},
@@ -210,9 +205,9 @@ const extraCharge = {
     {key: 'customerId', title: '客户', type: 'search', required: true},
     {key: 'contractNumber', title: '客户合同号', type: 'text'},
     {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
-    {key: 'departure', title: '起运地', type: 'select', required: true, options: departureOptions},
+    {key: 'departure', title: '起运地', type: 'search', required: true},
     {key: 'destinationType', title: '目的地类别', type: 'select', required: true, options: destinationTypeOptions},
-    {key: 'destination', title: '目的地', type: 'select', required: true, options: destinationTypeOptions},
+    {key: 'destination', title: '目的地', type: 'search', required: true},
     {key: 'businessType', title: '运输类型', type: 'select', dictionary: name.BUSINESS_TYPE},
     {key: 'carModeId', title: '车型', type: 'search'},
     {key: 'chargeItemId', title: '费用项', type: 'search', required: true},
