@@ -1,19 +1,11 @@
 @import '../../../../components/variables';
 
 .root [class='ant-modal-body'] {
-  > label {
-    display: block;
-    margin: @padding-vertical 0;
-  }
-}
-
-.root2 [class='ant-modal-body'] {
-  > label {
-    display: block;
-    margin: @padding-vertical 0;
+  > div:first-child {
+    margin-bottom: @padding-vertical;
   }
 
-  :global(.ant-upload-list) {
-    display: block !important;
+  > div:nth-child(2) {
+    margin-bottom: @padding-vertical-sm;
   }
 }
