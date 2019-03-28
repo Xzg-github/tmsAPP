@@ -7,16 +7,6 @@ import moment from 'moment';
 
 const BAIDU_AK = '018n8KOIEDfSSs7oxBhNEzCAyGlh6nXO';
 
-const getPoints = async (data) => {
-  const url = `/api/track/track_transport/line_points`;
-  const {returnCode, result, returnMsg} = await helper.fetchJson(url, helper.postOption(data));
-  if (returnCode !== 0) {
-    helper.showError(returnMsg);
-    return;
-  }
-  return result;
-};
-
 const createScript = (id, url) => {
   return new Promise(resolve => {
     if (document.getElementById(id)) {
@@ -51,47 +41,34 @@ class LineDialog extends React.Component {
     this.onClick = this.onClick.bind(this);
   }
 
-  toBlueLine = () => {
-    const {addressList} = this.props;
-    const length = addressList.length;
-    addressList.map(({latitude, longitude}, index) => {
-      if (index !== length-1) {
-        const polyline = new BMap.Polyline([
-            new BMap.Point(longitude, latitude),
-            new BMap.Point(addressList[index+1].longitude, addressList[index+1].latitude)
-          ],
-          {strokeColor:"blue", strokeWeight:6, strokeOpacity:0.5}
-        );
-        this.map.addOverlay(polyline);
-      }
-    });
-  };
-
   openWindow = (info, {point}) => {
-    const type = ['发货', '收货', '收发货'];
+    const type = ['发货点', '收货点', '收发货点'];
     const windowOpts = {
       width : 150,     // 信息窗口宽度
       height: 50,     // 信息窗口高度
       title : type[Number(info.pickupDeliveryType || 0)]  // 信息窗口标题
     };
-    const infoWindow = new BMap.InfoWindow(info.consigneeConsignorAddress, windowOpts);  // 创建信息窗口对象
+    const content = `${info.consigneeConsignorAddress}--${info.consigneeConsignorName}`;
+    const infoWindow = new BMap.InfoWindow(content, windowOpts);  // 创建信息窗口对象
     this.map.openInfoWindow(infoWindow, point);      // 打开信息窗口
   };
 
   toMarkers = () => {
+    const type = ['发货点', '收货点', '收发货点'];
     let pointsView = [];
     this.props.addressList.map((info) => {
-      const {latitude, longitude, consigneeConsignorName} = info;
+      const {latitude, longitude} = info;
       const point = new BMap.Point(longitude, latitude);
       pointsView.push(point);
       const marker = new BMap.Marker(point);        // 创建标注
       marker.addEventListener("click", this.openWindow.bind(this, info));
+      marker.disableMassClear();
       this.map.addOverlay(marker);                     // 将标注添加到地图中
       const opts = {
         position : point,    // 指定文本标注所在的地理位置
         offset   : new BMap.Size(-10, -40)    //设置文本偏移量
       };
-      const label = new BMap.Label(consigneeConsignorName, opts);  // 创建文本标注对象
+      const label = new BMap.Label(type[Number(info.pickupDeliveryType || 0)], opts);  // 创建文本标注对象
       label.setStyle({
         color : "#333",
         fontSize : "12px",
@@ -99,6 +76,7 @@ class LineDialog extends React.Component {
         lineHeight : "20px",
         fontFamily:"微软雅黑"
       });
+      label.disableMassClear();
       this.map.addOverlay(label);
     });
     this.map.setViewport(pointsView);
@@ -112,8 +90,8 @@ class LineDialog extends React.Component {
       map.enableScrollWheelZoom(true);
       map.addControl(new BMap.MapTypeControl());
       map.addControl(new BMap.NavigationControl());
-      !this.props.msg && this.toBlueLine();
-      !this.props.msg && this.toMarkers();
+      this.toMarkers();
+      this.onClick();
     });
   }
 
@@ -122,16 +100,16 @@ class LineDialog extends React.Component {
     arr.map((item, index) => {
       if (index !== length-1) {
         const point = item.split(',');
-        const latitude = point[0];
-        const longitude = point[1];
+        const latitude = point[1];
+        const longitude = point[0];
         const point2 = arr[index+1].split(',');
-        const latitude2 = point2[0];
-        const longitude2 = point2[1];
+        const latitude2 = point2[1];
+        const longitude2 = point2[0];
         const polyline = new BMap.Polyline([
             new BMap.Point(longitude, latitude),
             new BMap.Point(longitude2, latitude2)
           ],
-          {strokeColor:"red", strokeWeight:6, strokeOpacity:0.5}
+          {strokeColor:"green", strokeWeight:6, strokeOpacity:0.5}
         );
         this.map.addOverlay(polyline);
       }
@@ -140,28 +118,64 @@ class LineDialog extends React.Component {
 
   toRedLineMarkers = (arr) => {
     const point1 = arr[0].split(',');
-    const latitude = point1[0];
-    const longitude = point1[1];
+    const latitude = point1[1];
+    const longitude = point1[0];
     const point2 = arr[arr.length-1].split(',');
-    const latitude2 = point2[0];
-    const longitude2 = point2[1];
+    const latitude2 = point2[1];
+    const longitude2 = point2[0];
     let pointsView = [];
+    //起点
     let point = new BMap.Point(longitude, latitude);
     pointsView.push(point);
     let marker = new BMap.Marker(point);        // 创建标注
     this.map.addOverlay(marker);                     // 将标注添加到地图中
+    let opts = {
+      position : point,    // 指定文本标注所在的地理位置
+      offset   : new BMap.Size(-10, -40)    //设置文本偏移量
+    };
+    let label = new BMap.Label('起点', opts);  // 创建文本标注对象
+    label.setStyle({
+      color : "#333",
+      fontSize : "12px",
+      height : "20px",
+      lineHeight : "20px",
+      fontFamily:"微软雅黑"
+    });
+    this.map.addOverlay(label);
+
+    //终点
     point = new BMap.Point(longitude2, latitude2);
     pointsView.push(point);
     marker = new BMap.Marker(point);        // 创建标注
     this.map.addOverlay(marker);                     // 将标注添加到地图中
+    opts = {
+      position : point,    // 指定文本标注所在的地理位置
+      offset   : new BMap.Size(-10, -40)    //设置文本偏移量
+    };
+    label = new BMap.Label('终点', opts);  // 创建文本标注对象
+    label.setStyle({
+      color : "#333",
+      fontSize : "12px",
+      height : "20px",
+      lineHeight : "20px",
+      fontFamily:"微软雅黑"
+    });
+    this.map.addOverlay(label);
+
     this.map.setViewport(pointsView);
   };
 
   async onClick() {
     const url = `/api/track/track_transport/line_points`;
     const body = this.state.value;
+    if (!body.startTime || !body.endTime) {
+      helper.showError(`请先填写时间`);
+      return;
+    }
+    this.map.clearOverlays();
     const {returnCode, result, returnMsg} = await helper.fetchJson(url, helper.postOption(body));
     if (returnCode !== 0) return helper.showError(returnMsg);
+    if (result.length < 2) return helper.showError(`暂无轨迹信息`);
     this.toRedLine(result);
     this.toRedLineMarkers(result);
   };
@@ -250,16 +264,16 @@ export default async (data={}) => {
   let msg = '';
   if (returnCode !== 0) {
     return helper.showError(returnMsg);
-  }else if (result.length < 2) {
-    msg = `收发货地址信息不完整，无法形成轨迹`;
   }
   const invalidAddressList = result.filter(item => !item.latitude || !item.longitude);
   if (invalidAddressList.length > 0) {
-    msg = `以下收发货地址经纬度信息缺失，无法形成轨迹：`;
+    msg = `以下收发货地址经纬度信息缺失，无法形成标记：`;
     invalidAddressList.map(item => {
       msg += `${item.consigneeConsignorName};`;
     })
   }
-  const value = helper.getObject(data, ['id', 'carNumber', 'carModeId', 'gpsSimNumber', 'gpsEquipmentBrand', 'startTime', 'endTime']);
+  let value = helper.getObject(data, ['id', 'carNumber', 'carModeId', 'gpsSimNumber', 'gpsEquipmentBrand', 'startTime', 'endTime']);
+  value.startTime = data.planPickupTime;
+  value.endTime = moment().format('YYYY-MM-DD HH:mm:ss');
   return showPopup(LineDialog, {value, addressList: result, msg});
 };

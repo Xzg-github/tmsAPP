@@ -75,7 +75,8 @@ export default (data, config) => {
     title: isEdit ? config.edit : config.add,
     value: data,
     visible: true,
-    confirmLoading: false
+    confirmLoading: false,
+    container: true
   };
   global.store.dispatch(action.create(props));
   const Container = connect(mapStateToProps, actionCreators)(EditDialog);

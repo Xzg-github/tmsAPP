@@ -112,5 +112,9 @@ class PositionDialog extends React.Component {
 * 返回值：空
 */
 export default async (items) => {
-  return showPopup(PositionDialog, {items});
+  const {returnCode, result, returnMsg} = await helper.fetchJson(`/api/track/track_transport/positions`, helper.postOption(items));
+  if (returnCode !== 0) {
+    return helper.showError(returnMsg);
+  }
+  return showPopup(PositionDialog, {items: result});
 };

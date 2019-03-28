@@ -22,7 +22,8 @@ class AddDialog extends React.Component {
       onChange,
       onSearch,
       onExitValid,
-      readonly
+      readonly,
+      container: false
     };
     return <SuperForm {...props} /> ;
   };
