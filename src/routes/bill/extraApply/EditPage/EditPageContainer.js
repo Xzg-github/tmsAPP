@@ -201,7 +201,10 @@ const fallbackActionCreator = () => async (dispatch, getState) => {
 const reviewActionCreator = () => async (dispatch, getState) => {
   if (checkValid(dispatch, getState)) return;
   execWithLoading(async () => {
-    const {value} = getSelfState(getState());
+    const {value, statusType} = getSelfState(getState());
+    if (statusType !== 'status_checked_awaiting') {
+      return commitActionCreator()(dispatch, getState);
+    }
     const params = {agreeOrFallback: 'agree', ...convert(value)};
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_REVIEW, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
@@ -231,12 +234,13 @@ const receiveDelActionCreator = (KEY) => async (dispatch, getState) =>  {
 };
 
 const convertActionCreator = (KEY) => async (dispatch, getState) =>  {
-  const {value} = getSelfState(getState());
-  const list = value[KEY] || [];
-  const checkList = list.filter(o => o.checked);
+  const {value, customerId} = getSelfState(getState());
+  const payList = value[KEY] || [];
+  const checkList = payList.filter(o => o.checked).map(o => ({...o, checked: false, balanceId: customerId}));
   if (checkList.length === 0) return showError('请勾选一条数据！');
-  const newItems = list.filter(o => !o.checked);
-  dispatch(action.assign({[KEY]: newItems, receiveChargeList: checkList}, 'value'));
+  const receiveList = value['receiveChargeList'] || [];
+  const newItems = receiveList.concat(checkList.filter(it => !receiveList.find(o => o.id === it.id)));
+  dispatch(action.assign({receiveChargeList: newItems}, 'value'));
 };
 
 const buttons = {

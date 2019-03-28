@@ -51,14 +51,15 @@ const changeActionCreator = (KEY, key, value) => async (dispatch, getState) =>  
 };
 
 const formSearchActionCreator = (KEY, key, filter, control) => async (dispatch, getState) => {
-  const {controls} = getSelfState(getState());
+  const {controls, value} = getSelfState(getState());
   let result = [];
   if (control.searchType) {
     result = getJsonResult(await fuzzySearchEx(filter, control));
   } else {
     switch (key) {
       case 'receivableOpeningBank': {
-        result = getJsonResult(await fetchJson(URL_RECEIVABLE_OPENINGBANK, postOption({filter, maxNumber: 65536})));
+        const params = {filter, maxNumber: 65536, institutionId: value['institutionId']};
+        result = getJsonResult(await fetchJson(URL_RECEIVABLE_OPENINGBANK, postOption(params)));
         break;
       }
       case 'invoiceHeaderInformation': {
