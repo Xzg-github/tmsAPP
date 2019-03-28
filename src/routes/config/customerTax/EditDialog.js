@@ -68,7 +68,8 @@ class EditDialog extends React.Component {
       options: this.props.options,
       onChange: this.props.onChange,
       onSearch: this.props.onSearch,
-      onExitValid: this.props.onExitValid
+      onExitValid: this.props.onExitValid,
+      container: true
     };
   };
 

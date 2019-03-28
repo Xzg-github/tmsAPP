@@ -1,7 +1,7 @@
 import RouterHelper from '../RouteHelper';
 import React from 'react';
 
-const title = '计费与对帐';
+const title = '费用管理';
 const prefix = '/bill';
 
 const children = [
