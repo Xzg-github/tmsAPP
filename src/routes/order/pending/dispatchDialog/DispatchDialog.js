@@ -1,6 +1,6 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import {ModalWithDrag, Title} from '../../../../components';
+import {ModalWithDrag, Title, SuperForm} from '../../../../components';
 import s from './DispatchDialog.less';
 import {Checkbox} from 'antd';
 const CheckboxGroup = Checkbox.Group;
@@ -17,10 +17,21 @@ class DispatchDialog extends React.Component {
     )
   };
 
+  toForm = () => {
+    const {defaultSet={}, controls} = this.props;
+    return (
+      <div>
+        <Title title='基本信息' />
+        <SuperForm {...{controls, value:defaultSet}}/>
+      </div>
+    )
+  };
+
   toBody = () => {
     const {sections} = this.props;
     return (
       <div className={s.root}>
+        {this.toForm()}
         {sections.map(this.toSection)}
       </div>
     );

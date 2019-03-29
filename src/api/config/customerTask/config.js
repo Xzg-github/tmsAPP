@@ -9,6 +9,8 @@ const filters = [
 
 const tableCols = [
   {key: 'customerId', title: '客户'},
+  {key: 'consignorId', title: '发货人'},
+  {key: 'consigneeId', title: '收货人'},
   {key: 'businessType', title: '运输类型', dictionary: 'business_type'},
   {key: 'deptmentId', title: '部门'},
   {key: 'insertUser', title: '创建人'},

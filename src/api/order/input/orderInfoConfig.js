@@ -114,7 +114,7 @@ const orderConfig = {
 
 const trackConfig = {
   section1: {
-    title: '运单状态',
+    title: '订单状态',
   },
   section2: {
     title: '车辆信息',
@@ -126,7 +126,7 @@ const trackConfig = {
     ]
   },
   section3: {
-    title: '司机任务',
+    title: '司机作业信息',
   },
   section4: {
     title: '更改记录',

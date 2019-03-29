@@ -4,6 +4,7 @@ import {getPathValue} from '../../../../action-reducer/helper';
 import helper from '../../../../common/common';
 import DispatchDialog from './DispatchDialog';
 import showPopup from '../../../../standard-business/showPopup';
+import {fetchAllDictionary, setDictionary2} from "../../../../common/dictionary";
 
 const STATE_PATH = ['temp'];
 const action = new Action(STATE_PATH);
@@ -27,11 +28,9 @@ const okActionCreator = () => async (dispatch, getState) => {
     return {...item, subList};
   });
   const body = {
+    ...helper.convert(defaultSet),
     taskList,
-    id: data.id,
-    businessType: data.businessType,
-    customerId: data.customerId.value,
-    deptmentId: data.customerServiceDepartmentId
+    id: data.id
   };
   const {returnCode, returnMsg} = await helper.fetchJson(`/api/order/pending/send`, helper.postOption(body));
   if (returnCode !== 0) {
@@ -59,10 +58,19 @@ const actionCreators = {
 
 const buildDialogState = async (data) => {
   const config = {
-    title: '任务派发',
+    title: '任务制作',
     ok: '确定',
-    cancel: '取消'
+    cancel: '取消',
+    controls: [
+      {key: 'customerId', title: '客户', type: 'readonly'},
+      {key: 'consignorId', title: '发货人', type: 'readonly'},
+      {key: 'consigneeId', title: '收货人', type: 'readonly'},
+      {key: 'businessType', title: '运输类型', type: 'readonly', dictionary: 'business_type'},
+      {key: 'deptmentId', title: '部门', type: 'readonly'}
+    ]
   };
+  const dic = helper.getJsonResult(await fetchAllDictionary());
+  setDictionary2(dic, config.controls);
   //获取默认设置
   const {returnCode, returnMsg, result:defaultSet} = await helper.fetchJson(`/api/order/pending/default_setting/${data.id}`);
   if (returnCode !== 0) {
