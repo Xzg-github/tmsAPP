@@ -77,8 +77,13 @@ const showEditPage = (dispatch, getState, editType=0, itemData={}) => {
     // 应收待提交
     case 'status_receive_check_awaiting': {
       config.tables[0].btns = config.payBtns;
+      config.tables[0].cols = config.tables[0].cols.map(o => {
+        if (o.key !== 'index' && o.key !== 'checked') {
+          o.type = 'readonly';
+        }
+        return o;
+      });
       config.tables[1].btns = config.receiveBtns;
-      config.isShowAudit = true;
       config.footerButtons = config.footerButtons.filter(o => o.key !== 'save');
       // 如果费用来源不为空，设置表格为只读
       if (itemData['chargeFrom']) {
@@ -90,7 +95,8 @@ const showEditPage = (dispatch, getState, editType=0, itemData={}) => {
     case 'status_pay_check_awaiting': {
       // 去掉应收表格
       config.tables = config.tables.filter(o => o.key === 'payChargeList');
-      config.isShowAudit = true;
+      // 去掉回退按钮
+      config.footerButtons = config.footerButtons.filter(btn => btn.key !== 'fallback');
       break;
     }
     // 待审核
@@ -160,8 +166,8 @@ const isCanEdit = (item, type=0) => {
       break;
     }
     case 1: {
-      if (item.statusType !== 'status_check_awaiting' && item.statusType !== 'status_pay_check_awaiting') {
-        showError('只有待审核或应付待审核状态下才能审核！');
+      if (item.statusType !== 'status_checked_awaiting' && item.statusType !== 'status_pay_check_awaiting') {
+        showError('只有待审核或应付待审批状态下才能审核！');
         return false;
       }
       break;
