@@ -61,8 +61,7 @@ const saveActionCreator = async (dispatch, getState) => {
       return {
         fileFormat: o.fileFormat || 'id',
         fileName: o.name,
-        fileUrl: o.fileUrl || o.response.result,
-        url: o.url
+        fileUrl: o.fileUrl || o.response.result
       }
     });
     const params = {
@@ -88,8 +87,7 @@ const commitActionCreator = async (dispatch, getState) => {
       return {
         fileFormat: o.fileFormat || 'id',
         fileName: o.name,
-        fileUrl: o.fileUrl || o.response.result,
-        url: o.url
+        fileUrl: o.fileUrl || o.response.result
       }
     });
     const params = {
@@ -131,14 +129,6 @@ const handleImgChange = (data={}) => async (dispatch, getState) => {
     helper.showError(`上传失败，${file.response.returnMsg || ''}`);
     newList = fileList.filter(item => item.uid !== file.uid);
   }
-  if (file.status === 'done') {
-    const locationUrl = getJsonResult(await fetchJson(`${URL_DOWNLOAD}/${file.response.result}`));
-    fileList.forEach(item => {
-      if (item.uid === file.uid) {
-        item.url = `/api/proxy/zuul/file-center-service/${locationUrl[file.response.result]}`;
-      }
-    });
-  }
   dispatch(action.assign({fileList: newList}, [PATH]));
 };
 
@@ -150,6 +140,25 @@ const handleImgRemove = (file) => async (dispatch, getState) => {
   }
 };
 
+const getFiles = async (list=[]) => {
+  let arr = [];
+  for (let i in list) {
+    const file = list[i];
+    if(file.fileFormat === 'id') {
+      const locationUrl = getJsonResult(await fetchJson(`${URL_DOWNLOAD}/${file.fileUrl}`));
+      arr.push({
+        ...file,
+          uid: i,
+          fileFormat: 'id',
+          name: file.fileName,
+          status: 'done',
+          url: `/api/proxy/file-center-service/${locationUrl[file.fileUrl]}`
+      });
+    }
+  }
+  return arr;
+};
+
 const initActionCreator = () => async (dispatch, getState) => {
   try {
     dispatch(action.assign({status: 'loading'}, [PATH]));
@@ -158,18 +167,7 @@ const initActionCreator = () => async (dispatch, getState) => {
     if (editType === 2) {
       const data = getJsonResult(await fetchJson(`${URL_DETAIL}/${item.id}`));
       const {total={}, fileList=[], ...other={}} = data;
-      state = {
-        fileList: fileList.map((file, index) => {
-          return {
-            ...file,
-            uid: index,
-            fileFormat: 'id',
-            name: file.fileName,
-            status: 'done'
-          }
-        }),
-        value: other
-      };
+      state = {fileList, value: other};
       const newTabs = tabs.map(tab => {
         (tab.key === 'freight') && (tab.title = `${tab.title}（${total.masterTotal || 0}）`);
         (tab.key === 'extraCharge') && (tab.title = `${tab.title}（${total.additionalTotal || 0}）`);
@@ -178,6 +176,9 @@ const initActionCreator = () => async (dispatch, getState) => {
       dispatch(action.assign({tabs: newTabs}));
     } else {
       state = item;
+    }
+    if (state.fileList && state.fileList.length > 0) {
+      state.fileList = await getFiles(state.fileList);
     }
   const payload = {editType, ...state, status: 'page'};
     dispatch(action.assign(payload, [PATH]));

@@ -2,7 +2,7 @@ import express from 'express';
 import {postOption, fetchJsonByNode} from '../../../common/common';
 import {host} from '../../globalConfig';
 
-const archiver_service = `${host}/archiver-service-djh`;
+const archiver_service = `${host}/archiver-service`;
 const tenant_service = `${host}/tenant-service`;
 
 let api = express.Router();

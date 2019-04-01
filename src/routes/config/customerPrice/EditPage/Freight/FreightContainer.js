@@ -90,7 +90,7 @@ const createFreightContainer = (config) => {
     const {tableItems} = getSelfState(getState());
     const checkItems = tableItems.filter(o => o.checked);
     if(checkItems.length < 1) return showError('请勾选一条数据！');
-    if (checkItems.some(o => o.enabledType !== 'enabled_type_enabled')) return showError('请选择未启用状态的数据！');
+    if (checkItems.some(o => o.enabledType !== 'enabled_type_unenabled')) return showError('请选择未启用状态的数据！');
     execWithLoading(async () => {
       const {returnCode, returnMsg} = await fetchJson(API.delete, postOption(checkItems.map(o=>o.id)));
       if (returnCode !== 0) return showError(returnMsg);
@@ -106,7 +106,7 @@ const createFreightContainer = (config) => {
     if(type === 'enabled_type_enabled') {
       if (checkItems.some(o=> o.enabledType === 'enabled_type_enabled')) return showError('请选择未启用或禁用状态的数据！');
     } else if(type === 'enabled_type_disabled') {
-      if (checkItems.some(o=> o.enabledType !== 'enabled_type_enabled')) return showError('请选择已启用状态的数据！');
+      if (checkItems.some(o=> o.enabledType === 'enabled_type_disabled')) return showError('请选择已启用状态的数据！');
     }
     const params = {
       ids: checkItems.map(o=>o.id),

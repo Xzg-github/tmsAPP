@@ -181,7 +181,7 @@ const linkActionCreator = (key, rowIndex, item) => async (dispatch, getState) =>
     if(item.fileFormat === 'id'){
       const {returnCode, result, returnMsg} = await helper.fetchJson(`${URL_DOWNLOAD}/${item.fileUrl}`);
       if (returnCode !== 0) return helper.showError(returnMsg);
-      helper.download(`/api/proxy/zuul/file-center-service/${result[item.fileUrl]}`,'file');
+      helper.download(`/api/proxy/file-center-service/${result[item.fileUrl]}`,'file');
     }else {
       helper.download(item.fileUrl, 'file');
     }
