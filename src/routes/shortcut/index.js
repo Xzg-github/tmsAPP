@@ -74,6 +74,7 @@ const children = [
   require('../basic/roleDataAuthority').default,         // 角色数据权限分配
   require('../basic/defaultOutput').default,             // 默认输出模板
   require('../basic/commonOutput').default,              // 常用输出模板
+  require('../basic/information').default,              // 信息反馈
   require('../message/business').default,
   require('../message/sendMessageByShortMes').default,
   require('../message/sendMessageByEmail').default,

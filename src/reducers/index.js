@@ -117,7 +117,10 @@ const rootReducer = combineReducers({
   carManager: create('carManager'),
   corporation: create('corporation', false),
   bank: create('bank', false),
-  position: create('position', false)
+  position: create('position', false),
+
+  //系统设置
+  information: create('information', false),
 });
 
 export default rootReducer;

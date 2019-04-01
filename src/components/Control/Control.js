@@ -87,7 +87,7 @@ const select = (props) => {
   props.showSearch = true;
   props.filterOption = isMatch;
   (props.allowClear !== false) && (props.allowClear = true);
-  if (props.mode === 'multiple') {
+  if (props.mode === 'multiple' || props.mode === 'tags') {
     !props.value && typeof props.value !== 'undefined' && (props.value = []);
     !props.defaultValue && typeof props.defaultValue !== 'undefined' && (props.defaultValue = []);
   }else {
