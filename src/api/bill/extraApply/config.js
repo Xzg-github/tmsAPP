@@ -133,8 +133,8 @@ const footerButtons = [
 ];
 
 const amountInfo = [
-  {key: 'receiveNet', title: '应收净额', important: true},
-  {key: 'payNet', title: '应付净额'},
+  {key: 'receiveAmount', title: '应收净额', important: true},
+  {key: 'payAmount', title: '应付净额'},
   {key: 'profit', title: '差额'}
 ];
 

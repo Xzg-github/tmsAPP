@@ -46,6 +46,13 @@ const changeActionCreator = (KEY, key, value) => async (dispatch, getState) =>  
       payload['receivableAccountNumber'] = value['accountNumber'];
       break;
     }
+    case 'institutionId': {
+      payload['receivableOpeningBank'] = '';
+      payload['enterpriseSignature'] = value['enterpriseSignature'];
+      payload['taxRegistrationNumber'] = value['taxRegistrationNumber'];
+      payload['businessRegistrationNumber'] = value['businessRegistrationNumber'];
+      break;
+    }
   }
   dispatch(action.assign(payload, 'value'));
 };

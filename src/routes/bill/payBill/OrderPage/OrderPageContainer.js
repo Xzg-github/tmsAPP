@@ -189,3 +189,4 @@ const actionCreators = {
 
 const Container = connect(mapStateToProps, actionCreators)(OrderPage);
 export default Container;
+export {searchActionCreator};

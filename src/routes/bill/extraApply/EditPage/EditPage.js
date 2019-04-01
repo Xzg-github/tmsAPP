@@ -51,8 +51,8 @@ class EditPage extends React.Component {
   }
 
   toAmount = () => {
-    const {amountInfo, value, isShowAudit} = this.props;
-    return isShowAudit ? (<div style={{marginTop: '-10px', marginBottom: '10px'}}>{
+    const {amountInfo, value, isShowAmount} = this.props;
+    return isShowAmount ? (<div style={{marginTop: '-10px', marginBottom: '10px'}}>{
       amountInfo.map(it => {
         const className = it.important ? s.important : '';
         const amount = value[it.key] || 0;

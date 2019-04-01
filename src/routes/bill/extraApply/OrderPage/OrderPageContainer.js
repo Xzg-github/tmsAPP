@@ -76,6 +76,7 @@ const showEditPage = (dispatch, getState, editType=0, itemData={}) => {
     }
     // 应收待提交
     case 'status_receive_check_awaiting': {
+      config.isShowAmount = true;
       config.tables[0].btns = config.payBtns;
       config.tables[0].cols = config.tables[0].cols.map(o => {
         if (o.key !== 'index' && o.key !== 'checked') {
@@ -99,8 +100,9 @@ const showEditPage = (dispatch, getState, editType=0, itemData={}) => {
       config.footerButtons = config.footerButtons.filter(btn => btn.key !== 'fallback');
       break;
     }
-    // 待审核
-    case 'status_check_awaiting': {
+    // 待审批
+    case 'status_checked_awaiting': {
+      config.isShowAmount = true;
       config.isShowAudit = true;
       config.controls = setReadonly(config.controls);
       config.tables = setReadonly(config.tables);
@@ -167,7 +169,7 @@ const isCanEdit = (item, type=0) => {
     }
     case 1: {
       if (item.statusType !== 'status_checked_awaiting' && item.statusType !== 'status_pay_check_awaiting') {
-        showError('只有待审核或应付待审批状态下才能审核！');
+        showError('只有待审批或应付待审批状态下才能审核！');
         return false;
       }
       break;
