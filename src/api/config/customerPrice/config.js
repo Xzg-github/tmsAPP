@@ -111,7 +111,8 @@ const freight = {
     {key: 'refresh', title: '刷新'},
   ],
   cols: [
-    {key: 'customerPriceId', title: '客户报价标识'},
+    {key: 'customerPriceCode', title: '客户报价标识'},
+    {key: 'enabledType', title: '是否启用', dictionary: name.ENABLED_TYPE},
     {key: 'businessType', title: '运输类型', dictionary: name.BUSINESS_TYPE},
     {key: 'departureType', title: '起发地类别', options: businessTypeOptions},
     {key: 'departure', title: '起运地'},
@@ -182,7 +183,8 @@ const extraCharge = {
     {key: 'refresh', title: '刷新'},
   ],
   cols: [
-    {key: 'customerPriceId', title: '客户报价标识'},
+    {key: 'customerPriceCode', title: '客户报价标识'},
+    {key: 'enabledType', title: '是否启用', dictionary: name.ENABLED_TYPE},
     {key: 'businessType', title: '运输类型', dictionary: name.BUSINESS_TYPE},
     {key: 'departureType', title: '起发地类别', options: businessTypeOptions},
     {key: 'departure', title: '起运地'},
@@ -247,7 +249,7 @@ const config = {
   index,
   editConfig,
   names: [
-    name.ZERO_ONE_TYPE, name.BUSINESS_TYPE, name.FUEL_TYPE, name.CHARGE_UNIT, name.NUMBER_SOURCE
+    name.ZERO_ONE_TYPE, name.BUSINESS_TYPE, name.FUEL_TYPE, name.CHARGE_UNIT, name.NUMBER_SOURCE, name.ENABLED_TYPE
   ]
 };
 

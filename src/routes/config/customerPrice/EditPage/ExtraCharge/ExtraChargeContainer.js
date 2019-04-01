@@ -2,26 +2,24 @@ import {createFreightContainer} from '../Freight/FreightContainer';
 
 const ACITON_PATH = 'extraCharge';  // PATH与tab页签的key值一致
 
-const URL_FREIGHT_DETAIL = '/api/config/customerPrice/freightDetail';
-const URL_DELETE = '/api/config/customerPrice/freightDelete';
-const URL_ABLE = '/api/config/customerPrice/freightAble';
-const URL_REFRESH = '/api/config/customerPrice/freightRefresh';
+const URL_FREIGHT_DETAIL = '/api/config/customerPrice/extraChargeDetail';
+const URL_DELETE = '/api/config/customerPrice/extraChargeDelete';
+const URL_ABLE = '/api/config/customerPrice/extraChargeAble';
 
-const URL_ADD = '/api/config/customerPrice/freightAdd';
-const URL_EDIT = '/api/config/customerPrice/freightEdit';
+const URL_ADD = '/api/config/customerPrice/extraChargeAdd';
+const URL_EDIT = '/api/config/customerPrice/extraChargeEdit';
 const URL_CUSTOMER = '/api/config/customerPrice/customer';
 const URL_CAOMODE = '/api/config/customerPrice/carMode';
 const URL_CHARGEITEM = '/api/config/customerPrice/chargeItem';
 const URL_CURRENCY = '/api/config/customerPrice/currency';
-const URL_BATCHEDIT = '/api/config/customerPrice/freightBatchEdit';
+const URL_BATCHEDIT = '/api/config/customerPrice/extraChargeBatchEdit';
 
 const Container = createFreightContainer({
   PATH: ACITON_PATH,
   API: {
     list: URL_FREIGHT_DETAIL,
     delete: URL_DELETE,
-    able: URL_ABLE,
-    refresh: URL_REFRESH
+    able: URL_ABLE
   },
   DIALOG_API: {
     newAdd: URL_ADD,

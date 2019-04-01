@@ -29,34 +29,36 @@ const createFreightContainer = (config) => {
 
   const {PATH, API, DIALOG_API, IMPORT_CODE} = config;
 
-  const afterEdit = async (dispatch, pageSize, getState) => {
-    await search2(dispatch, action, API.list, 1, pageSize, {}, {currentPage: 1}, [PATH]);
-    if (getState) {
+  const afterEdit = async (dispatch, getState, isUpdateTab) => {
+    const {currentPage, pageSize} = getSelfState(getState());
+    const page = isUpdateTab ? 1 : currentPage;
+    await search2(dispatch, action, API.list, page, pageSize, {}, {currentPage: page}, [PATH]);
+    if (isUpdateTab) {
       const {tabs} = getParentState(getState());
-      const {tableItems} = getSelfState(getState());
+      const {maxRecords} = getSelfState(getState());
       const index = tabs.findIndex(o => o.key === PATH);
-      const title = tabs[index].title.replace(/(\d+)/, tableItems.length);
+      const title = tabs[index].title.replace(/(\d+)/, maxRecords);
       dispatch(action.update({title}, 'tabs', index));
     }
   };
 
   const addActionCreator = async (dispatch, getState) => {
-    const {controls, pageSize, customerPriceId} = getSelfState(getState());
+    const {controls, customerPriceId} = getSelfState(getState());
     const result = await showEditDialog({type: 0, customerPriceId, controls, DIALOG_API});
-    result && await afterEdit(dispatch, pageSize, getState);
+    result && await afterEdit(dispatch, getState, true);
   };
 
   const copyActionCreator = async (dispatch, getState) => {
-    const {controls, pageSize, tableItems, customerPriceId} = getSelfState(getState());
+    const {controls, tableItems, customerPriceId} = getSelfState(getState());
     const index = helper.findOnlyCheckedIndex(tableItems);
     if (index === -1) return showError('请勾选一条数据！');
     const value = tableItems[index];
     const result = await showEditDialog({type: 1, customerPriceId, controls, value, DIALOG_API});
-    result && await afterEdit(dispatch, pageSize, getState);
+    result && await afterEdit(dispatch, getState, true);
   };
 
   const editActionCreator = async (dispatch, getState) => {
-    const {controls, pageSize, tableItems, customerPriceId} = getSelfState(getState());
+    const {controls, tableItems, customerPriceId} = getSelfState(getState());
     const index = helper.findOnlyCheckedIndex(tableItems);
     if (index === -1) return showError('请勾选一条数据！');
     const value = tableItems[index];
@@ -64,41 +66,41 @@ const createFreightContainer = (config) => {
       return showError('只能编辑未启用状态记录！');
     }
     const result = await showEditDialog({type: 2, customerPriceId, controls, value, DIALOG_API});
-    result && await afterEdit(dispatch, pageSize);
+    result && await afterEdit(dispatch, getState);
   };
 
   const doubleClickActionCreator = (rowIndex) => async (dispatch, getState) => {
-    const {controls, pageSize, tableItems, customerPriceId} = getSelfState(getState());
+    const {controls, tableItems, customerPriceId} = getSelfState(getState());
     const value = tableItems[rowIndex];
     if (value['enabledType'] !== 'enabled_type_unenabled') {
       return showError('只能编辑未启用状态记录！');
     }
     const result = await showEditDialog({type: 2, customerPriceId, controls, value, DIALOG_API});
-    result && await afterEdit(dispatch, pageSize);
+    result && await afterEdit(dispatch, getState);
   };
 
   const batchActionCreator = async (dispatch, getState) => {
-    const {batchEditControls, pageSize, tableItems} = getSelfState(getState());
-    const index = helper.findOnlyCheckedIndex(tableItems);
-    if (index === -1) return showError('请勾选一条数据！');
-    const value = tableItems[index];
-    const result = await showEditDialog({type: 3, customerPriceId, controls: batchEditControls, value, DIALOG_API});
-    result && await afterEdit(dispatch, pageSize);
+    const {batchEditControls, tableItems, customerPriceId} = getSelfState(getState());
+    const idList = tableItems.filter(o => o.checked).map(o => o.id);
+    const result = await showEditDialog({type: 3, customerPriceId, controls: batchEditControls, value: {idList}, DIALOG_API});
+    result && await afterEdit(dispatch, getState);
   };
 
   const deleteActionCreator = async (dispatch, getState) => {
-    const {tableItems, pageSize} = getSelfState(getState());
+    const {tableItems} = getSelfState(getState());
     const checkItems = tableItems.filter(o => o.checked);
     if(checkItems.length < 1) return showError('请勾选一条数据！');
-    if (checkItems.some(o => o.enabledType !== 'enabled_type_unenabled')) return showError('请选择未启用状态的数据！');
-    const {returnCode, returnMsg} = await fetchJson(API.delete, postOption(checkItems.map(o=>o.id)));
-    if (returnCode !== 0) return showError(returnMsg);
-    showSuccessMsg(returnMsg);
-    await afterEdit(dispatch, pageSize, getState);
+    if (checkItems.some(o => o.enabledType !== 'enabled_type_enabled')) return showError('请选择未启用状态的数据！');
+    execWithLoading(async () => {
+      const {returnCode, returnMsg} = await fetchJson(API.delete, postOption(checkItems.map(o=>o.id)));
+      if (returnCode !== 0) return showError(returnMsg);
+      showSuccessMsg(returnMsg);
+      await afterEdit(dispatch, getState, true);
+    });
   };
 
   const ableActionCreator = async (type='enabled_type_enabled', dispatch, getState) => {
-    const {tableItems, pageSize} = getSelfState(getState());
+    const {tableItems} = getSelfState(getState());
     const checkItems = tableItems.filter(o=>o.checked);
     if(checkItems.length < 1) return showError('请勾选一条数据！');
     if(type === 'enabled_type_enabled') {
@@ -113,7 +115,7 @@ const createFreightContainer = (config) => {
     const {returnCode, returnMsg} = await fetchJson(API.able, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    await afterEdit(dispatch, pageSize);
+    await afterEdit(dispatch, getState);
   };
 
   const enableActionCreator = async (dispatch, getState) => ableActionCreator('enabled_type_enabled', dispatch, getState);
@@ -127,15 +129,7 @@ const createFreightContainer = (config) => {
     exportExcelFunc(cols, tableItems);
   };
 
-  const refreshActionCreator = async (dispatch, getState) => {
-    execWithLoading(async () => {
-      const {id, pageSize} = getSelfState(getState());
-      const {returnCode, returnMsg} = await fetchJson(`${API.refresh}/${id}`);
-      if (returnCode !== 0) return showError(returnMsg);
-      showSuccessMsg(returnMsg);
-      await afterEdit(dispatch, pageSize);
-    });
-  };
+  const refreshActionCreator = async (dispatch, getState) => afterEdit(dispatch, getState, true);
 
   const toolbarActions = {
     add: addActionCreator,
@@ -178,7 +172,7 @@ const createFreightContainer = (config) => {
   const initActionCreator = () => async (dispatch, getState) => {
     try {
       dispatch(action.assign({status: 'loading'}, [PATH]));
-      const {item={}, editType} = getParentState(getState());
+      const {item={}, editType, tabs} = getParentState(getState());
       const {pageSize} = getSelfState(getState());
       const list = getJsonResult(await search(API.list, 0, pageSize, {}));
       const payload = {
@@ -188,6 +182,9 @@ const createFreightContainer = (config) => {
         maxRecords: list.returnTotalItem,
         status: 'page'
       };
+      const index = tabs.findIndex(o => o.key === PATH);
+      const title = tabs[index].title.replace(/(\d+)/, list.returnTotalItem);
+      dispatch(action.update({title}, 'tabs', index));
       dispatch(action.assign(payload, [PATH]));
     } catch (e) {
       helper.showError(e.message);
@@ -216,7 +213,6 @@ const ACITON_PATH = 'freight';  // PATH与tab页签的key值一致
 const URL_FREIGHT_DETAIL = '/api/config/customerPrice/freightDetail';
 const URL_DELETE = '/api/config/customerPrice/freightDelete';
 const URL_ABLE = '/api/config/customerPrice/freightAble';
-const URL_REFRESH = '/api/config/customerPrice/freightRefresh';
 
 const URL_ADD = '/api/config/customerPrice/freightAdd';
 const URL_EDIT = '/api/config/customerPrice/freightEdit';
@@ -232,8 +228,7 @@ const Container = createFreightContainer({
   API: {
     list: URL_FREIGHT_DETAIL,
     delete: URL_DELETE,
-    able: URL_ABLE,
-    refresh: URL_REFRESH
+    able: URL_ABLE
   },
   DIALOG_API: {
     newAdd: URL_ADD,

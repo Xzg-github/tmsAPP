@@ -70,30 +70,6 @@ api.post('/contractCommit', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
-// 获取编辑界面运费列表数据
-api.post('/freightDetail', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master/list/search`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-});
-
-// 新增运费信息保存
-api.post('/freightAdd', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master/add`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
-});
-
-// 编辑运费信息保存
-api.post('/freightEdit', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master/save`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-});
-
-// 批量编辑运费信息保存
-api.post('/freightBatchEdit', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master/batch/update`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-});
-
 // 车型下拉
 api.post('/carMode', async (req, res) => {
   const url = `${archiver_service}/car_mode/drop_list`;
@@ -126,25 +102,76 @@ api.post('/consignor', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
-// 删除运费
+// 获取编辑界面运费列表数据
+api.post('/freightDetail', async (req, res) => {
+  const url = `${archiver_service}/customer_price_master/list/search`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+// 新增运费信息保存
+api.post('/freightAdd', async (req, res) => {
+  const url = `${archiver_service}/customer_price_master/add`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+// 编辑运费信息保存
 api.post('/freightEdit', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master/batch`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
-  res.send({returnCode: 0, returnMsg: 'Success', result: 'Success'});
+  const url = `${archiver_service}/customer_price_master/save`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });
 
-// 启用/禁用运费
+// 批量编辑运费信息保存
+api.post('/freightBatchEdit', async (req, res) => {
+  const url = `${archiver_service}/customer_price_master/batch/update`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
+});
+
+// 批量删除运费
+api.post('/freightDelete', async (req, res) => {
+  const url = `${archiver_service}/customer_price_master/batch/delete`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
+});
+
+// 批量启用/禁用运费
 api.post('/freightAble', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master/batch/${req.body.enabledType}`;
-  // res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
-  res.send({returnCode: 0, returnMsg: 'Success', result: 'Success'});
+  const url = `${archiver_service}/customer_price_master/batch/${req.body.type}`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body.ids, 'put')));
 });
 
-// 刷新
-api.get('/freightRefresh/:id', async (req, res) => {
-  const url = `${archiver_service}/customer_price_master/${req.params.id}`;
-  // res.send(await fetchJsonByNode(req, url));
-  res.send({returnCode: 0, returnMsg: 'Success', result: []});
+// 获取编辑界面附加费列表数据
+api.post('/extraChargeDetail', async (req, res) => {
+  const url = `${archiver_service}/customer_price_additional/list/search`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+// 新增附加费信息保存
+api.post('/extraChargeAdd', async (req, res) => {
+  const url = `${archiver_service}/customer_price_additional/insert`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+// 编辑附加费信息保存
+api.post('/extraChargeEdit', async (req, res) => {
+  const url = `${archiver_service}/customer_price_additional/save`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
+});
+
+// 批量编辑附加费信息保存
+api.post('/extraChargeBatchEdit', async (req, res) => {
+  const url = `${archiver_service}/customer_price_additional/batch/update`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
+});
+
+// 批量删除附加费
+api.post('/extraChargeDelete', async (req, res) => {
+  const url = `${archiver_service}/customer_price_additional/batch/delete`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body, 'delete')));
+});
+
+// 批量启用/禁用附加费
+api.post('/extraChargeAble', async (req, res) => {
+  const url = `${archiver_service}/customer_price_additional/batch/${req.body.type}`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body.ids, 'put')));
 });
 
 
