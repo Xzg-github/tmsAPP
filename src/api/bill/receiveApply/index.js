@@ -158,8 +158,20 @@ api.post('/submit', async (req, res) => {
 
 // 获取法人主体下拉
 api.post('/institutionId', async (req, res) => {
-  const url = `${host}/tenant-service/institution/legal_person/drop_list`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+  // const url = `${host}/tenant-service/institution/legal_person/drop_list`;
+  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+  const url = `${archiver_service}/TenantCorporateInfoDto/listByRelationId`;
+  const params = {
+    corporateName: req.body.filter,
+    itemFrom: 0,
+    itemTo: req.body.maxNumber
+  };
+  const data = getJsonResult(await fetchJsonByNode(req, url, postOption(params)));
+  res.send({returnCode: 0, returnMsg: 'Success', result: data.data.map(o => ({
+    ...o,
+    title: o.corporateName,
+    value: o.id
+  }))});
 });
 
 
