@@ -4,9 +4,8 @@ import helper from '../../../../common/common';
 import {Action} from '../../../../action-reducer/action';
 import {getPathValue} from '../../../../action-reducer/helper';
 import showPopup from '../../../../standard-business/showPopup';
-
-const FORMATS = ['image/jpeg', 'image/gif', 'image/bmp', 'image/jpg', 'image/png', 'image/tiff', 'image/gif', 'image/pcx', 'image/tga', 'image/exif', 'image/fpx', 'image/svg', 'image/psd', 'image/cdr', 'image/pcd', 'image/dxf', 'image/ufo', 'image/eps', 'image/ai', 'image/raw', 'image/WMF'];
-const FORMATS1 = ['.jpeg', '.gif', '.bmp', '.jpg', '.png', '.tiff', '.gif', '.pcx', '.tga', '.exif', '.fpx', '.svg', '.psd', '.cdr', '.pcd', '.dxf', '.ufo', '.eps', '.ai', '.raw', '.WMF'];
+import {fetchDictionary} from '../../../../common/dictionary';
+import upload from '../../../../standard-business/upload';
 
 const action = new Action(['temp'], false);
 
@@ -14,46 +13,84 @@ const getSelfState = (rootState) => {
   return getPathValue(rootState, ['temp']);
 };
 
-const changeActionCreator = ({file, fileList}) => (dispatch) => {
-  if (!file) return; //过滤掉不符合条件的响应
-  if (file.response && file.response.returnCode !== 0) { //检查是否上传到文件服务器成功
-    helper.showError(`上传失败，${file.response.returnMsg || ''}`);
-    const newList = fileList.filter(item => item.uid !== file.uid);
-    dispatch(action.assign({fileList: newList}));
+const changeActionCreator = (rowIndex, keyName, value) => (dispatch) => {
+  dispatch(action.update({[keyName]: value}, 'items', rowIndex));
+};
+
+const checkActionCreator = (rowIndex, keyName, checked) => (dispatch) => {
+  dispatch(action.update({checked}, 'items', rowIndex));
+};
+
+const linkActionCreator = (keyName, rowIndex) => async (dispatch, getState) => {
+  const {items} = getSelfState(getState());
+  const item = items[rowIndex];
+  const URL_DOWNLOAD= '/api/track/file_manager/download';  // 点击下载
+  if(item.fileFormat === 'id'){
+    const {returnCode, result, returnMsg} = await helper.fetchJson(`${URL_DOWNLOAD}/${item.fileUrl}`);
+    if (returnCode !== 0) {
+      return helper.showError(returnMsg);
+    }
+    helper.download(`/api/proxy/zuul/file-center-service/${result[item.fileUrl]}`,'file');
   }else {
-    const newList = fileList.filter(item => item.status).map(item => (FORMATS.indexOf(item.type) === -1) ? {...item, thumbUrl: '/default.png'} : item);
-    dispatch(action.assign({fileList: newList}));
+    helper.download(item.fileUrl, 'file');
   }
 };
 
-const removeActionCreator = (file) => async (dispatch,getState) => {
-  const {delFileList} = getSelfState(getState());
-  const {returnCode, result} = file.response || {};
-  let delList = delFileList;
-  returnCode === 0 && delList.push(result);
-  dispatch(action.assign({delFileList:delList}));
+const delActionCreator = (dispatch,getState) => {
+  const {items, delFileList} = getSelfState(getState());
+  const newItems = items.filter(item => item.checked !== true);
+  const newDelFiles = items.filter(item => item.checked === true && !!item.fileUrl).map(item => item.fileUrl);
+  dispatch(action.assign({items: newItems, delFileList: delFileList.concat(newDelFiles)}));
 };
 
-const previewActionCreator = (file) => {
-  return action.assign({
-    previewImage: file.url || file.thumbUrl,
-    previewVisible: true,
-  });
+const uploadActionCreator = async (dispatch, getState) => {
+  const {items} = getSelfState(getState());
+  const checkedItems = items.filter(item => item.checked === true);
+  if (checkedItems.length !== 1) return helper.showError(`请勾选一条记录`);
+  if (!!checkedItems[0].fileName) return helper.showError(`此记录已有附件，请新增记录后上传`);
+  const url = `/api/proxy/zuul/tms-service/file/upload/document`;
+  const start = await upload(url);
+  if (start) {
+    const sss = await start();
+    const {status, name, response={}} = sss;
+    if (status && response.returnCode === 0) {
+      helper.showSuccessMsg(`[${name}]上传成功`);
+      const file = {fileName: name, fileUrl: response.result, fileFormat: 'id'};
+      dispatch(action.update(file, 'items', {key: 'checked', value: true}));
+      dispatch(action.add(file.fileUrl, 'addFileList'));
+    } else {
+      helper.showError(`[${name}]上传失败:${response.returnMsg}`);
+    }
+  }
 };
 
-const closePreviewActionCreator = () => {
-  return action.assign({previewVisible: false});
+const addActionCreator = (dispatch) => {
+  dispatch(action.add({}, 'items'));
+};
+
+const formChangeActionCreator = (key, value) => (dispatch) => {
+  dispatch(action.assign({[key]: value}, 'formValue'));
+};
+
+const exitValidActionCreator = () => {
+  return action.assign({valid: false});
 };
 
 const okActionCreator = () => async (dispatch, getState) => {
-  const {controls, formValue, fileList, delFileList} = getSelfState(getState());
+  const {controls, formValue, items, delFileList} = getSelfState(getState());
   if (!helper.validValue(controls, formValue)) {
     dispatch(action.assign({valid: true}));
     return;
   }
+  const fileList = items.filter(item => !!item.fileName);
   if (fileList.length < 1) return helper.showError('附件不能为空');
   dispatch(action.assign({confirmLoading: true}));
-  const commitList = fileList.map(item => ({fileFormat: item.fileFormat || 'id', fileName: item.name, fileUrl: item.response.result}));
+  const commitList = fileList.map(item => ({
+    ...helper.convert(item),
+    driverTaskName: item.driverTaskId ? item.driverTaskId.title : '',
+    taskTypeFileName: item.taskTypeFile ? item.taskTypeFile.title : '',
+    checked: undefined
+  }));
   const newValue = {
     id: formValue.id,
     remark: formValue.remark,
@@ -72,40 +109,26 @@ const okActionCreator = () => async (dispatch, getState) => {
   }
 };
 
-const formChangeActionCreator = (key, value) => (dispatch) => {
-  dispatch(action.assign({[key]: value}, 'formValue'));
-};
-
-const exitValidActionCreator = () => {
-  return action.assign({valid: false});
-};
-
-//差集
-const difference = (arr1, arr2) => {
-  let a = new Set([...arr1]);
-  let b = new Set([...arr2]);
-  let intersectionSet = new Set([...a].filter(x => !b.has(x)));
-  return Array.from(intersectionSet);
-};
-
 //取消删除上传在文件中心的文件，编辑的时候保留原有的文件
 const cancelActionCreator= () => async (dispatch, getState) => {
-  const {delFileList,editFileList,fileList} = getSelfState(getState());
-  let editList = [];
-  let allList = [];
-  fileList.forEach(item => {
-    const {returnCode, result} = item.response || {};
-    returnCode === 0 && allList.push(result);
-  });
-  editFileList.forEach(item => {
-    const {returnCode, result} = item.response || {};
-    returnCode === 0 && editList.push(result);
-  });
-  let all = allList.concat(...delFileList);
-  let delList = difference(all,editList);
+  const {addFileList} = getSelfState(getState());
   const URL_DEL_FILE = '/api/track/file_manager/upload_del'; //删除远程文件
-  delList.length > 0 && helper.fetchJson(`${URL_DEL_FILE}/${delList.join(',')}`, 'delete');
+  addFileList.length > 0 && helper.fetchJson(`${URL_DEL_FILE}/${addFileList.join(',')}`, 'delete');
   dispatch(action.assign({visible: false}));
+};
+
+const buttons = {
+  add: addActionCreator,
+  del: delActionCreator,
+  upload: uploadActionCreator
+};
+
+const clickActionCreator = (key) => {
+  if (buttons[key]) {
+    return buttons[key];
+  }else {
+    return {type: 'unknown'};
+  }
 };
 
 const mapStateToProps = (state) => {
@@ -117,38 +140,10 @@ const actionCreators = {
   onCancel: cancelActionCreator,
   onFormChange: formChangeActionCreator,
   onExitValid: exitValidActionCreator,
-  onChange: changeActionCreator,
-  onRemove: removeActionCreator,
-  onPreview: previewActionCreator,
-  onClosePreview: closePreviewActionCreator
-};
-
-const URL_DOWNLOAD= '/api/track/file_manager/download';  // 点击下载
-const formatDisplayList =  async (originFileList=[]) => {
-  let fileList = [], uid = 0;
-  for(let item of originFileList) {
-    let fileItem = {};
-    if(item.fileFormat ==='id'){
-      const { result, returnMsg, returnCode }  = await helper.fetchJson(`${URL_DOWNLOAD}/${item.fileUrl}`);
-      if (returnCode !== 0) {
-        helper.showError(returnMsg);
-        return;
-      }
-      fileItem.url = `/api/proxy/file-center-service/${result[item.fileUrl]}`;
-    }
-    if (FORMATS1.indexOf(item.fileName.substr(item.fileName.lastIndexOf('.'))) !== -1) {
-      fileItem.type = 'image/jpeg';
-    }else {
-      fileItem.thumbUrl = '/default.png';
-    }
-    fileItem.status='done';
-    fileItem.name = item.fileName;
-    fileItem.uid = ++uid;
-    fileItem.response = { returnCode: 0, result: item.fileUrl };
-    fileItem.fileFormat = item.fileFormat;
-    fileList.push(fileItem);
-  }
-  return fileList
+  onContentChange: changeActionCreator,
+  onCheck: checkActionCreator,
+  onLink: linkActionCreator,
+  onClick: clickActionCreator,
 };
 
 /*
@@ -162,7 +157,27 @@ export default async (data) => {
     {key: 'taskTypeName', title: '文件任务', type:'readonly', required:true},
     {key: 'remark', title: '备注',type:'text'}
   ];
-  const fileList = await formatDisplayList(data.fileList);
+  const buttons = [
+    {key: 'add', title: '新增'},
+    {key: 'del', title: '删除'},
+    {key: 'upload', title: '上传'},
+  ];
+  const taskTypeCodeArr = data.taskTypeCode.split(',');
+  const taskTypeOptions = helper.getJsonResult(await fetchDictionary(['task_type_file'])).task_type_file.filter(item => taskTypeCodeArr.includes(item.value));
+  const {returnCode, result, returnMsg} = await helper.fetchJson(`/api/order/input/track_driver/${data.id}`);
+  if (returnCode !== 0) return helper.showError(returnMsg);
+  const driverTaskOptions = result.map(item => ({value: item.taskTypeId, title: item.taskTypeName}));
+  const cols = [
+    {key: 'checked', title: '', type: 'checkbox'},
+    {key: 'index', title: '序号', type: 'index'},
+    {key: 'taskTypeFile', title: '文件任务', type: 'search', options: taskTypeOptions},
+    {key: 'driverTaskId', title: '节点', type: 'search', options: driverTaskOptions},
+    {key: 'fileName', title: '附件', link: true},
+  ];
+  const items = data.fileList ? data.fileList.map(item => ({...item,
+    driverTaskId: item.driverTaskId ? {value: item.driverTaskId, title: item.driverTaskName} : '',
+    taskTypeFile: item.taskTypeFile ? {value: item.taskTypeFile, title: item.taskTypeFileName} : ''
+  })) : [];
   const props =  {
     label: {
       ok: '确定',
@@ -172,11 +187,11 @@ export default async (data) => {
     controls,
     formValue: data,
     valid: false,
-    fileList,
+    buttons,
+    cols,
+    items,
+    addFileList: [],
     delFileList: [],
-    editFileList: fileList,
-    previewVisible: false,
-    previewImage: '',
     visible: true
   };
   global.store.dispatch(action.create(props));

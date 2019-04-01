@@ -67,15 +67,20 @@ api.get('/detail/:id', async (req, res) => {
 
 // 开户行下拉
 api.post('/receivable_openingBank', async(req, res) => {
-  const url = `${archiver_service}/TenantCorporateInfoDto/listByRelationId`;
+  const url = `${archiver_service}/TenantBankDto/listByRelationId`;
+  const {filter, maxNumber, institutionId} = req.body;
   const params = {
-    corporateName: req.body.filter,
+    accountNumber: filter,
     itemFrom: 0,
-    itemTo: req.body.maxNumber
+    itemTo: maxNumber
   };
   const data = getJsonResult(await fetchJsonByNode(req, url, postOption(params)));
-  res.send({returnCode: 0, returnMsg: 'Success', result: data.data.map(o => {
-    o.title = o.corporateName;
+  res.send({returnCode: 0, returnMsg: 'Success', result: data.data.filter(o => {
+    // 根据法人主体做过滤
+    const id = o.tenantInstitutionId;
+    return typeof institutionId === 'object' ? id.value === institutionId.value : id.title === institutionId || id.value === institutionId;
+  }).map(o => {
+    o.title = o.openingBank || '';
     o.value = o.id;
     return o;
   })});
@@ -153,8 +158,20 @@ api.post('/submit', async (req, res) => {
 
 // 获取法人主体下拉
 api.post('/institutionId', async (req, res) => {
-  const url = `${host}/tenant-service/institution/legal_person/drop_list`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+  // const url = `${host}/tenant-service/institution/legal_person/drop_list`;
+  // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+  const url = `${archiver_service}/TenantCorporateInfoDto/listByRelationId`;
+  const params = {
+    corporateName: req.body.filter,
+    itemFrom: 0,
+    itemTo: req.body.maxNumber
+  };
+  const data = getJsonResult(await fetchJsonByNode(req, url, postOption(params)));
+  res.send({returnCode: 0, returnMsg: 'Success', result: data.data.map(o => ({
+    ...o,
+    title: o.corporateName,
+    value: o.id
+  }))});
 });
 
 

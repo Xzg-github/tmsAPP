@@ -104,11 +104,11 @@ const config = {
   },
   buttons: { //各tab页签操作按钮
     auto:[
-      {key: 'autoDispatch', title: '智能派单', confirm: '是否所有勾选运单智能派单？', bsStyle: 'primary'},
+      {key: 'autoDispatch', title: '智能派单', confirm: '是否所有勾选运单智能派单？', bsStyle: 'primary', disabled: true},
     ].concat(commonButtons),
     dispatch: [
-      {key: 'confirmPlan', title: '确认计划', bsStyle: 'primary', confirm: '是否所有勾选运单确认计划？'},
-      {key: 'revokePlan', title: '撤消计划', confirm: '是否所有勾选运单撤消计划？'},
+      {key: 'confirmPlan', title: '确认计划', bsStyle: 'primary', confirm: '是否所有勾选运单确认计划？', disabled: true},
+      {key: 'revokePlan', title: '撤消计划', confirm: '是否所有勾选运单撤消计划？', disabled: true},
       {key: 'dispatchDriver', title: '人工派车'},
       {key: 'dispatchSupplier', title: '人工派供应商'},
     ].concat(commonButtons),

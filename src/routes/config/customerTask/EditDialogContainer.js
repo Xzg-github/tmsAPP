@@ -13,13 +13,33 @@ const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
 };
 
-const changeActionCreator = (key, value) => {
-  return action.assign({[key]: value}, 'formValue');
+const changeActionCreator = (key, value) => (dispatch, getState) => {
+  let obj = {[key]: value};
+  if (key === 'customerId') {
+    const {formValue} = getSelfState(getState());
+    if (value && formValue.customerId && value.value === formValue.customerId.value) return;
+    obj.consignorId = '';
+    obj.consigneeId = '';
+  }
+  dispatch(action.assign(obj, 'formValue'));
 };
 
-const searchActionCreator = (key, filter, config) => async (dispatch) => {
-  const {returnCode, result} = await helper.fuzzySearchEx(filter, config);
-  dispatch(action.update({options: returnCode === 0 ? result : undefined}, 'controls', {key: 'key', value: key}));
+const searchActionCreator = (key, filter, config) => async (dispatch, getState) => {
+  if (key === 'consignorId' || key === 'consigneeId') {
+    const {formValue} = getSelfState(getState());
+    let options = [];
+    if (formValue.customerId) {
+      const url = `/api/order/input/customer_factory_drop_list`;
+      const data = await helper.fetchJson(url, helper.postOption({customerId: formValue.customerId.value, name: filter, isAll: 1}));
+      if (data.returnCode === 0) {
+        options = data.result || [];
+      }
+    }
+    dispatch(action.update({options}, ['controls'], {key: 'key', value: key}));
+  }else {
+    const {returnCode, result} = await helper.fuzzySearchEx(filter, config);
+    dispatch(action.update({options: returnCode === 0 ? result : undefined}, 'controls', {key: 'key', value: key}));
+  }
 };
 
 const exitValidActionCreator = () => {
@@ -81,8 +101,10 @@ const buildDialogState = async (data, type) => {
   try {
     let controls = [
       {key: 'customerId', title: '客户', type: type === 0 ? 'search': 'readonly', searchType: 'customer', required: true},
-      {key: 'businessType', title: '运输类型', type: type === 0 ? 'select': 'readonly', dictionary: 'business_type'},
-      {key: 'deptmentId', title: '部门', type: type === 0 ? 'search': 'readonly',searchUrl: URL_BRANCH}
+      {key: 'consignorId', title: '发货人', type: type === 0 ? 'search': 'readonly', props: {searchWhenClick: true}, required: true},
+      {key: 'consigneeId', title: '收货人', type: type === 0 ? 'search': 'readonly', props: {searchWhenClick: true}, required: true},
+      {key: 'businessType', title: '运输类型', type: type === 0 ? 'select': 'readonly', dictionary: 'business_type', required: true},
+      {key: 'deptmentId', title: '部门', type: type === 0 ? 'search': 'readonly',searchUrl: URL_BRANCH, required: true}
     ];
     const dic = helper.getJsonResult(await fetchAllDictionary());
     setDictionary2(dic, controls);

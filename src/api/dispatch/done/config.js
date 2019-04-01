@@ -78,7 +78,7 @@ const menu = [
 ];
 
 const config = {
-  tabs: [{key: 'index', title: '已办任务', close: false}],
+  tabs: [{key: 'index', title: '执行中任务', close: false}],
   filters,
   tableCols,
   pageSize,

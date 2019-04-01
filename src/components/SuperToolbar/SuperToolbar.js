@@ -16,6 +16,7 @@ const ButtonType = {
   title: PropTypes.string.isRequired,
   bsStyle: PropTypes.string,
   confirm: PropTypes.string,
+  disabled: PropTypes.bool,
   menu: PropTypes.array
 };
 
@@ -50,7 +51,7 @@ class SuperToolbar extends React.Component {
     );
   };
 
-  toButton = ({key, title, bsStyle: type, confirm, menu}) => {
+  toButton = ({key, title, bsStyle: type, confirm, menu, disabled}) => {
     const onClick = this.onClick.bind(this, key);
     const {size='default'} = this.props;
     if (menu && menu.length) {
@@ -60,11 +61,11 @@ class SuperToolbar extends React.Component {
         </Dropdown>
       );
     } else if (!confirm) {
-      return <ButtonEx {...{key, size, type, onClick}}>{title}</ButtonEx>;
+      return <ButtonEx {...{key, size, type, disabled, onClick}}>{title}</ButtonEx>;
     } else {
       return (
         <Popconfirm key={key} title={confirm} onConfirm={onClick}>
-          <ButtonEx {...{size, type}}>{title}</ButtonEx>
+          <ButtonEx {...{size, type, disabled}}>{title}</ButtonEx>
         </Popconfirm>
       );
     }

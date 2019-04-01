@@ -1,67 +1,23 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import {ModalWithDrag, SuperForm} from '../../../../components';
-import {Upload, Icon} from 'antd';
-import helper from '../../../../common/common';
+import {ModalWithDrag, SuperForm, SuperTable2, SuperToolbar} from '../../../../components';
 import s from './UploadDialog.less';
 
 class UploadDialog extends React.Component {
 
-  toUploadIcon = () => {  // 上传按钮
-    return (
-      <div>
-        <Icon type="plus" />
-        <div className="ant-upload-text">Upload</div>
-      </div>
-    );
-  };
-
-  toUpload = () => {
-    const { fileList=[], onChange, onRemove, onPreview } = this.props;
-    const props = {
-      action: '/api/proxy/zuul/tms-service/file/upload/document',
-      fileList,
-      listType: 'picture-card',
-      onChange,
-      onRemove,
-      onPreview,
-      beforeUpload:  (file) => {
-        const isLt2M = file.size / 1024 / 1024 < 5;      // 附件限制至5M
-        if (!isLt2M) {
-          helper.showError('附件大小不能超过5M');
-          onChange({fileList});
-        }
-        return isLt2M;
+  toTable = () => {
+    const {cols, items, onContentChange, onCheck, onLink} = this.props;
+    const props ={
+      cols, items,
+      callback: {
+        onContentChange, onCheck, onLink
       }
     };
-
-    return (
-      <Upload {...props}>
-        {fileList.length < 10 && this.toUploadIcon()}
-      </Upload >
-    );
+    return <SuperTable2 {...props}/>;
   };
 
-  toPreviewDialog = () => {
-    const {previewImage, onClosePreview, previewVisible=false} = this.props;
-    const props = {
-      title: '预览',
-      onCancel: onClosePreview,
-      visible: previewVisible,
-      maskClosable: true,
-      footer: null
-    };
-    return (
-      <ModalWithDrag {...props}>
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-      </ModalWithDrag>
-    );
-  };
-
-  toLabel = () => {
-    return (
-      <label>上传文档:(单个文件大小限制在5M以内,上传个数不能超过10个,如若大于10个请压缩后上传)</label>
-    );
+  toToolbar = () => {
+    return <SuperToolbar buttons={this.props.buttons} onClick={this.props.onClick}/>;
   };
 
   toForm = () => {
@@ -77,12 +33,12 @@ class UploadDialog extends React.Component {
   };
 
   getProps = () => {
-    const {onOk, onCancel, afterClose, res, title, label, visible, fileList=[], confirmLoading=false} = this.props;
+    const {onOk, onCancel, afterClose, res, title, label, visible, confirmLoading=false} = this.props;
     return {
       onOk,
       onCancel,
       afterClose: () => {afterClose(res)},
-      className: fileList.length < 10 ? s.root : s.root2,
+      className: s.root,
       title ,
       visible,
       maskClosable: false,
@@ -97,9 +53,8 @@ class UploadDialog extends React.Component {
     return (
       <ModalWithDrag {...this.getProps()}>
         {this.toForm()}
-        {this.toLabel()}
-        {this.toUpload()}
-        {this.toPreviewDialog()}
+        {this.toToolbar()}
+        {this.toTable()}
       </ModalWithDrag>
     );
   }

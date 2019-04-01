@@ -40,20 +40,33 @@ const changeActionCreator = (KEY, key, value) => async (dispatch, getState) =>  
       payload['openingBank'] = value['openingBank'];
       payload['accountNumber'] = value['accountNumber'];
       payload['postAddress'] = value['postAddress'];
+      break;
+    }
+    case 'receivableOpeningBank': {
+      payload['receivableAccountNumber'] = value['accountNumber'];
+      break;
+    }
+    case 'institutionId': {
+      payload['receivableOpeningBank'] = '';
+      payload['enterpriseSignature'] = value['enterpriseSignature'];
+      payload['taxRegistrationNumber'] = value['taxRegistrationNumber'];
+      payload['businessRegistrationNumber'] = value['businessRegistrationNumber'];
+      break;
     }
   }
   dispatch(action.assign(payload, 'value'));
 };
 
 const formSearchActionCreator = (KEY, key, filter, control) => async (dispatch, getState) => {
-  const {controls} = getSelfState(getState());
+  const {controls, value} = getSelfState(getState());
   let result = [];
   if (control.searchType) {
     result = getJsonResult(await fuzzySearchEx(filter, control));
   } else {
     switch (key) {
       case 'receivableOpeningBank': {
-        result = getJsonResult(await fetchJson(URL_RECEIVABLE_OPENINGBANK, postOption({filter, maxNumber: 65536})));
+        const params = {filter, maxNumber: 65536, institutionId: value['institutionId']};
+        result = getJsonResult(await fetchJson(URL_RECEIVABLE_OPENINGBANK, postOption(params)));
         break;
       }
       case 'invoiceHeaderInformation': {
