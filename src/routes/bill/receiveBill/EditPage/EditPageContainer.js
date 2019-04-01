@@ -9,6 +9,7 @@ import execWithLoading from '../../../../standard-business/execWithLoading';
 import {updateOne} from '../../../../action-reducer/array';
 import {showAddCustomerFactoryDialog} from '../../../config/customerFactory/EditDialogContainer';
 import {toCapitalization} from '../../receiveApply/EditPage/InvoiceTable/InvoiceTable';
+import {searchActionCreator as updateTable} from "../OrderPage/OrderPageContainer";
 
 const PARENT_STATE_PATH = ['receiveBill'];
 const STATE_PATH = ['receiveBill', 'edit'];
@@ -173,12 +174,17 @@ const saveActionCreator = () => async (dispatch, getState) => {
       return currentItem.billExchangeRate !== 0;
     });
     if (!invalidTableItem) return showError('汇率为空，请在档案维护汇率');
-    value['customerContact'] = value['customerContact'].title;
-    value['customerHeaderInformation'] = value['customerHeaderInformation'].title;
+    if (value['customerContact'].title) {
+      value['customerContact'] = value['customerContact'].title;
+    }
+    if (value['customerHeaderInformation'].title) {
+      value['customerHeaderInformation'] = value['customerHeaderInformation'].title;
+    }
     const {returnCode, returnMsg} = await helper.fetchJson(URL_SAVE, postOption({...convert(value)}));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
     closeActionCreator()(dispatch, getState);
+    return updateTable(dispatch, getState);
   });
 };
 
@@ -231,13 +237,14 @@ const onAddActionCreator = (KEY) => async (dispatch, getState) => {
 
 const buildEditPageState = async (config, itemData, readonly) => {
   const detailData = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
-  const {receivableBillChargeList: costInfo, ...formValue} = detailData;
+  const {receivableBillChargeList: costInfo, ...formValue} = detailData;debugger
   const customerInfomation = getJsonResult(await fetchJson(URL_HEADER_INDO, postOption({name: formValue['customerHeaderInformation']})));
+  const amountCapital = toCapitalization(formValue['amount']);
   return {
     ...config,
     ...itemData,
     readonly,
-    value: {...formValue, costInfo, customerAddress: customerInfomation[0] ? customerInfomation[0].address : '', orderNumber: itemData.orderNumber},
+    value: {...formValue, costInfo, customerAddress: customerInfomation[0] ? customerInfomation[0].address : '', orderNumber: itemData.orderNumber, amountCapital},
     status: 'page'
   };
 };
