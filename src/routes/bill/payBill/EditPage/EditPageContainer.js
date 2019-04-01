@@ -9,6 +9,7 @@ import execWithLoading from '../../../../standard-business/execWithLoading';
 import {updateOne} from '../../../../action-reducer/array';
 import {showAddCustomerFactoryDialog} from '../../../config/customerFactory/EditDialogContainer';
 import {toCapitalization} from '../../receiveApply/EditPage/InvoiceTable/InvoiceTable';
+import {searchActionCreator as updateTable} from "../OrderPage/OrderPageContainer";
 
 const PARENT_STATE_PATH = ['payBill'];
 const STATE_PATH = ['payBill', 'edit'];
@@ -173,10 +174,14 @@ const saveActionCreator = () => async (dispatch, getState) => {
       return currentItem.billExchangeRate !== 0;
     });
     if (!invalidTableItem) return showError('汇率为空，请在档案维护汇率');
+    if (value['supplierHeaderInformation'].title){
+      value['supplierHeaderInformation'] = value['supplierHeaderInformation'].title;
+    }
     const {returnCode, returnMsg} = await helper.fetchJson(URL_SAVE, postOption({...convert(value)}));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
     closeActionCreator()(dispatch, getState);
+    return updateTable(dispatch, getState);
   });
 };
 
@@ -233,11 +238,12 @@ const onAddActionCreator = (KEY) => async (dispatch, getState) => {
 const buildEditPageState = async (config, itemData, readonly) => {
   const detailData = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
   const {receivableBillChargeList: costInfo, ...formValue} = detailData;
+  const amountCapital = toCapitalization(formValue['amount']);
   return {
     ...config,
     ...itemData,
     readonly,
-    value: {...formValue, costInfo, orderNumber: itemData.orderNumber},
+    value: {...formValue, costInfo, orderNumber: itemData.orderNumber, amountCapital},
     status: 'page'
   };
 };
