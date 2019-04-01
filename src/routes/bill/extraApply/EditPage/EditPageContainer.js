@@ -272,7 +272,8 @@ const buildEditPageState = async (config, itemData, editType) => {
   let value = {};
   if (editType !== 0) {
     const {extraCharge, payChargeList, ...other} = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
-    value = {...extraCharge, payChargeList, ...other};
+    const {payAmount=0, receiveAmount=0} = extraCharge;
+    value = {...extraCharge, payChargeList, ...other, profit: receiveAmount - payAmount};
     // 如果是非待提交编辑页面且费用来源为空，才去判断后端给的是否只读的变量
     if (itemData['statusType'] !== 'status_submit_awaiting' && !itemData['chargeFrom'] && !extraCharge.directorIsTrueOrFalse) {
       config.tables = setReadonly(config.tables);
