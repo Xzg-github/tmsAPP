@@ -94,7 +94,6 @@ const showEditPage = (dispatch, getState, editType=0, itemData={}) => {
     }
     // 应付待审核
     case 'status_pay_check_awaiting': {
-      config.isShowAmount = true;
       // 去掉应收表格
       config.tables = config.tables.filter(o => o.key === 'payChargeList');
       // 去掉回退按钮
