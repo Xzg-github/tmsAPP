@@ -134,10 +134,9 @@ const handleImgChange = (data={}) => async (dispatch, getState) => {
 
 const handleImgRemove = (file) => async (dispatch, getState) => {
   // 删除文件服务中心的远程文件
-  if (file.response.returnCode === 0) {
-    const {returnCode, result, returnMsg} = await fetchJson(`${URL_DEL_FILE}/${[file.response.result]}`, 'delete');
+  const id = file.fileUrl || file.response.result;
+    const {returnCode, result, returnMsg} = await fetchJson(`${URL_DEL_FILE}/${[id]}`, 'delete');
     returnCode === 0 ? showSuccessMsg(returnMsg) : showError(returnMsg);
-  }
 };
 
 const getFiles = async (list=[]) => {
