@@ -80,7 +80,6 @@ const editButtons = [
 ];
 
 const cols = [
-  {key: 'supplierId', title: '结算单位'},
   {key: 'orderNumber', title: '运单号'},
   {key: 'amount', title: '对帐金额'},
   {key: 'customerDelegateCode', title: '委托号'},
