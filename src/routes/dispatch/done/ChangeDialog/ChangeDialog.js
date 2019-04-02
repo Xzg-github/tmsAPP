@@ -13,6 +13,7 @@ class ChangeDialog extends React.Component {
       valid,
       hideControls,
       colNum: 2,
+      container: true,
       onChange, onSearch, onExitValid
     };
     return <SuperForm {...props} /> ;
