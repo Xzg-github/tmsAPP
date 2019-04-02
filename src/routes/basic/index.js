@@ -15,6 +15,7 @@ const children = [
 
   require('./tenantCurrency').default,            // 租户币种
   require('./systemConfig').default,            // 系统配置
+  require('./information').default,              // 信息反馈
 
   require('./roleAuthorityDistribution').default, // 角色权限分配
   require('./accountManager').default,            // 用户角色分配

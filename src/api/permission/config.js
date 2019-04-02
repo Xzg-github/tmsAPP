@@ -207,6 +207,7 @@ const systemRule_mgr = [
   {key: 'SMSmail'},             // 通知账号配置
   {key: 'emailAccept'},         // 邮箱接收管理
   {key: 'messageSetting'},      // 消息设置
+  {key: 'information'},      // 信息反馈
   {key: 'formExpand'},          // 表单扩展设置
 ];
 

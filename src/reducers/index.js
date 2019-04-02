@@ -120,6 +120,9 @@ const rootReducer = combineReducers({
   position: create('position', false),
   customerPriceDetail: create('customerPriceDetail'),
   supplierPriceDetail: create('supplierPriceDetail'),
+
+  //系统设置
+  information: create('information', false),
 });
 
 export default rootReducer;
