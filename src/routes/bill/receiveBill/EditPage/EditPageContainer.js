@@ -237,7 +237,7 @@ const onAddActionCreator = (KEY) => async (dispatch, getState) => {
 
 const buildEditPageState = async (config, itemData, readonly) => {
   const detailData = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
-  const {receivableBillChargeList: costInfo, ...formValue} = detailData;debugger
+  const {receivableBillChargeList: costInfo, ...formValue} = detailData;
   const customerInfomation = getJsonResult(await fetchJson(URL_HEADER_INDO, postOption({name: formValue['customerHeaderInformation']})));
   const amountCapital = toCapitalization(formValue['amount']);
   return {
