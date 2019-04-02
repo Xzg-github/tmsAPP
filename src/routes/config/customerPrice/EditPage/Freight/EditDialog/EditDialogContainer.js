@@ -80,7 +80,7 @@ const formSearchActionCreator = (keyName, keyValue) => async (dispatch, getState
 };
 
 const okActionCreator = (afterClose) => async (dispatch, getState) => {
-  const {type, customerPriceId, controls, value, DIALOG_API} = getSelfState(getState());
+  const {type, controls, value, DIALOG_API} = getSelfState(getState());
   if(!helper.validValue(controls, value)) {
     dispatch(action.assign({valid: true}));
     return showError('请填写必填项！');
@@ -91,8 +91,7 @@ const okActionCreator = (afterClose) => async (dispatch, getState) => {
     if (checkList.some(o => helper.isEmpty2(value[o]))) return showError('勾选的数据为必填！');
   }
   const url = type < 2 ? DIALOG_API.newAdd : type === 2 ? DIALOG_API.editSave: DIALOG_API.batchEdit;
-  const params = postOption({...convert(value), customerPriceId});
-  const {returnCode, result, returnMsg} = await fetchJson(url, params);
+  const {returnCode, result, returnMsg} = await fetchJson(url, postOption(convert(value)));
   if (returnCode !== 0) return showError(returnMsg);
   helper.showSuccessMsg(returnMsg);
   dispatch(action.assign({okResult: true}));
@@ -121,14 +120,13 @@ const actionCreators = {
 };
 
 const buildState = async (config={}) => {
-  const {type=0, customerPriceId='', controls=[], value={}, DIALOG_API} = deepCopy(config);
+  const {type=0, value={}, controls=[], DIALOG_API} = deepCopy(config);
   const titleArr = ['新增', '复制新增', '编辑', '批量修改'];
   return {
     type,
     title: titleArr[type],
     controls,
     value,
-    customerPriceId,
     DIALOG_API,
     checkable: type === 3,
   }
