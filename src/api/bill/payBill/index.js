@@ -49,7 +49,7 @@ api.get('/detail/:id', async (req, res) => {
 
 // 获取指定客户联系人
 api.post('/cunstomer_contacts', async(req, res) => {
-  const url = `${archiver_service}/supplier_contact/${req.body.supplierId}/drop_list/enabled_type_enabled`;
+  const url = `${archiver_service}/supplier_contact/select_by_enabled_drop_list`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
