@@ -162,15 +162,15 @@ api.post('/institutionId', async (req, res) => {
   // res.send(await fetchJsonByNode(req, url, postOption(req.body)));
   const url = `${archiver_service}/TenantCorporateInfoDto/listByRelationId`;
   const params = {
-    corporateName: req.body.filter,
+    tenantInstitutionId: req.body.filter,
     itemFrom: 0,
     itemTo: req.body.maxNumber
   };
   const data = getJsonResult(await fetchJsonByNode(req, url, postOption(params)));
   res.send({returnCode: 0, returnMsg: 'Success', result: data.data.map(o => ({
     ...o,
-    title: o.corporateName,
-    value: o.id
+    title: o.tenantInstitutionId.title,
+    value: o.tenantInstitutionId.value
   }))});
 });
 
