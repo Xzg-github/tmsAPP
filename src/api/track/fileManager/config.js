@@ -25,7 +25,7 @@ const tableCols = [
   {key: 'taskTypeName', title: '文件任务'},
   {key: 'fileList', title: '附件', link: 'list'},
   {key: 'uploadType', title: '上传方式'},
-  {key: 'remark', title: '备注'},
+  {key: 'remark', title: '修改原因'},
   {key: 'customerId', title: '客户'},
   {key: 'customerDelegateCode', title: '委托号'},
   {key: 'customerDelegateTime', title: '委托日期'},
@@ -85,7 +85,9 @@ const config = {
       {key: 'edit', title: '编辑', bsStyle: 'primary'},
       {key: 'check1', title: '审核通过', confirm: '是否所有勾选记录审核通过？'},
     ].concat(commonButtons),
-    checked: commonButtons,
+    checked: [
+      {key: 'modify', title: '修改文件', bsStyle: 'primary'}
+    ].concat(commonButtons),
   }
 };
 
