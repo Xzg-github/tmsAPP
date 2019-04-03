@@ -109,6 +109,7 @@ const rootReducer = combineReducers({
   supplierSupervisor: create('supplierSupervisor', false),
   supplierCost: create('supplierCost', false),
   insideCar: create('insideCar', false),
+  brand: createReducer(['brand']),
   insideDriver: create('insideDriver', false),
   insideSupervisor: create('insideSupervisor', false),
   customerPrice: create('customerPrice'),
