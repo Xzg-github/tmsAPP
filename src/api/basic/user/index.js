@@ -79,4 +79,16 @@ api.post('/search', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
+// 重置密码
+api.put('/reset_password/:id', async (req, res) => {
+  const url = `${service}/user_password/reset/${req.params.id}`;
+  res.send(await fetchJsonByNode(req, url, 'put'));
+});
+
+// 设置签署角色
+api.post('/set', async (req, res) => {
+  const url = `${service}/user/contractRoles`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
 export default api;
