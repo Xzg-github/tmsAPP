@@ -4,8 +4,10 @@ import {getPathValue} from '../../../../action-reducer/helper';
 import helper from '../../../../common/common';
 import ConfirmSupplierDialog from './ConfirmSupplierDialog';
 import showPopup from '../../../../standard-business/showPopup';
+import showAddDriver from '../../../config/supplierDriver/addDialog/AddDialogContainer';
+import showAddCar from '../../../config/supplierCar/CarContainer';
 
-const STATE_PATH = ['temp'];
+const STATE_PATH = ['temp2'];
 const action = new Action(STATE_PATH);
 
 const getSelfState = (rootState) => {
@@ -107,6 +109,15 @@ const exitValidActionCreator = () => (dispatch) => {
   dispatch(action.assign({valid: false}));
 };
 
+const addActionCreator = (key) => (dispatch, getState) => {
+  const {info} = getSelfState(getState());
+  if (key === 'carInfoId') {
+    return showAddCar({supplierId: info.supplierId});
+  }else if (key === 'driverId') {
+    return showAddDriver({supplierId: info.supplierId});
+  }
+};
+
 const mapStateToProps = (state) => {
   return getSelfState(state);
 };
@@ -117,6 +128,7 @@ const actionCreators = {
   onChange: changeActionCreator,
   onSearch: searchActionCreator,
   onExitValid : exitValidActionCreator,
+  onAdd : addActionCreator,
 };
 
 const buildDialogState = async (data) => {
@@ -125,8 +137,8 @@ const buildDialogState = async (data) => {
     ok: '确定',
     cancel: '取消',
     controls: [
-      {key: 'carInfoId', title: '车牌号码', type: 'search', required: true},
-      {key: 'driverId', title: '司机', type: 'search', props:{searchWhenClick: true}, required: true},
+      {key: 'carInfoId', title: '车牌号码', type: 'search', showAdd: true, required: true},
+      {key: 'driverId', title: '司机', type: 'search', showAdd: true, props:{searchWhenClick: true}, required: true},
       {key: 'driverMobilePhone', title: '司机电话', type: 'text', required: true}
     ]
   };
