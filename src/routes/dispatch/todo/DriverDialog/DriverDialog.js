@@ -1,20 +1,22 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import {SuperTable, ModalWithDrag} from '../../../../components';
-import { Checkbox, Input} from 'antd';
+import { Checkbox, Input, Select} from 'antd';
 import s from './DriverDialog.less';
 const Search = Input.Search;
+const Option = Select.Option;
 
 class DriverDialog extends React.Component {
 
   onHandleChange = (changeKey, e) => {
     const {onSearch, data} = this.props;
-    console.log(changeKey, e);
     let value;
     if (changeKey === 'carModeId') {
       e.target.checked && (value = data.carModeId);
     }else if (changeKey === 'carState') {
       e.target.checked && (value = 'car_state_unuser');
+    }else if (changeKey === 'carArea') {
+      value = e;
     }
     onSearch(changeKey, value);
   };
@@ -23,12 +25,26 @@ class DriverDialog extends React.Component {
     this.props.onSearch('carNumber', value);
   };
 
+  getOptions = (carAreaOptions) => {
+    return carAreaOptions.map(item => {
+      return <Option key={item.value} value={item.value}>{item.title}</Option>;
+    });
+  };
+
   toSearch = () => {
-    const {searchData={}, data} = this.props;
+    const {searchData={}, data, carAreaOptions} = this.props;
     return (
       <div role='search'>
         <Checkbox onChange={this.onHandleChange.bind(null, 'carModeId')} checked={searchData['carModeId'] === data.carModeId}>查看车型匹配的车辆</Checkbox>
         <Checkbox onChange={this.onHandleChange.bind(null, 'carState')} checked={searchData['carState'] === 'car_state_unuser'}>查看空闲的车辆</Checkbox>
+        <Select
+          mode="multiple"
+          style={{ width: '300px', marginRight: '5px'}}
+          placeholder="车辆标签"
+          onChange={this.onHandleChange.bind(null, 'carArea')}
+        >
+          {this.getOptions(carAreaOptions)}
+        </Select>
         <Search
           placeholder="车牌号"
           onSearch={this.onHandleSearch}
