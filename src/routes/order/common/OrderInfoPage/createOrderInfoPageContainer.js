@@ -10,6 +10,7 @@ import { showAddCustomerFactoryDialog } from '../../../config/customerFactory/Ed
 import showAddCustomerContactDialog from '../../../config/customerContact/EditDialogContainer';
 import {getDistance} from '../../../../components/ElectricFence/Map';
 import showUploadDialog from '../uploadDialog/UploadDialogContainer';
+import showPrompt from "../PromptDialog";
 
 /**
  * 功能：生成一个运单基本信息页面容器组件
@@ -57,6 +58,9 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       }
       !isAppend && delete config.formSections.dispatchInfo; //非补录运单无派车信息组
       let buttons = [...config.buttons];
+      if (helper.getRouteKey() !== 'input') { //只有订单创建有提交指定单量按钮
+        buttons = buttons.filter(item => item.key !== 'commitBatch');
+      }
       if (helper.getRouteKey() === 'complete') {
         buttons = buttons.filter(item => item.key === 'save');
       }
@@ -500,6 +504,26 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     });
   };
 
+  //提交指定单量
+  const commitBatchActionCreator = async (dispatch, getState) => {
+    await countActionCreator(dispatch, getState);
+    const selfState = getSelfState(getState());
+    //校验数据
+    if (!checkData(selfState, dispatch)) return;
+    const value = await showPrompt('提交指定单量', '提交单量', '确定后将生成指定数量（<=100）的运单到待办任务-待派发列表', 'number');
+    if (value) {
+      if (Number(value) > 100) return helper.showError(`提交失败，单量不能大于100`);
+      execWithLoading(async () => {
+        const body = {...getSaveData(selfState), countOrder: value};
+        const url = '/api/order/input/commit';
+        const {returnCode, returnMsg} = await helper.fetchJson(url, helper.postOption(body));
+        if (returnCode !== 0) return helper.showError(returnMsg);
+        helper.showSuccessMsg(`提交指定单量成功`);
+        newActionCreator(dispatch, getState);
+      });
+    }
+  };
+
   //增加收发货地址
   const addActionCreator = async (dispatch) => {
     dispatch(action.add({}, 'addressList'));
@@ -630,6 +654,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     delGoods: delGoodsActionCreator,
     save: saveActionCreator,
     commit: commitActionCreator,
+    commitBatch: commitBatchActionCreator,
   };
 
   const clickActionCreator = (key) => {

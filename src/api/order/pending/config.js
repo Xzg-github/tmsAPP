@@ -87,6 +87,7 @@ const config = {
     ].concat(commonButtons),
     sending: [
       {key: 'send', title: '任务制作', bsStyle: 'primary'},
+      {key: 'sendBatch', title: '批量制作', confirm: '是否确认按任务库规则进行批量任务制作？'},
     ].concat(commonButtons),
   }
 };
