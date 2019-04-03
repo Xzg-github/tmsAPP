@@ -17,6 +17,7 @@ const URL_ATTR = '/api/config/supplier_car/attr';//拓展字段
 const URL_LIST = '/api/config/supplier_car/inside_list'; //查询列表
 const URL_STATE = '/api/config/supplier_car/state'; //是否激活
 const URL_DELETE = '/api/config/supplier_car/delete'; //删除
+const DICTIONARY_URL = '/api/dictionary';
 
 const getSelfState = (state) => {
   return state.insideCar || {};
@@ -74,6 +75,9 @@ const searchActionCreator = () => async (dispatch, getState) => {
 const addActionCreator = () => async (dispatch, getState) => {
   const state = getSelfState(getState());
   if(await showDiaLog(state.edit,{},'新增',false)){
+    const dic = await helper.fetchJson(DICTIONARY_URL, helper.postOption({names:['car_area']}));
+    if (dic.returnCode !== 0) return helper.showError(dic.returnMsg);
+    setDictionary2(dic.result, state.tableCols, state.edit.controls);
     refresh(dispatch, state);
   }
 };
@@ -84,6 +88,9 @@ const editActionCreator = () => async (dispatch, getState) => {
   if (items.length !== 1) {
     helper.showError('请勾选一条记录');
   }else if(await showDiaLog(state.edit,items[0],'编辑',false)){
+    const dic = await helper.fetchJson(DICTIONARY_URL, helper.postOption({names:['car_area']}));
+    if (dic.returnCode !== 0) return helper.showError(dic.returnMsg);
+    setDictionary2(dic.result, state.tableCols, state.edit.controls);
     refresh(dispatch, state);
   }
 };
