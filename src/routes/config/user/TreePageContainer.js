@@ -5,6 +5,7 @@ import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
 import Tree from '../../../common/tree';
 import {initActionCreator} from './UserContainer';
+import showSetDialog from './SetDialog';
 
 const STATE_PATH = ['basic', 'user'];
 const action = new Action(STATE_PATH);
@@ -149,12 +150,41 @@ const delAction = async (dispatch, getState) => {
   }
 };
 
+const resetAction = async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const ids = tableItems.filter(item => item.checked === true).map(item => item.guid);
+  if (ids.length === 1) {
+    const {returnCode, returnMsg} = await fetchJson(`/api/basic/user/reset_password/${ids[0]}`, 'put');
+    if (returnCode === 0) {
+      helper.showSuccessMsg('密码重置成功，新密码请查看邮件');
+    } else {
+      showError(returnMsg);
+    }
+  }else {
+    helper.showError('请先勾选一条记录');
+  }
+};
+
+const setAction = async (dispatch, getState) => {
+  const {tableItems, select} = getSelfState(getState());
+  const ids = tableItems.filter(item => item.checked === true).map(item => item.guid);
+  if (ids.length < 1) {
+    return helper.showError(`请先勾选记录`);
+  }
+  if (true === await showSetDialog(ids)) {
+    helper.showSuccessMsg(`设置签署角色成功`);
+    return selectActionCreator(select)(dispatch, getState);
+  }
+};
+
 const toolbarActions = {
   search: searchAction,
   add: addAction,
   edit: editAction,
   active: activeAction,
-  del: delAction
+  del: delAction,
+  reset: resetAction,
+  set: setAction
 };
 
 const clickActionCreator = (key) => {

@@ -92,6 +92,10 @@ const actionCreators = {
 * 返回值：成功返回true，取消返回false
 */
 export default async (item={}, config) => {
+  if (!config) {
+    const {edit} = await helper.fetchJson(`/api/config/supplierDriver/config`);
+    config = edit;
+  }
   buildAddDialogState(item, config);
   const Container = connect(mapStateToProps, actionCreators)(AddDialog);
   return showPopup(Container, {}, true);

@@ -3,9 +3,12 @@ import CarDialog from './CarDialog';
 import {Action} from '../../../action-reducer/action';
 import showPopup from '../../../standard-business/showPopup';
 import helper, {showError} from '../../../common/common';
+import showBrandDialog from './BrandDialogContainer';
+import {fetchDictionary, setDictionary} from '../../../common/dictionary';
 
 const action = new Action(['temp'], false);
 const URL_UPDATE = '/api/config/supplier_car/updateList';
+const DICTIONARY_URL = '/api/dictionary';
 
 const buildState = (config, title,value={},isSupplier) => {
   value.isOwner = isSupplier ? 0 : 1;//如果为供应商车辆时，固定值为0,综合为1
@@ -94,6 +97,17 @@ const exitValidActionCreator = () => {
   return action.assign({valid: false});
 };
 
+const addActionCreator = (key) =>  async(dispatch,getState) => {
+  const {controls} = getSelfState(getState());
+  if(await showBrandDialog()){
+    const dic = await helper.fetchJson(DICTIONARY_URL, helper.postOption({names:['car_area']}));
+    if (dic.returnCode !== 0) return helper.showError(dic.returnMsg);
+    const options = dic.result.car_area;
+    dispatch(action.update({options}, 'controls', 5));
+  }
+};
+
+
 
 const mapStateToProps = (state) => {
   return getSelfState(state);
@@ -103,7 +117,8 @@ const actionCreators = {
   onClick: clickActionCreator,
   onSearch:searchActionCreator,
   onChange:changeActionCreator,
-  onExitValid:exitValidActionCreator
+  onExitValid:exitValidActionCreator,
+  onAdd:addActionCreator
 };
 
 

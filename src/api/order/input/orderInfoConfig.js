@@ -104,6 +104,7 @@ const orderConfig = {
   buttons: [
     {key: 'save', title: '保存'},
     {key: 'commit', title: '提交'},
+    {key: 'commitBatch', title: '提交指定单量'},
   ],
   tabs: [
     {key: 'addressList', title: '收发货地址'},

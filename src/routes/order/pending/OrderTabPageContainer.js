@@ -68,10 +68,22 @@ const sendActionCreator = (tabKey) => async (dispatch, getState) => {
   }
 };
 
+//批量任务派发
+const sendBatchActionCreator = (tabKey) => async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const checkedIds = tableItems[tabKey].filter(item => item.checked === true).map(item => item.id);
+  if (checkedIds.length < 1) return helper.showError(`请先勾选记录`);
+  const {returnCode, returnMsg, result} = await helper.fetchJson(`/api/order/pending/send_batch`, helper.postOption(checkedIds));
+  if(returnCode !== 0) return helper.showError(returnMsg);
+  helper.showSuccessMsg(`${returnMsg}  ${result}`);
+  return updateTable(dispatch, action, getSelfState(getState()));
+};
+
 const buttons = {
   edit: editActionCreator,
   del: deleteActionCreator,
   send: sendActionCreator,
+  sendBatch: sendBatchActionCreator,
 };
 
 const clickActionCreator = (tabKey, key) => {

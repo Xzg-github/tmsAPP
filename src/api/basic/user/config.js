@@ -12,6 +12,7 @@ const tableCols = [
   {key: 'userPosition', title: '岗位'},
   {key: 'userCellphone', title: '联系电话'},
   {key: 'userEmail', title: '邮箱'},
+  {key: 'contractRoles', title: '签署角色', dictionary: name.CONTRACT_ROLES},
   {key: 'weChatOpenid', title: '微信'},
   {key: 'parentUserGuid', title: '归属上级'},
   {key: 'institutionGuid', title: '归属机构'},
@@ -23,8 +24,10 @@ const tableCols = [
 const buttons = [
   {key: 'add', title: '新增', bsStyle: 'primary'},
   {key: 'edit', title: '编辑'},
-  {key: 'active', title: '激活'},
-  {key: 'del', title: '失效'}
+  {key: 'active', title: '激活', confirm: '是否确认激活所有勾选的记录？'},
+  {key: 'del', title: '失效', confirm: '是否确认失效所有勾选的记录？'},
+  {key: 'reset', title: '重置密码', confirm: '是否确认重置密码勾选的记录？'},
+  {key: 'set', title: '设置签署角色'},
 ];
 
 const index = {

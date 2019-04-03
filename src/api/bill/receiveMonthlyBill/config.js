@@ -81,7 +81,6 @@ const editButtons = [
 
 //编辑 结算单列表配置
 const cols = [
-  {key: 'customerId', title: '结算单位'},
   {key: 'orderNumber', title: '运单号'},
   {key: 'amount', title: '对帐金额'},
   {key: 'customerDelegateCode', title: '委托号'},

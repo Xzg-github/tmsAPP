@@ -151,12 +151,14 @@ const actionCreators = {
 * 参数：data: 【必需】待上传、编辑的记录信息
 * 返回值：成功返回true，取消或关闭时返回空
 */
-export default async (data) => {
-  const controls = [
+export default async (data, isModify=false) => {
+  let controls = [
     {key: 'orderNumber', title: '运单号', type:'readonly', required:true},
-    {key: 'taskTypeName', title: '文件任务', type:'readonly', required:true},
-    {key: 'remark', title: '备注',type:'text'}
+    {key: 'taskTypeName', title: '文件任务', type:'readonly', required:true}
   ];
+  if (isModify) {
+    controls = controls.concat([{key: 'remark', title: '修改原因',type:'text', required:true}]);
+  }
   const buttons = [
     {key: 'add', title: '新增'},
     {key: 'del', title: '删除'},

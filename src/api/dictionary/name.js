@@ -208,6 +208,7 @@ const name = {
   NUMBER_SOURCE: 'number_source', //数量源
   CAR_STATE: 'car_state', //车辆状态
   CUSTOMER_INFORMATION_FEEDBACK: 'customer_information_feedback', //客户信息反馈类型
+  CONTRACT_ROLES: 'contract_roles', //签署角色
 };
 
 export default name;

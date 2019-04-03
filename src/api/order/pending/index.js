@@ -29,9 +29,15 @@ api.get('/default_setting/:id', async (req, res) => {
   res.send(await fetchJsonByNode(req, url));
 });
 
-//任务派发
+//任务制作
 api.post('/send', async (req, res) => {
   const url = `${service}/transport_order/send`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+//批量任务制作
+api.post('/send_batch', async (req, res) => {
+  const url = `${service}/transport_order/send/batch`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 

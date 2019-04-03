@@ -48,6 +48,16 @@ const editActionCreator = (tabKey) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
   if (checkedItems.length !== 1) return helper.showError(`请先勾选一条记录`);
+  if (true === await showUploadDialog(checkedItems[0])) {
+    return updateTable(dispatch, action, getSelfState(getState()));
+  }
+};
+
+//修改文件
+const modifyActionCreator = (tabKey) => async (dispatch, getState) => {
+  const {tableItems} = getSelfState(getState());
+  const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
+  if (checkedItems.length !== 1) return helper.showError(`请先勾选一条记录`);
   if (true === await showUploadDialog(checkedItems[0], true)) {
     return updateTable(dispatch, action, getSelfState(getState()));
   }
@@ -69,6 +79,7 @@ const buttons = {
   edit: editActionCreator,
   check: checkActionCreator,
   check1: checkActionCreator,
+  modify: modifyActionCreator,
 };
 
 const clickActionCreator = (tabKey, key) => {
