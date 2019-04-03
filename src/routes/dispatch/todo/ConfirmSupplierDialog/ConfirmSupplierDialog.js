@@ -6,7 +6,7 @@ import s from './ConfirmSupplierDialog.less';
 class ConfirmSupplierDialog extends React.Component {
 
   toForm = () => {
-    const {controls, value, valid, hideControls, onChange, onSearch, onExitValid} = this.props;
+    const {controls, value, valid, hideControls, onChange, onSearch, onExitValid, onAdd} = this.props;
     const props = {
       controls,
       value,
@@ -14,7 +14,7 @@ class ConfirmSupplierDialog extends React.Component {
       hideControls,
       colNum: 2,
       container: true,
-      onChange, onSearch, onExitValid
+      onChange, onSearch, onExitValid, onAdd
     };
     return <SuperForm {...props} /> ;
   };

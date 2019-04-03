@@ -53,7 +53,6 @@ const searchActionCreator = (key, value) => async (dispatch, getState) => {
 };
 
 const mapStateToProps = (state) => {
-  console.log(getSelfState(state))
   return getSelfState(state);
 };
 
@@ -76,6 +75,7 @@ const buildDialogState = async (data) => {
       {key: 'driverMobilePhone', title: '司机号码'},
       {key: 'supplierId', title: '车主'},
       {key: 'carState', title: '车辆状态', dictionary: 'car_state'},
+      {key: 'carArea', title: '车辆标签', dictionary: 'car_area'},
       {key: 'firstTransportOrderId', title: '待执行运单'},
       {key: 'transportOrderId', title: '操作中运单'},
       {key: 'operationPlanDeliveryTime', title: '操作中运单预计完成时间'},
@@ -93,6 +93,7 @@ const buildDialogState = async (data) => {
   };
   const dic = await fetchDictionary2(config.cols);
   setDictionary2(dic.result, config.cols);
+  const carAreaOptions = dic.result.car_area || [];
   const searchData = {
     carModeId: data.carModeId,
     carState: 'car_state_unuser',
@@ -106,6 +107,7 @@ const buildDialogState = async (data) => {
   }
   global.store.dispatch(action.create({
     ...config,
+    carAreaOptions,
     data,
     searchData,
     items,
