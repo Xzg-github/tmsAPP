@@ -15,7 +15,7 @@ const getSelfState = (state) => {
 const buildState = (config) => {
   return {
     ...config,
-    title: '司机归属区域',
+    title: '车辆归属区域',
     visible: true,
     value: {parentDictionaryCode:{value:'car_area',title:'车辆归属区域'}},
     tableItems:[]
