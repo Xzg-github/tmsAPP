@@ -11,19 +11,20 @@ import showEditDialog from './EditDialog/EditDialogContainer';
 import {showColsSetting} from '../../../common/tableColsSetting';
 
 const STATE_PATH = ['customerPriceDetail'];
-const URL_LIST = '/api/config/customerPriceDetail/list';
+const URL_LIST = '/api/config/customerPriceDetail/freightList';
 const URL_CUSTOMER = '/api/config/customerPriceDetail/customer';
 const URL_DISTRICT = '/api/config/customerPriceDetail/district';
 const URL_CONSIGNOR = '/api/config/customerPriceDetail/consignor';
 const URL_CARMODE = '/api/config/customerPriceDetail/carMode';
-const URL_DELETE = '/api/config/customerPriceDetail/delete';
-const URL_ABLE = '/api/config/customerPriceDetail/able';
+const URL_DELETE = '/api/config/customerPriceDetail/freightDelete';
+const URL_ABLE = '/api/config/customerPriceDetail/freightAble';
 const URL_ADD = '/api/config/customerPriceDetail/freightAdd';
 const URL_EDIT = '/api/config/customerPriceDetail/freightEdit';
 const URL_BATCHEDIT = '/api/config/customerPriceDetail/freightBatchEdit';
 const URL_CAOMODE = '/api/config/customerPriceDetail/carMode';
 const URL_CURRENCY = '/api/config/customerPriceDetail/currency';
 const URL_CHARGEITEM = '/api/config/customerPriceDetail/chargeItem';
+const URL_CONTRACT = '/api/config/customerPriceDetail/contract';
 
 const action = new Action(STATE_PATH);
 
@@ -32,6 +33,9 @@ const DIALOG_API = {
   search_carMode: URL_CAOMODE,
   search_chargeItem: URL_CHARGEITEM,
   search_currency: URL_CURRENCY,
+  search_contract: URL_CONTRACT,
+  search_district: URL_DISTRICT,
+  search_consignor: URL_CONSIGNOR,
   newAdd: URL_ADD,
   editSave: URL_EDIT,
   batchEdit: URL_BATCHEDIT

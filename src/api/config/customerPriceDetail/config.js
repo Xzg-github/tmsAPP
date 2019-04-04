@@ -32,7 +32,7 @@ const filters = [
   {key: 'carModeId', title: '车型', type: 'search'},
   {key: 'fuelType', title: '燃油种类', type: 'select', dictionary: name.FUEL_TYPE},
   {key: 'enabledType', title: '报价状态', type: 'select', dictionary: name.ENABLED_TYPE},
-  {key: 'contractCode', title: '合同号', type: 'text'},
+  {key: 'contractCode', title: '客户合同', type: 'text'},
   {key: 'statusType', title: '合同状态', type: 'select', dictionary: 'status_type'},
   {key: 'startTimeFrom', title: '合同开始日期', type: 'date'},
   {key: 'startTimeTo', title: '至', type: 'date'},
@@ -69,7 +69,7 @@ const tableCols = [
   {key: 'chargeUnit', title: '计量单位', dictionary: name.CHARGE_UNIT},
   {key: 'numberSource', title: '数量源', dictionary: name.NUMBER_SOURCE},
   {key: 'remark', title: '备注'},
-  {key: 'contractCode', title: '合同号'},
+  {key: 'contractCode', title: '客户合同'},
   {key: 'balanceCompany', title: '结算单位'},
   {key: 'startTime', title: '有效开始日期'},
   {key: 'endTime', title: '有效结束日期'},
@@ -81,11 +81,11 @@ const tableCols = [
 
 const freightControls = [
   {key: 'customerId', title: '客户', type: 'search', required: true},
-  {key: 'contractNumber', title: '客户合同号', type: 'text'},
+  {key: 'contractNumber', title: '客户合同', type: 'search'},
   {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
-  {key: 'departure', title: '起运地', type: 'select', required: true, options: departureOptions},
+  {key: 'departure', title: '起运地', type: 'search', required: true},
   {key: 'destinationType', title: '目的地类别', type: 'select', required: true, options: destinationTypeOptions},
-  {key: 'destination', title: '目的地', type: 'select', required: true, options: destinationTypeOptions},
+  {key: 'destination', title: '目的地', type: 'search', required: true},
   {key: 'businessType', title: '运输类型', type: 'select', dictionary: name.BUSINESS_TYPE},
   {key: 'isReturn', title: '是否返程', type: 'select', dictionary: name.ZERO_ONE_TYPE},
   {key: 'carModeId', title: '车型', type: 'search'},
@@ -101,7 +101,7 @@ const freightControls = [
 
 const extraChargeControls = [
   {key: 'customerId', title: '客户', type: 'search', required: true},
-  {key: 'contractNumber', title: '客户合同号', type: 'text'},
+  {key: 'contractNumber', title: '客户合同', type: 'search'},
   {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
   {key: 'departure', title: '起运地', type: 'select', required: true, options: departureOptions},
   {key: 'destinationType', title: '目的地类别', type: 'select', required: true, options: destinationTypeOptions},

@@ -13,16 +13,57 @@ const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
 };
 
-const changeActionCreator = (keyName, keyValue) => action.assign({[keyName]: keyValue}, 'value');
+const changeActionCreator = (keyName, keyValue) => (dispatch, getState) => {
+  const {controls} = getSelfState(getState());
+  let payload = {[keyName]: keyValue};
+  switch (keyName) {
+    case 'customerId': {
+      payload['contractNumber'] = '';
+      break;
+    }
+    case 'departureType': {
+      payload['departure'] = '';
+      const index = controls.findIndex(item => item.key === 'departure');
+      dispatch(action.update({options: []}, ['controls'], index));
+      break;
+    }
+    case 'destinationType': {
+      payload['destination'] = '';
+      const index = controls.findIndex(item => item.key === 'destination');
+      dispatch(action.update({options: []}, ['controls'], index));
+      break;
+    }
+  }
+  dispatch(action.assign(payload, 'value'));
+};
 
-const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
-  const {controls, DIALOG_API} = getSelfState(getState());
-  let result = [], params = {maxNumber: 20, filter: value};
+const getDistrict = async (type, DIALOG_API, filter) => {
+  if (type === '1') {
+    // 行政区域
+    return getJsonResult(await fetchJson(DIALOG_API.search_district, postOption({districtName: filter, maxNumber: 20})));
+  } else if (type === '2') {
+    // 行政区域
+    return getJsonResult(await fetchJson(DIALOG_API.search_consignor, postOption({name: filter})));
+  } else {
+    showError('请选择地点类别！');
+    return [];
+  }
+};
+
+const formSearchActionCreator = (key, keyValue) => async (dispatch, getState) => {
+  const {controls, DIALOG_API, value} = getSelfState(getState());
+  let result = [], params = {maxNumber: 20, filter: keyValue};
   switch (key) {
     case 'customerId': {
        result = getJsonResult(await fetchJson(DIALOG_API.search_customer, postOption(params)));
        break;
     }
+    case 'contractNumber': {
+      if (!value['customerId']) return showError('请先选择客户！');
+      params['customerId'] = value['customerId'].value;
+      result = getJsonResult(await fetchJson(DIALOG_API.search_contract, postOption(params)));
+      break;
+   }
     case 'carModeId': {
       result = getJsonResult(await fetchJson(DIALOG_API.search_carMode, postOption(params)));
       break;
@@ -33,6 +74,14 @@ const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
     }
     case 'currency': {
       result = getJsonResult(await fetchJson(DIALOG_API.search_currency, postOption(params)));
+      break;
+    }
+    case 'departure': {
+      result = await getDistrict(value['departureType'], DIALOG_API, keyValue);
+      break;
+    }
+    case 'destination': {
+      result = await getDistrict(value['destinationType'], DIALOG_API, keyValue);
       break;
     }
   }
@@ -52,8 +101,8 @@ const okActionCreator = (afterClose) => async (dispatch, getState) => {
     if (checkList.some(o => helper.isEmpty2(value[o]))) return showError('勾选的数据为必填！');
   }
   const url = type < 2 ? DIALOG_API.newAdd : type === 2 ? DIALOG_API.editSave: DIALOG_API.batchEdit;
-  const params = helper.getObject(convert(value), controls.map(o => o.key));
-  const {returnCode, result, returnMsg} = await fetchJson(url, postOption(params));
+  const params = {...value, customerPriceId: value['customerPriceId'] || value['contractNumber']};
+  const {returnCode, result, returnMsg} = await fetchJson(url, postOption(convert(params)));
   if (returnCode !== 0) return showError(returnMsg);
   helper.showSuccessMsg(returnMsg);
   dispatch(action.assign({okResult: result}));

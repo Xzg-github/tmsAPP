@@ -4,7 +4,7 @@ import {pageSize, pageSizeType, description, searchConfig} from '../../globalCon
 const filters = [
   {key: 'customerPriceCode', title: '系统编号', type: 'text'},
   {key: 'customerId', title: '客户', type: 'search'},
-  {key: 'contractCode', title: '合同号', type: 'text'},
+  {key: 'contractCode', title: '客户合同', type: 'text'},
   {key: 'balanceCompany', title: '结算单位', type: 'search'},
   {key: 'enableType', title: '是否启用', type: 'select', dictionary: name.ZERO_ONE_TYPE},
   {key: 'statusType', title: '状态', type: 'select', dictionary: 'status_type'},
@@ -31,7 +31,7 @@ const buttons = [
 const tableCols = [
   {key: 'customerPriceCode', title: '系统编号'},
   {key: 'customerId', title: '客户'},
-  {key: 'contractCode', title: '合同号'},
+  {key: 'contractCode', title: '客户合同'},
   {key: 'balanceCompany', title: '结算单位'},
   {key: 'startTime', title: '有效开始日期'},
   {key: 'endTime', title: '有效结束日期'},
@@ -69,7 +69,7 @@ const tabs2 = [
 const contract = {
   controls: [
     {key: 'customerId', title: '客户', type: 'search', required: true},
-    {key: 'contractCode', title: '合同号', type: 'text'},
+    {key: 'contractCode', title: '客户合同', type: 'text'},
     {key: 'startTime', title: '有效开始日期', type: 'date', required: true, rule: {type: '<', key: 'endTime'}},
     {key: 'endTime', title: '有效结束日期', type: 'date', required: true, rule: {type: '>', key: 'startTime'}},
     {key: 'balanceCompany', title: '结算单位', type: 'search'},
@@ -136,7 +136,7 @@ const freight = {
   ],
   controls: [
     {key: 'customerId', title: '客户', type: 'readonly', required: true},
-    {key: 'contractNumber', title: '客户合同号', type: 'readonly'},
+    {key: 'contractNumber', title: '客户合同', type: 'readonly'},
     {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
     {key: 'departure', title: '起运地', type: 'search', required: true},
     {key: 'destinationType', title: '目的地类别', type: 'select', required: true, options: destinationTypeOptions},
@@ -205,7 +205,7 @@ const extraCharge = {
   ],
   controls: [
     {key: 'customerId', title: '客户', type: 'readonly', required: true},
-    {key: 'contractNumber', title: '客户合同号', type: 'readonly'},
+    {key: 'contractNumber', title: '客户合同', type: 'readonly'},
     {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
     {key: 'departure', title: '起运地', type: 'search', required: true},
     {key: 'destinationType', title: '目的地类别', type: 'select', required: true, options: destinationTypeOptions},

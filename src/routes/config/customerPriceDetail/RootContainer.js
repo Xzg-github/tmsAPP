@@ -13,7 +13,7 @@ import {dealActions} from '../../../common/check';
 
 const STATE_PATH = ['customerPriceDetail'];
 const URL_CONFIG = '/api/config/customerPriceDetail/config';
-const URL_LIST = '/api/config/customerPriceDetail/list';
+const URL_LIST = '/api/config/customerPriceDetail/freightList';
 
 const action = new Action(STATE_PATH);
 

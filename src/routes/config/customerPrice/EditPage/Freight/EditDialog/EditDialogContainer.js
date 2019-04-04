@@ -14,7 +14,7 @@ const getSelfState = (rootState) => {
 };
 
 const changeActionCreator = (keyName, keyValue) => async (dispatch, getState) => {
-  const {controls, value} = getSelfState(getState());
+  const {controls} = getSelfState(getState());
   let payload = {[keyName]: keyValue};
   switch (keyName) {
     case 'departureType': {
@@ -91,7 +91,8 @@ const okActionCreator = (afterClose) => async (dispatch, getState) => {
     if (checkList.some(o => helper.isEmpty2(value[o]))) return showError('勾选的数据为必填！');
   }
   const url = type < 2 ? DIALOG_API.newAdd : type === 2 ? DIALOG_API.editSave: DIALOG_API.batchEdit;
-  const {returnCode, result, returnMsg} = await fetchJson(url, postOption(convert(value)));
+  const params = {...value, customerPriceId: value['customerPriceId'] || value['contractNumber']};
+  const {returnCode, result, returnMsg} = await fetchJson(url, postOption(convert(params)));
   if (returnCode !== 0) return showError(returnMsg);
   helper.showSuccessMsg(returnMsg);
   dispatch(action.assign({okResult: true}));

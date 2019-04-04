@@ -179,7 +179,10 @@ const createFreightContainer = (config) => {
       const defaultValue = {
         customerPriceId: item.id,
         customerId: item.customerId,
-        contractNumber: item.customerPriceCode
+        contractNumber: {
+          title: item.customerPriceCode,
+          value: item.id
+        }
       };
       const payload = {
         editType,
