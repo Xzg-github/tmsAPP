@@ -72,8 +72,9 @@ const config = {
   activeKey: 'index',
   fixedFilters: {},
   buttons: [
-      {key: 'export', title: '导出', menu},
-    ]
+    {key: 'template', title: '设为模板'},
+    {key: 'export', title: '导出', menu},
+  ]
 };
 
 export default config;

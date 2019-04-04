@@ -77,6 +77,7 @@ const config = {
     {key: 'revoke', title: '撤销任务', bsStyle: 'primary', confirm: '是否确认撤销所有勾选运单？'},
     {key: 'change', title: '运单更改'},
     {key: 'cancel', title: '取消运单'},
+    {key: 'template', title: '设为模板'},
     {key: 'export', title: '导出', menu},
   ]
 };

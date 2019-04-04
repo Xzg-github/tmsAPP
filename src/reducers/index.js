@@ -51,6 +51,7 @@ const rootReducer = combineReducers({
   home: createReducer(['home']),
   temp: createReducer(['temp']),
   temp2: createReducer(['temp2']),
+  temp3: createReducer(['temp3']),
   basic,
   config,
   password,

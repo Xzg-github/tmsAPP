@@ -2,6 +2,7 @@ import createOrderPageContainer, {buildOrderPageCommonState} from '../../../stan
 import {getPathValue} from '../../../action-reducer/helper';
 import {Action} from "../../../action-reducer/action";
 import helper from "../../../common/common";
+import showPrompt from "../common/PromptDialog";
 
 const STATE_PATH = ['all'];
 const action = new Action(STATE_PATH);
@@ -32,8 +33,25 @@ const showOrderInfoPage = (dispatch, item, selfState, readonly) => {
   }
 };
 
+//设为模板
+const templateActionCreator = async (dispatch, getState) => {
+  const selfState = getSelfState(getState());
+  const items = selfState.tableItems.filter(item => item.checked === true);
+  if (items.length !== 1) return helper.showError(`请勾选一条记录`);
+  const value = await showPrompt('设为模板', '模板名称', undefined, 'text');
+  if (value) {
+    const option = helper.postOption({templateName: value, transportOrderId: items[0].id});
+    const {returnCode, returnMsg} = await helper.fetchJson(`/api/order/all/template`, option);
+    if (returnCode !== 0) {
+      return helper.showError(returnMsg);
+    }
+    helper.showSuccessMsg('设为模板成功');
+  }
+};
+
 
 const buttons = {
+  template: templateActionCreator,
 };
 
 const clickActionCreator = (key) => {
