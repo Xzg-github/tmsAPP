@@ -31,27 +31,32 @@ const getSelfState = (rootState) => {
   return parent[parent.activeKey];
 };
 
-const changeActionCreator = (KEY, key, value) => async (dispatch, getState) =>  {
-  let payload = {[key]: value};
-  switch (key) {
+const changeActionCreator = (KEY, keyName, keyValue) => async (dispatch, getState) =>  {
+  let payload = {[keyName]: keyValue};
+  switch (keyName) {
     case 'invoiceHeaderInformation': {
-      payload['taxpayerIdentificationNumber'] = value['taxpayerIdentificationNumber'];
-      payload['addressPhone'] = value['addressPhone'];
-      payload['openingBank'] = value['openingBank'];
-      payload['accountNumber'] = value['accountNumber'];
-      payload['postAddress'] = value['postAddress'];
+      payload['taxpayerIdentificationNumber'] = keyValue['taxpayerIdentificationNumber'];
+      payload['addressPhone'] = keyValue['addressPhone'];
+      payload['openingBank'] = keyValue['openingBank'];
+      payload['accountNumber'] = keyValue['accountNumber'];
+      payload['postAddress'] = keyValue['postAddress'];
       break;
     }
     case 'receivableOpeningBank': {
-      payload['receivableAccountNumber'] = value['accountNumber'];
+      payload['receivableAccountNumber'] = keyValue['accountNumber'];
       break;
     }
     case 'institutionId': {
       payload['receivableOpeningBank'] = '';
       payload['receivableAccountNumber'] = '';
-      payload['enterpriseSignature'] = value['enterpriseSignature'];
-      payload['taxRegistrationNumber'] = value['taxRegistrationNumber'];
-      payload['businessRegistrationNumber'] = value['businessRegistrationNumber'];
+      payload['enterpriseSignature'] = keyValue['enterpriseSignature'];
+      payload['taxRegistrationNumber'] = keyValue['taxRegistrationNumber'];
+      payload['businessRegistrationNumber'] = keyValue['businessRegistrationNumber'];
+      const {controls} = getSelfState(getState());
+      const controlsIndex = controls.findIndex(o => o.key === KEY);
+      const index = controls[controlsIndex].cols.findIndex(item => item.key === 'receivableOpeningBank');
+      const cols = updateOne(controls[controlsIndex].cols, index, {options: []});
+      dispatch(action.update({cols}, ['controls'], controlsIndex));
       break;
     }
   }
