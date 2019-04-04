@@ -112,10 +112,10 @@ const config = {
     order:commonButtons,
     dispatch:commonButtons,
     confirm: [
-      {key: 'started', title: '运输已开始', bsStyle: 'primary', confirm: '是否所有勾选运单运输已开始？'},
+      {key: 'started', title: '运输已开始', bsStyle: 'primary'},
     ].concat(commonButtons),
     transport: [
-      {key: 'completed', title: '运输已完成', bsStyle: 'primary', confirm: '是否所有勾选运单运输已完成？'},
+      {key: 'completed', title: '运输已完成', bsStyle: 'primary'},
     ].concat(commonButtons),
     complete: commonButtons,
     sign: commonButtons,

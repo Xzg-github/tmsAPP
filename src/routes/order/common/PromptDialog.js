@@ -33,10 +33,11 @@ class PromptDialog extends React.Component {
 
   formProps = () => {
     return {
-      controls: [{key: 'label', title: this.props.label, type: this.props.type, required: true}],
+      controls: [{key: 'label', title: this.props.label, type: this.props.type, required: true, props:this.props.controlProps}],
       value: {label: this.state.value},
       valid: this.state.valid,
       colNum: 1,
+      container: true,
       onChange: (key, value) => this.setState({value}),
       onExitValid: () => this.setState({valid: false})
     };
@@ -52,6 +53,6 @@ class PromptDialog extends React.Component {
   }
 }
 
-export default (title, label, description=undefined, type='textArea') => {
-  return showPopup(PromptDialog, {title, label, description, type}, true);
+export default (title, label, description=undefined, type='textArea', controlProps={}) => {
+  return showPopup(PromptDialog, {title, label, description, type, controlProps}, true);
 }

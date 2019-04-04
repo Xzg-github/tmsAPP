@@ -73,7 +73,7 @@ const dispatchDriverActionCreator = (tabKey) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
   if (checkedItems.length !== 1) return helper.showError(`请勾选一条记录`);
-  if (true === await showDriverDialog(checkedItems.pop())) {
+  if (true === await showDriverDialog(checkedItems[0])) {
     return updateTable(dispatch, action, getSelfState(getState()), ['driver', 'supplier']);
   }
 };
@@ -81,9 +81,9 @@ const dispatchDriverActionCreator = (tabKey) => async (dispatch, getState) => {
 //人工派供应商
 const dispatchSupplierActionCreator = (tabKey) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
-  const checkedItems = tableItems[tabKey].filter(item => item.checked === true);
-  if (checkedItems.length !== 1) return helper.showError(`请勾选一条记录`);
-  if (true === await showSupplierDialog(checkedItems.pop())) {
+  const checkedItems = tableItems[tabKey].filter(item => item.checked === true).map(item => item.id);
+  if (checkedItems.length < 1) return helper.showError(`请先勾选记录`);
+  if (true === await showSupplierDialog(checkedItems)) {
     return updateTable(dispatch, action, getSelfState(getState()), ['driver', 'supplier']);
   }
 };

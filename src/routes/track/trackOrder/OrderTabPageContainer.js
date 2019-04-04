@@ -2,6 +2,7 @@ import createOrderTabPageContainer, {buildOrderTabPageCommonState, updateTable} 
 import {getPathValue} from '../../../action-reducer/helper';
 import {Action} from "../../../action-reducer/action";
 import helper from "../../../common/common";
+import showPrompt from "../../order/common/PromptDialog";
 
 const STATE_PATH = ['trackOrder'];
 const action = new Action(STATE_PATH);
@@ -37,10 +38,13 @@ const startedActionCreator = (tabKey) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const ids = tableItems[tabKey].filter(item => item.checked === true).map(item => item.id);
   if (ids.length < 1) return helper.showError(`请先勾选记录`);
-  const {returnCode, returnMsg} = await helper.fetchJson(`/api/track/track_order/started`, helper.postOption(ids));
-  if (returnCode !== 0) return helper.showError(returnMsg);
-  helper.showSuccessMsg('操作成功');
-  return updateTable(dispatch, action, getSelfState(getState()), ['transport']);
+  const value = await showPrompt('运输已开始', '开始时间', undefined, 'date', {showTime: true});
+  if(value) {
+    const {returnCode, returnMsg} = await helper.fetchJson(`/api/track/track_order/started`, helper.postOption({ids, finishTime: value}));
+    if (returnCode !== 0) return helper.showError(returnMsg);
+    helper.showSuccessMsg('操作成功');
+    return updateTable(dispatch, action, getSelfState(getState()), ['transport']);
+  }
 };
 
 //运输已完成
@@ -48,10 +52,13 @@ const completedActionCreator = (tabKey) => async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const ids = tableItems[tabKey].filter(item => item.checked === true).map(item => item.id);
   if (ids.length < 1) return helper.showError(`请先勾选记录`);
-  const {returnCode, returnMsg} = await helper.fetchJson(`/api/track/track_order/completed`, helper.postOption(ids));
-  if (returnCode !== 0) return helper.showError(returnMsg);
-  helper.showSuccessMsg('操作成功');
-  return updateTable(dispatch, action, getSelfState(getState()), ['complete', 'sign']);
+  const value = await showPrompt('运输已完成', '完成时间', undefined, 'date', {showTime: true});
+  if(value) {
+    const {returnCode, returnMsg} = await helper.fetchJson(`/api/track/track_order/completed`, helper.postOption({ids, finishTime: value}));
+    if (returnCode !== 0) return helper.showError(returnMsg);
+    helper.showSuccessMsg('操作成功');
+    return updateTable(dispatch, action, getSelfState(getState()), ['complete', 'sign']);
+  }
 };
 
 const buttons = {
