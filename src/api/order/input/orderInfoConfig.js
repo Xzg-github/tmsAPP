@@ -102,6 +102,7 @@ const orderConfig = {
     ]
   },
   buttons: [
+    {key: 'template', title: '从模板新增'},
     {key: 'save', title: '保存'},
     {key: 'commit', title: '提交'},
     {key: 'commitBatch', title: '提交指定单量'},

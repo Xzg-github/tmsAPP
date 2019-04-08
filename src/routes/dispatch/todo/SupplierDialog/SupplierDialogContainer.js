@@ -41,14 +41,14 @@ const cancelActionCreator = () => (dispatch) => {
 };
 
 const okActionCreator = () => async (dispatch, getState) => {
-  const {items, data} = getSelfState(getState());
+  const {items, ids} = getSelfState(getState());
   const checkedItems = items.filter(item => item.checked === true);
   if (checkedItems.length !== 1) return helper.showError(`请先勾选一条记录`);
   if (!checkedItems[0].supplierContactName) return helper.showError(`联系人不能为空`);
   dispatch(action.assign({confirmLoading: true}));
   const body = {
     ...helper.getObject(checkedItems[0], ['supplierId', 'supplierContactName', 'supplierContactTelephone', 'supplierContactEmail']),
-    transportOrderId: data.id,
+    transportOrderIds: ids,
     ownerCarTag: 0
   };
   const {returnCode, returnMsg} = await helper.fetchJson(`/api/dispatch/todo/dispatch_supplier`, helper.postOption(body));
@@ -117,7 +117,7 @@ const actionCreators = {
   onClick: clickActionCreator
 };
 
-const buildDialogState = async (data) => {
+const buildDialogState = async (ids) => {
   const config = {
     title: '派供应商',
     ok: '确定',
@@ -146,7 +146,7 @@ const buildDialogState = async (data) => {
   const items = await getItems();
   global.store.dispatch(action.create({
     ...config,
-    data,
+    ids,
     items,
     searchData: {},
     visible: true,
@@ -156,11 +156,11 @@ const buildDialogState = async (data) => {
 
 /*
 * 功能：派供应商对话框
-* 参数：data: 【必需】待派供应商的记录信息
+* 参数：ids: 【必需】待派供应商的记录id集合
 * 返回值：成功返回true，取消或关闭时返回空
 */
-export default async (data) => {
-  await buildDialogState(data);
+export default async (ids) => {
+  await buildDialogState(ids);
   const Container = connect(mapStateToProps, actionCreators)(SupplierDialog);
   return showPopup(Container, {}, true);
 };

@@ -7,7 +7,7 @@ import {getPathValue} from '../../../action-reducer/helper';
 import showAddDialog from '../supplierDriver/addDialog/AddDialogContainer';
 import {fetchDictionary, setDictionary2} from '../../../common/dictionary';
 
-const action = new Action(['config','supplierCar','edit']);
+const action = new Action(['temp3']);
 const URL_UPDATE = '/api/config/supplier_car/updateList';
 const URL_CONFIG = '/api/config/supplierDriver/config';
 const DRIVER = '/api/config/supplier_car/search/driver'; //司机下拉
@@ -24,7 +24,7 @@ const buildState = (config, title,value={},isSupplier) => {
 
 
 const getSelfState = (state) => {
-  return getPathValue(state, ['config','supplierCar','edit']);
+  return getPathValue(state, ['temp3']);
 };
 
 

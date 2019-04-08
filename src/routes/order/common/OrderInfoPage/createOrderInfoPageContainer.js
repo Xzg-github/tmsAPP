@@ -11,6 +11,7 @@ import showAddCustomerContactDialog from '../../../config/customerContact/EditDi
 import {getDistance} from '../../../../components/ElectricFence/Map';
 import showUploadDialog from '../uploadDialog/UploadDialogContainer';
 import showPrompt from "../PromptDialog";
+import showTemplateDialog from './TemplateDialog';
 
 /**
  * 功能：生成一个运单基本信息页面容器组件
@@ -58,8 +59,8 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       }
       !isAppend && delete config.formSections.dispatchInfo; //非补录运单无派车信息组
       let buttons = [...config.buttons];
-      if (helper.getRouteKey() !== 'input') { //只有订单创建有提交指定单量按钮
-        buttons = buttons.filter(item => item.key !== 'commitBatch');
+      if (helper.getRouteKey() !== 'input') { //只有订单创建有提交指定单量按钮和从模板新增按钮
+        buttons = buttons.filter(item => !['commitBatch', 'template'].includes(item.key));
       }
       if (helper.getRouteKey() === 'complete') {
         buttons = buttons.filter(item => item.key === 'save');
@@ -524,6 +525,26 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     }
   };
 
+  //从模板新增
+  const templateActionCreator = async (dispatch, getState) => {
+    const orderId = await showTemplateDialog();
+    if (orderId) {
+      const url = `/api/order/input/info/${orderId}`;
+      const {returnCode, result, returnMsg} = await helper.fetchJson(url);
+      if (returnCode !== 0) return helper.showError(returnMsg);
+      const baseInfo = helper.getObjectExclude(result, ['addressList', 'goodsList', 'planPickupTime', 'planDeliveryTime',
+        'csTag', 'costTag', 'incomeTag', 'id', 'dispatchTag', 'ownerCarTag', 'intelligenceTag', 'supplementType'
+      ]);
+      baseInfo.customerDelegateTime = moment().format('YYYY-MM-DD HH:mm:ss');
+      baseInfo.taskTypeCode = baseInfo.taskTypeCode ? baseInfo.taskTypeCode.split(',') : '';
+      baseInfo.carInfoId = baseInfo.carInfoId ? {value: baseInfo.carInfoId, title: baseInfo.carNumber} : '';
+      baseInfo.driverId = baseInfo.driverId ? {value: baseInfo.driverId, title: baseInfo.driverName}: '';
+      const addressList = result.addressList.map(item => item.consigneeConsignorId ? {...item, consigneeConsignorId: {value: item.consigneeConsignorId, title: item.consigneeConsignorName}} : item)
+      dispatch(action.assign({baseInfo, addressList, goodsList: result.goodsList}));
+      helper.showSuccessMsg(`复制模板内容成功`);
+    }
+  };
+
   //增加收发货地址
   const addActionCreator = async (dispatch) => {
     dispatch(action.add({}, 'addressList'));
@@ -655,6 +676,7 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     save: saveActionCreator,
     commit: commitActionCreator,
     commitBatch: commitBatchActionCreator,
+    template: templateActionCreator,
   };
 
   const clickActionCreator = (key) => {
