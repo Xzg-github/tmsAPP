@@ -51,8 +51,11 @@ const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
   dispatch(action.update({options}, 'filters', index));
 };
 
-const updateTable = async (dispatch, getState) => {
-  const {currentPage, pageSize, searchData={}} = getSelfState(getState());
+const updateTable = async (dispatch, getState, isUpdate=true) => {
+  const {activeKey, tabs, currentPage, pageSize, searchData={}} = getSelfState(getState());
+  const newTabs = tabs.filter(o => o.key !== activeKey);
+  dispatch(action.assign({activeKey: 'index', tabs: newTabs, [activeKey]: null}));
+  if (!isUpdate) return;
   return search2(dispatch, action, URL_LIST, currentPage, pageSize, toFormValue(searchData))
 };
 
@@ -84,10 +87,10 @@ const copyActionCreator = async (dispatch, getState) => {
 };
 
 const isCanEdit = (item) => {
-  if(item['enabledType'] !== 'enabled_type_unenabled'){
-    showError('只能编辑未启用状态记录');
-    return false;
-  }
+  // if(item['enabledType'] !== 'enabled_type_unenabled'){
+  //   showError('只能编辑未启用状态记录');
+  //   return false;
+  // }
   return true;
 };
 

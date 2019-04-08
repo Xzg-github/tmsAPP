@@ -102,16 +102,25 @@ const handleImgChange = (data) => async (dispatch, getState) => {
 const initActionCreator = () => async (dispatch, getState) => {
   try {
     dispatch(action.assign({status: 'loading'}, [PATH]));
-    const {id, tabs, editType} = getParentState(getState());
-    const data = getJsonResult(await fetchJson(`${URL_DETAIL}/${id}`));
-    const {fileList=[], total={}, ...other} = data;
-    const newTabs = tabs.map(tab => {
-      (tab.key === 'freight') && (tab.title = `${tab.title}（${total.masterTotal || 0}）`);
-      (tab.key === 'extraCharge') && (tab.title = `${tab.title}（${total.additionalTotal || 0}）`);
-      return tab;
-    });
-    dispatch(action.assign({tabs: newTabs}));
-    const payload = {editType, fileList, ...other, status: 'page'};
+    const {item={}, tabs, editType} = getParentState(getState());
+    let state = {};
+    if (editType === 2) {
+      const data = getJsonResult(await fetchJson(`${URL_DETAIL}/${item.id}`));
+      const {total={}, fileList=[], ...other={}} = data;
+      state = {fileList, value: other};
+      const newTabs = tabs.map(tab => {
+        (tab.key === 'freight') && (tab.title = `${tab.title}（${total.masterTotal || 0}）`);
+        (tab.key === 'extraCharge') && (tab.title = `${tab.title}（${total.additionalTotal || 0}）`);
+        return tab;
+      });
+      dispatch(action.assign({tabs: newTabs}));
+    } else {
+      state = item;
+    }
+    if (state.fileList && state.fileList.length > 0) {
+      state.fileList = await getFiles(state.fileList);
+    }
+    const payload = {editType, ...state, status: 'page'};
     dispatch(action.assign(payload, [PATH]));
   } catch (e) {
     helper.showError(e.message);

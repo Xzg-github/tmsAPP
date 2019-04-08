@@ -71,7 +71,7 @@ const createFreightContainer = (config) => {
 
   const doubleClickActionCreator = (rowIndex) => async (dispatch, getState) => {
     const {controls, tableItems, defaultValue} = getSelfState(getState());
-    const value = {...defaultValue, ...tableItems[index]};
+    const value = {...defaultValue, ...tableItems[rowIndex]};
     if (value['enabledType'] !== 'enabled_type_unenabled') {
       return showError('只能编辑未启用状态记录！');
     }

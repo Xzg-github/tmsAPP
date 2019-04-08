@@ -171,15 +171,27 @@ const createFreightContainer = (config) => {
   const initActionCreator = () => async (dispatch, getState) => {
     try {
       dispatch(action.assign({status: 'loading'}, [PATH]));
-      const {id, editType} = getParentState(getState());
+      const {item={}, editType, tabs} = getParentState(getState());
       const {pageSize} = getSelfState(getState());
-      const list = getJsonResult(await search(API.list, 0, pageSize, {id}));
+      const list = getJsonResult(await search(API.list, 0, pageSize, {}));
+      const defaultValue = {
+        customerPriceId: item.id,
+        customerId: item.customerId,
+        contractNumber: {
+          title: item.customerPriceCode,
+          value: item.id
+        }
+      };
       const payload = {
         editType,
-        items: list.data,
+        defaultValue,
+        tableItems: list.data,
         maxRecords: list.returnTotalItem,
         status: 'page'
       };
+      const index = tabs.findIndex(o => o.key === PATH);
+      const title = tabs[index].title.replace(/(\d+)/, list.returnTotalItem);
+      dispatch(action.update({title}, 'tabs', index));
       dispatch(action.assign(payload, [PATH]));
     } catch (e) {
       helper.showError(e.message);
