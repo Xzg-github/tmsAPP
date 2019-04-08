@@ -38,10 +38,10 @@ const getNewTableData = async (params, payload, home=false) => {
     list = getJsonResult(await search(URL_LIST, itemFrom, itemTo, options, false));
     newTabs2 = deepCopy(tabs2).map(tab => {
       // 0:待明细整审,1:待整审,2:已整审
-      if (tab.key != '2') {
+      // if (tab.key != '2') {
         const count = computedCount(list.tags, tab.key);
         tab.title = `${tab.title.split(' ')[0]} (${count})`;
-      }
+      // }
       return tab;
     });
   });
