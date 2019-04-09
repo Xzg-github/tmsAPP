@@ -90,6 +90,7 @@ api.post('/receivable_openingBank', async(req, res) => {
 api.post('/invoiceHeaderInfo', async(req, res) => {
   const url = `${archiver_service}/CustomerInvoiceRequestDto/listByRelationId`;
   const params = {
+    customerId: req.body.customerId,
     invoiceHeaderInformation: req.body.filter,
     itemFrom: 0,
     itemTo: req.body.maxNumber

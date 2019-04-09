@@ -76,7 +76,8 @@ const formSearchActionCreator = (KEY, key, filter, control) => async (dispatch, 
         break;
       }
       case 'invoiceHeaderInformation': {
-        result = getJsonResult(await fetchJson(URL_HEADER_INDO, postOption({filter, maxNumber: 65536})));
+        const customerId = value['customerId'] ? value['customerId'].value : '';
+        result = getJsonResult(await fetchJson(URL_HEADER_INDO, postOption({filter, customerId, maxNumber: 65536})));
         break;
       }
       case 'institutionId': {
@@ -197,10 +198,11 @@ const clickActionCreator = (KEY, key) => {
 
 // 发票抬头的新增
 const onAddActionCreator = () => async (dispatch, getState) => {
-  const {addInvoiceConfig, controls} = getSelfState(getState());
+  const {addInvoiceConfig, controls, value} = getSelfState(getState());
   const flag = await showAddInvoiceDialog({}, addInvoiceConfig);
   if (flag) {
-    const result = getJsonResult(await fetchJson(URL_HEADER_INDO, postOption({filter: '', maxNumber: 65536})));
+    const customerId = value['customerId'] ? value['customerId'].value : '';
+    const result = getJsonResult(await fetchJson(URL_HEADER_INDO, postOption({filter: '', customerId, maxNumber: 65536})));
     const options = result.data ? result.data : result ? result : [];
     const cols = updateOne(controls[1].cols, 1, {options});
     dispatch(action.update({cols}, ['controls'], 1));
