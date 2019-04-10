@@ -22,8 +22,6 @@ const monthOptions = [
 const filters = [
   {key:"customerId",title:"结算单位",type:"search",searchUrl:customer},
   {key:"billNumber",title:"月帐单号",type:"text"},
-  {key:"orderNumber",title:"运单号",type:"text"},
-  {key:"customerDelegateCode",title:"客户委托号",type:"text"},
   {key:"statusType",title:"状态",type:"select",dictionary:'status_type1'},
   {key:"periodOfyear",title:"归属年",type:"select"},
   {key:"periodOfmonth",title:"归属月",type:"select",options:monthOptions},
