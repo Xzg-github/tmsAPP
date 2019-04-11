@@ -6,11 +6,6 @@ const businessTypeOptions = [
   {title: '发货人', value: '2'},
 ];
 
-const departureOptions = [
-  {title: '来自行政区域档案', value: '1'},
-  {title: '来自于合同供应商', value: '2'},
-];
-
 const destinationTypeOptions = [
   {title: '目的地', value: '1'},
   {title: '收货人', value: '2'},
@@ -58,9 +53,9 @@ const tableCols = [
   {key: 'supplierId', title: '供应商'},
   {key: 'enabledType', title: '报价状态', dictionary: name.ENABLED_TYPE},
   {key: 'businessType', title: '运输类型', dictionary: name.BUSINESS_TYPE},
-  {key: 'departure', title: '起运地', options: departureOptions},
+  {key: 'departure', title: '起运地'},
   {key: 'departureType', title: '起发地类别', options: businessTypeOptions},
-  {key: 'destination', title: '目的地', options: destinationTypeOptions},
+  {key: 'destination', title: '目的地'},
   {key: 'destinationType', title: '目的地类别', options: destinationTypeOptions},
   {key: 'carModeId', title: '车型'},
   {key: 'chargeItemId', title: '费用项', required: true},
@@ -81,11 +76,11 @@ const tableCols = [
 
 const freightControls = [
   {key: 'supplierId', title: '供应商', type: 'search', required: true},
-  {key: 'contractNumber', title: '供应商合同号', type: 'text'},
+  {key: 'contractNumber', title: '供应商合同号', type: 'search'},
   {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
-  {key: 'departure', title: '起运地', type: 'select', required: true, options: departureOptions},
+  {key: 'departure', title: '起运地', type: 'select', required: true},
   {key: 'destinationType', title: '目的地类别', type: 'select', required: true, options: destinationTypeOptions},
-  {key: 'destination', title: '目的地', type: 'select', required: true, options: destinationTypeOptions},
+  {key: 'destination', title: '目的地', type: 'select', required: true},
   {key: 'businessType', title: '运输类型', type: 'select', dictionary: name.BUSINESS_TYPE},
   {key: 'isReturn', title: '是否返程', type: 'select', dictionary: name.ZERO_ONE_TYPE},
   {key: 'carModeId', title: '车型', type: 'search'},
@@ -101,11 +96,11 @@ const freightControls = [
 
 const extraChargeControls = [
   {key: 'supplierId', title: '供应商', type: 'search', required: true},
-  {key: 'contractNumber', title: '供应商合同号', type: 'text'},
+  {key: 'contractNumber', title: '供应商合同号', type: 'search'},
   {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
-  {key: 'departure', title: '起运地', type: 'select', required: true, options: departureOptions},
+  {key: 'departure', title: '起运地', type: 'select', required: true},
   {key: 'destinationType', title: '目的地类别', type: 'select', required: true, options: destinationTypeOptions},
-  {key: 'destination', title: '目的地', type: 'select', required: true, options: destinationTypeOptions},
+  {key: 'destination', title: '目的地', type: 'select', required: true},
   {key: 'businessType', title: '运输类型', type: 'select', dictionary: name.BUSINESS_TYPE},
   {key: 'carModeId', title: '车型', type: 'search'},
   {key: 'chargeItemId', title: '费用项', type: 'search', required: true},

@@ -15,7 +15,7 @@ import {showColsSetting} from '../../../common/tableColsSetting';
 
 const PARENT_PATH = ['supplierPriceDetail'];
 const STATE_PATH = ['supplierPriceDetail', 'edit'];
-const URL_LIST = '/api/config/supplierPriceDetail/list';
+const URL_LIST = '/api/config/supplierPriceDetail/extraChargeDetail';
 const URL_SUPPLIER = '/api/config/supplierPriceDetail/supplier';
 const URL_DISTRICT = '/api/config/supplierPriceDetail/district';
 const URL_CONSIGNOR = '/api/config/supplierPriceDetail/consignor';
@@ -230,12 +230,13 @@ const pageSizeActionCreator = (pageSize, currentPage) => async (dispatch, getSta
 const initActionCreator = () => async (dispatch, getState) => {
   try {
     dispatch(action.assign({status: 'loading'}));
-    const {pageSize, ...config} = getSelfState(getState());
+    const {pageSize, ...config} = getSelfState(getState());dealActions
     const list = getJsonResult(await search(URL_LIST, 0, pageSize, {}));
     const payload = {
       ...config,
       maxRecords: list.returnTotalItem,
       currentPage: 1,
+      pageSize,
       tableItems: toTableItems(list),
       searchData: {},
       status: 'page'

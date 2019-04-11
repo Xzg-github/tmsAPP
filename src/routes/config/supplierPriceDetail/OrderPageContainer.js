@@ -11,7 +11,7 @@ import showEditDialog from './EditDialog/EditDialogContainer';
 import {showColsSetting} from '../../../common/tableColsSetting';
 
 const STATE_PATH = ['supplierPriceDetail'];
-const URL_LIST = '/api/config/supplierPriceDetail/list';
+const URL_LIST = '/api/config/supplierPriceDetail/freightDetail';
 const URL_SUPPLIER = '/api/config/supplierPriceDetail/supplier';
 const URL_DISTRICT = '/api/config/supplierPriceDetail/district';
 const URL_CONSIGNOR = '/api/config/supplierPriceDetail/consignor';

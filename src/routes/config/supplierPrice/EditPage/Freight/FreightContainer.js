@@ -30,9 +30,9 @@ const createFreightContainer = (config) => {
   const {PATH, API, DIALOG_API, IMPORT_CODE} = config;
 
   const afterEdit = async (dispatch, getState, isUpdateTab) => {
-    const {currentPage, pageSize} = getSelfState(getState());
+    const {currentPage, pageSize, searchData} = getSelfState(getState());
     const page = isUpdateTab ? 1 : currentPage;
-    await search2(dispatch, action, API.list, page, pageSize, {}, {currentPage: page}, [PATH]);
+    await search2(dispatch, action, API.list, page, pageSize, searchData, {currentPage: page}, [PATH], false);
     if (isUpdateTab) {
       const {tabs} = getParentState(getState());
       const {maxRecords} = getSelfState(getState());
@@ -161,13 +161,13 @@ const createFreightContainer = (config) => {
   const pageNumberActionCreator = (currentPage) => (dispatch, getState) => {
     const {pageSize, searchData={}} = getSelfState(getState());
     const newState = {currentPage};
-    return search2(dispatch, action, API.list, currentPage, pageSize, searchData, newState, [PATH]);
+    return search2(dispatch, action, API.list, currentPage, pageSize, searchData, newState, [PATH], false);
   };
 
   const pageSizeActionCreator = (pageSize, currentPage) => async (dispatch, getState) => {
     const {searchData={}} = getSelfState(getState());
     const newState = {pageSize, currentPage};
-    return search2(dispatch, action, API.list, currentPage, pageSize, searchData, newState, [PATH]);
+    return search2(dispatch, action, API.list, currentPage, pageSize, searchData, newState, [PATH], false);
   };
 
   const initActionCreator = () => async (dispatch, getState) => {
@@ -175,8 +175,10 @@ const createFreightContainer = (config) => {
       dispatch(action.assign({status: 'loading'}, [PATH]));
       const {item={}, editType, tabs} = getParentState(getState());
       const {pageSize} = getSelfState(getState());
-      const list = getJsonResult(await search(API.list, 0, pageSize, {}));
+      const searchData = {supplierPriceCode: item.supplierPriceCode};
+      const list = getJsonResult(await search(API.list, 0, pageSize, searchData, false));
       const defaultValue = {
+        supplierPriceCode: item.supplierPriceCode,
         supplierPriceId: item.id,
         supplierId: item.supplierId,
         contractNumber: {
@@ -187,6 +189,7 @@ const createFreightContainer = (config) => {
       const payload = {
         editType,
         defaultValue,
+        searchData,
         tableItems: list.data,
         maxRecords: list.returnTotalItem,
         status: 'page'
