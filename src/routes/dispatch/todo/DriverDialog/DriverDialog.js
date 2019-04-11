@@ -31,6 +31,10 @@ class DriverDialog extends React.Component {
     });
   };
 
+  onHandleFilterOptions= (inputValue, option) => {
+    return option.props.children.includes(inputValue);
+  };
+
   toSearch = () => {
     const {searchData={}, data, carAreaOptions} = this.props;
     return (
@@ -41,6 +45,7 @@ class DriverDialog extends React.Component {
           mode="multiple"
           style={{ width: '300px', marginRight: '5px'}}
           placeholder="车辆标签"
+          filterOption={this.onHandleFilterOptions}
           onChange={this.onHandleChange.bind(null, 'carArea')}
         >
           {this.getOptions(carAreaOptions)}
