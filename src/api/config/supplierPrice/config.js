@@ -21,7 +21,7 @@ const buttons = [
   {key: 'add', title: '新增', bsStyle: 'primary', sign: 'supplierPrice_add'},
   {key: 'copy', title: '复制新增', sign: 'supplierPrice_copy'},
   {key: 'edit', title: '编辑', sign: 'supplierPrice_edit'},
-  {key: 'delete', title: '删除', sign: 'supplierPrice_delete'},
+  {key: 'delete', title: '删除', sign: 'supplierPrice_delete', confirm: '是否确定删除所选数据？'},
   {key: 'enable', title: '启用', sign: 'supplierPrice_enable'},
   {key: 'disable', title: '禁用', sign: 'supplierPrice_disable'},
   {key: 'import', title: '导入', sign: 'supplierPrice_import'},
@@ -69,7 +69,7 @@ const tabs2 = [
 const contract = {
   controls: [
     {key: 'supplierId', title: '供应商', type: 'search', required: true},
-    {key: 'contractNumber', title: '合同号', type: 'text'},
+    {key: 'contractCode', title: '合同号', type: 'text'},
     {key: 'startTime', title: '有效开始日期', type: 'date', required: true, rule: {type: '<', key: 'endTime'}},
     {key: 'endTime', title: '有效结束日期', type: 'date', required: true, rule: {type: '>', key: 'startTime'}},
     {key: 'balanceCompany', title: '结算单位', type: 'search'},
@@ -85,11 +85,6 @@ const contract = {
 const businessTypeOptions = [
   {title: '始发地', value: '1'},
   {title: '发货人', value: '2'},
-];
-
-const departureOptions = [
-  {title: '来自行政区域档案', value: '1'},
-  {title: '来自于合同供应商', value: '2'},
 ];
 
 const destinationTypeOptions = [
@@ -116,7 +111,7 @@ const freight = {
     {key: 'refresh', title: '刷新'},
   ],
   cols: [
-    {key: 'supplierPriceId', title: '供应商报价标识'},
+    {key: 'supplierPriceCode', title: '供应商报价标识'},
     {key: 'enabledType', title: '是否启用', dictionary: name.ENABLED_TYPE},
     {key: 'businessType', title: '运输类型', dictionary: name.BUSINESS_TYPE},
     {key: 'departureType', title: '起发地类别', options: businessTypeOptions},
@@ -141,7 +136,7 @@ const freight = {
   ],
   controls: [
     {key: 'supplierId', title: '供应商', type: 'search', required: true},
-    {key: 'contractNumber', title: '供应商合同号', type: 'search'},
+    {key: 'contractNumber', title: '供应商合同号', type: 'readonly'},
     {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
     {key: 'departure', title: '起运地', type: 'search', required: true},
     {key: 'destinationType', title: '目的地类别', type: 'select', required: true, options: destinationTypeOptions},
@@ -188,7 +183,7 @@ const extraCharge = {
     {key: 'refresh', title: '刷新'},
   ],
   cols: [
-    {key: 'supplierPriceId', title: '供应商报价标识'},
+    {key: 'supplierPriceCode', title: '供应商报价标识'},
     {key: 'enabledType', title: '是否启用', dictionary: name.ENABLED_TYPE},
     {key: 'businessType', title: '运输类型', dictionary: name.BUSINESS_TYPE},
     {key: 'departureType', title: '起发地类别', options: businessTypeOptions},
@@ -210,7 +205,7 @@ const extraCharge = {
   ],
   controls: [
     {key: 'supplierId', title: '供应商', type: 'search', required: true},
-    {key: 'contractNumber', title: '供应商合同号', type: 'search'},
+    {key: 'contractNumber', title: '供应商合同号', type: 'readonly'},
     {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
     {key: 'departure', title: '起运地', type: 'search', required: true},
     {key: 'destinationType', title: '目的地类别', type: 'select', required: true, options: destinationTypeOptions},

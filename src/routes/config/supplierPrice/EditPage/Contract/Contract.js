@@ -21,8 +21,8 @@ class Contract extends React.Component {
 
 
   toPicture = () => {
-    const {fileList, uploadText, handleImgChange} = this.props;
-    const props = {fileList, uploadText, handleImgChange};
+    const {fileList, uploadText, handleImgChange, handleImgRemove} = this.props;
+    const props = {fileList, uploadText, handleImgChange, handleImgRemove};
     return <PictureWall {...props}/>
   }
 

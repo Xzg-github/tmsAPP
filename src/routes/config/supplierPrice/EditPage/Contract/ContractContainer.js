@@ -12,8 +12,11 @@ const STATE_PATH = ['supplierPrice', 'edit'];
 
 const URL_DETAIL = '/api/config/supplierPrice/detail';
 const URL_SUPPLIER = '/api/config/supplierPrice/supplier';
-const URL_SAVE_NEWADD = '/api/config/supplierPrice/contractSave';
+const URL_SAVE_NEWADD = '/api/config/supplierPrice/contractAdd';
+const URL_SAVE_EDIT = '/api/config/supplierPrice/contractSave';
 const URL_SAVE_COMMIT = '/api/config/supplierPrice/contractCommit';
+const URL_DEL_FILE = '/api/track/file_manager/upload_del';
+const URL_DOWNLOAD= '/api/track/file_manager/download';
 
 const action = new Action(STATE_PATH);
 const PATH = 'contract';  // PATH与tab页签的key值一致
@@ -48,30 +51,56 @@ const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
 
 const saveActionCreator = async (dispatch, getState) => {
   execWithLoading(async () => {
-    const {editType, fileList, value={}, controls} = getSelfState(getState());
+    const {editType, fileList=[], value={}, controls} = getSelfState(getState());
     if (!helper.validValue(controls, value)) {
       return dispatch(action.assign({valid: true}, [PATH]));
     }
-    const url = editType === 2 ? URL_SAVE_COMMIT : URL_SAVE_NEWADD;
-    const params = {fileList, value};
+    await removeImages(getState);
+    const url = editType === 2 ? URL_SAVE_EDIT : URL_SAVE_NEWADD;
+    const {item} = getParentState(getState());
+    const files = fileList.map(o => {
+      return {
+        fileFormat: o.fileFormat || 'id',
+        fileName: o.name,
+        fileUrl: o.fileUrl || o.response.result
+      }
+    });
+    const params = {
+      ...helper.getObject(helper.convert(value), controls.map(o => o.key)),
+      id: editType === 2 ? item.id : null,
+      fileList: files,
+    };
     const {returnCode, returnMsg} = await fetchJson(url, helper.postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    await updateTable();
+    await updateTable(dispatch, getState);
   });
 };
 
 const commitActionCreator = async (dispatch, getState) => {
   execWithLoading(async () => {
-    const {fileList, value={}, controls} = getSelfState(getState());
+    const {fileList=[], value={}, controls} = getSelfState(getState());
     if (!helper.validValue(controls, value)) {
       return dispatch(action.assign({valid: true}, [PATH]));
     }
-    const params = {fileList, value};
+    await removeImages(getState);
+    const {item} = getParentState(getState());
+    const files = fileList.map(o => {
+      return {
+        fileFormat: o.fileFormat || 'id',
+        fileName: o.name,
+        fileUrl: o.fileUrl || o.response.result
+      }
+    });
+    const params = {
+      ...helper.getObject(helper.convert(value), controls.map(o => o.key)),
+      id: item.id,
+      fileList: files,
+    };
     const {returnCode, returnMsg} = await fetchJson(URL_SAVE_COMMIT, helper.postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    await updateTable();
+    await updateTable(dispatch, getState);
   });
 };
 
@@ -92,11 +121,54 @@ const onExitValidActionCreator = () => async (dispatch, getState) => {
   dispatch(action.assign({valid: false}, [PATH]));
 };
 
-const handleImgChange = (data) => async (dispatch, getState) => {
+const handleImgChange = (data={}) => async (dispatch, getState) => {
+  const {file, fileList} = data;
+  if (!file) return;
+  const list = fileList.filter(o => o.status);
   // 控制最多上传10个
-  const list = data.fileList.filter(o => o.status);
-  const fileList = list.length > 10 ? list.slice(0, 10) : list;
-  dispatch(action.assign({fileList}, [PATH]));
+  let newList = list.length > 10 ? list.slice(0, 10) : list;
+  if (file.response && file.response.returnCode !== 0) {
+    helper.showError(`上传失败，${file.response.returnMsg || ''}`);
+    newList = fileList.filter(item => item.uid !== file.uid);
+  }
+  dispatch(action.assign({fileList: newList}, [PATH]));
+};
+
+const handleImgRemove = (file) => async (dispatch, getState) => {
+  const {delFiles=[]} = getSelfState(getState());
+  const id = file.fileUrl || file.response.result;
+  if (!delFiles.includes(id)) {
+    delFiles.push(id);
+  }
+  dispatch(action.assign({delFiles}, [PATH]));
+};
+
+const removeImages = async (getState) => {
+  // 删除文件服务中心的远程文件
+  const {delFiles=[]} = getSelfState(getState());
+  if (delFiles.length > 0) {
+    const {returnCode, result, returnMsg} = await fetchJson(`${URL_DEL_FILE}/${delFiles}`, 'delete');
+    returnCode === 0 ? showSuccessMsg(returnMsg) : showError(returnMsg);
+  }
+};
+
+const getFiles = async (list=[]) => {
+  let arr = [];
+  for (let i in list) {
+    const file = list[i];
+    if(file.fileFormat === 'id') {
+      const locationUrl = getJsonResult(await fetchJson(`${URL_DOWNLOAD}/${file.fileUrl}`));
+      arr.push({
+        ...file,
+          uid: i,
+          fileFormat: 'id',
+          name: file.fileName,
+          status: 'done',
+          url: `/api/proxy/file-center-service/${locationUrl[file.fileUrl]}`
+      });
+    }
+  }
+  return arr;
 };
 
 const initActionCreator = () => async (dispatch, getState) => {
@@ -138,7 +210,8 @@ const actionCreators = {
   onChange: changeActionCreator,
   onSearch: formSearchActionCreator,
   onExitValid: onExitValidActionCreator,
-  handleImgChange
+  handleImgChange,
+  handleImgRemove
 };
 
 const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(Contract));

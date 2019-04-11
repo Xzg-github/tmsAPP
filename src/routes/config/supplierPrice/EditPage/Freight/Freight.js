@@ -12,10 +12,10 @@ class Freight extends React.Component {
   }
 
   toTable = () => {
-    const {cols, items=[], onCheck, onDoubleClick} = this.props;
+    const {cols, tableItems=[], onCheck, onDoubleClick} = this.props;
     const tableProps = {
       cols,
-      items,
+      items: tableItems,
       callback: {onCheck, onDoubleClick}
     };
     return <div className={s.table}>

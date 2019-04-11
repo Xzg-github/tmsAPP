@@ -146,7 +146,7 @@ api.post('/extraChargeDetail', async (req, res) => {
 
 // 新增附加费信息保存
 api.post('/extraChargeAdd', async (req, res) => {
-  const url = `${archiver_service}/supplier_price_additional/insert`;
+  const url = `${archiver_service}/supplier_price_additional/add`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 

@@ -55,6 +55,7 @@ const saveActionCreator = async (dispatch, getState) => {
     if (!helper.validValue(controls, value)) {
       return dispatch(action.assign({valid: true}, [PATH]));
     }
+    await removeImages(getState);
     const url = editType === 2 ? URL_SAVE_EDIT : URL_SAVE_NEWADD;
     const {item} = getParentState(getState());
     const files = fileList.map(o => {
@@ -82,6 +83,7 @@ const commitActionCreator = async (dispatch, getState) => {
     if (!helper.validValue(controls, value)) {
       return dispatch(action.assign({valid: true}, [PATH]));
     }
+    await removeImages(getState);
     const {item} = getParentState(getState());
     const files = fileList.map(o => {
       return {
@@ -133,10 +135,21 @@ const handleImgChange = (data={}) => async (dispatch, getState) => {
 };
 
 const handleImgRemove = (file) => async (dispatch, getState) => {
-  // 删除文件服务中心的远程文件
+  const {delFiles=[]} = getSelfState(getState());
   const id = file.fileUrl || file.response.result;
-    const {returnCode, result, returnMsg} = await fetchJson(`${URL_DEL_FILE}/${[id]}`, 'delete');
+  if (!delFiles.includes(id)) {
+    delFiles.push(id);
+  }
+  dispatch(action.assign({delFiles}, [PATH]));
+};
+
+const removeImages = async (getState) => {
+  // 删除文件服务中心的远程文件
+  const {delFiles=[]} = getSelfState(getState());
+  if (delFiles.length > 0) {
+    const {returnCode, result, returnMsg} = await fetchJson(`${URL_DEL_FILE}/${delFiles}`, 'delete');
     returnCode === 0 ? showSuccessMsg(returnMsg) : showError(returnMsg);
+  }
 };
 
 const getFiles = async (list=[]) => {
