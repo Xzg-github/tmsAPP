@@ -2,6 +2,7 @@ import fetch from '../core/fetch';
 import {getPathValue} from '../action-reducer/helper';
 import message from 'antd/lib/message';
 import { Action } from '../action-reducer/action';
+import upload from '../standard-business/upload';
 
 /**
  * 功能：设置fetch的选项
@@ -473,7 +474,6 @@ const getRouteKey = () => {
 
 //获取当前页面标题，返回值：组成标题的字符串数组
 const getPageTitle = () => {
-  const layoutAction = new Action(['layout']);
   const rootState = global.store.getState();
   return rootState.layout.pageTitles[getRouteKey()];
 };
@@ -482,6 +482,24 @@ const getPageTitle = () => {
 const setPageTitle = (titleArr=[]) => {
   const layoutAction = new Action(['layout']);
   global.store.dispatch(layoutAction.assign({[getRouteKey()]: titleArr}, 'pageTitles'));
+};
+
+const checkFile = (file) => {
+  let suffix = file.name.split('.');
+  if (suffix.length > 1 && ['exe', 'bat', 'com'].includes(suffix.pop())) {
+    showError(`不允许此文件类型的文件上传`);
+    return false;
+  }
+  if (file.size > 5000000) {
+    showError(`文件上传大小不能超过5M`);
+    return false;
+  }
+  return true;
+};
+
+//上传前检查文件大小及类型
+const uploadWithFileCheck = (url) => {
+  return upload(url, checkFile);
 };
 
 const helper = {
@@ -519,7 +537,8 @@ const helper = {
   getButtons,
   getRouteKey,
   getPageTitle,
-  setPageTitle
+  setPageTitle,
+  uploadWithFileCheck
 };
 
 export {

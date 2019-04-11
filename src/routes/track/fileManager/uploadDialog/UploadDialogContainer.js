@@ -5,7 +5,6 @@ import {Action} from '../../../../action-reducer/action';
 import {getPathValue} from '../../../../action-reducer/helper';
 import showPopup from '../../../../standard-business/showPopup';
 import {fetchDictionary} from '../../../../common/dictionary';
-import upload from '../../../../standard-business/upload';
 
 const action = new Action(['temp'], false);
 
@@ -49,7 +48,7 @@ const uploadActionCreator = async (dispatch, getState) => {
   if (checkedItems.length !== 1) return helper.showError(`请勾选一条记录`);
   if (!!checkedItems[0].fileName) return helper.showError(`此记录已有附件，请新增记录后上传`);
   const url = `/api/proxy/zuul/tms-service/file/upload/document`;
-  const start = await upload(url);
+  const start = await helper.uploadWithFileCheck(url);
   if (start) {
     const sss = await start();
     const {status, name, response={}} = sss;
