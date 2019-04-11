@@ -155,7 +155,6 @@ const linkActionCreator = (tabKey, key, rowIndex, item) => (dispatch, getState) 
 };
 
 const actionCreatorsEx = {
-  // onSearch: searchActionCreator,
   onClick: clickActionCreator,
   onDoubleClick: doubleClickActionCreator,
   onLink: linkActionCreator

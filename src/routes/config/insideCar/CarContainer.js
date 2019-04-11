@@ -69,7 +69,8 @@ const searchActionCreator = (key,keyValue,keyControls) => async(dispatch,getStat
     id =  1;
     const body = {
       isOwner:id,
-      name:keyValue
+      name:keyValue,
+      supplierId: value.supplierId.value
     };
     json = await helper.fetchJson(keyControls.searchUrl,helper.postOption(body))
   }else {

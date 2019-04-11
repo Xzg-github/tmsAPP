@@ -18,7 +18,7 @@ const UploadComponent = ({url, onChange, beforeUpload}) => {
 
 let lastResolve = null;
 
-const upload = (url) => {
+const upload = (url, checkCallback) => {
   return new Promise(resolve => {
     let node = document.getElementById('_upload_global');
     if (!node) {
@@ -34,15 +34,17 @@ const upload = (url) => {
     lastResolve = resolve;
 
     let resolve4;
-    const beforeUpload = () => {
+    const beforeUpload = (file, fileList) => {
       return new Promise(resolve2 => {
         lastResolve = null;
+        const isUpload = checkCallback(file, fileList);
+        isUpload ?
         resolve(() => {
           return new Promise(resolve3 => {
             resolve4 = resolve3;
             resolve2();
           });
-        });
+        }) : resolve();
       });
     };
 

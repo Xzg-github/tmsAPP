@@ -507,7 +507,6 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
 
   //提交指定单量
   const commitBatchActionCreator = async (dispatch, getState) => {
-    await countActionCreator(dispatch, getState);
     const selfState = getSelfState(getState());
     //校验数据
     if (!checkData(selfState, dispatch)) return;
@@ -515,7 +514,8 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
     if (value) {
       if (Number(value) > 100) return helper.showError(`提交失败，单量不能大于100`);
       execWithLoading(async () => {
-        const body = {...getSaveData(selfState), countOrder: value};
+        await countActionCreator(dispatch, getState);
+        const body = {...getSaveData(getSelfState(getState())), countOrder: value};
         const url = '/api/order/input/commit';
         const {returnCode, returnMsg} = await helper.fetchJson(url, helper.postOption(body));
         if (returnCode !== 0) return helper.showError(returnMsg);
