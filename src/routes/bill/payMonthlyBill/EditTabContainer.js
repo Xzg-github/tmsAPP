@@ -122,7 +122,7 @@ const editActionCreator = (props) => async(dispatch,getState) => {
   const {tableItems,value,tabKey} = getSelfState(getState());
   const items = tableItems.filter(item => item.checked);
   if(items.length === 1){
-    let json = await showEditDiaLog(editDialog,tableItems[0],value);
+    let json = await showEditDiaLog(editDialog,items[0],value);
     if(json){
       const json = await helper.fetchJson(`${URL_ONE}/${value.id}`);
       if(json.returnCode !==0 ){

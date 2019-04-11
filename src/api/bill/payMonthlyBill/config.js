@@ -22,9 +22,7 @@ const monthOptions = [
 const filters = [
   {key:"supplierId",title:"结算单位",type:"search",searchUrl:supplierId},
   {key:"billNumber",title:"月帐单号",type:"text"},
-  {key:"orderNumber",title:"运单号",type:"text"},
-  {key:"customerDelegateCode",title:"客户委托号",type:"text"},
-  {key:"statusType",title:"状态",type:"select",dictionary:'status_type'},
+  {key:"statusType",title:"状态",type:"select",dictionary:'status_type1'},
   {key:"periodOfyear",title:"归属年",type:"select"},
   {key:"periodOfmonth",title:"归属月",type:"select",options:monthOptions},
   {key:"insertUser",title:"创建人",type:"search",searchType:'user'},
@@ -114,7 +112,6 @@ const addDialogFilters = [
 const editDialogCols = [
   {key: 'statusType', title: '状态',dictionary:'status_type'},
   {key: 'customerId', title: '结算单位'},
-  {key: 'cancelChargeId', title: '取消费用标识'},
   {key: 'chargeItemId', title: '费用名称'},
   {key: 'chargeOrigin', title: '费用来源'},
   {key: 'chargeUnit', title: '计量单位',dictionary:'charge_unit'},
@@ -128,8 +125,6 @@ const editDialogCols = [
   {key: 'periodOfmonth', title: '会计月'},
   {key: 'periodOfyear', title: '会计年'},
   {key: 'price', title: '单价'},
-  {key: 'relationChargeId', title: '相关费用标识'},
-  {key: 'relationId', title: '关联标识'},
   {key: 'relationNumber', title: '关联编码'},
   {key: 'settlementSystemStatus', title: '对接结算系统状态',dictionary:'settlement_system_status'},
   {key: 'tax', title: '税率'},

@@ -39,7 +39,7 @@ const initActionCreator = () => async (dispatch) => {
 
     const dictionary = helper.getJsonResult(await fetchDictionary(names));
     //获取状态字典
-    const status = helper.getJsonResult(await getStatus("pay_monthly_bill"));
+    const status = helper.getJsonResult(await getStatus("payable_month_bill"));
     const dictResult = {...dictionary, status_type1:status};
     setDictionary2(dictResult, index.tableCols,index.filters,edit.cols,addDialog.tableCols,editDialog.cols);
     //设置年份下拉 从2018年到当前年份
