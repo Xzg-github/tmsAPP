@@ -140,7 +140,7 @@ class SuperTable2 extends React.Component {
     const {readonly, isReadonly=[], isRequired=[]} = this.props.items[index];
     const cellProps = {
       value, width,
-      type: readonly || (isReadonly.includes(key)) ? 'readonly' : type,
+      type: readonly || (Array.isArray(isReadonly) && isReadonly.includes(key)) ? 'readonly' : type,
       props: readonly ? {} : props,
       error: this.validField(required, value),
       options: this.getOptions(key, options, index),
@@ -148,7 +148,7 @@ class SuperTable2 extends React.Component {
       onSearch: this.onSearch(key, index),
       onBlur: this.onBlur
     };
-    if(isRequired.includes(key)){
+    if(Array.isArray(isRequired) && isRequired.includes(key)){
       return (<div>
         <span style={{color: 'red', display: 'inline-block'}}>*</span>
         <span style={{marginLeft: '5px', display: 'inline-block'}}><SuperTableCell {...cellProps} /></span>
