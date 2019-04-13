@@ -175,7 +175,7 @@ const createFreightContainer = (config) => {
       dispatch(action.assign({status: 'loading'}, [PATH]));
       const {item={}, editType, tabs} = getParentState(getState());
       const {pageSize} = getSelfState(getState());
-      const searchData = {customerPriceId: item.id};
+      const searchData = {customerPriceCode: item.customerPriceCode};
       const list = getJsonResult(await search(API.list, 0, pageSize, searchData, false));
       const defaultValue = {
         customerPriceId: item.id,
