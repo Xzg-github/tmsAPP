@@ -18,6 +18,17 @@ api.post('/supplier', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
+// 供应商合同下拉(根据供应商查询)
+api.post('/contract', async (req, res) => {
+  const {maxNumber, filter, supplierId} = req.body;
+  const url = `${archiver_service}/supplier_price/drop_list/${supplierId}`;
+  const {returnCode, result=[], returnMsg} = await fetchJsonByNode(req, url);
+  const options = result.filter(o => o.supplierPriceCode.includes(filter)).slice(0, maxNumber).map(o => ({
+    title: o.supplierPriceCode, value: o.id
+  }));
+  res.send({returnCode, result: options, returnMsg});
+});
+
 // 用户下拉
 api.post('/user', async (req, res) => {
   const url = `${tenant_service}/user/drop_list`;

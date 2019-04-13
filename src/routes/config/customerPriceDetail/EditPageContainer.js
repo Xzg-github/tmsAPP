@@ -38,7 +38,6 @@ const DIALOG_API = {
   search_currency: URL_CURRENCY,
   search_chargeItem: URL_CHARGEITEM,
   search_contract: URL_CONTRACT,
-  search_contract: URL_CONTRACT,
   search_district: URL_DISTRICT,
   newAdd: URL_ADD,
   editSave: URL_EDIT,

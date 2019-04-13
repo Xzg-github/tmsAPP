@@ -15,10 +15,10 @@ const getSelfState = (rootState) => {
 
 const changeActionCreator = (keyName, keyValue) => action.assign({[keyName]: keyValue}, 'value');
 
-const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
-  const {controls, DIALOG_API} = getSelfState(getState());
-  let result = [], params = {maxNumber: 20, filter: value};
-  switch (key) {
+const formSearchActionCreator = (keyName, keyValue) => async (dispatch, getState) => {
+  const {controls, DIALOG_API, value} = getSelfState(getState());
+  let result = [], params = {maxNumber: 20, filter: keyValue};
+  switch (keyName) {
     case 'customerId': {
        result = getJsonResult(await fetchJson(DIALOG_API.search_customer, postOption(params)));
        break;
@@ -27,6 +27,12 @@ const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
       result = getJsonResult(await fetchJson(DIALOG_API.search_supplier, postOption(params)));
       break;
    }
+   case 'contractNumber': {
+      if (!value['supplierId']) return showError('请先选择供应商！');
+      params['supplierId'] = value['supplierId'].value;
+      result = getJsonResult(await fetchJson(DIALOG_API.search_contract, postOption(params)));
+      break;
+    }
     case 'carModeId': {
       result = getJsonResult(await fetchJson(DIALOG_API.search_carMode, postOption(params)));
       break;
@@ -40,7 +46,7 @@ const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
       break;
     }
   }
-  const index = controls.findIndex(item => item.key === key);
+  const index = controls.findIndex(item => item.key === keyName);
   dispatch(action.update({options: result}, ['controls'], index));
 };
 

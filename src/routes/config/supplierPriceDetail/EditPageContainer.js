@@ -28,6 +28,7 @@ const URL_BATCHEDIT = '/api/config/supplierPriceDetail/freightBatchEdit';
 const URL_CAOMODE = '/api/config/supplierPriceDetail/carMode';
 const URL_CURRENCY = '/api/config/supplierPriceDetail/currency';
 const URL_CHARGEITEM = '/api/config/supplierPriceDetail/chargeItem';
+const URL_CONTRACT = '/api/config/supplierPriceDetail/contract';
 
 const action = new Action(STATE_PATH);
 
@@ -36,6 +37,7 @@ const DIALOG_API = {
   search_carMode: URL_CAOMODE,
   search_currency: URL_CURRENCY,
   search_chargeItem: URL_CHARGEITEM,
+  search_contract: URL_CONTRACT,
   newAdd: URL_ADD,
   editSave: URL_EDIT,
   batchEdit: URL_BATCHEDIT

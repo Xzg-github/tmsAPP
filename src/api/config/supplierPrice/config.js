@@ -135,7 +135,7 @@ const freight = {
     {key: 'updateUser', title: '更新人员'},
   ],
   controls: [
-    {key: 'supplierId', title: '供应商', type: 'search', required: true},
+    {key: 'supplierId', title: '供应商', type: 'readonly', required: true},
     {key: 'contractNumber', title: '供应商合同号', type: 'readonly'},
     {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
     {key: 'departure', title: '起运地', type: 'search', required: true},
@@ -204,7 +204,7 @@ const extraCharge = {
     {key: 'updateUser', title: '更新人员'},
   ],
   controls: [
-    {key: 'supplierId', title: '供应商', type: 'search', required: true},
+    {key: 'supplierId', title: '供应商', type: 'readonly', required: true},
     {key: 'contractNumber', title: '供应商合同号', type: 'readonly'},
     {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
     {key: 'departure', title: '起运地', type: 'search', required: true},
