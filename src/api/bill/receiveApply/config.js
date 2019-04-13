@@ -120,11 +120,11 @@ const invoiceInfoConfig = {
       otherProps: {disabled: true}},
     {key: 'netAmount', title: '净额', type: 'number', props: {real: true, precision: 2},
       otherProps: {disabled: true}},
-    {key: 'currency', title: '折算币种', type: 'text',
-      otherProps: {disabled: true}},
+    // {key: 'currency', title: '折算币种', type: 'text',
+    //   otherProps: {disabled: true}},
     {key: 'exchangeCurrency', title: '开票币种', type: 'text',
       otherProps: {disabled: true}},
-    {key: 'exchangeAmount', title: '折算金额', type: 'number', props: {real: true, precision: 2, zero: true},
+    {key: 'exchangeAmount', title: '开票金额', type: 'number', props: {real: true, precision: 2, zero: true},
       otherProps: {prefix: '合计：', colSpan: 1, align: 'right',}},
     {key: 'remark', title: '备注', type: 'textarea', props: {real: true, precision: 2},
       otherProps: {colSpan: 1, addonBefore: '￥', align: 'left', type: 'number',}}
@@ -182,7 +182,7 @@ const costInfoConfig = {
     title: '变更开票汇率',
     cols: [
       {key: 'currency', title: '币种', type: 'readonly'},
-      {key: 'invoiceExchangeRate', title: '开票汇率', type: 'text' }
+      {key: 'invoiceExchangeRate', title: '开票汇率', type: 'number', props: {real: true, precision: 4} }
     ]
   }
 };
