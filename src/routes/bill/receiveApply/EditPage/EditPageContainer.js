@@ -234,7 +234,7 @@ const buildEditPageState = async (config, itemData) => {
   const detailData = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
   const {chargeList, invoice={}} = detailData;
   const invoiceInfo = helper.getObject(invoice, config.invoiceInfoConfig.cols.map(o => o.key));
-  const rateList = getJsonResult(await fetchJson(`${URL_CURRENCY_RATE}/${invoiceInfo['currency']}`));
+  const rateList = getJsonResult(await fetchJson(`${URL_CURRENCY_RATE}/${invoice['currency']}`));
   return {
     ...config,
     ...itemData,
