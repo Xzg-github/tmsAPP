@@ -79,12 +79,12 @@ const exitValidActionCreator = () => {
 
 const searchActionCreator = (key, value) => async (dispatch) => {
   if (key === 'customerId') {
-    const {returnCode, result} = await fetchJson(URL_CLIENT, postOption({"customerName": value, "maxNumber": 10}));
+    const {returnCode, result} = await fetchJson(URL_CLIENT, postOption({"customerName": value, "maxNumber": 20}));
     if (returnCode === 0) {
       dispatch(action.assign({[key]: result}, 'options'));
     }
   }else if (key === 'chargeItemId') {
-    const {returnCode, result} = await fetchJson(URL_ITEMS, postOption({"customerName": value, "maxNumber": 10}));
+    const {returnCode, result} = await fetchJson(URL_ITEMS, postOption({"customerName": value, "maxNumber": 20}));
     if (returnCode === 0) {
       dispatch(action.assign({[key]: result}, 'options'));
     }

@@ -90,7 +90,7 @@ const cooperationInfo = [
   {key: 'creditDays', title: '结算天数', type: 'number'},
   {key: 'creditMoney', title: '信用额度', type: 'number'},
   {key: 'taxType', title: '计税方式', type: 'select', dictionary: name.TAX_TYPE},
-  {key: 'tax', title: '税率', type: 'number', props: {precision: 2}},
+  {key: 'tax', title: '税率', type: 'select', dictionary: 'supplier_tax_type'},
 ];
 
 const controls = [
@@ -120,7 +120,7 @@ const config = {
   finance,
   names: [
     name.BALANCE_WAY, name.YES_OR_NO,name.CUSTOMER_TYPE, name.TAX_TYPE,
-    name.ENABLED_TYPE, name.COMPANY_TYPE, name.COMPANY_LEVEL,name.SUPPLIER_TYPE
+    name.ENABLED_TYPE, name.COMPANY_TYPE, name.COMPANY_LEVEL,name.SUPPLIER_TYPE, 'supplier_tax_type'
   ]
 };
 

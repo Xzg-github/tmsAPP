@@ -20,6 +20,10 @@ const getSelfState = (rootState) => {
 
 const changeActionCreator = (keyName, keyValue) => async (dispatch, getState) => {
   const {value, controls} = getSelfState(getState());
+  if (keyName === 'tax') {
+    const options = controls[1].data.find(item => item.key === 'tax').options;
+    keyValue = options.find(item => item.value === keyValue).title;
+  }
   if(keyValue === value[keyName]) return dispatch(action.assign({[keyName]: keyValue}, 'value'));
   let data, options, body;
   const dealDistrictFunc = async (district, payload) => {
