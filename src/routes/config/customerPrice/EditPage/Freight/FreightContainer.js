@@ -32,7 +32,7 @@ const createFreightContainer = (config) => {
   const afterEdit = async (dispatch, getState, isUpdateTab) => {
     const {currentPage, pageSize, searchData} = getSelfState(getState());
     const page = isUpdateTab ? 1 : currentPage;
-    await search2(dispatch, action, API.list, page, pageSize, searchData, {currentPage: page}, [PATH], false);
+    await search2(dispatch, action, API.list, page, pageSize, searchData, {currentPage: page}, [PATH]);
     if (isUpdateTab) {
       const {tabs} = getParentState(getState());
       const {maxRecords} = getSelfState(getState());
@@ -161,13 +161,13 @@ const createFreightContainer = (config) => {
   const pageNumberActionCreator = (currentPage) => (dispatch, getState) => {
     const {pageSize, searchData={}} = getSelfState(getState());
     const newState = {currentPage};
-    return search2(dispatch, action, API.list, currentPage, pageSize, searchData, newState, [PATH], false);
+    return search2(dispatch, action, API.list, currentPage, pageSize, searchData, newState, [PATH]);
   };
 
   const pageSizeActionCreator = (pageSize, currentPage) => async (dispatch, getState) => {
     const {searchData={}} = getSelfState(getState());
     const newState = {pageSize, currentPage};
-    return search2(dispatch, action, API.list, currentPage, pageSize, searchData, newState, [PATH], false);
+    return search2(dispatch, action, API.list, currentPage, pageSize, searchData, newState, [PATH]);
   };
 
   const initActionCreator = () => async (dispatch, getState) => {
@@ -176,7 +176,7 @@ const createFreightContainer = (config) => {
       const {item={}, editType, tabs} = getParentState(getState());
       const {pageSize} = getSelfState(getState());
       const searchData = {customerPriceCode: item.customerPriceCode};
-      const list = getJsonResult(await search(API.list, 0, pageSize, searchData, false));
+      const list = getJsonResult(await search(API.list, 0, pageSize, searchData));
       const defaultValue = {
         customerPriceId: item.id,
         customerPriceCode: item.customerPriceCode,
