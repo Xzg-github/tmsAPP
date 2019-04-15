@@ -15,6 +15,7 @@ const tableCols = [
   {key: 'isNet', title: '净额改单', dictionary: name.ZERO_ONE},
   {key: 'relationThreePartyCode', title: '第三方系统编码'},
   {key: 'chargeType', title: '费用类型', dictionary: 'charge_type'},
+  {key: 'expenseOutputType', title: '产值报销类型', dictionary: 'expense_output_type'},
   {key: 'description', title: '描述'},
 ];
 
@@ -35,6 +36,7 @@ const controls = [
   {key: 'isNet', title: '净额改单', type: 'select', dictionary: name.ZERO_ONE},
   {key: 'relationThreePartyCode', title: '第三方系统编码', type: 'text'},
   {key: 'chargeType', title: '费用类型', type: 'select', dictionary: 'charge_type'},
+  {key: 'expenseOutputType', title: '产值报销类型', type: 'select', dictionary: 'expense_output_type'},
   {key: 'description', title: '描述', type: 'text'}
 ];
 
