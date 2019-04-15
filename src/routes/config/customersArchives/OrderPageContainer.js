@@ -241,7 +241,7 @@ const actionCreators = {
 // 编辑完成后的动作
 const afterEditActionCreator = (isOk=false ,dispatch, getState) => {
   dispatch(action.assign({edit: undefined}));
-  isOk && searchActionCreator(dispatch, getState);
+  isOk && updateTable(dispatch, getState);
 };
 
 const Container = connect(mapStateToProps, actionCreators)(OrderPage);

@@ -125,7 +125,7 @@ const editDialogCols = [
   {key: 'periodOfmonth', title: '会计月'},
   {key: 'periodOfyear', title: '会计年'},
   {key: 'price', title: '单价'},
-  {key: 'relationNumber', title: '关联编码'},
+  {key: 'relationNumber', title: '关联编号'},
   {key: 'settlementSystemStatus', title: '对接结算系统状态',dictionary:'settlement_system_status'},
   {key: 'tax', title: '税率'},
   {key: 'taxAmount', title: '税额'},
