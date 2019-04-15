@@ -99,7 +99,8 @@ const joinActionCreator = (KEY) => async (dispatch, getState) => {
   const {costInfoConfig, id} = getSelfState(getState());
   const okResult = await showJoinDialog({...costInfoConfig.joinDialogConfig, id});
   if (okResult) {
-    const params = {chargeList: okResult, id};
+    const chargeList = okResult.map(o => convert(o));
+    const params = {chargeList, id};
     const {returnCode, result=[], returnMsg} = await helper.fetchJson(URL_JION, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
