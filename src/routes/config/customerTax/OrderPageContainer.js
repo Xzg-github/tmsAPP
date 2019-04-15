@@ -15,7 +15,7 @@ const action = new Action(STATE_PATH);
 const URL_LIST = '/api/config/customer_tax/list';
 const URL_ENABLE = '/api/config/customer_tax/enable';
 const URL_DELETE = '/api/config/customer_tax/delete';
-const URL_ALLCUSTOMER = '/api/config/customer_tax/allCustomer';
+const URL_ALLCUSTOMER = '/api/config/customer_contact/customer';
 const URL_ALLITEM = '/api/config/customer_tax/allItems';
 
 const getSelfState = (rootState) => {

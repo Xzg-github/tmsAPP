@@ -15,7 +15,7 @@ const action = new Action(STATE_PATH);
 const URL_LIST = '/api/config/customer_contact/list';
 const URL_ENABLE = '/api/config/customer_contact/enable';
 const URL_DELETE = '/api/config/customer_contact/delete';
-const URL_ALLCUSTOMER = '/api/config/customer_contact/allCustomer';
+const URL_ALLCUSTOMER = '/api/config/customer_contact/customer';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -170,7 +170,7 @@ const mapStateToProps = (state) => {
 
 const filterSearchActionCreator = (key, value) =>async(dispatch)=> {
   if(key === 'customerId'){
-    const option = helper.postOption({maxNumber: 10, customerId: value});
+    const option = helper.postOption({maxNumber: 20, customerId: value});
     let data = await fetchJson(URL_ALLCUSTOMER, option);
     if (data.returnCode === 0) {
       dispatch(action.update({options:data.result},"filters",{key:"key",value:key}));

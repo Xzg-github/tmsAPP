@@ -16,7 +16,7 @@ const URL_CONFIG = '/api/config/supplierDriver/config';
 const URL_LIST = '/api/config/supplierDriver/list';
 const URL_ACTIVE_OR_INACTIVE = '/api/config/supplierDriver/active_or_inactive';                //激活/失效
 const URL_DEL = '/api/config/supplierDriver/delete';
-const URL_ALL_SUPPLIER = '/api/config/supplierDriver/all_supplier'; //供应商下拉
+const URL_ALL_SUPPLIER = '/api/config/supplier_contact/customer'; //供应商下拉
 
 const STATE_PATH = ['supplierDriver'];
 const action = new Action(STATE_PATH);
@@ -71,7 +71,7 @@ const formSearchActionCreator = (key, title) => async (dispatch, getState) => {
   let data, options, body;
   switch (key) {
     case 'supplierId': {
-      body = {maxNumber: 10, supplierId: title};
+      body = {maxNumber: 20, supplierId: title};
       data = await fetchJson(URL_ALL_SUPPLIER, helper.postOption(body));
       break;
     }

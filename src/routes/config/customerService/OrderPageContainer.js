@@ -14,7 +14,7 @@ const URL_ACTIVE = '/api/config/customer_service/active';
 const URL_INVALID = '/api/config/customer_service/invalid';
 const URL_DETAIL = '/api/config/customer_service/detail';
 const BASE_EXPORT_URL='/archiver_service/customer/care/search';
-const URL_CUSTOMER_OPTIONS = '/api/config/customer_factory/allCustomer';
+const URL_CUSTOMER_OPTIONS = '/api/config/customer_contact/customer';
 const action = new Action(STATE_PATH);
 
 const getSelfState = (rootState) => {

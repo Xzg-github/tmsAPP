@@ -17,7 +17,7 @@ const action = new Action(STATE_PATH);
 const URL_LIST = '/api/config/customer_factory/list';
 const URL_DELETE = '/api/config/customer_factory/delete';
 const URL_ENABLE = '/api/config/customer_factory/enable';
-const URL_ALLCUSTOMER = '/api/config/customer_factory/allCustomer';
+const URL_ALLCUSTOMER = '/api/config/customer_contact/customer';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);

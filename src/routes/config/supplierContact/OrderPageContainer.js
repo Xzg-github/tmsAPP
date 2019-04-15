@@ -15,7 +15,7 @@ const action = new Action(STATE_PATH);
 const URL_LIST = '/api/config/supplier_contact/list';
 const URL_ENABLE = '/api/config/supplier_contact/enable';
 const URL_DELETE = '/api/config/supplier_contact/delete';
-const URL_ALLCUSTOMER = '/api/config/supplier_contact/allCustomer';
+const URL_ALLCUSTOMER = '/api/config/supplier_contact/customer';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
