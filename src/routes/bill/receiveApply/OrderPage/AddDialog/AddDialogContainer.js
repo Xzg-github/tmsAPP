@@ -63,8 +63,9 @@ const onOkActionCreator = () => async (dispatch, getState) => {
     const { returnCode, result, returnMsg } = await fetchJson(URL_ADD_APPLY, postOption(params));
     if(returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({visible: false, okResult: true}));
+    dispatch(action.assign({okResult: true}));
   });
+  dispatch(action.assign({visible: false}));
 };
 
 const buttons = {
