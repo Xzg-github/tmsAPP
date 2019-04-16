@@ -84,7 +84,7 @@ const searchActionCreator = (key, value) => async (dispatch) => {
       dispatch(action.assign({[key]: result}, 'options'));
     }
   }else if (key === 'chargeItemId') {
-    const {returnCode, result} = await fetchJson(URL_ITEMS, postOption({"param": {chargeName: value}, "maxNumber": 10}));
+    const {returnCode, result} = await fetchJson(URL_ITEMS, postOption({chargeName: value, "maxNumber": 10}));
     if (returnCode === 0) {
       dispatch(action.assign({[key]: result}, 'options'));
     }
