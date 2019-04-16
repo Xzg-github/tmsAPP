@@ -73,7 +73,7 @@ const exitValidActionCreator = () => {
 };
 
 const searchActionCreator = (key, value) => async (dispatch) => {
-  const {returnCode, result} = await fetchJson(URL_CLIENT, postOption({"customerName": value, "maxNumber": 65536}));
+  const {returnCode, result} = await fetchJson(URL_CLIENT, postOption({"filter": value, "maxNumber": 10}));
   if (returnCode === 0) {
     dispatch(action.assign({[key]: result}, 'options'));
   }

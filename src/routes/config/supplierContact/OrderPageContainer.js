@@ -170,7 +170,7 @@ const mapStateToProps = (state) => {
 
 const filterSearchActionCreator = (key, value) =>async(dispatch)=> {
   if(key === 'supplierId'){
-    const option = helper.postOption({maxNumber: 65536, customerId: value});
+    const option = helper.postOption({maxNumber: 10, filter: value});
     let data = await fetchJson(URL_ALLCUSTOMER, option);
     if (data.returnCode === 0) {
       dispatch(action.update({options:data.result},"filters",{key:"key",value:key}));

@@ -71,7 +71,7 @@ const formSearchActionCreator = (key, title) => async (dispatch, getState) => {
   let data, options, body;
   switch (key) {
     case 'supplierId': {
-      body = {maxNumber: 20, supplierId: title};
+      body = {maxNumber: 10, filter: title};
       data = await fetchJson(URL_ALL_SUPPLIER, helper.postOption(body));
       break;
     }
