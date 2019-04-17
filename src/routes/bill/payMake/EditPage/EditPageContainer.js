@@ -41,10 +41,10 @@ const currencyChangeActionCreator = (value, isRefresh=false) => async (dispatch,
 
 const showDialogType = async (state, type=0, isDoubleClick=false, rowIndex=0) => {
   // type: 0: 新增, 1: 复制新增, 2: 编辑
-  const {supplierId, payColsEdit, payItems, dialogBtnsPay, balanceCurrency} = state;
+  const {supplierId, payColsEdit, payItems, dialogBtnsPay, balanceCurrency, carNumber} = state;
   let items = type === 0 ? [] : payItems;
   isDoubleClick && (items[rowIndex]['checked'] = true);
-  const checkList = items.filter(o => o.checked).map(son => ({...son, checked: false}));
+  const checkList = items.filter(o => o.checked).map(son => ({...son, checked: false, carNumber}));
   if (type > 0 && !isDoubleClick && checkList.length === 0) return showError('请勾选一条数据！');
   const titleArr = ['批量新增', '批量新增', '批量编辑'];
   const configKey = 'payMake_payColsEdit';
@@ -57,7 +57,8 @@ const showDialogType = async (state, type=0, isDoubleClick=false, rowIndex=0) =>
     items: checkList,
     supplierId,
     buttons: dialogBtnsPay,
-    cols: newCols
+    cols: newCols,
+    carNumber
   };
   return await showMutipleDialog(params);
 };
@@ -227,6 +228,11 @@ const buildEditPageState = async (config, itemData, isReadonly) => {
   const supplier = itemData.supplierId ? itemData.supplierId.value : undefined;
   const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${supplier}`));
   const totalValues = getJsonResult(await fetchJson(`${URL_TOTAL}/${itemData.id}/${currencyTypeCode}`));
+  const list = data.map(o => {
+    const {netAmount=0, taxAmount} = o;
+    const includeTaxAmount = Number((Number(netAmount) + Number(taxAmount)).toFixed(2));
+    return {...o, includeTaxAmount}
+  });
   return {
     ...config,
     ...itemData,
@@ -234,7 +240,7 @@ const buildEditPageState = async (config, itemData, isReadonly) => {
     activeCurrency: currencyTypeCode,
     balanceCurrency: currency ? currency.balanceCurrency: undefined,
     totalValues,
-    payItems: data,
+    payItems: list,
     orderInfo: {id: itemData.id, readonly: true},
     status: 'page'
   };

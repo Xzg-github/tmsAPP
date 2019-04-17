@@ -55,7 +55,7 @@ const formSearchActionCreator = (key, title, keyControls) => async (dispatch, ge
     data = await helper.fetchJson(URL_ALL_INSTITUTION, helper.postOption(body));
   }else if(key === 'consigneeConsignorId'){
       body = {customerId: -1, name: title};
-      data = await helper.fetchJson(URL_ALL_SITE, helper.postOption(body));debugger
+      data = await helper.fetchJson(URL_ALL_SITE, helper.postOption(body));
   }else if(key === 'driverId'){
     body = { isOwner: 1, name: title};
     data = await helper.fetchJson(URL_ALL_DRIVER, helper.postOption(body));
