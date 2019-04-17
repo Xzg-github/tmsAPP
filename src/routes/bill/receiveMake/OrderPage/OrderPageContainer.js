@@ -9,6 +9,7 @@ import {showColsSetting} from '../../../../common/tableColsSetting';
 import {getNewTableData} from '../RootContainer';
 import {jumpToChange} from '../../receiveChange/RootContainer';
 import {showConfirmDialog} from '../../../../common/showCofirmDialog';
+import showFilterSortDialog from "../../../../common/filtersSort";
 
 const STATE_PATH = ['receiveMake'];
 const action = new Action(STATE_PATH);
@@ -76,6 +77,12 @@ const searchActionCreator = async (dispatch, getState) => {
 };
 
 const resetActionCreator = action.assign({searchData: {}});
+
+const sortActionCreator = async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
+};
 
 // 弹出编辑页面
 const showEditPage = (dispatch, getState, item, isReadonly=false) => {
@@ -168,6 +175,7 @@ const configActionCreator = async (dispatch, getState) => {
 };
 
 const toolbarActions = {
+  sort: sortActionCreator,
   reset: resetActionCreator,
   search: searchActionCreator,
   edit: editActionCreator,

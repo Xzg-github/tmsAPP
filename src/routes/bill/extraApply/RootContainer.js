@@ -55,7 +55,7 @@ const initActionCreator = () => async (dispatch) => {
     const pay_customConfig = getJsonResult(await fetchJson(`${CUSTOM_CONFIG}/transport_order_cost_property`));
     editConfig.tables[0].cols = uniqueArrHanlder(editConfig.tables[0].cols, pay_customConfig.controls);
 
-    const payload = await buildOrderPageState(index, {tabs, activeKey, editConfig});
+    const payload = await buildOrderPageState(index, {tabs, activeKey, editConfig, isSort: true});
 
     // 获取币种、状态，设置字典
     const dictionarys = getJsonResult(await fetchDictionary(names));

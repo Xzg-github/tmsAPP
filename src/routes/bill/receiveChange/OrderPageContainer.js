@@ -2,11 +2,12 @@ import {connect} from 'react-redux';
 import OrderPage from '../../../components/OrderPage';
 import {Action} from "../../../action-reducer/action";
 import {getPathValue} from "../../../action-reducer/helper";
-import {deepCopy, fetchJson, getObject, postOption, showError} from "../../../common/common";
+import helper, {deepCopy, fetchJson, getObject, postOption, showError} from "../../../common/common";
 import {search2} from '../../../common/search';
 import {commonExport, exportExcelFunc} from "../../../common/exportExcelSetting";
 import {showColsSetting} from "../../../common/tableColsSetting";
 import {toFormValue} from "../../../common/check";
+import showFilterSortDialog from "../../../common/filtersSort";
 
 
 const STATE_PATH = ['receiveChange'];
@@ -50,6 +51,12 @@ const searchActionCreator = async (dispatch, getState) => {
   const {pageSize, searchData} = getSelfState(getState());
   const newState = {searchDataBak: searchData, currentPage: 1};
   return search2(dispatch, action, URL_LIST, 1, pageSize, searchData, newState, undefined, false);
+};
+
+const sortActionCreator = async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
 };
 
 // 查询导出
@@ -195,6 +202,7 @@ const auditingActionCreator = async (dispatch, getState) => {
 };
 
 const toolbarActions = {
+  sort: sortActionCreator,
   reset: resetActionCreator,
   search: searchActionCreator,
   exportSearch: exportSearchActionCreator,
