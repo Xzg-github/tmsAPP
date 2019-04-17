@@ -11,6 +11,7 @@ import showDiaLog from './CarContainer';
 import {showImportDialog} from '../../../common/modeImport';
 import { exportExcelFunc, commonExport } from '../../../common/exportExcelSetting';
 import {toFormValue,hasSign} from '../../../common/check';
+import showFilterSortDialog from "../../../common/filtersSort";
 
 const action = new Action(['config','supplierCar']);
 const URL_CONFIG = '/api/config/supplier_car/config';
@@ -44,7 +45,7 @@ const initActionCreator = () => async (dispatch) => {
       edit.controls.push(...attr.controls)
     }
 
-    const payload = buildOrderPageState(list, config);
+    const payload = buildOrderPageState(list, config, {isSort: true});
     payload.status = 'page';
     payload.edit = config.edit;
     payload.searchDataBak = payload.searchData;
@@ -167,7 +168,11 @@ const pageExportActionCrator =()=> async(dispatch, getState) => {
   exportExcelFunc(tableCols, tableItems);
 };
 
-
+const sortActionCreator =() => async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
+};
 
 
 const clickActionCreators = {
@@ -175,6 +180,7 @@ const clickActionCreators = {
   search: searchActionCreator,
   add: addActionCreator,
   enable:enableActionCreator,
+  sort: sortActionCreator,
   disable:disableActionCreator,
   delete:deleteActionCreator,
   edit:editActionCreator,

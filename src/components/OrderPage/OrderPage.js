@@ -47,6 +47,7 @@ class OrderPage extends React.Component {
     return ReactDOM.findDOMNode(this);
   };
 
+  //增加isSort属性, 默认为false, 用于展示排序按钮
   toSearch = () => {
     const {filters, searchConfig, searchData, isSort = false} = this.props;
     const props = {

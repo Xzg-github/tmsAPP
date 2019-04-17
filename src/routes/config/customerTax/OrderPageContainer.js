@@ -8,6 +8,7 @@ import {showImportDialog} from '../../../common/modeImport';
 import {exportExcelFunc} from '../../../common/exportExcelSetting';
 import showEditDialog from './EditDialogContainer'
 import {toFormValue} from "../../../common/check";
+import showFilterSortDialog from "../../../common/filtersSort";
 
 const STATE_PATH = ['customerTax'];
 const action = new Action(STATE_PATH);
@@ -119,12 +120,19 @@ const exportActionCreator =(dispatch, getState)=>{
   return exportExcelFunc(tableCols, tableItems);
 };
 
+const sortActionCreator = async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
+};
+
 const toolbarActions = {
   reset: resetActionCreator(),
   search: searchAction,
   add: addAction,
   edit: editAction,
   enable: enableAction,
+  sort: sortActionCreator,
   disable: disableAction,
   delete: delAction,
   import: importActionCreator,

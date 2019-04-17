@@ -9,6 +9,7 @@ import { exportExcelFunc, commonExport } from '../../../common/exportExcelSettin
 import { showColsSetting } from '../../../common/tableColsSetting';
 import showFinanceDialog from './financeDialog';
 import {toFormValue} from "../../../common/check";
+import showFilterSortDialog from "../../../common/filtersSort";
 
 const STATE_PATH = ['config', 'customersArchives'];
 const URL_LIST = '/api/config/customersArchives/list';
@@ -183,6 +184,12 @@ const configActionCreator = async (dispatch, getState) => {
   showColsSetting(tableCols, okFunc, 'customersArchives');
 };
 
+const sortActionCreator = async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
+};
+
 const toolbarActions = {
   reset: resetActionCreator,
   search: searchActionCreator,
@@ -191,6 +198,7 @@ const toolbarActions = {
   enable: enableActionCreator,
   disable: disableActionCreator,
   delete: deleteActionCreator,
+  sort: sortActionCreator,
   import: importActionCreator,
   exportSearch: exportSearchActionCreator,
   exportPage :exportActionCreator,
