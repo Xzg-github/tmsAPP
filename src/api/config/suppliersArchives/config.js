@@ -43,6 +43,7 @@ const tableCols = [
   {key: 'contractEndTime', title: '合同结束日期', type: 'date'},
   {key: 'supplierType', title: '供应商类型', type: 'select', dictionary: name.SUPPLIER_TYPE},
   {key: 'companyLevel', title: '供应商级别', type: 'select',dictionary: name.COMPANY_LEVEL},
+  {key: 'chargeRemark', title: '费用备注'},
   {key: 'insertUser', title: '操作人'},
   {key: 'insertTime', title: '操作时间', type: 'date'}
 ];
@@ -91,6 +92,7 @@ const cooperationInfo = [
   {key: 'creditMoney', title: '信用额度', type: 'number'},
   {key: 'taxType', title: '计税方式', type: 'select', dictionary: name.TAX_TYPE},
   {key: 'tax', title: '税率', type: 'select', dictionary: 'supplier_tax_type'},
+  {key: 'chargeRemark', title: '费用备注', type: 'textArea', span: 4}
 ];
 
 const controls = [

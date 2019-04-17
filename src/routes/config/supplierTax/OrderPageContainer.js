@@ -7,7 +7,9 @@ import {search2} from '../../../common/search';
 import {showImportDialog} from '../../../common/modeImport';
 import {exportExcelFunc} from '../../../common/exportExcelSetting';
 import showEditDialog from './EditDialogContainer'
+import showFilterSortDialog from "../../../common/filtersSort";
 import {toFormValue} from "../../../common/check";
+import showOwnerDialog from  './OwnerTaxDialog';
 
 const STATE_PATH = ['supplierTax'];
 const action = new Action(STATE_PATH);
@@ -17,6 +19,7 @@ const URL_ENABLE = '/api/config/supplier_tax/enable';
 const URL_DELETE = '/api/config/supplier_tax/delete';
 const URL_ALLCUSTOMER = '/api/config/supplier_contact/customer';
 const URL_ALLITEM = '/api/config/supplier_tax/allItems';
+const URL_OWNER = '/api/config/supplier_tax/owner';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -52,6 +55,31 @@ const editAction = async (dispatch, getState) => {
     return showError('请勾选一条记录');
   }
   await showEditDialog(editConfig,tableItems[index],true);
+};
+
+// 车主税率
+const ownerAction = async (dispatch, getState) => {
+  const {editConfig} = getSelfState(getState());
+  const {result, returnCode, returnMsg} = await fetchJson(URL_OWNER, postOption(['-1']));
+  if (returnCode !== 0) return showError(returnMsg);
+  let ownerControls = editConfig.controls.filter(item => {
+    return item.key === 'taxRate' || item.key === 'taxRateWay' && item;
+  });
+  if (result[0].taxRateWay === 'tax_rate_way_not_calculate') {
+    ownerControls = ownerControls.map(item => {
+      if (item.key === 'taxRate') item.type = 'readonly';
+      return item;
+    });
+  }
+  //车主税率默认supplierId为-1
+  const ownerConfig = {
+    controls: ownerControls,
+    title: '车主税率',
+    config: {ok: '确定', cancel: '取消'},
+    size: 'small',
+    value: {taxRate: result[0].taxRate, taxRateWay: result[0].taxRateWay, id: result[0].id, supplierId: '-1'}
+  };
+  await showOwnerDialog(ownerConfig) && updateTable(dispatch, getState);
 };
 
 // 批量删除
@@ -119,6 +147,12 @@ const exportActionCreator =(dispatch, getState)=>{
   return exportExcelFunc(tableCols, tableItems);
 };
 
+const sortActionCreator = async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
+};
+
 const toolbarActions = {
   reset: resetActionCreator(),
   search: searchAction,
@@ -126,6 +160,8 @@ const toolbarActions = {
   edit: editAction,
   enable: enableAction,
   disable: disableAction,
+  owner: ownerAction,
+  sort: sortActionCreator,
   delete: delAction,
   import: importActionCreator,
   export:exportActionCreator,
@@ -146,7 +182,7 @@ const checkActionCreator = (isAll, checked, rowIndex) => {
 
 const changeActionCreator = (key, value) => {
   if (key === 'taxRate') {
-    if (value > 100) {
+    if (value >= 100) {
       value = null;
       showError('税率必须小于100');
     }
