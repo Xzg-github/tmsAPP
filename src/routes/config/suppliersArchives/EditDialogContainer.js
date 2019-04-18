@@ -18,11 +18,31 @@ const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
 };
 
+//更改controls下合作信息中税率的type
+const changeItemType = (controls, type) => {
+  const newData = controls[1].data.map(item => {
+    if (item.key === 'tax') item.type = type;
+    return item;
+  });
+  controls[1].data = newData;
+  return controls;
+};
+
 const changeActionCreator = (keyName, keyValue) => async (dispatch, getState) => {
   const {value, controls} = getSelfState(getState());
   if (keyName === 'tax') {
     const options = controls[1].data.find(item => item.key === 'tax').options;
     keyValue = options.find(item => item.value === keyValue).title;
+  }else if (keyName === 'taxType') {
+    let newControls;
+    if (keyValue === 'tax_rate_way_not_calculate') {
+      newControls = changeItemType(controls, 'readonly');
+      dispatch(action.assign({controls: newControls}));
+      dispatch(action.assign({tax: 0}, 'value'));
+    } else {
+      newControls = changeItemType(controls, 'select');
+      dispatch(action.assign({controls: newControls}));
+    }
   }
   if(keyValue === value[keyName]) return dispatch(action.assign({[keyName]: keyValue}, 'value'));
   let data, options, body;

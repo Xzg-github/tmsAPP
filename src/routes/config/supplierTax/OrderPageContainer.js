@@ -192,7 +192,9 @@ const changeActionCreator = (key, value) => {
 
 const doubleClickActionCreator = (index) => async (dispatch, getState) => {
   const {tableItems, editConfig} = getSelfState(getState());
-  await showEditDialog(editConfig,tableItems[index],true);
+  tableItems[index].supplierId ?
+    await showEditDialog(editConfig,tableItems[index],true) :
+    await ownerAction(dispatch, getState)
 };
 
 const pageNumberActionCreator = (currentPage) => (dispatch, getState) => {

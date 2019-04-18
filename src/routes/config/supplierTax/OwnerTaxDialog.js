@@ -15,12 +15,12 @@ const getSelfState = (rootState) => {
 };
 
 const changeActionCreator = (key, keyValue) => (dispatch, getState) => {
+  const {controls, value} = getSelfState(getState());
   if (key === 'taxRate') {
-    return keyValue >= 100 ?
-      helper.showError('税率必须小于100') :
-      dispatch(action.assign({[key]: keyValue}, 'value'));
+    const options = controls.find(item => item.key === 'taxRate').options;
+    keyValue = options.find(item => item.value === keyValue).title;
+    dispatch(action.assign({[key]: keyValue}, 'value'));
   } else if (key === 'taxRateWay') {
-    const {controls, value} = getSelfState(getState());
     //如果是不计税(字典值: tax_rate_way_not_calculate) 税率为0且不可编辑
     if (keyValue === 'tax_rate_way_not_calculate') {
       const newControls = controls.map(item => {
@@ -32,12 +32,11 @@ const changeActionCreator = (key, keyValue) => (dispatch, getState) => {
     } else {
       const state = getSelfState(getState());
       const newControls = controls.map(item => {
-        if (item.key === 'taxRate' && item.type === 'readonly') item.type = 'number';
+        if (item.key === 'taxRate' && item.type === 'readonly') item.type = 'select';
         return item;
       });
       dispatch(action.assign(({controls: newControls})));
       dispatch(action.assign({[key]: keyValue, taxRate: state.initialValue || value.taxRate}, 'value'));
-
     }
   }
 };
