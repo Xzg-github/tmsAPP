@@ -124,6 +124,9 @@ const initActionCreator = () => async (dispatch, getState) => {
     payload.tableCols = initTableCols('receiveChange', payload.tableCols);
     assignPrivilege(payload);
 
+    // 初始化按钮配置
+    payload.buttons = helper.setExportBtns(payload.buttons, payload.tableCols);
+
     // 如果是从其它界面跳转来的
     const {isJump, jumpData} = getSelfState(getState());
     if (isJump) {

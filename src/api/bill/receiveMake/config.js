@@ -22,8 +22,9 @@ const btns = [
   {key: 'audit', title: '整审', showInTab: ['1']},
   {key: 'import', title: '导入', showInTab: ['0', '1']},
   {key: 'export', title: '导出', showInTab: ['0', '1', '2'], menu: [
-    { key: 'exportSearch', title: '查询导出'},
     { key: 'exportPage', title: '页面导出'},
+    { key: 'exportSearch', title: '查询导出'},
+    { key: 'templateManager', title: '模板管理'}
   ]},
   {key: 'changeOrder', title: '改单', showInTab: ['2']},
   {key: 'createBill', title: '生成账单', showInTab: ['1'], menu: [

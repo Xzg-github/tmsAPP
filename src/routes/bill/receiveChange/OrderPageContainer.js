@@ -8,7 +8,7 @@ import {commonExport, exportExcelFunc} from "../../../common/exportExcelSetting"
 import {showColsSetting} from "../../../common/tableColsSetting";
 import {toFormValue} from "../../../common/check";
 import showFilterSortDialog from "../../../common/filtersSort";
-
+import showTemplateManagerDialog from '../../../standard-business/template/TemplateContainer';
 
 const STATE_PATH = ['receiveChange'];
 const action = new Action(STATE_PATH);
@@ -60,15 +60,27 @@ const sortActionCreator = async (dispatch, getState) => {
 };
 
 // 查询导出
-const exportSearchActionCreator = (dispatch, getState) => {
-  const {tableCols, searchData} = getSelfState(getState());
-  return commonExport(tableCols, '/tms-service/renewal/0/search', searchData);
+const exportSearchActionCreator = (subKey) => async (dispatch, getState) => {
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {searchData, tabKey} = getSelfState(getState());
+  const url = '/tms-service/renewal/0/search';
+  const filters = {...searchData, incomeTag: tabKey};
+  commonExport(tableCols, url, filters, true, false, 'post', false);
 };
 
 // 页面导出
-const exportPageActionCreator = async (dispatch, getState) => {
-  const {tableCols, tableItems} = getSelfState(getState());
-  return exportExcelFunc(tableCols, tableItems);
+const exportPageActionCreator = (subKey) => async (dispatch, getState) => {
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {tableItems=[]} = getSelfState(getState());
+  exportExcelFunc(tableCols, tableItems);
+};
+
+//模板管理
+const templateManagerActionCreator = async (dispatch, getState) => {
+  const {tableCols, buttons} = getSelfState(getState());
+  if(true === await showTemplateManagerDialog(tableCols, helper.getRouteKey())) {
+    dispatch(action.assign({buttons: helper.setExportBtns(buttons, tableCols)}));
+  }
 };
 
 // 配置字段
@@ -215,6 +227,7 @@ const toolbarActions = {
   addNet: addNetActionCreator,
   edit: editActionCreator,
   auditing: auditingActionCreator,
+  templateManager: templateManagerActionCreator,
 };
 
 const clickActionCreator = (key) => {
@@ -222,6 +235,14 @@ const clickActionCreator = (key) => {
     return toolbarActions[key];
   } else {
     console.log('unknow key:', key);
+    return {type: 'unknown'};
+  }
+};
+
+const onSubClickActionCreator = (key, subKey) => {
+  if (toolbarActions.hasOwnProperty(key)) {
+    return toolbarActions[key](subKey);
+  } else {
     return {type: 'unknown'};
   }
 };
@@ -295,7 +316,8 @@ const actionCreators = {
   onClick: clickActionCreator,
   onLink: linkActionCreator,
   onDoubleClick: doubleClickActionCreator,
-  onTableChange: tableChangeActionCreator
+  onTableChange: tableChangeActionCreator,
+  onSubClick: onSubClickActionCreator,
 };
 
 export default connect(mapStateToProps, actionCreators)(OrderPage);

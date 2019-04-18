@@ -126,6 +126,10 @@ const initActionCreator = (home) => async (dispatch) => {
     payload.editConfig.receiveColsEdit = initTableCols('receiveMake_receiveColsEdit', payload.editConfig.receiveColsEdit);
 
     assignPrivilege(payload);
+
+    // 初始化按钮配置
+    payload.btns = helper.setExportBtns(payload.btns, payload.tableCols);
+
     dispatch(action.create(payload));
   } catch (e) {
     showError(e.message);
