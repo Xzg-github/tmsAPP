@@ -67,7 +67,7 @@ class EditPage extends React.Component {
       allFullFather: true,
       controls: fallbackInfo,
       value,
-      onChange
+      onChange: onChange.bind(null, fallbackInfo.key),
     };
     return isShowAudit ? <SuperForm {...props}/> : null;
   }
