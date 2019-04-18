@@ -82,10 +82,10 @@ const createOrderPageContainer = (action, getSelfState, actionCreatorsEx={}) => 
   };
 
   //配置字段按钮
-  const configActionCreator = () => (dispatch, getState) => {
+  const configActionCreator = () => async (dispatch, getState) => {
     const {tableCols} = getSelfState(getState());
     const okFunc = (newCols) => {
-      dispatch(action.assign({tableCols: newCols}));
+      dispatch(action.assign({tableCols: newCols, buttons: dealExportButtons(helper.getRouteKey(), newCols)}));
     };
     showColsSetting(tableCols, okFunc, helper.getRouteKey());
   };

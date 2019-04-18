@@ -96,10 +96,14 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
   };
 
   //配置字段按钮
-  const configActionCreator = () => (dispatch, getState) => {
-    const {tableCols} = getSelfState(getState());
+  const configActionCreator = () => async (dispatch, getState) => {
+    const {tableCols, buttons} = getSelfState(getState());
     const okFunc = (newCols) => {
-      dispatch(action.assign({tableCols: newCols}));
+      const newButtons = Object.keys(buttons).reduce((result, key) => {
+        result[key] = dealExportButtons(buttons[key], newCols);
+        return result;
+      }, {});
+      dispatch(action.assign({tableCols: newCols, buttons: newButtons}));
     };
     showColsSetting(tableCols, okFunc, helper.getRouteKey());
   };
