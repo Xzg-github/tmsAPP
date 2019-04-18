@@ -8,6 +8,7 @@ import {search2} from '../../../../common/search';
 import showAddDialog from './AddDialog/AddDialogContainer';
 import {showOutputDialog} from '../../../../components/ModeOutput/ModeOutput';
 import showFilterSortDialog from "../../../../common/filtersSort";
+import showTemplateManagerDialog from '../../../../standard-business/template/TemplateContainer';
 
 const STATE_PATH = ['receiveBill'];
 const action = new Action(STATE_PATH);
@@ -133,15 +134,27 @@ const outputActionCreator = async (dispatch, getState) => {
 };
 
 // 查询导出
-const exportSearchActionCreator = (dispatch, getState) => {
-  const {tableCols, searchData} = getSelfState(getState());
-  commonExport(tableCols, '/tms-service/receivable_bill/search', searchData);
+const exportSearchActionCreator = (subKey) => async (dispatch, getState) => {
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {searchData, tabKey} = getSelfState(getState());
+  const url = '/tms-service/receivable_bill/search';
+  const filters = {...searchData, incomeTag: tabKey};
+  commonExport(tableCols, url, filters, true, false, 'post', false);
 };
 
 // 页面导出
-const exportPageActionCreator = async (dispatch, getState) => {
-  const {tableCols, tableItems} = getSelfState(getState());
+const exportPageActionCreator = (subKey) => async (dispatch, getState) => {
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {tableItems=[]} = getSelfState(getState());
   exportExcelFunc(tableCols, tableItems);
+};
+
+//模板管理
+const templateManagerActionCreator = async (dispatch, getState) => {
+  const {tableCols, buttons} = getSelfState(getState());
+  if(true === await showTemplateManagerDialog(tableCols, helper.getRouteKey())) {
+    dispatch(action.assign({buttons: helper.setExportBtns(buttons, tableCols)}));
+  }
 };
 
 const toolbarActions = {
@@ -154,7 +167,8 @@ const toolbarActions = {
   audit: auditActionCreator,
   output: outputActionCreator,
   exportSearch: exportSearchActionCreator,
-  exportPage: exportPageActionCreator
+  exportPage: exportPageActionCreator,
+  templateManager: templateManagerActionCreator,
 };
 
 const clickActionCreator = (key) => {
@@ -162,6 +176,14 @@ const clickActionCreator = (key) => {
     return toolbarActions[key];
   } else if(key.includes('createBill')) {
     return createBillActionCreator(key);
+  } else {
+    return {type: 'unknown'};
+  }
+};
+
+const onSubClickActionCreator = (key, subKey) => {
+  if (toolbarActions.hasOwnProperty(key)) {
+    return toolbarActions[key](subKey);
   } else {
     return {type: 'unknown'};
   }
@@ -192,7 +214,8 @@ const actionCreators = {
   onLink: linkActionCreator,
   onDoubleClick: doubleClickActionCreator,
   onPageNumberChange: pageNumberActionCreator,
-  onPageSizeChange: pageSizeActionCreator
+  onPageSizeChange: pageSizeActionCreator,
+  onSubClick: onSubClickActionCreator,
 };
 
 const Container = connect(mapStateToProps, actionCreators)(OrderPage);

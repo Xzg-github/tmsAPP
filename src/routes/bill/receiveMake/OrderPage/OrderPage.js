@@ -6,7 +6,6 @@ import s from './OrderPage.less';
 import {Search, SuperTab2, SuperTable, SuperPagination, SuperToolbar, Indent} from '../../../../components';
 
 const SEARCH_EVENTS = ['onChange', 'onSearch', 'onClick'];
-const TOOLBAR_EVENTS = ['onClick'];
 const TABLE_EVENTS = ['onTableChange', 'onCheck', 'onDoubleClick', 'onLink'];
 const TAB_EVENTS = ['onTabChange'];
 const PAGINATION = ['maxRecords', 'pageSize', 'currentPage', 'pageSizeType', 'description', 'onPageNumberChange', 'onPageSizeChange'];
@@ -51,7 +50,8 @@ class OrderPage extends React.Component {
   toToolbar = () => {
     const props = {
       buttons: this.props.buttons,
-      callback: getObject(this.props, TOOLBAR_EVENTS)
+      onClick: this.props.onClick,
+      onSubClick: this.props.onSubClick
     };
     return <SuperToolbar {...props} />;
   };

@@ -518,6 +518,25 @@ const getTemplateList = (code, tableCols) => {
   const {templateList=[]} = config;
   return defaultList.concat(templateList.map(item => ({title: item.name, key: JSON.stringify({templateName:item.name, tableCols: item.cols})})));
 };
+/**
+ * 功能：设置标准化导出按钮下拉和子下拉选项,主要针对费用管理部分原有的导出配置做优化
+ * 参数：btns:原有的按钮组数据
+ *      tableCols:当前列表配置
+ *      exportKeys:导出下拉项的key值数组，默认值为['exportSearch', 'exportPage']
+ * */
+const setExportBtns = (btns=[], tableCols=[], exportKeys=['exportSearch', 'exportPage']) => {
+  return btns.map(btn => {
+    if (btn.key.includes('export') && btn.menu) {
+      btn.menu = btn.menu.map(o => {
+        if (exportKeys.includes(o.key)) {
+          o.subMenu = getTemplateList(getRouteKey(), tableCols);
+        }
+        return o;
+      })
+    }
+    return btn;
+  });
+};
 
 const helper = {
   postOption,
@@ -556,7 +575,8 @@ const helper = {
   getPageTitle,
   setPageTitle,
   uploadWithFileCheck,
-  getTemplateList
+  getTemplateList,
+  setExportBtns
 };
 
 export {
@@ -589,6 +609,7 @@ export {
   formatTime,
   deepCopy,
   download,
+  setExportBtns
 };
 
 export default helper;

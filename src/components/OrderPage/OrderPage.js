@@ -64,7 +64,8 @@ class OrderPage extends React.Component {
   toToolbar = () => {
     const props = {
       buttons: this.props.buttons,
-      callback: getObject(this.props, TOOLBAR_EVENTS)
+      callback: getObject(this.props, TOOLBAR_EVENTS),
+      onSubClick: this.props.onSubClick
     };
     return <SuperToolbar {...props} />;
   };

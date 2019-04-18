@@ -41,6 +41,10 @@ const initActionCreator = () => async (dispatch) => {
     setDictionary(payload.editConfig.joinDialogTableCols, dictionary);
 
     payload.buttons = dealActions( payload.buttons, 'payBill');
+
+    // 初始化按钮配置
+    payload.buttons = helper.setExportBtns(payload.buttons, payload.tableCols);
+
     dispatch(action.create(payload));
   } catch (e) {
     helper.showError(e.message);
