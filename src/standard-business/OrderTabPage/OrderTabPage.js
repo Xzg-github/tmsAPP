@@ -38,7 +38,7 @@ class OrderTabPage extends React.Component {
   };
 
   onHandleClick = (key) => {
-    const {subActiveKey, onClick, onClickReset, onClickSearch, onClickSort, onConfig, onWebExport, onAllExport} = this.props;
+    const {subActiveKey, onClick, onClickReset, onClickSearch, onClickSort, onConfig, onTemplateManager} = this.props;
     switch (key) {
       case 'reset': {
         onClickReset();
@@ -56,16 +56,29 @@ class OrderTabPage extends React.Component {
         onConfig();
         break;
       }
-      case 'webExport': {
-        onWebExport();
-        break;
-      }
-      case 'allExport': {
-        onAllExport();
+      case 'templateManager': {
+        onTemplateManager();
         break;
       }
       default:
         onClick && onClick(subActiveKey, key);
+    }
+  };
+
+  onHandleSubClick = (key, subKey) => {
+    const {subActiveKey, onWebExport, onAllExport, onSubClick} = this.props;
+    switch (key) {
+      case 'webExport': {
+        onWebExport(subActiveKey, subKey);
+        break;
+      }
+      case 'allExport': {
+        onAllExport(subActiveKey, subKey);
+        break;
+      }
+      default: {
+        onSubClick && onSubClick(subActiveKey, key, subKey);
+      }
     }
   };
 
@@ -89,7 +102,8 @@ class OrderTabPage extends React.Component {
     const {subActiveKey, buttons} = this.props;
     const props = {
       buttons: buttons[subActiveKey].concat({key: 'config', title: '配置字段'}),
-      onClick: this.onHandleClick
+      onClick: this.onHandleClick,
+      onSubClick: this.onHandleSubClick,
     };
     return <SuperToolbar {...props} />;
   };

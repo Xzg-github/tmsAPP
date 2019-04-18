@@ -70,7 +70,8 @@ const tableCols = [
 
 const menu = [
   {key:'webExport',title:'页面导出'},
-  {key:'allExport',title:'查询导出'}
+  {key:'allExport',title:'查询导出'},
+  {key:'templateManager', title:'模板管理'}
 ];
 const commonButtons = [{key: 'export', title: '导出', menu}];
 
