@@ -17,7 +17,7 @@ const baseForm = [
   {key: 'commodityDescription', title: '商品描述', type:'text'},
   {key: 'goodsNumber', title: '总数量', type:'readonly'},
   {key: 'volume', title: '总体积', type:'number', props: {real: true, precision: 4}},
-  {key: 'roughWeight', title: '总重量', type:'number', props: {real: true, precision: 2}},
+  {key: 'roughWeight', title: '总重量', type:'number', props: {real: true, precision: 4}},
   {key: 'salespersonId', title: '销售员', type:'readonly'},
   {key: 'customerServiceId', title: '客服', type:'readonly', showAdd: true, required: true},
   {key: 'palletsNumber', title: '总卡板数', type:'number', props: {real: true, precision: 2}},
@@ -52,7 +52,7 @@ const options = [
 const addressCols = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
-  {key: 'pickupDeliveryType', title: '收发货类型', type:'select', options},
+  {key: 'pickupDeliveryType', title: '收发货类型', type:'select', options, required: true},
   {key: 'consigneeConsignorId', title: '收发货人', type:'search', props: {searchWhenClick: true}, showAdd: true, required: true},
   {key: 'consigneeConsignorCode', title: '收发货人编码', type:'readonly'},
   {key: 'consigneeConsignorShortName', title: '收发货人简称', type:'readonly'},
@@ -73,7 +73,7 @@ const goodsCols = [
   {key: 'commodityName', title: '商品名称', type:'text', required: true},
   {key: 'goodsNumber', title: '数量', type:'number', props: {real: true, precision: 2}},
   {key: 'volume', title: '体积', type:'number', props: {real: true, precision: 4}},
-  {key: 'roughWeight', title: '重量', type:'number', props: {real: true, precision: 2}},
+  {key: 'roughWeight', title: '重量', type:'number', props: {real: true, precision: 4}},
   {key: 'packageUnit', title: '包装单位', type:'select', dictionary: 'package_unit'},
   {key: 'commodityUnit', title: '基本单位', type:'select', dictionary: 'commodity_unit'},
 ];
