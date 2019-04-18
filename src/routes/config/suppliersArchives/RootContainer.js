@@ -9,6 +9,7 @@ import helper, { fetchJson, getJsonResult, postOption } from '../../../common/co
 import { search } from '../../../common/search';
 import { fetchDictionary, setDictionary } from '../../../common/dictionary';
 import { dealActions } from '../../../common/check';
+import {dealExportButtons} from "../customersArchives/RootContainer";
 
 const STATE_PATH = ['config', 'suppliersArchives'];
 const URL_CONFIG = '/api/config/suppliersArchives/config';
