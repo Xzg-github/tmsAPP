@@ -1,7 +1,7 @@
 import express from 'express';
 import {fetchJsonByNode, postOption} from '../../../common/common';
 import {host} from '../../globalConfig';
-import  {search} from "../../helper";
+import  {search, searchByHjj} from "../../helper";
 const tms_service = `${host}/tms-service`;
 const archiver_service = `${host}/archiver-service`;
 const charge_service = `${host}/charge_service`;
@@ -134,7 +134,7 @@ api.get('/total/:id/:currency', async (req, res) => {
 // 获取费用名称下拉
 api.post('/chargeItemId', async (req, res) => {
   const url = `${archiver_service}/charge_item/drop_list/enabled_type_enabled`;
-  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+  res.send(await searchByHjj(req, url, 'chargeName', req.body.filter));
 });
 
 // 整审（批量）
