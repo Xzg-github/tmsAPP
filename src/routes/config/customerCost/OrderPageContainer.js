@@ -11,7 +11,7 @@ import showEditDialog from './EditDialogContainer';
 const STATE_PATH = ['customerCost'];
 const URL_CONFIG = '/api/config/customer_cost/config';
 const URL_LIST = '/api/config/customer_cost/list';
-const URL_CUSTOMER_OPTIONS = '/api/config/customer_factory/allCustomer';
+const URL_CUSTOMER_OPTIONS = '/api/config/customer_contact/customer';
 const URL_DEL = '/api/config/customer_cost/del';
 
 const action = new Action(STATE_PATH);

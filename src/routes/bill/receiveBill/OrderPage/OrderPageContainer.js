@@ -7,6 +7,7 @@ import { exportExcelFunc, commonExport } from '../../../../common/exportExcelSet
 import {search2} from '../../../../common/search';
 import showAddDialog from './AddDialog/AddDialogContainer';
 import {showOutputDialog} from '../../../../components/ModeOutput/ModeOutput';
+import showFilterSortDialog from "../../../../common/filtersSort";
 
 const STATE_PATH = ['receiveBill'];
 const action = new Action(STATE_PATH);
@@ -36,6 +37,12 @@ const searchActionCreator = async (dispatch, getState) => {
 };
 
 const resetActionCreator = action.assign({searchData: {}});
+
+const sortActionCreator = async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
+};
 
 const addActionCreator = async (dispatch, getState) => {
   const {addConfig} = getSelfState(getState());
@@ -138,6 +145,7 @@ const exportPageActionCreator = async (dispatch, getState) => {
 };
 
 const toolbarActions = {
+  sort: sortActionCreator,
   reset: resetActionCreator,
   search: searchActionCreator,
   add: addActionCreator,

@@ -8,6 +8,7 @@ import {showImportDialog} from '../../../common/modeImport';
 import {exportExcelFunc} from '../../../common/exportExcelSetting';
 import showEditDialog from './EditDialogContainer'
 import {toFormValue} from "../../../common/check";
+import showFilterSortDialog from "../../../common/filtersSort";
 
 const STATE_PATH = ['supplierContact'];
 const action = new Action(STATE_PATH);
@@ -15,7 +16,7 @@ const action = new Action(STATE_PATH);
 const URL_LIST = '/api/config/supplier_contact/list';
 const URL_ENABLE = '/api/config/supplier_contact/enable';
 const URL_DELETE = '/api/config/supplier_contact/delete';
-const URL_ALLCUSTOMER = '/api/config/supplier_contact/allCustomer';
+const URL_ALLCUSTOMER = '/api/config/supplier_contact/customer';
 
 const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
@@ -118,10 +119,17 @@ const exportActionCreator =(dispatch, getState)=>{
   return exportExcelFunc(tableCols, tableItems);
 };
 
+const sortActionCreator = async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
+};
+
 const toolbarActions = {
   reset: resetActionCreator(),
   search: searchAction,
   add: addAction,
+  sort: sortActionCreator,
   edit: editAction,
   enable: enableAction,
   disable: disableAction,
@@ -170,7 +178,7 @@ const mapStateToProps = (state) => {
 
 const filterSearchActionCreator = (key, value) =>async(dispatch)=> {
   if(key === 'supplierId'){
-    const option = helper.postOption({maxNumber: 65536, customerId: value});
+    const option = helper.postOption({maxNumber: 10, filter: value});
     let data = await fetchJson(URL_ALLCUSTOMER, option);
     if (data.returnCode === 0) {
       dispatch(action.update({options:data.result},"filters",{key:"key",value:key}));

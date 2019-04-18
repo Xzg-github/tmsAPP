@@ -8,6 +8,7 @@ import {showImportDialog} from '../../../common/modeImport';
 import {exportExcelFunc} from '../../../common/exportExcelSetting';
 import showEditDialog from './EditDialogContainer'
 import {toFormValue} from "../../../common/check";
+import showFilterSortDialog from "../../../common/filtersSort";
 
 const STATE_PATH = ['customerTax'];
 const action = new Action(STATE_PATH);
@@ -15,7 +16,7 @@ const action = new Action(STATE_PATH);
 const URL_LIST = '/api/config/customer_tax/list';
 const URL_ENABLE = '/api/config/customer_tax/enable';
 const URL_DELETE = '/api/config/customer_tax/delete';
-const URL_ALLCUSTOMER = '/api/config/customer_tax/allCustomer';
+const URL_ALLCUSTOMER = '/api/config/customer_contact/customer';
 const URL_ALLITEM = '/api/config/customer_tax/allItems';
 
 const getSelfState = (rootState) => {
@@ -119,12 +120,19 @@ const exportActionCreator =(dispatch, getState)=>{
   return exportExcelFunc(tableCols, tableItems);
 };
 
+const sortActionCreator = async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
+};
+
 const toolbarActions = {
   reset: resetActionCreator(),
   search: searchAction,
   add: addAction,
   edit: editAction,
   enable: enableAction,
+  sort: sortActionCreator,
   disable: disableAction,
   delete: delAction,
   import: importActionCreator,

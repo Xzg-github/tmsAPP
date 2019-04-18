@@ -2,7 +2,7 @@ import {pageSize, pageSizeType, paginationConfig, searchConfig} from '../../glob
 
 
 const filters = [
-  {key: 'customerId', title: '客户', type: 'search', searchType: 'customer_all'},
+  {key: 'customerId', title: '客户', type: 'search', searchType: 'customer'},
   {key: 'invoiceHeaderInformation', title: '发票抬头', type: 'text'}
 
 ];

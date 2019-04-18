@@ -17,6 +17,7 @@ const URL_SUPPLIER = '/api/bill/payMake/supplierId';
 const URL_GET_COST = '/api/bill/receiveMake/getCost';
 const URL_CURRENCY = `/api/bill/receiveMake/customerCurrency`;
 const URL_CURRENCY_SUPPLIER = `/api/bill/payMake/supplierCurrency`;
+const URL_CARINFO = '/api/bill/payMake/carInfoId';
 
 
 const getSelfState = (rootState) => {
@@ -24,7 +25,7 @@ const getSelfState = (rootState) => {
 };
 
 const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, getState) =>{
-  const {customerId, supplierId} = getSelfState(getState());
+  const {customerId, supplierId, cols} = getSelfState(getState());
   let payload = {[keyName]: keyValue}, index = rowIndex;
   switch (keyName) {
     case 'price':
@@ -44,6 +45,14 @@ const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, ge
     case 'supplierId': {
       const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY_SUPPLIER}/${keyValue.value}`));
       payload['currency'] = currency ? currency.balanceCurrency : undefined;
+      // 如果是车主类型，车牌号码为必填
+      const i = cols.findIndex(o => o.key === 'carNumber');
+      const required1 = keyValue.supplierType === 'supplier_type_car_owner';
+      dispatch(action.update({required: required1}, 'cols', i));
+      // 如果有费用备注，备注为必填
+      const j = cols.findIndex(o => o.key === 'remark');
+      const required2 = !!keyValue.chargeRemark;
+      dispatch(action.update({required: required2, props: {placeholder: keyValue.chargeRemark}}, 'cols', j));
       break;
     }
   }
@@ -55,6 +64,10 @@ const searchActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, ge
   switch (keyName) {
     case 'supplierId': {
       options = getJsonResult(await helper.fetchJson(URL_SUPPLIER, postOption(params)));
+      break;
+    }
+    case 'carNumber': {
+      options = getJsonResult(await helper.fetchJson(URL_CARINFO, postOption(params)));
       break;
     }
     case 'customerId': {
@@ -70,12 +83,13 @@ const searchActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, ge
 };
 
 const addActionCreator = () => async (dispatch, getState) => {
-  const {customerId, supplierId, items, balanceCurrency} = getSelfState(getState());
+  const {customerId, supplierId, items, balanceCurrency, carNumber} = getSelfState(getState());
   items.push({
     checked: false,
     currency: balanceCurrency,
     customerId,
-    supplierId
+    supplierId,
+    carNumber
   });
   dispatch(action.assign({items: deepCopy(items)}));
 };
@@ -151,7 +165,12 @@ const okActionCreator = (afterClose) => async (dispatch, getState) => {
     dispatch(action.assign({valid: true}));
     return showError('请填写必填项！');
   }
-  dispatch(action.assign({okResult: items.map(o => convert(o))}));
+  dispatch(action.assign({okResult: items.map(o => {
+    if (o.carNumber && o.carNumber.title) {
+      o.carNumber = o.carNumber.title;
+    }
+    return convert(o)
+  })}));
   afterClose();
 };
 

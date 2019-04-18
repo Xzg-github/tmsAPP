@@ -91,7 +91,7 @@ const cooperationInfo = [
   {key: 'checkAccountDeadlineTime', title: '对账时间', type: 'text', props: {placeholder: '文本输入,例如：每月25号'}},
   {key: 'paymentTime', title: '付款时间', type: 'date' },
   {key: 'taxType', title: '计税方式', type: 'select', dictionary: name.TAX_TYPE},
-  {key: 'tax', title: '税率', type: 'number', props: {precision: 2}},
+  {key: 'tax', title: '税率', type: 'select', dictionary: 'customer_tax_type'},
 ];
 
 const controls = [
@@ -119,7 +119,7 @@ const config = {
   index,
   finance,
   names: [ name.BALANCE_WAY, name.YES_OR_NO, name.TAX_TYPE,
-    name.ENABLED_TYPE, name.COMPANY_TYPE, name.COMPANY_LEVEL
+    name.ENABLED_TYPE, name.COMPANY_TYPE, name.COMPANY_LEVEL, 'customer_tax_type'
   ]
 };
 

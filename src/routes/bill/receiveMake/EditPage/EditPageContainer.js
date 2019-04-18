@@ -280,6 +280,16 @@ const buildEditPageState = async (config, itemData, isReadonly) => {
   const currencyTypeCode = getJsonResult(await helper.fetchJson(URL_CURRENCY_CODE, 'get'));
   const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${itemData.customerId.value}`));
   const totalValues = getJsonResult(await fetchJson(`${URL_TOTAL}/${itemData.id}/${currencyTypeCode}`));
+  const incomeList = incomeDetails.map(o => {
+    const {netAmount=0, taxAmount} = o;
+    const includeTaxAmount = Number((Number(netAmount) + Number(taxAmount)).toFixed(2));
+    return {...o, includeTaxAmount}
+  });
+  const costList = costDetails.map(o => {
+    const {netAmount=0, taxAmount} = o;
+    const includeTaxAmount = Number((Number(netAmount) + Number(taxAmount)).toFixed(2));
+    return {...o, includeTaxAmount}
+  });
   return {
     ...config,
     ...itemData,
@@ -288,8 +298,8 @@ const buildEditPageState = async (config, itemData, isReadonly) => {
     activeCurrency: currencyTypeCode,
     balanceCurrency: currency.balanceCurrency,
     totalValues,
-    receiveItems: incomeDetails,
-    payItems: costDetails,
+    receiveItems: incomeList,
+    payItems: costList,
     activeKey: 'index',
     orderInfo: {id: itemData.id, readonly: true},
     tabs: [

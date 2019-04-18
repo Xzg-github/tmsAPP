@@ -33,6 +33,7 @@ const buttons = [
   {key: 'delete', title: '删除', sign: 'customerTax_delete', confirm: '确认删除选中记录'},
   {key: 'enable', title: '启用', sign: 'customerTax_enable'},
   {key: 'disable', title: '禁用', sign: 'customerTax_disable'},
+  {key: 'owner', title: '车主税率', sign: 'customerTax_owner'},
   {key: 'import', title: '导入', sign: 'customerTax_import'},
   {key: 'export', title: '导出', sign: 'customerTax_export'}
 ];

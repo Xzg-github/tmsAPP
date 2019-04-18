@@ -24,7 +24,7 @@ const initActionCreator = () => async (dispatch) => {
     const {index, edit, names} = getJsonResult(await fetchJson(URL_CONFIG));
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}));
     const dictionary = getJsonResult(await fetchDictionary(names));
-    const payload = buildOrderPageState(list, index, {editConfig: edit, status: 'page'});
+    const payload = buildOrderPageState(list, index, {editConfig: edit, status: 'page', isSort: true});
     setDictionary(payload.tableCols, dictionary);
     setDictionary(payload.filters, dictionary);
     setDictionary(payload.editConfig.controls, dictionary);

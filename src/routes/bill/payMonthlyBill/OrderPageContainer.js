@@ -9,6 +9,7 @@ import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
 import {search2} from '../../../common/search';
 import showModeDialog from '../../../components/ModeOutput/showModeOutputDialog';
+import showFilterSortDialog from "../../../common/filtersSort";
 
 const TAB_KEY = 'index';
 const STATE_PATH =  ['payMonthlyBill'];
@@ -94,6 +95,12 @@ const searchClickActionCreator = async (dispatch, getState) => {
   return search2(dispatch, action, URL_LIST, 1, pageSize, toFormValue(searchData), newState,tabKey);
 };
 
+const sortActionCreator = async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
+};
+
 const deleteActionCreator = async (dispatch, getState) => {
   const {tableItems} = getSelfState(getState());
   const idList = tableItems.reduce((result, item) => {
@@ -154,6 +161,7 @@ const cancelActionCreator = async (dispatch, getState) => {
 
 
 const toolbarActions = {
+  sort: sortActionCreator,
   search: searchClickActionCreator,
   reset: resetActionCreator,
   add:addActionCreator,

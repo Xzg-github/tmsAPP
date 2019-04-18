@@ -28,7 +28,7 @@ const initActionCreator = () => async (dispatch) => {
     const {index, dicNames, tabs, activeKey, editConfig, addConfig} = getJsonResult(await fetchJson(URL_CONFIG));
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}, false));
     const dictionary = getJsonResult(await fetchDictionary(dicNames));
-    const payload = buildOrderPageState(list, index, {tabs, activeKey, editConfig, addConfig, status: 'page'});
+    const payload = buildOrderPageState(list, index, {tabs, activeKey, editConfig, addConfig, isSort: true, status: 'page'});
 
     //获取状态表单字典 AddDialog运单状态取表单字典transport_order
     dictionary['status_type'] = getJsonResult(await getStatus('receivable_bill'));

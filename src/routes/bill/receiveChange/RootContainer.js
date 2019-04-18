@@ -110,7 +110,7 @@ const initActionCreator = () => async (dispatch, getState) => {
     dictionary['status_type'] = getJsonResult(await getStatus('renewal'));
     const currency = getJsonResult(await fetchJson(URL_CURRENCY, postOption({currencyTypeCode: '', maxNumber: 65536})));
     const renewalReasonOptions = await getRenewalReson(dictionary['responsible_party']);
-    const newState = {tabs, activeKey, editConfig, status: 'page'};
+    const newState = {tabs, activeKey, editConfig, isSort: true, status: 'page'};
     const payload = buildOrderPageState(list, index, newState);
 
     setDictionary(payload.filters, dictionary);

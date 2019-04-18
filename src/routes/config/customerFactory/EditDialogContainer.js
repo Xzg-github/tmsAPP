@@ -115,7 +115,7 @@ const createContainer = (statePath, afterEditActionCreator) => {
     let data, options, body;
     switch (key) {
       case 'customerId': {
-        body = {maxNumber: 10, customerName: title};
+        body = {maxNumber: 10, filter: title};
         data = await fetchJson(URL_CUSTOMER, postOption(body));
         break;
       }

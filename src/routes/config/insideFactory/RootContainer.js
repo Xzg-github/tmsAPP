@@ -47,7 +47,7 @@ const initActionCreator = () => async (dispatch) => {
     const dictionary = getJsonResult(await fetchDictionary(names));
     const body ={ maxNumber: 300, districtType: 2};
     const country = getJsonResult(await fetchJson(URL_DISTRICT_OPTIONS, postOption(body)));
-    const payload = buildOrderPageState(list, index, {editConfig: edit, customerConfig, status: 'page'});
+    const payload = buildOrderPageState(list, index, {editConfig: edit, customerConfig, status: 'page', isSort: true});
     helper.setOptions('country', payload.editConfig.controls, country);
     setDictionary(payload.tableCols, dictionary);
     setDictionary(payload.filters, dictionary);

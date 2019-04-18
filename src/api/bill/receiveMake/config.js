@@ -85,6 +85,10 @@ const receiveCols = [
   {key: 'taxRateWay', title: '计税方式', dictionary: name.TAX_TYPE},
   {key: 'taxAmount', title: '税额'},
   {key: 'netAmount', title: '净价'},
+  {key: 'includeTaxAmount', title: '含税金额'},
+  {key: 'periodOfyear', title: '会计年'},
+  {key: 'periodOfmonth', title: '会计月'},
+  {key: 'settlementSystemStatus', title: '对接状态', dictionary: name.SETTLEMENT_SYSTEM_STATUS},
   {key: 'remark', title: '备注'},
   {key: 'isAdditional', title: '是否额外费用', dictionary: name.ZERO_ONE_TYPE},
   {key: 'statusType', title: '状态', dictionary: 'status_type_01'},
@@ -124,6 +128,10 @@ const payCols = [
   {key: 'taxRateWay', title: '计税方式', dictionary: name.TAX_TYPE},
   {key: 'taxAmount', title: '税额'},
   {key: 'netAmount', title: '净价'},
+  {key: 'includeTaxAmount', title: '含税金额'},
+  {key: 'periodOfyear', title: '会计年'},
+  {key: 'periodOfmonth', title: '会计月'},
+  {key: 'settlementSystemStatus', title: '对接状态', dictionary: name.SETTLEMENT_SYSTEM_STATUS},
   {key: 'remark', title: '备注'},
   {key: 'isAdditional', title: '是否额外费用', dictionary: name.ZERO_ONE_TYPE},
   {key: 'statusType', title: '状态', dictionary: 'status_type_01'},
@@ -261,7 +269,8 @@ const config = {
     name.CHARGE_ORIGIN,
     name.CHARGE_UNIT,
     name.ZERO_ONE_TYPE,
-    name.TAX_TYPE
+    name.TAX_TYPE,
+    name.SETTLEMENT_SYSTEM_STATUS
   ]
 };
 

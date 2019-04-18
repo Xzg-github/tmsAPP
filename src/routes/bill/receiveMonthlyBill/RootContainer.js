@@ -61,7 +61,7 @@ const initActionCreator = () => async (dispatch) => {
 
     dispatch(action.assign({
       status: 'page',
-      index: buildOrderPageState(list, index, {tabKey: 'index'}),
+      index: buildOrderPageState(list, index, {tabKey: 'index', isSort: true}),
       activeKey: 'index',
       tabs: [{key: 'index', title: '应收月帐单', close: false}],
       editConfig:edit,

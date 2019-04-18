@@ -92,7 +92,7 @@ api.post('/addSave', async (req, res) => {
 });
 
 //编辑 保存
-api.put('editSave', async (req, res) => {
+api.put('/editSave', async (req, res) => {
   const url = `${service}/renewal/${charge_direction}`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });

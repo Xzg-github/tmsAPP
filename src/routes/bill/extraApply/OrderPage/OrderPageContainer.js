@@ -4,6 +4,7 @@ import helper,{postOption, fetchJson, showError, showSuccessMsg, convert, getJso
 import {Action} from '../../../../action-reducer/action';
 import {getPathValue} from '../../../../action-reducer/helper';
 import {search2} from '../../../../common/search';
+import showFilterSortDialog from "../../../../common/filtersSort";
 
 const STATE_PATH = ['extraApply'];
 const action = new Action(STATE_PATH);
@@ -32,6 +33,12 @@ const searchActionCreator = async (dispatch, getState) => {
 };
 
 const resetActionCreator = action.assign({searchData: {}});
+
+const sortActionCreator = async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
+};
 
 const afterEdit = async (dispatch, getState) => {
   const {searchData, currentPage, pageSize} = getSelfState(getState());
@@ -231,6 +238,7 @@ const deleteActionCreator = async (dispatch, getState) => {
 };
 
 const toolbarActions = {
+  sort: sortActionCreator,
   reset: resetActionCreator,
   search: searchActionCreator,
   add: addActionCreator,

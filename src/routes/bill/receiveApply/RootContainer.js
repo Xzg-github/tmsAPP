@@ -28,7 +28,7 @@ const initActionCreator = () => async (dispatch) => {
     const {index, names, tabs, activeKey, editConfig, addDialogConfig} = getJsonResult(await fetchJson(URL_CONFIG));
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}, false));
     const dictionary = getJsonResult(await fetchDictionary(names));
-    const payload = buildOrderPageState(list, index, {tabs, activeKey, editConfig, addDialogConfig, status: 'page'});
+    const payload = buildOrderPageState(list, index, {tabs, activeKey, editConfig, addDialogConfig, isSort: true, status: 'page'});
 
     // 获取状态表单字典
     const dics = deepCopy(dictionary);

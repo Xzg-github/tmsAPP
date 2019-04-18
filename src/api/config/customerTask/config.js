@@ -2,7 +2,7 @@ import {pageSize, pageSizeType, paginationConfig, searchConfig} from '../../glob
 
 const URL_BRANCH = '/api/config/customer_task/options/departments';  // 部门
 const filters = [
-  {key: 'customerId', title: '客户', type: 'search', searchType: 'customer_all'},
+  {key: 'customerId', title: '客户', type: 'search', searchType: 'customer'},
   {key: 'businessType', title: '运输类型', type: 'select', dictionary: 'business_type'},
   {key: 'deptmentId', title: '部门', type: 'search',searchUrl: URL_BRANCH}
 ];
