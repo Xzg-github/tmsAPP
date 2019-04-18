@@ -23,8 +23,9 @@ const buttons = [
   {key: 'audit', title: '审核', confirm: '是否审核?'},
   {key: 'output', title: '输出'},
   {key: 'export', title: '导出', menu: [
-    { key: 'exportSearch', title: '查询导出'},
     { key: 'exportPage', title: '页面导出'},
+    { key: 'exportSearch', title: '查询导出'},
+    { key: 'templateManager', title: '模板管理'}
   ]}
 ];
 

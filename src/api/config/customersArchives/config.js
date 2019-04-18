@@ -22,8 +22,9 @@ const buttons = [
   {key: 'customersArchives_delete', title: '删除', confirm: '确认删除?'},
   {key: 'customersArchives_import', title: '导入'},
   {key: 'customersArchives_export', title: '导出', menu:[
-    { key: 'suppliersArchives_exportSearch', title: '查询导出'},
-    { key: 'suppliersArchives_exportPage', title: '页面导出'},
+    { key: 'customersArchives_exportSearch', title: '查询导出'},
+    { key: 'customersArchives_exportPage', title: '页面导出'},
+    { key: 'customersArchives_templateManager', title: '模板管理'},
   ]},
   {key: 'customersArchives_finance', title: '设置财务人员'},
   {key: 'customersArchives_config', title: '配置字段'}
