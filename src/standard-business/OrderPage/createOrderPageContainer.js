@@ -83,9 +83,9 @@ const createOrderPageContainer = (action, getSelfState, actionCreatorsEx={}) => 
 
   //配置字段按钮
   const configActionCreator = () => async (dispatch, getState) => {
-    const {tableCols} = getSelfState(getState());
+    const {tableCols, buttons} = getSelfState(getState());
     const okFunc = (newCols) => {
-      dispatch(action.assign({tableCols: newCols, buttons: dealExportButtons(helper.getRouteKey(), newCols)}));
+      dispatch(action.assign({tableCols: newCols, buttons: dealExportButtons(buttons, newCols)}));
     };
     showColsSetting(tableCols, okFunc, helper.getRouteKey());
   };
@@ -107,9 +107,9 @@ const createOrderPageContainer = (action, getSelfState, actionCreatorsEx={}) => 
 
   //模板管理
   const templateManagerActionCreator = () => async (dispatch, getState) => {
-    const {tableCols} = getSelfState(getState());
+    const {tableCols, buttons} = getSelfState(getState());
     if(true === await showTemplateManagerDialog(tableCols, helper.getRouteKey())) {
-      dispatch(action.assign({buttons: dealExportButtons(helper.getRouteKey(), tableCols)}));
+      dispatch(action.assign({buttons: dealExportButtons(buttons, tableCols)}));
     }
   };
 
