@@ -27,13 +27,20 @@ const getSelfState = (rootState) => {
 
 // 为EditDialog组件构建状态
 const buildEditDialogState = (config={}, data, edit) => {
-  const EDIT_DIALOG = ['config', 'size', 'controls'];
+  const EDIT_DIALOG = ['config', 'size'];
+  const backConfig = helper.deepCopy(config);
+  const newData = backConfig.controls[1].data.map(item => {
+    if (item.key === 'tax') item.type = 'readonly';
+      return item;
+  });
+  backConfig.controls[1].data = newData;
   return {
     edit,
     ...getObject(config, EDIT_DIALOG),
     title: edit ? config.edit : config.add,
     value: helper.getObjectExclude(data, ['checked']),
-    options: {}
+    options: {},
+    controls: data['taxType'] === 'tax_rate_way_not_calculate' ? backConfig.controls : config.controls
   };
 };
 
