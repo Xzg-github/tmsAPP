@@ -67,21 +67,32 @@ const ownerAction = async (dispatch, getState) => {
   let ownerControls = editConfig.controls.filter(item => {
     return item.key === 'taxRate' || item.key === 'taxRateWay' && item;
   });
-  if (result[0].taxRateWay === 'tax_rate_way_not_calculate') {
-    ownerControls = ownerControls.map(item => {
-      if (item.key === 'taxRate') item.type = 'readonly';
-      return item;
-    });
+  if(result.length === 0) {
+    const addOwnerConfig = {
+      controls: ownerControls,
+      title: '新增车主税率',
+      config: {ok: '确定', cancel: '取消'},
+      size: 'small',
+      value: {supplierId: '-1'}
+    };
+    await showOwnerDialog(addOwnerConfig) && updateTable(dispatch, getState);
+  } else {
+    if (result[0].taxRateWay === 'tax_rate_way_not_calculate') {
+      ownerControls = ownerControls.map(item => {
+        if (item.key === 'taxRate') item.type = 'readonly';
+        return item;
+      });
+    }
+    //车主税率默认supplierId为-1
+    const ownerConfig = {
+      controls: ownerControls,
+      title: '车主税率',
+      config: {ok: '确定', cancel: '取消'},
+      size: 'small',
+      value: {taxRate: result[0].taxRate, taxRateWay: result[0].taxRateWay, id: result[0].id, supplierId: '-1'}
+    };
+    await showOwnerDialog(ownerConfig) && updateTable(dispatch, getState);
   }
-  //车主税率默认supplierId为-1
-  const ownerConfig = {
-    controls: ownerControls,
-    title: '车主税率',
-    config: {ok: '确定', cancel: '取消'},
-    size: 'small',
-    value: {taxRate: result[0].taxRate, taxRateWay: result[0].taxRateWay, id: result[0].id, supplierId: '-1'}
-  };
-  await showOwnerDialog(ownerConfig) && updateTable(dispatch, getState);
 };
 
 // 批量删除
