@@ -24,7 +24,7 @@ const buttons = [
   {key: 'suppliersArchives_export', title: '导出', menu:[
     { key: 'suppliersArchives_exportSearch', title: '查询导出'},
     { key: 'suppliersArchives_exportPage', title: '页面导出'},
-    { key: 'suppliersArchives_templateManager', title: '页面导出'},
+    { key: 'suppliersArchives_templateManager', title: '模板管理'},
   ]},
   {key: 'suppliersArchives_finance', title: '设置财务人员'},
   {key: 'suppliersArchives_config', title: '配置字段'}

@@ -11,6 +11,8 @@ import {showImportDialog} from '../../../common/modeImport';
 import { exportExcelFunc, commonExport } from '../../../common/exportExcelSetting';
 import {toFormValue,hasSign} from '../../../common/check';
 import showFilterSortDialog from "../../../common/filtersSort";
+import {dealExportButtons} from "../customerContact/RootContainer";
+import showTemplateManagerDialog from "../../../standard-business/template/TemplateContainer";
 
 const action = new Action(['insideCar']);
 const URL_CONFIG = '/api/config/supplier_car/inside_config';
@@ -51,6 +53,9 @@ const initActionCreator = () => async (dispatch) => {
     payload.searchData = {};
     payload.searchDataBak = payload.searchData;
     setDictionary2(dictionary, payload.tableCols, payload.edit.controls,payload.tableCols,payload.filters);
+    //初始化列表配置
+    payload.tableCols = helper.initTableCols(helper.getRouteKey(), payload.tableCols);
+    payload.buttons = dealExportButtons(payload.buttons, payload.tableCols);
     dispatch(action.assign(payload));
   } catch (e) {
     helper.showError(e.message);
@@ -160,25 +165,32 @@ const importActionCreator =()=> async(dispatch, getState) => {
   return showImportDialog('car_info_import',oKFunc);
 };
 
-//查询导出
-const searchExportActionCrator =()=> async(dispatch, getState) => {
-  const {tableCols, searchData} = getSelfState(getState());
-  const search = {
-    ...toFormValue(searchData)
-  };
-  commonExport(tableCols, '/archiver-service/car_info/list/search', search);
-};
-
-//页面导出
-const pageExportActionCrator =()=> async(dispatch, getState) => {
-  const {tableCols, tableItems} = getSelfState(getState());
-  exportExcelFunc(tableCols, tableItems);
-};
-
 const sortActionCreator = () => async (dispatch, getState) => {
   const {filters} = getSelfState(getState());
   const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
   newFilters && dispatch(action.assign({filters: newFilters}));
+};
+
+//页面导出
+const exportPageActionCreator = (subKey) => (dispatch, getState) => {
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {tableItems} = getSelfState(getState());
+  return exportExcelFunc(tableCols, tableItems);
+};
+
+// 查询导出
+const exportSearchActionCreator = (subKey) => (dispatch, getState) =>{
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {searchData} = getSelfState(getState());
+  return commonExport(tableCols, '/archiver-service/car_info/list/search', searchData);
+};
+
+//模板管理
+const templateManagerActionCreator = () => async (dispatch, getState) => {
+  const {tableCols, buttons} = getSelfState(getState());
+  if(true === await showTemplateManagerDialog(tableCols, helper.getRouteKey())) {
+    dispatch(action.assign({buttons: dealExportButtons(buttons, tableCols)}));
+  }
 };
 
 
@@ -192,8 +204,9 @@ const clickActionCreators = {
   delete:deleteActionCreator,
   edit:editActionCreator,
   import:importActionCreator,
-  searchExport:searchExportActionCrator,
-  pageExport:pageExportActionCrator,
+  exportSearch: exportSearchActionCreator,
+  exportPage :exportPageActionCreator,
+  templateManager: templateManagerActionCreator,
 };
 
 const clickActionCreator = (key) => {
@@ -203,6 +216,14 @@ const clickActionCreator = (key) => {
     return {type: 'unknown'};
   }
 };
+const subClickActionCreator = (key, subKey) => {
+  if (clickActionCreators.hasOwnProperty(key)) {
+    return clickActionCreators[key](subKey);
+  } else {
+    return {type: 'unknown',};
+  }
+};
+
 
 const mapStateToProps = (state) => {
   return getSelfState(state);
@@ -253,6 +274,7 @@ const actionCreators = {
   onInit: initActionCreator,
   onChange: changeActionCreator,
   onClick: clickActionCreator,
+  onSubClick: subClickActionCreator,
   onCheck: checkActionCreator,
   onDoubleClick: doubleClickActionCreator,
   onPageNumberChange: pageNumberActionCreator,

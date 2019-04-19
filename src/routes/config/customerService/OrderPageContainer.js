@@ -4,16 +4,17 @@ import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
 import helper, {fetchJson, showError} from '../../../common/common';
 import {search2} from '../../../common/search';
-import {commonExport} from '../../../common/exportExcelSetting';
+import {commonExport, exportExcelFunc} from '../../../common/exportExcelSetting';
 import {toFormValue} from "../../../common/check";
 import showEditDialog from './EditDialogContainer';
+import showTemplateManagerDialog from "../../../standard-business/template/TemplateContainer";
+import {dealExportButtons} from "../customerContact/RootContainer";
 
 const STATE_PATH = ['customerService'];
 const URL_LIST = '/api/config/customer_service/list';
 const URL_ACTIVE = '/api/config/customer_service/active';
 const URL_INVALID = '/api/config/customer_service/invalid';
 const URL_DETAIL = '/api/config/customer_service/detail';
-const BASE_EXPORT_URL='/archiver_service/customer/care/search';
 const URL_CUSTOMER_OPTIONS = '/api/config/customer_contact/customer';
 const action = new Action(STATE_PATH);
 
@@ -117,12 +118,27 @@ const activeAction = async (dispatch, getState) => {
   }
 };
 
-//导出
-const exportActionCreator =(dispatch,getState)=>{
-  const {tableCols, searchData} = getSelfState(getState());
-  return commonExport(tableCols, BASE_EXPORT_URL, searchData, true, true, 'post', false);
+//页面导出
+const exportPageActionCreator = (subKey) => (dispatch, getState) => {
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {tableItems} = getSelfState(getState());
+  return exportExcelFunc(tableCols, tableItems);
 };
 
+// 查询导出
+const exportSearchActionCreator = (subKey) => (dispatch, getState) =>{
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {searchData} = getSelfState(getState());
+  return commonExport(tableCols, '/archiver-service/customer/care/search', searchData);
+};
+
+//模板管理
+const templateManagerActionCreator = async (dispatch, getState) => {
+  const {tableCols, buttons} = getSelfState(getState());
+  if(true === await showTemplateManagerDialog(tableCols, helper.getRouteKey())) {
+    dispatch(action.assign({buttons: dealExportButtons(buttons, tableCols)}));
+  }
+};
 const toolbarActions = {
   reset: resetActionCreator(),
   search: searchAction,
@@ -130,7 +146,9 @@ const toolbarActions = {
   edit: editAction,
   del: delAction,
   active: activeAction,
-  export:exportActionCreator,
+  exportSearch: exportSearchActionCreator,
+  exportPage :exportPageActionCreator,
+  templateManager: templateManagerActionCreator,
 };
 
 const clickActionCreator = (key) => {
@@ -138,6 +156,14 @@ const clickActionCreator = (key) => {
     return toolbarActions[key];
   } else {
     return {type: 'unknown'};
+  }
+};
+
+const subClickActionCreator = (key, subKey) => {
+  if (toolbarActions.hasOwnProperty(key)) {
+    return toolbarActions[key](subKey);
+  } else {
+    return {type: 'unknown',};
   }
 };
 
@@ -175,6 +201,7 @@ const filterSearchActionCreator = (key, value) =>async(dispatch)=> {
 const actionCreators = {
   onSearch:filterSearchActionCreator,
   onClick: clickActionCreator,
+  onSubClick: subClickActionCreator,
   onChange: changeActionCreator,
   onCheck: checkActionCreator,
   onDoubleClick: doubleClickActionCreator,

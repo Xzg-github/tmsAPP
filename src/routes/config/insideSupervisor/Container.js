@@ -11,6 +11,8 @@ import {search, search2} from '../../../common/search';
 import showAddDialog from './addDialog/AddDialogContainer';
 import {showImportDialog} from '../../../common/modeImport';
 import {commonExport, exportExcelFunc} from "../../../common/exportExcelSetting";
+import {dealExportButtons} from "../customerContact/RootContainer";
+import showTemplateManagerDialog from "../../../standard-business/template/TemplateContainer";
 
 const URL_CONFIG = '/api/config/insideSupervisor/config';
 const URL_LIST = '/api/config/insideSupervisor/list';
@@ -36,6 +38,9 @@ const initActionCreator = () => async (dispatch) => {
         setDictionary(payload.tableCols, dictionary);
         setDictionary(payload.filters, dictionary);
         setDictionary(payload.editConfig.controls, dictionary);
+      //初始化列表配置
+      payload.tableCols = helper.initTableCols(helper.getRouteKey(), payload.tableCols);
+      payload.buttons = dealExportButtons(payload.buttons, payload.tableCols);
         dispatch(action.create(payload));
     }catch(e){
         dispatch(action.assign({status: 'retry'}));
@@ -194,17 +199,26 @@ const importActionCreator = (dispatch, getState) => {
   return showImportDialog('supervisor_info_import');
 };
 
-// 查询导出-后端导出
-const searchExportActionCreator = (dispatch, getState) => {
-  const {tableCols, searchData} = getSelfState(getState());
-  const api = '/archiver-service/supervisor_info/list/search';
-  return commonExport(tableCols, api, searchData);
+//页面导出
+const exportPageActionCreator = (subKey) => (dispatch, getState) => {
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {tableItems} = getSelfState(getState());
+  return exportExcelFunc(tableCols, tableItems);
 };
 
-//页面导出
-const pageExportActionCreator =(dispatch, getState)=> {
-  const {tableCols, tableItems} = getSelfState(getState());
-  exportExcelFunc(tableCols, tableItems);
+// 查询导出
+const exportSearchActionCreator = (subKey) => (dispatch, getState) =>{
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {searchData} = getSelfState(getState());
+  return commonExport(tableCols, '/archiver-service/supervisor_info/list/search', searchData);
+};
+
+//模板管理
+const templateManagerActionCreator = async (dispatch, getState) => {
+  const {tableCols, buttons} = getSelfState(getState());
+  if(true === await showTemplateManagerDialog(tableCols, helper.getRouteKey())) {
+    dispatch(action.assign({buttons: dealExportButtons(buttons, tableCols)}));
+  }
 };
 
 const toolbarActions = {
@@ -216,8 +230,9 @@ const toolbarActions = {
   active: enableAction,
   inactive: disableAction,
   import:importActionCreator,
-  exportSearch:searchExportActionCreator,
-  exportPage:pageExportActionCreator,
+  exportSearch: exportSearchActionCreator,
+  exportPage :exportPageActionCreator,
+  templateManager: templateManagerActionCreator,
 };
 
 const clickActionCreator = (key) => {
@@ -229,6 +244,14 @@ const clickActionCreator = (key) => {
   }
 };
 
+const subClickActionCreator = (key, subKey) => {
+  if (toolbarActions.hasOwnProperty(key)) {
+    return toolbarActions[key](subKey);
+  } else {
+    return {type: 'unknown',};
+  }
+};
+
 const mapStateToProps = (state) => {
     return getSelfState(state);
 };
@@ -236,6 +259,7 @@ const mapStateToProps = (state) => {
 const actionCreators = {
   onInit: initActionCreator,
   onClick: clickActionCreator,
+  onSubClick: subClickActionCreator,
   onChange: changeActionCreator,
   onCheck: checkActionCreator,
   onDoubleClick: doubleClickActionCreator,

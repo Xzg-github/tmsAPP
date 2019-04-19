@@ -35,7 +35,11 @@ const buttons = [
   {key: 'disable', title: '禁用', sign: 'customerTax_disable'},
   {key: 'owner', title: '车主税率', sign: 'customerTax_owner'},
   {key: 'import', title: '导入', sign: 'customerTax_import'},
-  {key: 'export', title: '导出', sign: 'customerTax_export'}
+  {key: 'export', title: '导出', sign: 'customerTax_export', menu: [
+      { key: 'exportSearch', title: '查询导出'},
+      { key: 'exportPage', title: '页面导出'},
+      { key: 'templateManager', title: '模板管理'}
+    ]}
 ];
 
 const index = {

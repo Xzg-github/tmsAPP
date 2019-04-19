@@ -9,6 +9,7 @@ import helper, {fetchJson, getJsonResult, postOption, showError} from '../../../
 import {search} from '../../../common/search';
 import {fetchDictionary, setDictionary} from '../../../common/dictionary';
 import {dealActions} from '../../../common/check';
+import {dealExportButtons} from "../customerContact/RootContainer";
 
 const STATE_PATH = ['config', 'insideFactory'];
 const action = new Action(STATE_PATH);
@@ -52,7 +53,10 @@ const initActionCreator = () => async (dispatch) => {
     setDictionary(payload.tableCols, dictionary);
     setDictionary(payload.filters, dictionary);
     setDictionary(payload.editConfig.controls, dictionary);
+    //初始化列表配置
+    payload.tableCols = helper.initTableCols(helper.getRouteKey(), payload.tableCols);
     payload.buttons = dealActions( payload.buttons, 'insideFactory');
+    payload.buttons = dealExportButtons(payload.buttons, payload.tableCols);
     dispatch(action.create(payload));
   } catch (e) {
     showError(e.message);

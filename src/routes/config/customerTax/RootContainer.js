@@ -8,6 +8,7 @@ import helper, {fetchJson, getJsonResult} from '../../../common/common';
 import {search} from '../../../common/search';
 import {fetchDictionary, setDictionary} from '../../../common/dictionary';
 import {dealActions} from '../../../common/check';
+import {dealExportButtons} from "../customerContact/RootContainer";
 
 const STATE_PATH = ['customerTax'];
 const URL_CONFIG = '/api/config/customer_tax/config';
@@ -28,7 +29,10 @@ const initActionCreator = () => async (dispatch) => {
     setDictionary(payload.tableCols, dictionary);
     setDictionary(payload.filters, dictionary);
     setDictionary(payload.editConfig.controls, dictionary);
+    //初始化列表配置
+    payload.tableCols = helper.initTableCols(helper.getRouteKey(), payload.tableCols);
     payload.buttons = dealActions( payload.buttons, 'customerTax');
+    payload.buttons = dealExportButtons(payload.buttons, payload.tableCols);
     dispatch(action.create(payload));
   } catch (e) {
     helper.showError(e.message);

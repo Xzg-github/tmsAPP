@@ -53,7 +53,10 @@ const initActionCreator = () => async (dispatch) => {
     setDictionary(payload.filters, dictionary);
     setDictionary(payload.editConfig.controls[0].data, dictionary);
     setDictionary(payload.editConfig.controls[1].data, dictionary);
+    //初始化列表配置
+    payload.tableCols = helper.initTableCols(helper.getRouteKey(), payload.tableCols);
     payload.buttons = dealActions( payload.buttons, 'suppliersArchives');
+    payload.buttons = dealExportButtons(payload.buttons, payload.tableCols);
     dispatch(action.create(payload));
   } catch (e) {
     helper.showError(e.message);

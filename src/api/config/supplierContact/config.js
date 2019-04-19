@@ -41,7 +41,11 @@ const buttons = [
   {key: 'enable', title: '启用', sign: 'customerContact_enable'},
   {key: 'disable', title: '禁用', sign: 'customerContact_disable'},
   {key: 'import', title: '导入', sign: 'customerContact_import'},
-  {key: 'export', title: '导出', sign: 'customerContact_export'}
+  {key: 'export', title: '导出', sign: 'customerContact_export', menu: [
+      { key: 'exportSearch', title: '查询导出'},
+      { key: 'exportPage', title: '页面导出'},
+      { key: 'templateManager', title: '模板管理'}
+    ]}
 ];
 
 const index = {
