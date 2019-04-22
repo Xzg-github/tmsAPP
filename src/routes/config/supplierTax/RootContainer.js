@@ -8,6 +8,7 @@ import helper, {fetchJson, getJsonResult} from '../../../common/common';
 import {search} from '../../../common/search';
 import {fetchDictionary, setDictionary} from '../../../common/dictionary';
 import {dealActions} from '../../../common/check';
+import {dealExportButtons} from "../customerContact/RootContainer";
 
 const STATE_PATH = ['supplierTax'];
 const URL_CONFIG = '/api/config/supplier_tax/config';
@@ -21,13 +22,14 @@ const getSelfState = (rootState) => {
 const initActionCreator = () => async (dispatch) => {
   try {
     dispatch(action.assign({status: 'loading'}));
-    const {index, edit, names} = getJsonResult(await fetchJson(URL_CONFIG));
+    const {index, edit, ownerControls, names} = getJsonResult(await fetchJson(URL_CONFIG));
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}));
     const dictionary = getJsonResult(await fetchDictionary(names));
-    const payload = buildOrderPageState(list, index, {editConfig: edit, status: 'page', isSort: true});
+    const payload = buildOrderPageState(list, index, {editConfig: edit, status: 'page', isSort: true, ownerControls});
     setDictionary(payload.tableCols, dictionary);
     setDictionary(payload.filters, dictionary);
     setDictionary(payload.editConfig.controls, dictionary);
+    setDictionary(payload.ownerControls, dictionary);
     payload.buttons = dealActions( payload.buttons, 'supplierTax');
     dispatch(action.create(payload));
   } catch (e) {

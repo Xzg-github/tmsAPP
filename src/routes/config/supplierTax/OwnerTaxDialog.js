@@ -15,30 +15,19 @@ const getSelfState = (rootState) => {
 };
 
 const changeActionCreator = (key, keyValue) => (dispatch, getState) => {
-  const {controls, value} = getSelfState(getState());
-  if (key === 'taxRate') {
-    const options = controls.find(item => item.key === 'taxRate').options;
-    keyValue = options.find(item => item.value === keyValue).title;
-    dispatch(action.assign({[key]: keyValue}, 'value'));
-  } else if (key === 'taxRateWay') {
-    //如果是不计税(字典值: tax_rate_way_not_calculate) 税率为0且不可编辑
-    if (keyValue === 'tax_rate_way_not_calculate') {
-      const newControls = controls.map(item => {
-        if (item.key === 'taxRate') item.type = 'readonly';
-        return item;
-      });
-      dispatch(action.assign(({controls: newControls, initialValue: value.taxRate})));
-      dispatch(action.assign({[key]: keyValue, taxRate: '0'}, 'value'));
-    } else {
-      const state = getSelfState(getState());
-      const newControls = controls.map(item => {
-        if (item.key === 'taxRate' && item.type === 'readonly') item.type = 'select';
-        return item;
-      });
-      dispatch(action.assign(({controls: newControls})));
-      dispatch(action.assign({[key]: keyValue, taxRate: state.initialValue || value.taxRate}, 'value'));
+  const {readOnlyOwnerControls, ownerControls} = getSelfState(getState());
+  if (key === 'taxRateWay' && keyValue === 'tax_rate_way_not_calculate') {
+    dispatch(action.assign({controls: readOnlyOwnerControls}));
+    dispatch(action.assign({taxRate: '0'}, 'value'));
+  }else if (key === 'taxRateWay') {
+    dispatch(action.assign({controls: ownerControls}));
+  }else {
+    if (keyValue >= 100) {
+      keyValue = '';
+      helper.showError('税率为0至100的整数');
     }
   }
+  dispatch(action.assign({[key]: keyValue}, 'value'));
 };
 
 const exitValidActionCreator = () => {
