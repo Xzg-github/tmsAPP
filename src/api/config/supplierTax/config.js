@@ -62,6 +62,11 @@ const controls = [
   {key: 'oilRatio', title: '油卡比例', type: 'number',  props: {placeholder: '小于100的整数'}},
 ];
 
+const ownerControls = [
+  {key: 'taxRateWay', title: '计税方式', type: 'select', dictionary: name.TAX_RATE_WAY, required: true},
+  {key: 'taxRate', title: '税率', type: 'number', props: {zero: true}, placeholder: '0至100的整数',required:true},
+];
+
 const edit = {
   controls,
   edit: '编辑',
@@ -71,8 +76,7 @@ const edit = {
 };
 
 const config = {
-  index,
-  edit,
+  index, edit, ownerControls,
   names: [name.BUSINESS_TYPE, name.ENABLED_TYPE, name.TAX_RATE_WAY, 'supplier_tax_type']
 };
 

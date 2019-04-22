@@ -22,13 +22,14 @@ const getSelfState = (rootState) => {
 const initActionCreator = () => async (dispatch) => {
   try {
     dispatch(action.assign({status: 'loading'}));
-    const {index, edit, names} = getJsonResult(await fetchJson(URL_CONFIG));
+    const {index, edit, ownerControls, names} = getJsonResult(await fetchJson(URL_CONFIG));
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}));
     const dictionary = getJsonResult(await fetchDictionary(names));
-    const payload = buildOrderPageState(list, index, {editConfig: edit, status: 'page', isSort: true});
+    const payload = buildOrderPageState(list, index, {editConfig: edit, status: 'page', isSort: true, ownerControls});
     setDictionary(payload.tableCols, dictionary);
     setDictionary(payload.filters, dictionary);
     setDictionary(payload.editConfig.controls, dictionary);
+    setDictionary(payload.ownerControls, dictionary);
     //初始化列表配置
     payload.tableCols = helper.initTableCols(helper.getRouteKey(), payload.tableCols);
     payload.buttons = dealActions( payload.buttons, 'supplierTax');
