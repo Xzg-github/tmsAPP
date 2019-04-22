@@ -31,6 +31,21 @@ const getSelfState = (rootState) => {
   return parent[parent.activeKey];
 };
 
+// 更新发票内容
+const updateInvoice = async (dispatch, getState, isGetExchange=1) => {
+  const {activeKey, value, id} = getSelfState(getState());
+  const {contentCurrency, tax} = value[activeKey][0];
+  const params = {
+    id,
+    invoiceShowMode: value['invoiceShowMode'] || 1,
+    isGetExchange,
+    currency: contentCurrency || 'USD',
+    tax
+  };
+  const result = getJsonResult(await fetchJson(URL_UPDATE_INVOICE, postOption(params)));
+  dispatch(action.assign({invoiceInfo: [result]}, ['value']));
+};
+
 const changeActionCreator = (KEY, keyName, keyValue) => async (dispatch, getState) =>  {
   let payload = {[keyName]: keyValue};
   switch (keyName) {
@@ -57,6 +72,14 @@ const changeActionCreator = (KEY, keyName, keyValue) => async (dispatch, getStat
       const index = controls[controlsIndex].cols.findIndex(item => item.key === 'receivableOpeningBank');
       const cols = updateOne(controls[controlsIndex].cols, index, {options: []});
       dispatch(action.update({cols}, ['controls'], controlsIndex));
+      break;
+    }
+    case 'invoiceShowMode': {
+      await updateInvoice(dispatch, getState, 0);
+      break;
+    }
+    case 'invoiceCategory': {
+      await updateInvoice(dispatch, getState, 0);
       break;
     }
   }
@@ -160,7 +183,7 @@ const closeActionCreator = () => (dispatch, getState) => {
 const saveActionCreator = () => async (dispatch, getState) => {
   execWithLoading(async () => {
     const {value} = getSelfState(getState());
-    const params = {...convert(value)};
+    const params = {...convert({...value, ...value['invoiceInfo'][0]})};
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SAVE, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
@@ -171,7 +194,7 @@ const saveActionCreator = () => async (dispatch, getState) => {
 const commitActionCreator = () => async (dispatch, getState) => {
   execWithLoading(async () => {
     const {value} = getSelfState(getState());
-    const params = {...convert(value)};
+    const params = {...convert({...value, ...value['invoiceInfo'][0]})};
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_SUBMIT, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
@@ -215,16 +238,7 @@ const onInvoiceChange = (KEY, keyName, keyValue, index) => action.update({[keyNa
 
 // 发票表格币种下拉值变化
 const onInvoiceSelect = (KEY, keyName, keyValue, index) => async (dispatch, getState) => {
-  const {value, id} = getSelfState(getState());
-  const params = {
-    id,
-    invoiceShowMode: 1,
-    isGetExchange: 1,
-    currency: keyValue,
-    tax: value[KEY][0]['tax']
-  };
-  const result = getJsonResult(await fetchJson(URL_UPDATE_INVOICE, postOption(params)));
-  dispatch(action.assign({invoiceInfo: [result]}, ['value']));
+  await updateInvoice(dispatch, getState, 1);
 };
 
 const onTabChangeActionCreator = (activeKey) => action.assign({activeKey});
@@ -234,7 +248,12 @@ const exitValidActionCreator = (KEY) => action.assign({valid: KEY});
 const buildEditPageState = async (config, itemData) => {
   const detailData = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
   const {chargeList, invoice={}} = detailData;
-  const invoiceInfo = helper.getObject(invoice, config.invoiceInfoConfig.cols.map(o => o.key));
+  // const invoiceInfo = helper.getObject(invoice, config.invoiceInfoConfig.cols.map(o => o.key));
+  const invoiceInfo = Object.keys(invoice).reduce((res, key) => {
+    res[key] = typeof invoice[key] === 'string' ? `${invoice[key]}`.replace(/(\\r\\n)+/g, '\r\n'): invoice[key];
+    return res;
+
+  }, {});
   const rateList = getJsonResult(await fetchJson(`${URL_CURRENCY_RATE}/${invoice['currency']}`));
   return {
     ...config,
