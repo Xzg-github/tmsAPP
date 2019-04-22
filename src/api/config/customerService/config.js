@@ -11,7 +11,11 @@ const buttons = [
   {key: 'edit', title: '编辑',sign: 'customer_service_edit'},
   {key: 'del', title: '失效', confirm: '是否确认失效所有勾选的记录？',sign: 'customer_service_del'},
   {key: 'active', title: '激活', confirm: '是否确认激活所有勾选的记录？',sign: 'customer_service_active'},
-  {key: 'export', title: '导出',sign: 'customer_service_export'}
+  {key: 'export', title: '导出',sign: 'customer_service_export', menu: [
+      { key: 'exportSearch', title: '查询导出'},
+      { key: 'exportPage', title: '页面导出'},
+      { key: 'templateManager', title: '模板管理'}
+    ]}
 ];
 
 const tableCols = [

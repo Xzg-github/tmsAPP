@@ -34,6 +34,25 @@ const uniqueArrHanlder = (tableCols=[], customConfig=[]) => {
   }, []);
 };
 
+const dealExportButtons = (buttons, tableCols) => {
+  return buttons.map(btn => {
+    if (btn.key.split('_')[1] !== 'export' || !btn.menu) {
+      return btn;
+    }else {
+      let newBtn = {...btn};
+      newBtn.menu = newBtn.menu.map(menu => {
+        if (['exportSearch', 'exportPage'].includes(menu.key.split('_')[1])) {
+          const subMenu = helper.getTemplateList(helper.getRouteKey(), tableCols);
+          return {...menu, subMenu};
+        }else {
+          return menu;
+        }
+      });
+      return newBtn;
+    }
+  });
+};
+
 const initActionCreator = () => async (dispatch) => {
   try {
     dispatch(action.assign({status: 'loading'}));
@@ -44,7 +63,7 @@ const initActionCreator = () => async (dispatch) => {
     const dictionary = getJsonResult(await fetchDictionary(names));
     const salemen = getJsonResult(await fetchJson(URL_SALEMEN, postOption({maxNumber: 65536, filter: ''})));
     const country = getJsonResult(await fetchJson(URL_DISTRICT, postOption({maxNumber: 300, districtType: 2})));
-    const payload = buildOrderPageState(list, index, {editConfig: edit, customConfig, finance, status: 'page'});
+    const payload = buildOrderPageState(list, index, {editConfig: edit, customConfig, finance, status: 'page', isSort: true});
     helper.setOptions('country', payload.tableCols, country);
     helper.setOptions('country', payload.editConfig.controls[0].data, country);
     helper.setOptions('salesPersonId', payload.tableCols, salemen.data);
@@ -52,7 +71,10 @@ const initActionCreator = () => async (dispatch) => {
     setDictionary(payload.filters, dictionary);
     setDictionary(payload.editConfig.controls[0].data, dictionary);
     setDictionary(payload.editConfig.controls[1].data, dictionary);
+    //初始化列表配置
+    payload.tableCols = helper.initTableCols(helper.getRouteKey(), payload.tableCols);
     payload.buttons = dealActions( payload.buttons, 'customersArchives');
+    payload.buttons = dealExportButtons(payload.buttons, payload.tableCols);
     dispatch(action.create(payload));
   } catch (e) {
     helper.showError(e.message);
@@ -67,5 +89,5 @@ const actionCreators = {
 };
 
 const Component = EnhanceLoading(EnhanceEditDialog(OrderPageContainer, EditDialogContainer));
-const Container = connect(mapStateToProps, actionCreators)(Component);
-export default Container;
+export default connect(mapStateToProps, actionCreators)(Component);
+export {dealExportButtons};

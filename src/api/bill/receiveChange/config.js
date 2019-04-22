@@ -23,8 +23,9 @@ const buttons = [
   {key: 'revoke', title: '撤销提交'},
   {key: 'delete', title: '删除', confirm: '是否确定删除已选中记录?'},
   {key: 'export', title: '导出', menu: [
-      { key: 'exportSearch', title: '查询导出'},
       { key: 'exportPage', title: '页面导出'},
+      { key: 'exportSearch', title: '查询导出'},
+      { key: 'templateManager', title: '模板管理'}
     ]},
   {key: 'config', title: '配置字段'}
 ];

@@ -22,8 +22,9 @@ const btns = [
   {key: 'audit', title: '整审', showInTab: ['1']},
   {key: 'import', title: '导入', showInTab: ['0', '1']},
   {key: 'export', title: '导出', showInTab: ['0', '1', '2'], menu: [
-    { key: 'exportSearch', title: '查询导出'},
     { key: 'exportPage', title: '页面导出'},
+    { key: 'exportSearch', title: '查询导出'},
+    { key: 'templateManager', title: '模板管理'}
   ]},
   {key: 'changeOrder', title: '改单', showInTab: ['2']},
   {key: 'createBill', title: '生成账单', showInTab: ['1'], menu: [
@@ -85,6 +86,10 @@ const receiveCols = [
   {key: 'taxRateWay', title: '计税方式', dictionary: name.TAX_TYPE},
   {key: 'taxAmount', title: '税额'},
   {key: 'netAmount', title: '净价'},
+  {key: 'includeTaxAmount', title: '含税金额'},
+  {key: 'periodOfyear', title: '会计年'},
+  {key: 'periodOfmonth', title: '会计月'},
+  {key: 'settlementSystemStatus', title: '对接状态', dictionary: name.SETTLEMENT_SYSTEM_STATUS},
   {key: 'remark', title: '备注'},
   {key: 'isAdditional', title: '是否额外费用', dictionary: name.ZERO_ONE_TYPE},
   {key: 'statusType', title: '状态', dictionary: 'status_type_01'},
@@ -124,6 +129,10 @@ const payCols = [
   {key: 'taxRateWay', title: '计税方式', dictionary: name.TAX_TYPE},
   {key: 'taxAmount', title: '税额'},
   {key: 'netAmount', title: '净价'},
+  {key: 'includeTaxAmount', title: '含税金额'},
+  {key: 'periodOfyear', title: '会计年'},
+  {key: 'periodOfmonth', title: '会计月'},
+  {key: 'settlementSystemStatus', title: '对接状态', dictionary: name.SETTLEMENT_SYSTEM_STATUS},
   {key: 'remark', title: '备注'},
   {key: 'isAdditional', title: '是否额外费用', dictionary: name.ZERO_ONE_TYPE},
   {key: 'statusType', title: '状态', dictionary: 'status_type_01'},
@@ -261,7 +270,8 @@ const config = {
     name.CHARGE_ORIGIN,
     name.CHARGE_UNIT,
     name.ZERO_ONE_TYPE,
-    name.TAX_TYPE
+    name.TAX_TYPE,
+    name.SETTLEMENT_SYSTEM_STATUS
   ]
 };
 

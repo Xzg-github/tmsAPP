@@ -8,6 +8,7 @@ import helper, {fetchJson, getJsonResult} from '../../../common/common';
 import {search} from '../../../common/search';
 import {fetchDictionary, setDictionary} from '../../../common/dictionary';
 import {dealActions} from '../../../common/check';
+import {dealExportButtons} from "../customerContact/RootContainer";
 
 const STATE_PATH = ['supplierContact'];
 const URL_CONFIG = '/api/config/supplier_contact/config';
@@ -24,11 +25,14 @@ const initActionCreator = () => async (dispatch) => {
     const {index, edit, names} = getJsonResult(await fetchJson(URL_CONFIG));
     const list = getJsonResult(await search(URL_LIST, 0, index.pageSize, {}));
     const dictionary = getJsonResult(await fetchDictionary(names));
-    const payload = buildOrderPageState(list, index, {editConfig: edit, status: 'page'});
+    const payload = buildOrderPageState(list, index, {editConfig: edit, status: 'page', isSort: true});
     setDictionary(payload.tableCols, dictionary);
     setDictionary(payload.filters, dictionary);
     setDictionary(payload.editConfig.controls, dictionary);
+    //初始化列表配置
+    payload.tableCols = helper.initTableCols(helper.getRouteKey(), payload.tableCols);
     payload.buttons = dealActions( payload.buttons, 'customerContact');
+    payload.buttons = dealExportButtons(payload.buttons, payload.tableCols);
     dispatch(action.create(payload));
   } catch (e) {
     helper.showError(e.message);

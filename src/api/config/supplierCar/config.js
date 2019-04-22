@@ -19,8 +19,11 @@ const buttons = [
   {key: 'enable', title: '启用'},
   {key: 'disable', title: '禁用'},
   {key: 'import', title: '导入'},
-  {key:'export',title:'导出', menu: [{key:'searchExport',title:'查询导出'}
-    ,{key:'pageExport',title:'页面导出'}]},
+  {key:'export',title:'导出', menu: [
+      { key: 'exportSearch', title: '查询导出'},
+      { key: 'exportPage', title: '页面导出'},
+      { key: 'templateManager', title: '模板管理'}
+    ]},
 ];
 
 const tableCols = [

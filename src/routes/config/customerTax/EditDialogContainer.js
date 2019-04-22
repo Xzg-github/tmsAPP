@@ -14,11 +14,16 @@ const URL_CLIENT = '/api/config/customer_tax/customer';
 const URL_ITEMS = '/api/config/customer_tax/Items';
 
 const buildState = (config, data, edit) => {
+  const newControls = helper.deepCopy(config.controls).map(item => {
+    if (item.key === 'taxRate') item.type = 'readonly';
+    return item;
+  });
   return {
     ...config,
     title: edit ? '编辑' :'新增',
     visible: true,
     value: data,
+    controls: data['taxRateWay'] === 'tax_rate_way_not_calculate' ? newControls : config.controls
   }
 };
 
@@ -58,19 +63,39 @@ const clickActionCreator = (key) => {
   }
 };
 
-const changeActionCreator = (key, value) =>  {
-  if (key === 'taxRate') {
-    if (value >= 100) {
-      value = null;
-      showError('税率必须小于100');
-    }
-  }else if (key === 'oilRatio')  {
-    if (value >= 100) {
-      value = null;
+const changeActionCreator = (key, keyValue) => (dispatch, getState) => {
+  if (key === 'oilRatio')  {
+    if (keyValue >= 100) {
+      keyValue = null;
       showError('油卡比例必须小于100');
     }
   }
-  return action.assign({[key]: value}, 'value');
+  if (key === 'taxRate') {
+    const {controls} = getSelfState(getState());
+    const options = controls.find(item => item.key === 'taxRate').options;
+    keyValue = options.find(item => item.value === keyValue).title;
+  }
+  if (key === 'taxRateWay') {
+    const {controls, value} = getSelfState(getState());
+    //如果是不计税(字典值: tax_rate_way_not_calculate) 税率为0且不可编辑
+    if (keyValue === 'tax_rate_way_not_calculate') {
+      const newControls = controls.map(item => {
+        if (item.key === 'taxRate') item.type = 'readonly';
+        return item;
+      });
+      dispatch(action.assign(({controls: newControls, initialValue: value.taxRate})));
+      dispatch(action.assign({[key]: keyValue, taxRate: '0'}, 'value'));
+    } else {
+      const state = getSelfState(getState());
+      const newControls = controls.map(item => {
+        if (item.key === 'taxRate' && item.type === 'readonly') item.type = 'select';
+        return item;
+      });
+      dispatch(action.assign(({controls: newControls})));
+      dispatch(action.assign({[key]: keyValue, taxRate: state.initialValue || value.taxRate}, 'value'));
+    }
+  }
+  dispatch(action.assign({[key]: keyValue}, 'value'));
 };
 
 const exitValidActionCreator = () => {
@@ -79,12 +104,12 @@ const exitValidActionCreator = () => {
 
 const searchActionCreator = (key, value) => async (dispatch) => {
   if (key === 'customerId') {
-    const {returnCode, result} = await fetchJson(URL_CLIENT, postOption({"customerName": value, "maxNumber": 10}));
+    const {returnCode, result} = await fetchJson(URL_CLIENT, postOption({"filter": value, "maxNumber": 10}));
     if (returnCode === 0) {
       dispatch(action.assign({[key]: result}, 'options'));
     }
   }else if (key === 'chargeItemId') {
-    const {returnCode, result} = await fetchJson(URL_ITEMS, postOption({"customerName": value, "maxNumber": 10}));
+    const {returnCode, result} = await fetchJson(URL_ITEMS, postOption({chargeName: value, "maxNumber": 10}));
     if (returnCode === 0) {
       dispatch(action.assign({[key]: result}, 'options'));
     }

@@ -9,6 +9,7 @@ import helper, { fetchJson, getJsonResult, postOption } from '../../../common/co
 import { search } from '../../../common/search';
 import { fetchDictionary, setDictionary } from '../../../common/dictionary';
 import { dealActions } from '../../../common/check';
+import {dealExportButtons} from "../customersArchives/RootContainer";
 
 const STATE_PATH = ['config', 'suppliersArchives'];
 const URL_CONFIG = '/api/config/suppliersArchives/config';
@@ -44,7 +45,7 @@ const initActionCreator = () => async (dispatch) => {
     const dictionary = getJsonResult(await fetchDictionary(names));
     const buyers = getJsonResult(await fetchJson(URL_BUYERS, postOption({maxNumber: 20, filter: ''})));
     const country = getJsonResult(await fetchJson(URL_DISTRICT, postOption({maxNumber: 300, districtType: 2})));
-    const payload = buildOrderPageState(list, index, {editConfig: edit, customConfig, finance, status: 'page'});
+    const payload = buildOrderPageState(list, index, {editConfig: edit, customConfig, finance, status: 'page', isSort: true});
     helper.setOptions('country', payload.tableCols, country);
     helper.setOptions('country', payload.editConfig.controls[0].data, country);
     helper.setOptions('purchasePersonId', payload.tableCols, buyers.data);
@@ -52,7 +53,10 @@ const initActionCreator = () => async (dispatch) => {
     setDictionary(payload.filters, dictionary);
     setDictionary(payload.editConfig.controls[0].data, dictionary);
     setDictionary(payload.editConfig.controls[1].data, dictionary);
+    //初始化列表配置
+    payload.tableCols = helper.initTableCols(helper.getRouteKey(), payload.tableCols);
     payload.buttons = dealActions( payload.buttons, 'suppliersArchives');
+    payload.buttons = dealExportButtons(payload.buttons, payload.tableCols);
     dispatch(action.create(payload));
   } catch (e) {
     helper.showError(e.message);

@@ -9,6 +9,8 @@ import {showColsSetting} from '../../../../common/tableColsSetting';
 import {getNewTableData} from '../RootContainer';
 import {jumpToChange} from '../../payChange/RootContainer';
 import {showConfirmDialog} from '../../../../common/showCofirmDialog';
+import showFilterSortDialog from "../../../../common/filtersSort";
+import showTemplateManagerDialog from '../../../../standard-business/template/TemplateContainer';
 
 const STATE_PATH = ['payMake'];
 const action = new Action(STATE_PATH);
@@ -97,6 +99,12 @@ const searchActionCreator = async (dispatch, getState) => {
 
 const resetActionCreator = action.assign({searchData: {}});
 
+const sortActionCreator = async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
+};
+
 // 弹出编辑页面
 const showEditPage = (dispatch, getState, item, isReadonly=false) => {
   const {tabs, editConfig} = getSelfState(getState());
@@ -167,15 +175,28 @@ const changeOrderActionCreator = async (dispatch, getState) => {
 const importActionCreator = async (dispatch, getState) => showImportDialog('cost_import');
 
 // 查询导出
-const exportSearchActionCreator = (dispatch, getState) => {
-  const {tableCols, searchData} = getSelfState(getState());
-  commonExport(tableCols, '/tms-service/transport_order/cost/search', searchData);
+const exportSearchActionCreator = (subKey) => async (dispatch, getState) => {
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {searchData, tabKey} = getSelfState(getState());
+  const url = '/tms-service/transport_order/cost/search';
+  const filters = {...searchData, incomeTag: tabKey};
+  commonExport(tableCols, url, filters, true, false, 'post', false);
 };
 
 // 页面导出
-const exportPageActionCreator = async (dispatch, getState) => {
-  const {tableCols, tableItems} = getSelfState(getState());
+const exportPageActionCreator = (subKey) => async (dispatch, getState) => {
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {tableItems=[]} = getSelfState(getState());
   exportExcelFunc(tableCols, tableItems);
+};
+
+//模板管理
+const templateManagerActionCreator = async (dispatch, getState) => {
+  const {tableCols, btns} = getSelfState(getState());
+  if(true === await showTemplateManagerDialog(tableCols, helper.getRouteKey())) {
+    const buttons = helper.setExportBtns(btns, tableCols);
+    dispatch(action.assign({btns: buttons}));
+  }
 };
 
 // 配置字段
@@ -188,6 +209,7 @@ const configActionCreator = async (dispatch, getState) => {
 };
 
 const toolbarActions = {
+  sort: sortActionCreator,
   reset: resetActionCreator,
   search: searchActionCreator,
   edit: editActionCreator,
@@ -198,6 +220,7 @@ const toolbarActions = {
   exportSearch: exportSearchActionCreator,
   exportPage: exportPageActionCreator,
   config: configActionCreator,
+  templateManager: templateManagerActionCreator,
 };
 
 const clickActionCreator = (key) => {
@@ -206,6 +229,14 @@ const clickActionCreator = (key) => {
   } else if(key.includes('createBill_')) {
     const k = key.split('createBill_')[1];
     return createBillActionCreator(k);
+  } else {
+    return {type: 'unknown'};
+  }
+};
+
+const onSubClickActionCreator = (key, subKey) => {
+  if (toolbarActions.hasOwnProperty(key)) {
+    return toolbarActions[key](subKey);
   } else {
     return {type: 'unknown'};
   }
@@ -263,6 +294,7 @@ const actionCreators = {
   onPageSizeChange: pageSizeActionCreator,
   onTableChange: tableChangeActionCreator,
   onTabChange: tabChangeActionCreator,
+  onSubClick: onSubClickActionCreator,
 };
 
 const Container = connect(mapStateToProps, actionCreators)(OrderPage);

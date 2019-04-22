@@ -502,6 +502,42 @@ const uploadWithFileCheck = (url) => {
   return upload(url, checkFile);
 };
 
+/**
+ * 功能：获取对应页面表格的导出模板列表
+ * 参数：code:页面标识,必须与对应模板管理页面标识一致
+ *       tableCols当前列表配置
+ * */
+const getTemplateList = (code, tableCols) => {
+  const defaultList = [
+    {title: '导出全部列', key: JSON.stringify({templateName: '导出全部列', tableCols})},
+    {title: '导出列表显示列', key: JSON.stringify({templateName: '导出列表显示列', tableCols: tableCols.filter(col => col.hide !== true)})}
+  ];
+  const state = global.store.getState();
+  const path = ['layout', 'tableColsSetting', code];
+  const config = getPathValue(state, path) || {};
+  const {templateList=[]} = config;
+  return defaultList.concat(templateList.map(item => ({title: item.name, key: JSON.stringify({templateName:item.name, tableCols: item.cols})})));
+};
+/**
+ * 功能：设置标准化导出按钮下拉和子下拉选项,主要针对费用管理部分原有的导出配置做优化
+ * 参数：btns:原有的按钮组数据
+ *      tableCols:当前列表配置
+ *      exportKeys:导出下拉项的key值数组，默认值为['exportSearch', 'exportPage']
+ * */
+const setExportBtns = (btns=[], tableCols=[], exportKeys=['exportSearch', 'exportPage']) => {
+  return btns.map(btn => {
+    if (btn.key.includes('export') && btn.menu) {
+      btn.menu = btn.menu.map(o => {
+        if (exportKeys.includes(o.key)) {
+          o.subMenu = getTemplateList(getRouteKey(), tableCols);
+        }
+        return o;
+      })
+    }
+    return btn;
+  });
+};
+
 const helper = {
   postOption,
   fetchJson,
@@ -538,7 +574,9 @@ const helper = {
   getRouteKey,
   getPageTitle,
   setPageTitle,
-  uploadWithFileCheck
+  uploadWithFileCheck,
+  getTemplateList,
+  setExportBtns
 };
 
 export {
@@ -571,6 +609,7 @@ export {
   formatTime,
   deepCopy,
   download,
+  setExportBtns
 };
 
 export default helper;

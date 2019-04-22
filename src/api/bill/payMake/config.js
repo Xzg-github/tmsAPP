@@ -26,8 +26,9 @@ const btns = [
   {key: 'audit', title: '整审', showInTab: ['1']},
   {key: 'import', title: '导入', showInTab: ['0', '1']},
   {key: 'export', title: '导出', showInTab: ['0', '1', '2'], menu: [
-    { key: 'exportSearch', title: '查询导出'},
     { key: 'exportPage', title: '页面导出'},
+    { key: 'exportSearch', title: '查询导出'},
+    { key: 'templateManager', title: '模板管理'}
   ]},
   {key: 'changeOrder', title: '改单', showInTab: ['2']},
   {key: 'createBill', title: '生成账单', showInTab: ['1'], menu: [
@@ -102,6 +103,10 @@ const payCols = [
   {key: 'taxRateWay', title: '计税方式', dictionary: name.TAX_TYPE},
   {key: 'taxAmount', title: '税额'},
   {key: 'netAmount', title: '净价'},
+  {key: 'includeTaxAmount', title: '含税金额'},
+  {key: 'periodOfyear', title: '会计年'},
+  {key: 'periodOfmonth', title: '会计月'},
+  {key: 'settlementSystemStatus', title: '对接状态', dictionary: name.SETTLEMENT_SYSTEM_STATUS},
   {key: 'remark', title: '备注'},
   {key: 'isAdditional', title: '是否额外费用', dictionary: name.ZERO_ONE_TYPE},
   {key: 'statusType', title: '状态', dictionary: 'status_type_01'},
@@ -144,6 +149,7 @@ const payColsEdit = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
   {key: 'supplierId', title: '结算单位', type: 'search', required: true},
+  {key: 'carNumber', title: '车牌号码', type: 'search'},
   {key: 'chargeItemId', title: '费用名称', type: 'search', required: true},
   {key: 'chargeUnit', title: '计量单位', type: 'select', required: true, dictionary: name.CHARGE_UNIT},
   {key: 'price', title: '单价', type: 'number', required: true, props: {real: true, precision: 2}},
@@ -151,7 +157,7 @@ const payColsEdit = [
   {key: 'amount', title: '金额', type: 'readonly', props: {real: true, precision: 2}},
   {key: 'currency', title: '币种', type: 'select', required: true, dictionary: 'currency'},
   {key: 'exchangeRate', title: '汇率', type: 'readonly'},
-  {key: 'remark', title: '备注', type: 'text'},
+  {key: 'remark', title: '备注', type: 'text', width: 200},
   {key: 'statusType', title: '状态', type: 'readonly', dictionary: 'status_type_01'}
 ];
 
@@ -198,7 +204,8 @@ const config = {
     name.CHARGE_ORIGIN,
     name.CHARGE_UNIT,
     name.ZERO_ONE_TYPE,
-    name.TAX_TYPE
+    name.TAX_TYPE,
+    name.SETTLEMENT_SYSTEM_STATUS
   ]
 };
 

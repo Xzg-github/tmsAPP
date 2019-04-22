@@ -26,7 +26,8 @@ const props = {
   pageSize: PropTypes.number,
   pageSizeType: PropTypes.array,
   description: PropTypes.string,
-  paginationConfig: PropTypes.object  // 该属性将被description替代
+  paginationConfig: PropTypes.object, // 该属性将被description替代
+  isSort: PropTypes.bool //search组件是否展示排序
 };
 
 class OrderPage extends React.Component {
@@ -46,14 +47,16 @@ class OrderPage extends React.Component {
     return ReactDOM.findDOMNode(this);
   };
 
+  //增加isSort属性, 默认为false, 用于展示排序按钮
   toSearch = () => {
-    const {filters, searchConfig, searchData} = this.props;
+    const {filters, searchConfig, searchData, isSort = false} = this.props;
     const props = {
       filters,
       data: searchData,
       config: searchConfig,
       ...getObject(this.props, SEARCH_EVENTS),
-      onHeightChange: this.onHeightChange
+      onHeightChange: this.onHeightChange,
+      isSort
     };
     return <Search {...props}/>;
   };
@@ -61,7 +64,8 @@ class OrderPage extends React.Component {
   toToolbar = () => {
     const props = {
       buttons: this.props.buttons,
-      callback: getObject(this.props, TOOLBAR_EVENTS)
+      callback: getObject(this.props, TOOLBAR_EVENTS),
+      onSubClick: this.props.onSubClick
     };
     return <SuperToolbar {...props} />;
   };

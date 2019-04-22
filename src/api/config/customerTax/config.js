@@ -34,7 +34,11 @@ const buttons = [
   {key: 'enable', title: '启用', sign: 'customerTax_enable'},
   {key: 'disable', title: '禁用', sign: 'customerTax_disable'},
   {key: 'import', title: '导入', sign: 'customerTax_import'},
-  {key: 'export', title: '导出', sign: 'customerTax_export'}
+  {key: 'export', title: '导出', sign: 'customerTax_export', menu: [
+      { key: 'exportSearch', title: '查询导出'},
+      { key: 'exportPage', title: '页面导出'},
+      { key: 'templateManager', title: '模板管理'}
+    ]}
 ];
 
 const index = {
@@ -52,8 +56,8 @@ const controls = [
   {key: 'customerId', title: '客户档案标识', type: 'search', required: true},
   {key: 'businessType', title: '业务类型',type: 'select', dictionary: name.BUSINESS_TYPE},
   {key: 'chargeItemId', title: '费用标识', type: 'search'},
-  {key: 'taxRate', title: '税率', type: 'number', props: {placeholder: '小于100的整数'}, required:true},
   {key: 'taxRateWay', title: '计税方式', type: 'select', dictionary: name.TAX_RATE_WAY, required: true},
+  {key: 'taxRate', title: '税率', type: 'select', dictionary: 'customer_tax_type', required:true},
   {key: 'oilRatio', title: '油卡比例', type: 'number',  props: {placeholder: '小于100的整数'}},
 ];
 
@@ -68,7 +72,7 @@ const edit = {
 const config = {
   index,
   edit,
-  names: [name.BUSINESS_TYPE, name.ENABLED_TYPE, name.TAX_RATE_WAY]
+  names: [name.BUSINESS_TYPE, name.ENABLED_TYPE, name.TAX_RATE_WAY, 'customer_tax_type']
 };
 
 export default config;

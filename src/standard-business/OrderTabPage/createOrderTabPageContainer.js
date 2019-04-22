@@ -6,6 +6,7 @@ import {showColsSetting} from '../../common/tableColsSetting';
 import showFilterSortDialog from "../../common/filtersSort";
 import {fetchAllDictionary, setDictionary2, getStatus} from "../../common/dictionary";
 import {exportExcelFunc, commonExport} from '../../common/exportExcelSetting';
+import showTemplateManagerDialog from "../template/TemplateContainer";
 
 //实现搜索公共业务
 const mySearch = async (dispatch, action, selfState, currentPage, pageSize, filter, newState={}) => {
@@ -95,25 +96,43 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
   };
 
   //配置字段按钮
-  const configActionCreator = () => (dispatch, getState) => {
-    const {tableCols} = getSelfState(getState());
+  const configActionCreator = () => async (dispatch, getState) => {
+    const {tableCols, buttons} = getSelfState(getState());
     const okFunc = (newCols) => {
-      dispatch(action.assign({tableCols: newCols}));
+      const newButtons = Object.keys(buttons).reduce((result, key) => {
+        result[key] = dealExportButtons(buttons[key], newCols);
+        return result;
+      }, {});
+      dispatch(action.assign({tableCols: newCols, buttons: newButtons}));
     };
     showColsSetting(tableCols, okFunc, helper.getRouteKey());
   };
 
   //页面导出
-  const webExportActionCreator = () => (dispatch, getState) => {
-    const {tableCols, tableItems, subActiveKey} = getSelfState(getState());
+  const webExportActionCreator = (tabKey, subKey) => (dispatch, getState) => {
+    const {tableCols=[]} = JSON.parse(subKey);
+    const {tableItems, subActiveKey} = getSelfState(getState());
     return exportExcelFunc(tableCols, tableItems[subActiveKey]);
   };
 
   //查询导出
-  const allExportActionCreator = () => (dispatch, getState) => {
-    const {tableCols, searchData, subActiveKey, urlExport, fixedFilters={}} = getSelfState(getState());
+  const allExportActionCreator = (tabKey, subKey) => (dispatch, getState) => {
+    const {tableCols=[]} = JSON.parse(subKey);
+    const {searchData, subActiveKey, urlExport, fixedFilters={}} = getSelfState(getState());
     const realSearchData = {...searchData, ...fixedFilters[subActiveKey]};
     return commonExport(tableCols, urlExport, realSearchData, true, false, 'post', false);
+  };
+
+  //模板管理
+  const templateManagerActionCreator = () => async (dispatch, getState) => {
+    const {tableCols, buttons} = getSelfState(getState());
+    if(true === await showTemplateManagerDialog(tableCols, helper.getRouteKey())) {
+      const newButtons = Object.keys(buttons).reduce((result, key) => {
+        result[key] = dealExportButtons(buttons[key], tableCols);
+        return result;
+      }, {});
+      dispatch(action.assign({buttons: newButtons}));
+    }
   };
 
   //前端表格排序和过滤
@@ -148,6 +167,7 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
     onConfig: configActionCreator,        //点击配置字段按钮
     onWebExport: webExportActionCreator, //点击页面导出按钮
     onAllExport: allExportActionCreator, //点击查询导出按钮
+    onTemplateManager: templateManagerActionCreator, //点击模板管理
     onChange: changeActionCreator,        //过滤条件输入改变
     onSearch: searchOptionsActionCreator, //过滤条件为search控件时的下拉搜索响应
     onCheck: checkActionCreator,          //表格勾选响应
@@ -157,12 +177,33 @@ const createOrderTabPageContainer = (action, getSelfState, actionCreatorsEx={}) 
     onSubTabChange: tabChangeActionCreator,          //列表页签切换响应
     //可扩展的响应
     // onClick: 按钮点击响应 func(tabKey, buttonKey)
+    // onSubClick: 按钮二级子列表点击响应 func(tabKey, buttonKey, subKey)
     // onDoubleClick: 表格双击响应 func(tabKey, rowIndex)
     // onLink: 表格点击链接响应 func(tabKey, key, rowIndex, item)
     ...actionCreatorsEx
   };
 
   return connect(mapStateToProps, actionCreators)(OrderTabPage);
+};
+
+//初始化导出按钮下拉项模板列表，参数tableCols需为初始化配置后的
+const dealExportButtons = (buttons, tableCols) => {
+  return buttons.map(btn => {
+    if (btn.key !== 'export' || !btn.menu) {
+      return btn;
+    }else {
+      let newBtn = {...btn};
+      newBtn.menu = newBtn.menu.map(menu => {
+        if (['webExport', 'allExport'].includes(menu.key)) {
+          const subMenu = helper.getTemplateList(helper.getRouteKey(), tableCols);
+          return {...menu, subMenu};
+        }else {
+          return menu;
+        }
+      });
+      return newBtn;
+    }
+  });
 };
 
 /*
@@ -183,6 +224,10 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[], 
       dic[item] = helper.getJsonResult(await getStatus(item));
     }
     setDictionary2(dic, config.filters, config.tableCols);
+    //初始化查询列表配置
+    config.filters = isSort ? helper.initFilters(helper.getRouteKey(), config.filters) : config.filters;
+    //初始化列表配置
+    config.tableCols = helper.initTableCols(helper.getRouteKey(), config.tableCols);
     //获取列表数据
     let {subActiveKey, subTabs, isTotal, initPageSize, fixedFilters={}, searchDataBak={}, buttons={}} = config;
     if (home && subTabs.filter(item => item.key === home).length === 1) {
@@ -214,7 +259,9 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[], 
       currentPage[tab.key] = 1;
       isRefresh[tab.key] = true;
       //处理按钮权限(要求按钮权限的资源代码结构为"上级资源代码_按钮key")
-      finalButtons[tab.key] = buttons[tab.key] ? buttons[tab.key].filter(btn => helper.getActions(helper.getRouteKey(), true).includes(btn.key)) : []
+      finalButtons[tab.key] = buttons[tab.key] ? buttons[tab.key].filter(btn => helper.getActions(helper.getRouteKey(), true).includes(btn.key)) : [];
+      //处理导出按钮模板列表初始化
+      finalButtons[tab.key] = dealExportButtons(finalButtons[tab.key], config.tableCols);
     });
     tableItems[subActiveKey] = data.data || [];
     isRefresh[subActiveKey] = false;
@@ -231,8 +278,6 @@ const buildOrderTabPageCommonState = async (urlConfig, urlList, statusNames=[], 
       isRefresh,
       tableItems,
       buttons: finalButtons,
-      tableCols: helper.initTableCols(helper.getRouteKey(), config.tableCols),
-      filters: isSort ? helper.initFilters(helper.getRouteKey(), config.filters) : config.filters,
       sortInfo: {},
       filterInfo: {},
       status: 'page'

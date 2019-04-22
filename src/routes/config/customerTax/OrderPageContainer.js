@@ -5,9 +5,12 @@ import {getPathValue} from '../../../action-reducer/helper';
 import helper, {getObject, fetchJson, showError, postOption, showSuccessMsg} from '../../../common/common';
 import {search2} from '../../../common/search';
 import {showImportDialog} from '../../../common/modeImport';
-import {exportExcelFunc} from '../../../common/exportExcelSetting';
+import {commonExport, exportExcelFunc} from '../../../common/exportExcelSetting';
 import showEditDialog from './EditDialogContainer'
 import {toFormValue} from "../../../common/check";
+import showFilterSortDialog from "../../../common/filtersSort";
+import showTemplateManagerDialog from "../../../standard-business/template/TemplateContainer";
+import {dealExportButtons} from "../customerContact/RootContainer";
 
 const STATE_PATH = ['customerTax'];
 const action = new Action(STATE_PATH);
@@ -15,7 +18,7 @@ const action = new Action(STATE_PATH);
 const URL_LIST = '/api/config/customer_tax/list';
 const URL_ENABLE = '/api/config/customer_tax/enable';
 const URL_DELETE = '/api/config/customer_tax/delete';
-const URL_ALLCUSTOMER = '/api/config/customer_tax/allCustomer';
+const URL_ALLCUSTOMER = '/api/config/customer_contact/customer';
 const URL_ALLITEM = '/api/config/customer_tax/allItems';
 
 const getSelfState = (rootState) => {
@@ -113,10 +116,33 @@ const importActionCreator = () => {
   return showImportDialog('customer_tax_import');
 };
 
-//导出
-const exportActionCreator =(dispatch, getState)=>{
-  const {tableCols, tableItems} = getSelfState(getState());
+
+const sortActionCreator = async (dispatch, getState) => {
+  const {filters} = getSelfState(getState());
+  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  newFilters && dispatch(action.assign({filters: newFilters}));
+};
+
+//页面导出
+const exportPageActionCreator = (subKey) => (dispatch, getState) => {
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {tableItems} = getSelfState(getState());
   return exportExcelFunc(tableCols, tableItems);
+};
+
+// 查询导出
+const exportSearchActionCreator = (subKey) => (dispatch, getState) =>{
+  const {tableCols=[]} = JSON.parse(subKey);
+  const {searchData} = getSelfState(getState());
+  return commonExport(tableCols, '/archiver-service/customer_tax/list/search', searchData);
+};
+
+//模板管理
+const templateManagerActionCreator = async (dispatch, getState) => {
+  const {tableCols, buttons} = getSelfState(getState());
+  if(true === await showTemplateManagerDialog(tableCols, helper.getRouteKey())) {
+    dispatch(action.assign({buttons: dealExportButtons(buttons, tableCols)}));
+  }
 };
 
 const toolbarActions = {
@@ -125,15 +151,26 @@ const toolbarActions = {
   add: addAction,
   edit: editAction,
   enable: enableAction,
+  sort: sortActionCreator,
   disable: disableAction,
   delete: delAction,
   import: importActionCreator,
-  export:exportActionCreator,
+  exportSearch: exportSearchActionCreator,
+  exportPage :exportPageActionCreator,
+  templateManager: templateManagerActionCreator,
 };
 
 const clickActionCreator = (key) => {
   if (toolbarActions.hasOwnProperty(key)) {
     return toolbarActions[key];
+  } else {
+    return {type: 'unknown',};
+  }
+};
+
+const subClickActionCreator = (key, subKey) => {
+  if (toolbarActions.hasOwnProperty(key)) {
+    return toolbarActions[key](subKey);
   } else {
     return {type: 'unknown',};
   }
@@ -194,6 +231,7 @@ const filterSearchActionCreator = (key, value) =>async(dispatch)=> {
 const actionCreators = {
   onSearch:filterSearchActionCreator,
   onClick: clickActionCreator,
+  onSubClick: subClickActionCreator,
   onChange: changeActionCreator,
   onCheck: checkActionCreator,
   onDoubleClick: doubleClickActionCreator,

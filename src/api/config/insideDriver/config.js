@@ -28,10 +28,11 @@ const buttons = [
   {key: 'inactive', title: '禁用', sign: 'insideDriver_inactive'},
   {key: 'del', title: '删除', sign: 'insideDriver_del', confirm:'是否确定删除'},
   {key: 'import', title: '导入', sign: 'insideDriver_import'},
-  {key: 'insideDriver_export', title: '导出', menu:[
-    { key: 'exportSearch', title: '查询导出'},
-    { key: 'exportPage', title: '页面导出'},
-  ]},
+  {key: 'export', title: '导出', sign: 'insideDriver_export', menu: [
+      { key: 'exportSearch', title: '查询导出'},
+      { key: 'exportPage', title: '页面导出'},
+      { key: 'templateManager', title: '模板管理'}
+    ]}
 ];
 
 const controls = [

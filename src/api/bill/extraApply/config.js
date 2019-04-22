@@ -139,7 +139,7 @@ const amountInfo = [
 ];
 
 const fallbackInfo = [
-  {key: 'fallbackReason', title: '回退原因', type: 'textArea'}
+  {key: 'fallbackRemark', title: '回退原因', type: 'textArea'}
 ];
 
 const resultForm = {

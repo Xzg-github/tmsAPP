@@ -479,6 +479,28 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       dispatch(action.assign({goodsList: true}, 'valid'));
       return false;
     }
+    let consignorNum = 0, consigneeNum = 0;
+    //收发货数量是否填写
+    for (let i = 0; i < addressList.length; ++i) {
+      const {pickupDeliveryType, pickupGoodsNumber, deliveryGoodsNumber} = addressList[i];
+      if (~~pickupDeliveryType === 0 && !pickupGoodsNumber) {
+        helper.showError(`收发货列表第${i+1}行，类型发货，需填写发货数量`);
+        return false;
+      }else if (~~pickupDeliveryType === 1 && !deliveryGoodsNumber) {
+        helper.showError(`收发货列表第${i+1}行，类型收货，需填写收货数量`);
+        return false;
+      }else if (~~pickupDeliveryType === 2 && (!pickupGoodsNumber || !deliveryGoodsNumber)) {
+        helper.showError(`收发货列表第${i+1}行，类型收发货，需填写发货数量和收货数量`);
+        return false;
+      }
+      consignorNum += Number(pickupGoodsNumber || 0);
+      consigneeNum += Number(deliveryGoodsNumber || 0);
+    }
+    //收货数量===发货数量
+    if (consignorNum.toFixed(2) !== consigneeNum.toFixed(2)) {
+      helper.showError(`总发货数量${consignorNum}与总收货数量${consigneeNum}不一致`);
+      return false;
+    }
     return true;
   };
 

@@ -29,6 +29,7 @@ class OrderPage extends React.Component {
   toSearch = () => {
     const {filters, searchConfig, searchData} = this.props;
     const props = {
+      isSort: true,
       filters,
       data: searchData,
       config: searchConfig,

@@ -46,7 +46,7 @@ class OrderPage extends React.Component {
   };
 
   onHandleClick = (key) => {
-    const {onClick, onClickReset, onClickSearch, onConfig, onWebExport, onAllExport, onClickSort} = this.props;
+    const {onClick, onClickReset, onClickSearch, onConfig, onTemplateManager, onClickSort} = this.props;
     switch (key) {
       case 'reset': {
         onClickReset();
@@ -64,16 +64,30 @@ class OrderPage extends React.Component {
         onConfig();
         break;
       }
-      case 'webExport': {
-        onWebExport();
-        break;
-      }
-      case 'allExport': {
-        onAllExport();
+      case 'templateManager': {
+        onTemplateManager();
         break;
       }
       default:
         onClick && onClick(key);
+    }
+  };
+
+
+  onHandleSubClick = (key, subKey) => {
+    const {onWebExport, onAllExport, onSubClick} = this.props;
+    switch (key) {
+      case 'webExport': {
+        onWebExport(subKey);
+        break;
+      }
+      case 'allExport': {
+        onAllExport(subKey);
+        break;
+      }
+      default: {
+        onSubClick && onSubClick(key, subKey);
+      }
     }
   };
 
@@ -94,7 +108,8 @@ class OrderPage extends React.Component {
   toToolbar = () => {
     const props = {
       buttons: this.props.buttons.concat([{key: 'config', title: '配置字段'}]),
-      onClick: this.onHandleClick
+      onClick: this.onHandleClick,
+      onSubClick: this.onHandleSubClick,
     };
     return <SuperToolbar {...props} />;
   };

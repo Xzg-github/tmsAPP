@@ -27,10 +27,11 @@ const buttons = [
   {key: 'inactive', title: '禁用', sign: 'supplierDriver_inactive'},
   {key: 'del', title: '删除', sign: 'supplierDriver_del', confirm:'是否确定删除'},
   {key: 'import', title: '导入', sign: 'supplierDriver_import'},
-  {key: 'supplierDriver_export', title: '导出', menu:[
-    { key: 'exportSearch', title: '查询导出'},
-    { key: 'exportPage', title: '页面导出'},
-  ]},
+  {key: 'export', title: '导出', menu: [
+      { key: 'exportSearch', title: '查询导出'},
+      { key: 'exportPage', title: '页面导出'},
+      { key: 'templateManager', title: '模板管理'}
+    ]},
 ];
 
 const controls = [

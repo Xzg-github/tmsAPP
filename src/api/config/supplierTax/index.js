@@ -59,4 +59,16 @@ api.post('/Items', async (req, res) => {
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
+//车主税率
+api.post('/owner', async (req, res) => {
+  const url = `${service}/supplier_tax/select_by_supplier_ids/batch`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
+//车主税率保存
+api.post('/ownerTax', async (req, res) => {
+  const url = `${service}/supplier_tax`;
+  res.send(await fetchJsonByNode(req, url, postOption(req.body)));
+});
+
 export default api;

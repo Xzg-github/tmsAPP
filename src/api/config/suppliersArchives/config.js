@@ -24,6 +24,7 @@ const buttons = [
   {key: 'suppliersArchives_export', title: '导出', menu:[
     { key: 'suppliersArchives_exportSearch', title: '查询导出'},
     { key: 'suppliersArchives_exportPage', title: '页面导出'},
+    { key: 'suppliersArchives_templateManager', title: '模板管理'},
   ]},
   {key: 'suppliersArchives_finance', title: '设置财务人员'},
   {key: 'suppliersArchives_config', title: '配置字段'}
@@ -43,6 +44,7 @@ const tableCols = [
   {key: 'contractEndTime', title: '合同结束日期', type: 'date'},
   {key: 'supplierType', title: '供应商类型', type: 'select', dictionary: name.SUPPLIER_TYPE},
   {key: 'companyLevel', title: '供应商级别', type: 'select',dictionary: name.COMPANY_LEVEL},
+  {key: 'chargeRemark', title: '费用备注'},
   {key: 'insertUser', title: '操作人'},
   {key: 'insertTime', title: '操作时间', type: 'date'}
 ];
@@ -90,7 +92,8 @@ const cooperationInfo = [
   {key: 'creditDays', title: '结算天数', type: 'number'},
   {key: 'creditMoney', title: '信用额度', type: 'number'},
   {key: 'taxType', title: '计税方式', type: 'select', dictionary: name.TAX_TYPE},
-  {key: 'tax', title: '税率', type: 'number', props: {precision: 2}},
+  {key: 'tax', title: '税率', type: 'select', dictionary: 'supplier_tax_type'},
+  {key: 'chargeRemark', title: '费用备注', type: 'textArea', span: 4}
 ];
 
 const controls = [
@@ -120,7 +123,7 @@ const config = {
   finance,
   names: [
     name.BALANCE_WAY, name.YES_OR_NO,name.CUSTOMER_TYPE, name.TAX_TYPE,
-    name.ENABLED_TYPE, name.COMPANY_TYPE, name.COMPANY_LEVEL,name.SUPPLIER_TYPE
+    name.ENABLED_TYPE, name.COMPANY_TYPE, name.COMPANY_LEVEL,name.SUPPLIER_TYPE, 'supplier_tax_type'
   ]
 };
 

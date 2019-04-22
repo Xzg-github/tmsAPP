@@ -2,7 +2,7 @@ import {pageSize, pageSizeType, paginationConfig, searchConfig} from '../../glob
 
 
 const filters = [
-  {key: 'customerId', title: '客户', type: 'search', searchType: 'customer_all'},
+  {key: 'customerId', title: '客户', type: 'search', searchType: 'customer'},
   {key: 'invoiceHeaderInformation', title: '发票抬头', type: 'text'}
 
 ];
@@ -22,7 +22,8 @@ const tableCols = [
 
 const menu = [
   {key:'webExport',title:'页面导出'},
-  {key:'allExport',title:'查询导出'}
+  {key:'allExport',title:'查询导出'},
+  {key:'templateManager', title:'模板管理'}
 ];
 
 const buttons = [

@@ -210,6 +210,7 @@ const name = {
   CUSTOMER_INFORMATION_FEEDBACK: 'customer_information_feedback', //客户信息反馈类型
   CONTRACT_ROLES: 'contract_roles', //签署角色
   EXPENSE_OUTPUT_TYPE: 'expense_output_type', //产值报销类型
+  SETTLEMENT_SYSTEM_STATUS: 'settlement_system_status', //对接状态
 };
 
 export default name;

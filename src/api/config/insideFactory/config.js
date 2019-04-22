@@ -36,7 +36,11 @@ const buttons = [
   {key: 'disable', title: '禁用', sign: 'cutomerFactory_disable'},
   {key: 'delete', title: '删除', sign: 'cutomerFactory_delete', confirm: '是否删除选中记录'},
   {key: 'import', title: '导入', sign: 'cutomerFactory_import'},
-  {key: 'export', title: '导出', sign: 'cutomerFactory_export'},
+  {key: 'export', title: '导出', sign: 'customerFactory_export', menu: [
+      { key: 'exportSearch', title: '查询导出'},
+      { key: 'exportPage', title: '页面导出'},
+      { key: 'templateManager', title: '模板管理'}
+    ]},
   {key: 'config', title: '配置字段', sign: 'cutomerFactory_config'}
 ];
 
