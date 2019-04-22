@@ -56,7 +56,9 @@ const editAction = async (dispatch, getState) => {
   if (index === -1) {
     return showError('请勾选一条记录');
   }
-  await showEditDialog(editConfig,tableItems[index],true);
+  tableItems[index].supplierId ?
+    await showEditDialog(editConfig,tableItems[index],true) :
+    await ownerAction(dispatch, getState);
 };
 
 // 车主税率
@@ -233,7 +235,7 @@ const doubleClickActionCreator = (index) => async (dispatch, getState) => {
   const {tableItems, editConfig} = getSelfState(getState());
   tableItems[index].supplierId ?
     await showEditDialog(editConfig,tableItems[index],true) :
-    await ownerAction(dispatch, getState)
+    await ownerAction(dispatch, getState);
 };
 
 const pageNumberActionCreator = (currentPage) => (dispatch, getState) => {
