@@ -69,8 +69,8 @@ const index = {
 };
 
 const invoiceShowModeOptions = [
-  {value: 0, title: '汇总'},
-  {value: 1, title: '明细'}
+  {value: '0', title: '汇总'},
+  {value: '1', title: '明细'}
 ];
 
 const baseInfo = [
@@ -110,21 +110,24 @@ const invoiceInfoConfig = {
     {key: 'goodsName', title: '货物名称', type: 'textarea',
       otherProps: {prefix: '金额合计：', colSpan: 1, align: 'right'}},
     {key: 'chargeName', title: '费用项', type: 'textarea',
-      otherProps: {colSpan: 8, align: 'left', select: true}},
+      otherProps: {colSpan: 9, align: 'left', select: true}},
     {key: 'price', title: '单价', type: 'number', props: {real: true, precision: 2},
       otherProps: {disabled: true}},
     {key: 'itemCount', title: '数量', type: 'number',
       otherProps: {disabled: true}},
-    {key: 'tax', title: '税率', type: 'number', props: {real: true, precision: 2, zero: true}},
+    {key: 'tax', title: '税率', type: 'number', props: {real: true, precision: 2, zero: true},
+      otherProps: {disabled: true}},
     {key: 'taxAmount', title: '税额', type: 'number', props: {real: true, precision: 2},
       otherProps: {disabled: true}},
     {key: 'netAmount', title: '净额', type: 'number', props: {real: true, precision: 2},
       otherProps: {disabled: true}},
-    // {key: 'currency', title: '折算币种', type: 'text',
-    //   otherProps: {disabled: true}},
-    {key: 'exchangeCurrency', title: '开票币种', type: 'text',
+    {key: 'contentCurrency', title: '币种', type: 'text',
       otherProps: {disabled: true}},
-    {key: 'amount', title: '开票金额', type: 'number', props: {real: true, precision: 2, zero: true},
+      {key: 'contentAmount', title: '金额', type: 'text',
+        otherProps: {disabled: true}},
+    {key: 'exchangeCurrency', title: '开票币种', type: 'textarea',
+      otherProps: {disabled: true}},
+    {key: 'amount', title: '开票金额', type: 'textarea',
       otherProps: {prefix: '合计：', colSpan: 1, align: 'right',}},
     {key: 'remark', title: '备注', type: 'textarea', props: {real: true, precision: 2},
       otherProps: {colSpan: 1, addonBefore: '￥', align: 'left', type: 'number',}}
