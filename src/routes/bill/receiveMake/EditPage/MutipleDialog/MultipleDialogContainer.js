@@ -27,10 +27,14 @@ const getSelfState = (rootState) => {
 const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, getState) =>{
   const {customerId, supplierId, cols, items} = getSelfState(getState());
   let payload = {[keyName]: keyValue}, index = rowIndex;
+  const {price=0, number=0} = items[index];
   switch (keyName) {
-    case 'price':
-    case 'chargeNum': {
-      payload['amount'] = '';
+    case 'price': {
+      payload['amount'] = (Number(keyValue) * Number(number)).toFixed(2);
+      break;
+    }
+    case 'number': {
+      payload['amount'] = (Number(keyValue) * Number(price)).toFixed(2);
       break;
     }
     case 'currency': {
@@ -38,13 +42,15 @@ const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, ge
       break;
     }
     case 'customerId': {
-      const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${keyValue.value}`));
-      payload['currency'] = currency ? currency.balanceCurrency : undefined;
+      // const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${keyValue.value}`));
+      // payload['currency'] = currency ? currency.balanceCurrency : undefined;
+      payload['currency'] = keyValue.balanceCurrency;
       break;
     }
     case 'supplierId': {
-      const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY_SUPPLIER}/${keyValue.value}`));
-      payload['currency'] = currency ? currency.balanceCurrency : undefined;
+      // const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY_SUPPLIER}/${keyValue.value}`));
+      // payload['currency'] = currency ? currency.balanceCurrency : undefined;
+      payload['currency'] = keyValue.balanceCurrency;
       let {isRequired:requiredArr=[], _extraProps={}} = items[index];
       // 如果是车主类型，车牌号码为必填
       if (keyValue.supplierType === 'supplier_type_car_owner' && !requiredArr.includes('carNumber')) {
