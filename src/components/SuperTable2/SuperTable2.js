@@ -137,7 +137,7 @@ class SuperTable2 extends React.Component {
   };
 
   renderEditableCell = ({key, type, options, props, required, width}, value, index) => {
-    const {readonly, isReadonly=[], isRequired=[]} = this.props.items[index];
+    const {readonly, isReadonly=[], isRequired=[], _extraProps={}} = this.props.items[index];
     const cellProps = {
       value, width,
       type: readonly || (Array.isArray(isReadonly) && isReadonly.includes(key)) ? 'readonly' : type,
@@ -149,6 +149,8 @@ class SuperTable2 extends React.Component {
       onBlur: this.onBlur
     };
     if(Array.isArray(isRequired) && isRequired.includes(key)){
+      cellProps.error = this.validField(true, value);
+      cellProps.props = {...cellProps.props, ..._extraProps}
       return (<div>
         <span style={{color: 'red', display: 'inline-block'}}>*</span>
         <span style={{marginLeft: '5px', display: 'inline-block'}}><SuperTableCell {...cellProps} /></span>

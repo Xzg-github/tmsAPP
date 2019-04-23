@@ -25,7 +25,7 @@ const getSelfState = (rootState) => {
 };
 
 const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, getState) =>{
-  const {customerId, supplierId, cols} = getSelfState(getState());
+  const {customerId, supplierId, cols, items} = getSelfState(getState());
   let payload = {[keyName]: keyValue}, index = rowIndex;
   switch (keyName) {
     case 'price':
@@ -45,14 +45,23 @@ const changeActionCreator = (rowIndex, keyName, keyValue) => async (dispatch, ge
     case 'supplierId': {
       const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY_SUPPLIER}/${keyValue.value}`));
       payload['currency'] = currency ? currency.balanceCurrency : undefined;
+      let {isRequired:requiredArr=[], _extraProps={}} = items[index];
       // 如果是车主类型，车牌号码为必填
-      const i = cols.findIndex(o => o.key === 'carNumber');
-      const required1 = keyValue.supplierType === 'supplier_type_car_owner';
-      dispatch(action.update({required: required1}, 'cols', i));
+      if (keyValue.supplierType === 'supplier_type_car_owner' && !requiredArr.includes('carNumber')) {
+        requiredArr.push('carNumber');
+      } else {
+        requiredArr = requiredArr.filter(o => o !== 'carNumber');
+      }
       // 如果有费用备注，备注为必填
-      const j = cols.findIndex(o => o.key === 'remark');
-      const required2 = !!keyValue.chargeRemark;
-      dispatch(action.update({required: required2, props: {placeholder: keyValue.chargeRemark}}, 'cols', j));
+      if (!!keyValue.chargeRemark && !requiredArr.includes('remark')) {
+        _extraProps['placeholder'] = keyValue.chargeRemark;
+        requiredArr.push('remark');
+      } else {
+        _extraProps['placeholder'] = '';
+        requiredArr = requiredArr.filter(o => o !== 'remark');
+      }
+      payload.isRequired = requiredArr;
+      payload._extraProps = _extraProps;
       break;
     }
   }
@@ -161,16 +170,13 @@ const clickActionCreator = (key) => {
 
 const okActionCreator = (afterClose) => async (dispatch, getState) => {
   const {cols, items} = getSelfState(getState());
-  if(!validArray(cols, items)) {
+  const list = items.filter(item => item.isRequired && item.isRequired.length > 0);
+  const flag = list.some( o =>(o.isRequired.some(i => !o[i])));
+  if(!validArray(cols, items) || flag) {
     dispatch(action.assign({valid: true}));
     return showError('请填写必填项！');
   }
-  dispatch(action.assign({okResult: items.map(o => {
-    if (o.carNumber && o.carNumber.title) {
-      o.carNumber = o.carNumber.title;
-    }
-    return convert(o)
-  })}));
+  dispatch(action.assign({okResult: items.map(o => convert(o))}));
   afterClose();
 };
 
@@ -191,7 +197,20 @@ const actionCreators = {
 
 const Container = connect(mapStateToProps, actionCreators)(EnhanceLoading(MultipleDialog));
 export default async (params) => {
-  global.store.dispatch(action.create(params));
+  const {items=[]} = params;
+  const newItems = items.map(it => {
+    const isRequired = [], _extraProps = {};
+    const {supplierDto={}} = it;
+    if (supplierDto.supplierType === 'supplier_type_car_owner') {
+      isRequired.push('carNumber');
+    }
+    if (!!supplierDto.chargeRemark) {
+      isRequired.push('remark');
+      _extraProps['placeholder'] = supplierDto.chargeRemark;
+    }
+    return {...it, isRequired, _extraProps}
+  });
+  global.store.dispatch(action.create({...params, items: newItems}));
   await showPopup(Container, {status: 'page'}, true);
   const state = getSelfState(global.store.getState());
   global.store.dispatch(action.create({}));

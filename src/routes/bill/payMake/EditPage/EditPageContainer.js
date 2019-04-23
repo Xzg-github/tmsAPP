@@ -30,6 +30,14 @@ const getSelfState = (rootState) => {
   return parent[parent.activeKey];
 };
 
+const caculateTaxAmount = (list=[]) => {
+  return list.map(o => {
+    const {netAmount=0, taxAmount=0} = o;
+    const includeTaxAmount = Number((Number(netAmount) + Number(taxAmount)).toFixed(2));
+    return {...o, includeTaxAmount}
+  });
+};
+
 const currencyChangeActionCreator = (value, isRefresh=false) => async (dispatch, getState) => {
   const {activeCurrency, id} = getSelfState(getState());
   if (activeCurrency !== value || isRefresh) {
@@ -72,7 +80,7 @@ const addActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_ADD, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({payItems: result}));
+    dispatch(action.assign({payItems: caculateTaxAmount(result)}));
     currencyChangeActionCreator(state.activeCurrency, true)(dispatch, getState);
     await afterEdit(dispatch, getState);
   });
@@ -91,7 +99,7 @@ const copyActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_ADD, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({payItems: result}));
+    dispatch(action.assign({payItems: caculateTaxAmount(result)}));
     currencyChangeActionCreator(state.activeCurrency, true)(dispatch, getState);
     await afterEdit(dispatch, getState);
   });
@@ -116,7 +124,7 @@ const editActionCreator = (isDoubleClick, rowIndex) => async (dispatch, getState
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_EDIT, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({payItems: result}));
+    dispatch(action.assign({payItems: caculateTaxAmount(result)}));
     currencyChangeActionCreator(state.activeCurrency, true)(dispatch, getState);
     await afterEdit(dispatch, getState);
   });
@@ -151,7 +159,7 @@ const auditActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_AUDIT, postOption(ids));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({payItems: result}));
+    dispatch(action.assign({payItems: caculateTaxAmount(result)}));
     await afterEdit(dispatch, getState);
   });
 };
@@ -165,7 +173,7 @@ const strikeBlanceActionCreator = () => async (dispatch, getState) => {
     const {returnCode, returnMsg, result} = await fetchJson(`${URL_STRIKEBALANCE}/${item.id}`, 'post');
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({payItems: result}));
+    dispatch(action.assign({payItems: caculateTaxAmount(result)}));
     await afterEdit(dispatch, getState);
   });
 };
@@ -228,11 +236,6 @@ const buildEditPageState = async (config, itemData, isReadonly) => {
   const supplier = itemData.supplierId ? itemData.supplierId.value : undefined;
   const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${supplier}`));
   const totalValues = getJsonResult(await fetchJson(`${URL_TOTAL}/${itemData.id}/${currencyTypeCode}`));
-  const list = data.map(o => {
-    const {netAmount=0, taxAmount} = o;
-    const includeTaxAmount = Number((Number(netAmount) + Number(taxAmount)).toFixed(2));
-    return {...o, includeTaxAmount}
-  });
   return {
     ...config,
     ...itemData,
@@ -240,7 +243,7 @@ const buildEditPageState = async (config, itemData, isReadonly) => {
     activeCurrency: currencyTypeCode,
     balanceCurrency: currency ? currency.balanceCurrency: undefined,
     totalValues,
-    payItems: list,
+    payItems: caculateTaxAmount(data),
     orderInfo: {id: itemData.id, readonly: true},
     status: 'page'
   };
