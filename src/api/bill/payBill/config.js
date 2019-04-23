@@ -85,7 +85,7 @@ const costInfoButtons = [
 const costInfoCols = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
-  {key: 'sequence', title: '排序', type: 'number', required: true},
+  {key: 'sequence', title: '排序', type: 'number'},
   {key: 'supplierId', title: '结算单位', type: 'readonly'},
   {key: 'chargeItemId', title: '费用名称', type: 'readonly'},
   {key: 'chargeUnit', title: '计量单位', type: 'readonly', dictionary: name.CHARGE_UNIT},
