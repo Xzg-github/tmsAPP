@@ -118,9 +118,21 @@ const editActionCreator = async (dispatch, getState) => {
 
 const batchActionCreator = async (dispatch, getState) => {
   const {batchEditControls, tableItems} = getSelfState(getState());
-  const index = helper.findOnlyCheckedIndex(tableItems);
-  if (index === -1) return showError('请勾选一条数据！');
-  const value = tableItems[index];
+  const checckList = tableItems.filter(o => o.checked);
+  if (checckList.length < 1) return showError('请勾选一条数据！');
+  const customerPriceIds = Array.from(new Set(checckList.map(o => o.customerPriceId)));
+  if (customerPriceIds.length > 1) return showError('请勾选同一个报价合同下的数据！');
+  const {customerPriceId, customerPriceCode, customerId} = customerPriceIds[0];
+  const defaultValue = {
+    customerPriceId,
+    customerPriceCode,
+    customerId,
+    contractNumber: {
+      title: customerPriceCode,
+      value: customerPriceId
+    }
+  };
+  const value = {...defaultValue, idList: checckList.map(o => o.id)};
   const result = await showEditDialog({type: 3, controls: batchEditControls, value, DIALOG_API});
   result && await afterEdit(dispatch, getState);
 };

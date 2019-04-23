@@ -91,11 +91,11 @@ const freightControls = [
   {key: 'carModeId', title: '车型', type: 'search'},
   {key: 'fuelType', title: '燃油种类', type: 'select', dictionary: name.FUEL_TYPE},
   {key: 'standardPrice', title: '基本运费', type: 'text', required: true},
-  {key: 'returnPrice', title: '返空费', type: 'text', required: true},
+  {key: 'returnPrice', title: '返空费', type: 'text'},
   {key: 'chargeUnit', title: '计量单位', type: 'select', dictionary: name.CHARGE_UNIT, required: true},
   {key: 'numberSource', title: '数量源', type: 'select', dictionary: name.NUMBER_SOURCE, required: true},
   {key: 'hours', title: '时效（小时）', type: 'number'},
-  {key: 'kilometre', title: '公里数（KM）', type: 'number'},
+  {key: 'kilometre', title: '公里数（KM）', type: 'number', props: {real: true, precision: 2}},
   {key: 'remark', title: '备注', type: 'text'},
 ];
 

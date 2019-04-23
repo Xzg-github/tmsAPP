@@ -105,7 +105,7 @@ const okActionCreator = (afterClose) => async (dispatch, getState) => {
   const {returnCode, result, returnMsg} = await fetchJson(url, postOption(convert(params)));
   if (returnCode !== 0) return showError(returnMsg);
   helper.showSuccessMsg(returnMsg);
-  dispatch(action.assign({okResult: result}));
+  dispatch(action.assign({okResult: result || true}));
   afterClose();
 };
 
