@@ -51,7 +51,7 @@ const formSearchActionCreator = (key, value) => async (dispatch, getState) => {
 
 const saveActionCreator = async (dispatch, getState) => {
   execWithLoading(async () => {
-    const {editType, fileList, value={}, controls} = getSelfState(getState());
+    const {editType, fileList=[], value={}, controls} = getSelfState(getState());
     if (!helper.validValue(controls, value)) {
       return dispatch(action.assign({valid: true}, [PATH]));
     }
@@ -79,7 +79,7 @@ const saveActionCreator = async (dispatch, getState) => {
 
 const commitActionCreator = async (dispatch, getState) => {
   execWithLoading(async () => {
-    const {fileList, value={}, controls} = getSelfState(getState());
+    const {fileList=[], value={}, controls} = getSelfState(getState());
     if (!helper.validValue(controls, value)) {
       return dispatch(action.assign({valid: true}, [PATH]));
     }
