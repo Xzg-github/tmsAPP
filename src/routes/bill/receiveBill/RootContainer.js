@@ -42,8 +42,11 @@ const initActionCreator = () => async (dispatch) => {
 
     payload.buttons = dealActions( payload.buttons, 'receiveBill');
 
+    // 初始化搜索条件配置
+    payload.filters = helper.initFilters('receive_bill_sort', payload.filters);
+
     // 初始化按钮配置
-    payload.buttons = helper.setExportBtns(payload.buttons, payload.tableCols);
+    payload.buttons = helper.setExportBtns('receive_bill_export', payload.buttons, payload.tableCols);
 
     dispatch(action.create(payload));
   } catch (e) {

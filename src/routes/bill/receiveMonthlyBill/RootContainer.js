@@ -59,6 +59,9 @@ const initActionCreator = () => async (dispatch) => {
     helper.setOptions('periodOfyear', index.filters, allYear);
     helper.setOptions('periodOfyear', edit.controls, allYear);
 
+    // 初始化搜索条件配置
+    index.filters = helper.initFilters('receive_month_bill_sort', index.filters);
+
     dispatch(action.assign({
       status: 'page',
       index: buildOrderPageState(list, index, {tabKey: 'index', isSort: true}),

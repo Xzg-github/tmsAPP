@@ -36,7 +36,7 @@ const resetActionCreator = action.assign({searchData: {}});
 
 const sortActionCreator = async (dispatch, getState) => {
   const {filters} = getSelfState(getState());
-  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  const newFilters = await showFilterSortDialog(filters, 'extra_apply_sort');
   newFilters && dispatch(action.assign({filters: newFilters}));
 };
 

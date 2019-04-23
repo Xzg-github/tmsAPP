@@ -70,6 +70,8 @@ const initActionCreator = () => async (dispatch) => {
     setDictionary(payload.editConfig.tables[1].cols, dictionarys);
     setDictionary(payload.editConfig.resultForm.cols, dictionarys);
 
+    payload.filters = helper.initFilters('extra_apply_sort', payload.filters);
+
     payload.buttons = dealActions(payload.buttons, 'extraApply');
     dispatch(action.create({...payload, status: 'page'}));
   } catch (e) {
