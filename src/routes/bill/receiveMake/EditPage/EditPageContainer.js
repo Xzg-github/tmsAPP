@@ -30,6 +30,14 @@ const getSelfState = (rootState) => {
   return parent[parent.activeKey];
 };
 
+const caculateTaxAmount = (list=[]) => {
+  return list.map(o => {
+    const {netAmount=0, taxAmount=0} = o;
+    const includeTaxAmount = Number((Number(netAmount) + Number(taxAmount)).toFixed(2));
+    return {...o, includeTaxAmount}
+  });
+};
+
 const currencyChangeActionCreator = (value, isRefresh=false) => async (dispatch, getState) => {
   const {activeCurrency, id} = getSelfState(getState());
   if (activeCurrency !== value || isRefresh) {
@@ -74,7 +82,7 @@ const addActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_ADD, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}));
+    dispatch(action.assign({receiveItems: caculateTaxAmount(result)}));
     currencyChangeActionCreator(state.activeCurrency, true)(dispatch, getState);
     await afterEdit(dispatch, getState);
   });
@@ -94,7 +102,7 @@ const copyActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_ADD, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}));
+    dispatch(action.assign({receiveItems: caculateTaxAmount(result)}));
     currencyChangeActionCreator(state.activeCurrency, true)(dispatch, getState);
     await afterEdit(dispatch, getState);
   });
@@ -119,7 +127,7 @@ const editActionCreator = (isDoubleClick, rowIndex) => async (dispatch, getState
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_EDIT, postOption(params));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}));
+    dispatch(action.assign({receiveItems: caculateTaxAmount(result)}));
     currencyChangeActionCreator(state.activeCurrency, true)(dispatch, getState);
     await afterEdit(dispatch, getState);
   });
@@ -154,7 +162,7 @@ const auditActionCreator = () => async (dispatch, getState) => {
     const {returnCode, result, returnMsg} = await helper.fetchJson(URL_BATCH_AUDIT, postOption(ids));
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}));
+    dispatch(action.assign({receiveItems: caculateTaxAmount(result)}));
     await afterEdit(dispatch, getState);
   });
 };
@@ -168,7 +176,7 @@ const strikeBlanceActionCreator = () => async (dispatch, getState) => {
     const {returnCode, returnMsg, result} = await fetchJson(`${URL_STRIKEBALANCE}/${item.id}`, 'post');
     if (returnCode !== 0) return showError(returnMsg);
     showSuccessMsg(returnMsg);
-    dispatch(action.assign({receiveItems: result}));
+    dispatch(action.assign({receiveItems: caculateTaxAmount(result)}));
     await afterEdit(dispatch, getState);
   });
 };
@@ -217,7 +225,7 @@ const convertActionCreator = () => async (dispatch, getState) => {
       }
       return o;
     });
-    dispatch(action.assign({receiveItems: result, payItems: newPayItems}));
+    dispatch(action.assign({receiveItems: caculateTaxAmount(result), payItems: caculateTaxAmount(newPayItems)}));
     await afterEdit(dispatch, getState);
   });
 };
@@ -280,16 +288,6 @@ const buildEditPageState = async (config, itemData, isReadonly) => {
   const currencyTypeCode = getJsonResult(await helper.fetchJson(URL_CURRENCY_CODE, 'get'));
   const currency = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${itemData.customerId.value}`));
   const totalValues = getJsonResult(await fetchJson(`${URL_TOTAL}/${itemData.id}/${currencyTypeCode}`));
-  const incomeList = incomeDetails.map(o => {
-    const {netAmount=0, taxAmount} = o;
-    const includeTaxAmount = Number((Number(netAmount) + Number(taxAmount)).toFixed(2));
-    return {...o, includeTaxAmount}
-  });
-  const costList = costDetails.map(o => {
-    const {netAmount=0, taxAmount} = o;
-    const includeTaxAmount = Number((Number(netAmount) + Number(taxAmount)).toFixed(2));
-    return {...o, includeTaxAmount}
-  });
   return {
     ...config,
     ...itemData,
@@ -298,8 +296,8 @@ const buildEditPageState = async (config, itemData, isReadonly) => {
     activeCurrency: currencyTypeCode,
     balanceCurrency: currency.balanceCurrency,
     totalValues,
-    receiveItems: incomeList,
-    payItems: costList,
+    receiveItems: caculateTaxAmount(incomeDetails),
+    payItems: caculateTaxAmount(costDetails),
     activeKey: 'index',
     orderInfo: {id: itemData.id, readonly: true},
     tabs: [
