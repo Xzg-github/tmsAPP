@@ -55,7 +55,7 @@ const searchActionCreator = async (dispatch, getState) => {
 
 const sortActionCreator = async (dispatch, getState) => {
   const {filters} = getSelfState(getState());
-  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  const newFilters = await showFilterSortDialog(filters, 'receive_change_sort');
   newFilters && dispatch(action.assign({filters: newFilters}));
 };
 
@@ -78,8 +78,8 @@ const exportPageActionCreator = (subKey) => async (dispatch, getState) => {
 //模板管理
 const templateManagerActionCreator = async (dispatch, getState) => {
   const {tableCols, buttons} = getSelfState(getState());
-  if(true === await showTemplateManagerDialog(tableCols, helper.getRouteKey())) {
-    dispatch(action.assign({buttons: helper.setExportBtns(buttons, tableCols)}));
+  if(true === await showTemplateManagerDialog(tableCols, 'receive_change_export')) {
+    dispatch(action.assign({buttons: helper.setExportBtns('receive_change_export', buttons, tableCols)}));
   }
 };
 

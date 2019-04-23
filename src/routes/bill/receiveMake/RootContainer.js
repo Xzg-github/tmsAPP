@@ -127,8 +127,11 @@ const initActionCreator = (home) => async (dispatch) => {
 
     assignPrivilege(payload);
 
+    // 初始化搜索条件配置
+    payload.filters = helper.initFilters('receive_make_sort', payload.filters);
+
     // 初始化按钮配置
-    payload.btns = helper.setExportBtns(payload.btns, payload.tableCols);
+    payload.btns = helper.setExportBtns('receive_make_export', payload.btns, payload.tableCols);
 
     dispatch(action.create(payload));
   } catch (e) {
