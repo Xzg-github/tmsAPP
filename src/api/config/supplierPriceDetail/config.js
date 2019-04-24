@@ -97,10 +97,10 @@ const freightControls = [
 const extraChargeControls = [
   {key: 'supplierId', title: '供应商', type: 'search', required: true},
   {key: 'contractNumber', title: '供应商合同号', type: 'search'},
-  {key: 'departureType', title: '起发地类别', type: 'select', required: true, options: businessTypeOptions},
-  {key: 'departure', title: '起运地', type: 'search', required: true},
-  {key: 'destinationType', title: '目的地类别', type: 'select', required: true, options: destinationTypeOptions},
-  {key: 'destination', title: '目的地', type: 'search', required: true},
+  {key: 'departureType', title: '起发地类别', type: 'select', options: businessTypeOptions},
+  {key: 'departure', title: '起运地', type: 'search'},
+  {key: 'destinationType', title: '目的地类别', type: 'select', options: destinationTypeOptions},
+  {key: 'destination', title: '目的地', type: 'search'},
   {key: 'businessType', title: '运输类型', type: 'select', dictionary: name.BUSINESS_TYPE},
   {key: 'carModeId', title: '车型', type: 'search'},
   {key: 'chargeItemId', title: '费用项', type: 'search', required: true},
@@ -120,8 +120,9 @@ const freightBatchEditControls = [
 ];
 
 const ExtraChargeatchEditControls = [
-  {key: 'standardPrice', title: '基本运费', type: 'text'},
-  {key: 'returnPrice', title: '返空费', type: 'text'},
+  // {key: 'standardPrice', title: '基本运费', type: 'text'},
+  // {key: 'returnPrice', title: '返空费', type: 'text'},
+  {key: 'price', title: '价格', type: 'number', props: {real: true, precision: 2}},
   {key: 'currency', title: '币种', type: 'search'},
   {key: 'chargeUnit', title: '计量单位', type: 'select', dictionary: name.CHARGE_UNIT},
   {key: 'numberSource', title: '数量源', type: 'select', dictionary: name.NUMBER_SOURCE},

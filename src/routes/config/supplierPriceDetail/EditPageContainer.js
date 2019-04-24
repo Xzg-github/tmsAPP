@@ -22,9 +22,9 @@ const URL_CONSIGNOR = '/api/config/supplierPriceDetail/consignor';
 const URL_CARMODE = '/api/config/supplierPriceDetail/carMode';
 const URL_DELETE = '/api/config/supplierPriceDetail/delete';
 const URL_ABLE = '/api/config/supplierPriceDetail/able';
-const URL_ADD = '/api/config/supplierPriceDetail/freightAdd';
-const URL_EDIT = '/api/config/supplierPriceDetail/freightEdit';
-const URL_BATCHEDIT = '/api/config/supplierPriceDetail/freightBatchEdit';
+const URL_ADD = '/api/config/supplierPriceDetail/extraChargeAdd';
+const URL_EDIT = '/api/config/supplierPriceDetail/extraChargeEdit';
+const URL_BATCHEDIT = '/api/config/supplierPriceDetail/extraChargeBatchEdit';
 const URL_CAOMODE = '/api/config/supplierPriceDetail/carMode';
 const URL_CURRENCY = '/api/config/supplierPriceDetail/currency';
 const URL_CHARGEITEM = '/api/config/supplierPriceDetail/chargeItem';
@@ -127,16 +127,16 @@ const batchActionCreator = async (dispatch, getState) => {
   const {batchEditControls, tableItems} = getSelfState(getState());
   const checckList = tableItems.filter(o => o.checked);
   if (checckList.length < 1) return showError('请勾选一条数据！');
-  const customerPriceIds = Array.from(new Set(checckList.map(o => o.customerPriceId)));
-  if (customerPriceIds.length > 1) return showError('请勾选同一个报价合同下的数据！');
-  const {customerPriceId, customerPriceCode, customerId} = customerPriceIds[0];
+  const supplierPriceIds = Array.from(new Set(checckList.map(o => o.supplierPriceId)));
+  if (supplierPriceIds.length > 1) return showError('请勾选同一个报价合同下的数据！');
+  const {supplierPriceId, supplierPriceCode, supplierId} = supplierPriceIds[0];
   const defaultValue = {
-    customerPriceId,
-    customerPriceCode,
-    customerId,
+    supplierPriceId,
+    supplierPriceCode,
+    supplierId,
     contractNumber: {
-      title: customerPriceCode,
-      value: customerPriceId
+      title: supplierPriceCode,
+      value: supplierPriceId
     }
   };
   const value = {...defaultValue, idList: checckList.map(o => o.id)};

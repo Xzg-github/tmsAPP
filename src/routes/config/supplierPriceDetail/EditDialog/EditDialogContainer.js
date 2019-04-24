@@ -62,8 +62,8 @@ const okActionCreator = (afterClose) => async (dispatch, getState) => {
     if (checkList.some(o => helper.isEmpty2(value[o]))) return showError('勾选的数据为必填！');
   }
   const url = type < 2 ? DIALOG_API.newAdd : type === 2 ? DIALOG_API.editSave: DIALOG_API.batchEdit;
-  const params = helper.getObject(convert(value), controls.map(o => o.key));
-  const {returnCode, result, returnMsg} = await fetchJson(url, postOption(params));
+  const params = {...value, supplierPriceId: value['supplierPriceId'] || value['contractNumber']};
+  const {returnCode, result, returnMsg} = await fetchJson(url, postOption(convert(params)));
   if (returnCode !== 0) return showError(returnMsg);
   helper.showSuccessMsg(returnMsg);
   dispatch(action.assign({okResult: result || true}));
