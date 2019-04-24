@@ -8,8 +8,9 @@ const InputGroup = Input.Group;
 const Option = Select.Option;
 
 /** 数字金额大写转换(可以处理整数,小数,负数) */
-const toCapitalization = (num=0) => {
-  if (typeof Number(num) !== 'number' || Number(num).toString() === 'NaN') return '';
+const toCapitalization = (number=0) => {
+  if (typeof Number(number) !== 'number' || Number(number).toString() === 'NaN') return '';
+  const num = Number(Number(number).toFixed(2));
   const fraction = ['角', '分'];
   const digit = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
   // 之所以分开是因为：('元', '万', '亿')是作为类似角分单位计算的，而('拾', '佰', '仟')则是数量量级
@@ -75,7 +76,7 @@ class InvoiceTable extends React.Component {
       className: s.capital,
       placeholder: '零壹贰叁肆伍陆柒捌玖拾佰仟',
       disabled: true,
-      value: toCapitalization(items[0].exchangeAmount)
+      value: toCapitalization(items[0].amount)
     };
     return <InputGroup>
       <Select {...props}>
@@ -137,7 +138,7 @@ class InvoiceTable extends React.Component {
     const {items=[]} = this.props;
     return items.length > 0 ? items.slice(0, 1).concat([{
       chargeName: items[0].currency,
-      remark: items[0].exchangeAmount,
+      remark: items[0].amount,
     }]).map((o, i) => ({...o, key: i})) : items;
   }
 

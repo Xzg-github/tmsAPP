@@ -43,6 +43,9 @@ const initActionCreator = () => async (dispatch) => {
     setDictionary(payload.editConfig.costInfoConfig.cols, dictionary);
     setDictionary(payload.editConfig.costInfoConfig.joinDialogConfig.cols, dictionary);
 
+    // 存上字典下拉数据（发票种类会用到）
+    payload.dictionary = dictionary;
+
     // 初始化搜索条件配置
     payload.filters = helper.initFilters('receive_apply_sort', payload.filters);
 
