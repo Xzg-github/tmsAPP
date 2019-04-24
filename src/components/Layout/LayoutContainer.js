@@ -136,7 +136,7 @@ const openChangeActionCreator = (key, openKeys) => {
 
 const menuClickActionCreator = (key) => async () => {
   if (key === 'revoke') {
-    await helper.fetchJson(REVOKE_URL, 'put');
+    await helper.fetchJson(`${REVOKE_URL}/${helper.getUsername()}`, 'put');
     window.location.href = '/login';
   } else if (key === 'modify') {
     showPassword()

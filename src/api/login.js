@@ -23,8 +23,11 @@ api.post('/', async (req, res) => {
   }
 });
 
-api.put('/revoke', (req, res) => {
+//注销
+api.put('/revoke/:account', async (req, res) => {
   res.cookie('token', '', {httpOnly: true, maxAge: 0});
+  const url = `${host}/auth-center-provider/account/logout/${req.params.account}`;
+  await fetchJsonByNode(req, url, 'put');
   res.send({returnCode: 0});
 });
 

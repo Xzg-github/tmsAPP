@@ -484,6 +484,15 @@ const setPageTitle = (titleArr=[]) => {
   global.store.dispatch(layoutAction.assign({[getRouteKey()]: titleArr}, 'pageTitles'));
 };
 
+// 获取当前登录的用户名
+const getUsername = () => {
+  const username = 'username=';
+  const cookie = document.cookie;
+  const begin = cookie.indexOf(username) + username.length;
+  const end = cookie.indexOf(';', begin);
+  return unescape(cookie.substring(begin, end < 0 ? cookie.length : end));
+};
+
 const checkFile = (file) => {
   let suffix = file.name.split('.');
   if (suffix.length > 1 && ['exe', 'bat', 'com'].includes(suffix.pop())) {
@@ -577,7 +586,8 @@ const helper = {
   setPageTitle,
   uploadWithFileCheck,
   getTemplateList,
-  setExportBtns
+  setExportBtns,
+  getUsername
 };
 
 export {
