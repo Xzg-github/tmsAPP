@@ -31,19 +31,28 @@ const getSelfState = (rootState) => {
   return parent[parent.activeKey];
 };
 
+// 解析发票换行
+const compilerInvoiceEnter = (result={}) => {
+  const res = Object.keys(result).reduce((res, key) => {
+    res[key] = typeof result[key] === 'string' ? `${result[key]}`.replace(/;+/g, '\r\n'): result[key];
+    return res;
+  }, {});
+  return [res];
+};
+
 // 更新发票内容
-const updateInvoice = async (dispatch, getState, isGetExchange=1) => {
+const updateInvoice = async (dispatch, getState, isGetExchange=1, invoiceShowMode) => {
   const {activeKey, value, id} = getSelfState(getState());
-  const {contentCurrency, tax} = value[activeKey][0];
+  const {contentCurrency, tax, currency} = value[activeKey][0];
   const params = {
     id,
-    invoiceShowMode: value['invoiceShowMode'] || 1,
+    invoiceShowMode: invoiceShowMode || value['invoiceShowMode'] || 1,
     isGetExchange,
-    currency: contentCurrency || 'USD',
+    currency: contentCurrency || currency || 'CNY',
     tax
   };
   const result = getJsonResult(await fetchJson(URL_UPDATE_INVOICE, postOption(params)));
-  dispatch(action.assign({invoiceInfo: [result]}, ['value']));
+  dispatch(action.assign({invoiceInfo: compilerInvoiceEnter(result)}, ['value']));
 };
 
 const changeActionCreator = (KEY, keyName, keyValue) => async (dispatch, getState) =>  {
@@ -75,10 +84,17 @@ const changeActionCreator = (KEY, keyName, keyValue) => async (dispatch, getStat
       break;
     }
     case 'invoiceShowMode': {
-      await updateInvoice(dispatch, getState, 0);
+      await updateInvoice(dispatch, getState, 0, keyValue);
       break;
     }
     case 'invoiceCategory': {
+      const {dictionary={}} = getPathValue(getState(), PARENT_STATE_PATH);
+      const options = dictionary['invoice_category'] || [];
+      const option = options.find(o => o.value === keyValue) || {};
+      const title = option.title || '';
+      const tax = Number(title.match(/\d+/g)[0]) || 1;
+      dispatch(action.update({tax}, ['value', 'invoiceInfo'], 0));
+      dispatch(action.assign({tax}, 'value'));
       await updateInvoice(dispatch, getState, 0);
       break;
     }
@@ -249,11 +265,6 @@ const buildEditPageState = async (config, itemData) => {
   const detailData = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
   const {chargeList, invoice={}} = detailData;
   // const invoiceInfo = helper.getObject(invoice, config.invoiceInfoConfig.cols.map(o => o.key));
-  const invoiceInfo = Object.keys(invoice).reduce((res, key) => {
-    res[key] = typeof invoice[key] === 'string' ? `${invoice[key]}`.replace(/(\\r\\n)+/g, '\r\n'): invoice[key];
-    return res;
-
-  }, {});
   const rateList = getJsonResult(await fetchJson(`${URL_CURRENCY_RATE}/${invoice['currency']}`));
   return {
     ...config,
@@ -262,7 +273,7 @@ const buildEditPageState = async (config, itemData) => {
     value: {
       ...invoice,
       costInfo: chargeList,
-      invoiceInfo: [invoiceInfo]
+      invoiceInfo: compilerInvoiceEnter(invoice)
     },
     status: 'page'
   };
