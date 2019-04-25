@@ -106,9 +106,16 @@ const copyActionCreator = () => async (dispatch, getState) => {
 };
 
 const isCanEdit = (isDoubleClick, rowIndex, items) => {
-  const item = items.filter(o => o.checked).find(o => o.statusType === 'status_check_completed');
-  const validItem = isDoubleClick ? items[rowIndex] : item ? item : {};
-  if (validItem.statusType === 'status_check_completed') {
+  const checkList = items.filter(o => o.checked);
+  const item1 = checkList.find(o => o['chargeOrigin'] === 'charge_origin_price');
+  const validItem1 = isDoubleClick ? items[rowIndex] : item1 ? item1: {};
+  if (validItem1['chargeOrigin'] === 'status_check_completed') {
+    showError('费用来自于自动计费，不可编辑！');
+    return true;
+  }
+  const item2 = checkList.find(o => o.statusType === 'status_check_completed');
+  const validItem2 = isDoubleClick ? items[rowIndex] : item2 ? item2 : {};
+  if (validItem2.statusType === 'status_check_completed') {
     showError('存在已审核费用，不可编辑！');
     return true;
   }

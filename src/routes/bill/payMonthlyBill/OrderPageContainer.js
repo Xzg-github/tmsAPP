@@ -97,8 +97,8 @@ const searchClickActionCreator = async (dispatch, getState) => {
 
 const sortActionCreator = async (dispatch, getState) => {
   const {filters} = getSelfState(getState());
-  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
-  newFilters && dispatch(action.assign({filters: newFilters}));
+  const newFilters = await showFilterSortDialog(filters, 'pay_month_bill_sort');
+  newFilters && dispatch(action.assign({filters: newFilters}, TAB_KEY));
 };
 
 const deleteActionCreator = async (dispatch, getState) => {

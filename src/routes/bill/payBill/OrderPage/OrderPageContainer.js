@@ -41,7 +41,7 @@ const resetActionCreator = action.assign({searchData: {}});
 
 const sortActionCreator = async (dispatch, getState) => {
   const {filters} = getSelfState(getState());
-  const newFilters = await showFilterSortDialog(filters, helper.getRouteKey());
+  const newFilters = await showFilterSortDialog(filters, 'pay_bill_sort');
   newFilters && dispatch(action.assign({filters: newFilters}));
 };
 
@@ -152,8 +152,8 @@ const exportPageActionCreator = (subKey) => async (dispatch, getState) => {
 //模板管理
 const templateManagerActionCreator = async (dispatch, getState) => {
   const {tableCols, buttons} = getSelfState(getState());
-  if(true === await showTemplateManagerDialog(tableCols, helper.getRouteKey())) {
-    dispatch(action.assign({buttons: helper.setExportBtns(buttons, tableCols)}));
+  if(true === await showTemplateManagerDialog(tableCols, 'pay_bill_export')) {
+    dispatch(action.assign({buttons: helper.setExportBtns('pay_bill_export', buttons, tableCols)}));
   }
 };
 
