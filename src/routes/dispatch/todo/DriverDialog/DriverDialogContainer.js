@@ -95,8 +95,6 @@ const buildDialogState = async (data) => {
   setDictionary2(dic.result, config.cols);
   const carAreaOptions = dic.result.car_area || [];
   const searchData = {
-    carModeId: data.carModeId,
-    carState: 'car_state_unuser',
     transportOrderId: data.id,
     carNumber: ''
   };

@@ -479,6 +479,11 @@ const createOrderInfoPageContainer = (action, getSelfState) => {
       dispatch(action.assign({goodsList: true}, 'valid'));
       return false;
     }
+    //允许收发货数量全都不填
+    if (addressList.every(item => !item.pickupGoodsNumber && !item.deliveryGoodsNumber)) {
+      return true;
+    }
+    //如果有任何一项填写了数量则进行严格的数量校验
     let consignorNum = 0, consigneeNum = 0;
     //收发货数量是否填写
     for (let i = 0; i < addressList.length; ++i) {
