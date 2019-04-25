@@ -89,7 +89,7 @@ api.post('/carInfoId', async (req, res) => {
   };
   const data = await fetchJsonByNode(req, url, postOption(params))
   const list = data.result.data.map(o => ({
-    value: o.id,
+    value: o.carNumber,
     title: o.carNumber
   }));
   res.send({returnCode: 0, returnMsg: 'Success', result: list});

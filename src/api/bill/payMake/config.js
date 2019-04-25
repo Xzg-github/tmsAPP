@@ -92,6 +92,7 @@ const payButtons = [
 // 明细界面应付表格
 const payCols = [
   {key: 'supplierId', title: '结算单位'},
+  {key: 'carNumber', title: '车牌号码'},
   {key: 'chargeItemId', title: '费用名称'},
   {key: 'chargeUnit', title: '计量单位', dictionary: name.CHARGE_UNIT},
   {key: 'price', title: '单价'},
@@ -112,8 +113,9 @@ const payCols = [
   {key: 'statusType', title: '状态', dictionary: 'status_type_01'},
   {key: 'relationNumber', title: '关联编码'},
   {key: 'chargeOrigin', title: '费用来源', dictionary: name.CHARGE_ORIGIN},
-  {key: 'isExpense', title: '是否报销', dictionary: name.ZERO_ONE_TYPE},
-  {key: 'isOutputValue', title: '是否产值', dictionary: name.ZERO_ONE_TYPE},
+  // {key: 'isExpense', title: '是否报销', dictionary: name.ZERO_ONE_TYPE},
+  // {key: 'isOutputValue', title: '是否产值', dictionary: name.ZERO_ONE_TYPE},
+  {key: 'outputExpense', title: '产值报销类型'},
   {key: 'institutionId', title: '费用归属机构'},
   {key: 'insertUser', title: '创建人'},
   {key: 'insertTime', title: '创建时间'},

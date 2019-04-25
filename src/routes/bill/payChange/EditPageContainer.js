@@ -25,6 +25,7 @@ const URL_REJECT = '/api/bill/pay_change/reject';
 const URL_CURRENCY = '/api/bill/pay_change/mainCurrency';
 const URL_TAX = '/api/bill/pay_change/tax';
 const URL_NET = '/api/bill/pay_change/net';
+const URL_CARINFO = '/api/bill/payMake/carInfoId';
 
 const getSelfState = (rootstate) => {
   const parentState = getPathValue(rootstate, STATE_PARENT_PATH);
@@ -68,6 +69,11 @@ const searchActionCreator = (tableKey, rowIndex, key, tablevalue) => async (disp
     }
     case 'chargeItemId': {
       options = getJsonResult(await fetchJson(chargeItemURLObject[changeType], postOption(params)));
+      break;
+    }
+    case 'carNumber': {
+      params.maxNumber = 20;
+      options = getJsonResult(await helper.fetchJson(URL_CARINFO, postOption(params)));
       break;
     }
     default: return;
@@ -125,13 +131,35 @@ const priceOrNumChange = (tableKey, rowIndex, keyName, keyValue) => (dispatch, g
   dispatch(action.update(payload, ['value', tableKey], rowIndex));
 };
 
+const handleBalanceChange = (tableKey, rowIndex, keyName, keyValue) => async (dispatch, getState) => {
+  const payload = {[keyName]: keyValue, currency: keyValue.balanceCurrency};
+  const {value} = getSelfState(getState());
+  let {isRequired:requiredArr=[], _extraProps={}} = value[tableKey][rowIndex];
+  // 如果是车主类型，车牌号码为必填
+  if (keyValue.supplierType === 'supplier_type_car_owner' && !requiredArr.includes('carNumber')) {
+    requiredArr.push('carNumber');
+  } else {
+    requiredArr = requiredArr.filter(o => o !== 'carNumber');
+  }
+  // 如果有费用备注，备注为必填
+  if (!!keyValue.chargeRemark && !requiredArr.includes('remark')) {
+    _extraProps['placeholder'] = keyValue.chargeRemark;
+    requiredArr.push('remark');
+  } else {
+    _extraProps['placeholder'] = '';
+    requiredArr = requiredArr.filter(o => o !== 'remark');
+  }
+  payload.isRequired = requiredArr;
+  payload._extraProps = _extraProps;
+  dispatch(action.update(payload, ['value', tableKey], rowIndex));
+};
 
-const contentChangeActionCreator = (tableKey, rowIndex, keyName, keyValue) =>{
+const contentChangeActionCreator = (tableKey, rowIndex, keyName, keyValue) => {
   if (keyName === 'price' || keyName === 'number') {
     return priceOrNumChange(tableKey, rowIndex, keyName, keyValue);
   } else if (keyName === 'balanceId') {
-    return action.update({[keyName]: keyValue, currency: keyValue.balanceCurrency}, ['value', tableKey], rowIndex);
-  }else {
+    return handleBalanceChange(tableKey, rowIndex, keyName, keyValue);
+  } else {
     return action.update({[keyName]: keyValue}, ['value', tableKey], rowIndex);
   }
 };
@@ -139,7 +167,7 @@ const contentChangeActionCreator = (tableKey, rowIndex, keyName, keyValue) =>{
 const addAction = () => async (dispatch, getState) => {
   const { value } = getSelfState(getState());
   if (!value['transportOrderId'] || value['transportOrderId'] === '') return showError('请先选择运单号');
-  if (value.balanceId.value) {
+  if (value.balanceId && value.balanceId.value) {
     const {result} = await fetchJson(`${URL_CURRENCY}/${value.balanceId.value}`);
     dispatch(action.add({currency: result, balanceId: value['balanceId']}, ['value', 'costInfo']));
   } else{
@@ -217,6 +245,12 @@ const saveAction = () => async (dispatch, getState) => {
     dispatch(action.assign({valid: invalidTableItem.key}));
     return showError('请填写必填项');
   }
+  const list = value['costInfo'].filter(item => item.isRequired && item.isRequired.length > 0);
+  const flag = list.some( o =>(o.isRequired.some(i => !o[i])));
+  if (flag) {
+    dispatch(action.assign({valid: 'costInfo'}));
+    return showError('请填写必填项');
+  }
   if (CURRENT_KEY === 'add') {
     const saveData = {
       title: helper.convert(getObjectExclude(value, ['costInfo'])),
@@ -277,6 +311,12 @@ const commitAction = () => async (dispatch, getState) => {
   });
   if (invalidTableItem) {
     dispatch(action.assign({valid: invalidTableItem.key}));
+    return showError('请填写必填项');
+  }
+  const list = value['costInfo'].filter(item => item.isRequired && item.isRequired.length > 0);
+  const flag = list.some( o =>(o.isRequired.some(i => !o[i])));
+  if (flag) {
+    dispatch(action.assign({valid: 'costInfo'}));
     return showError('请填写必填项');
   }
   const saveData = {

@@ -136,11 +136,21 @@ const addTaxActionCreator = addActionCreator('renewal_mode_002');
 
 const addNetActionCreator = addActionCreator('renewal_mode_003');
 
-const convertResultToValue = (result) => {
+const convertResultToValue = (result, props={}) => {
   const {details, from=0, to=0, title} = result;
   const pos = to - from ;
    const tableItems = details.map((item, index) => {
-    return index < pos ? Object.assign(item, {readonly: true}) : item;
+    const isRequired = [], _extraProps = {};
+    const {supplierDto={}} = item;
+    if (supplierDto.supplierType === 'supplier_type_car_owner') {
+      isRequired.push('carNumber');
+    }
+    if (!!supplierDto.chargeRemark) {
+      isRequired.push('remark');
+      _extraProps['placeholder'] = supplierDto.chargeRemark;
+    }
+    const it = index < pos ? Object.assign(item, {readonly: true}) : item;
+    return {...it, isRequired, _extraProps, ...props};
   });
   return Object.assign({}, title, {['costInfo']: tableItems});
 };
@@ -149,7 +159,8 @@ const showEditPage = async (dispatch, getState, checkedItem, isReadOnly = false)
   const {editConfig, tabs} = getSelfState(getState());
   const {returnCode, returnMsg, result} = await fetchJson(`${URL_DETAIL}/${checkedItem.id}`);
   if (returnCode !== 0) return showError(returnMsg);
-  const value = Object.assign(convertResultToValue(result), {balanceId: checkedItem.supplierId});
+  const carNumber = {value: checkedItem.carNumber, title: checkedItem.carNumber};
+  const value = Object.assign(convertResultToValue(result, {carNumber}), {balanceId: checkedItem.supplierId});
   const editTabKey = `edit_${checkedItem['renewalNumber']}`;
   const newTabs = tabs.find(tab => tab.key === editTabKey) ? tabs : tabs.concat([{key: editTabKey, title: checkedItem.renewalNumber}]);
   const readOnlyConfig = deepCopy(editConfig);

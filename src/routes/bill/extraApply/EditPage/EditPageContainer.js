@@ -19,6 +19,7 @@ const URL_COMMIT = '/api/bill/extraApply/commit';
 const URL_REVIEW = '/api/bill/extraApply/review';
 const URL_ENDCASE = '/api/bill/extraApply/endCase';
 const URL_CURRENCY = `/api/bill/payMake/supplierCurrency`;
+const URL_CARINFO = '/api/bill/payMake/carInfoId';
 
 
 const getSelfState = (rootState) => {
@@ -65,6 +66,10 @@ const tableSearchActionCreator = (KEY, rowIndex, key, filter) => async (dispatch
         result = getJsonResult(await helper.fetchJson(URL_CHARGE_NAME, postOption(params)));
         break;
       }
+      case 'carNumber': {
+        result = getJsonResult(await helper.fetchJson(URL_CARINFO, postOption(params)));
+        break;
+      }
     }
   }
   const options = result.data ? result.data : result;
@@ -73,12 +78,32 @@ const tableSearchActionCreator = (KEY, rowIndex, key, filter) => async (dispatch
 };
 
 const onContentChangeActionCreator = (KEY, rowIndex, keyName, keyValue) => async (dispatch, getState) =>  {
+  const {value} = getSelfState(getState());
+  let payload = {[keyName]: keyValue}
   if (keyName === 'balanceId') {
-    const res = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${keyValue.value}`));
-    const currency = res ? res.balanceCurrency : undefined;
-    dispatch(action.update({currency}, ['value', KEY], rowIndex));
+    // const res = getJsonResult(await helper.fetchJson(`${URL_CURRENCY}/${keyValue.value}`));
+    // const currency = res ? res.balanceCurrency : undefined;
+    // dispatch(action.update({currency}, ['value', KEY], rowIndex));
+    payload['currency'] = keyValue.balanceCurrency;
+    let {isRequired:requiredArr=[], _extraProps={}} = value[KEY] ? value[KEY] [rowIndex] : {};
+    // 如果是车主类型，车牌号码为必填
+    if (keyValue.supplierType === 'supplier_type_car_owner' && !requiredArr.includes('carNumber')) {
+      requiredArr.push('carNumber');
+    } else {
+      requiredArr = requiredArr.filter(o => o !== 'carNumber');
+    }
+    // 如果有费用备注，备注为必填
+    if (!!keyValue.chargeRemark && !requiredArr.includes('remark')) {
+      _extraProps['placeholder'] = keyValue.chargeRemark;
+      requiredArr.push('remark');
+    } else {
+      _extraProps['placeholder'] = '';
+      requiredArr = requiredArr.filter(o => o !== 'remark');
+    }
+    payload.isRequired = requiredArr;
+    payload._extraProps = _extraProps;
   }
-  dispatch(action.update({[keyName]: keyValue}, ['value', KEY], rowIndex));
+  dispatch(action.update(payload, ['value', KEY], rowIndex));
 };
 
 const checkActionCreator = (KEY, rowIndex, key, checked) => (dispatch, getState) => {
@@ -131,7 +156,8 @@ const checkValid = (dispatch, getState) => {
   }
   const tableItem = tables.find(o => {
     const arr = value[o.key] || [];
-    return !helper.validArray(o.cols, arr);
+    const flag = arr.filter(item => item.isRequired && item.isRequired.length > 0).some( o =>(o.isRequired.some(i => !o[i])));
+    return !helper.validArray(o.cols, arr) || flag;
   });
   if (tableItem) {
     dispatch(action.assign({valid: tableItem.key}));
@@ -271,9 +297,22 @@ const exitValidActionCreator = () => action.assign({valid: false});
 const buildEditPageState = async (config, itemData, editType) => {
   let value = {};
   if (editType !== 0) {
-    const {extraCharge, payChargeList, ...other} = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
+    const {extraCharge, payChargeList=[], ...other} = getJsonResult(await fetchJson(`${URL_DETAIL}/${itemData.id}`));
     const {payAmount=0, receiveAmount=0} = extraCharge;
-    value = {...extraCharge, payChargeList, ...other, profit: receiveAmount - payAmount};
+    const payChargeItems = payChargeList.map((item) => {
+      const isRequired = [], _extraProps = {};
+      const {supplierDto={}} = item;
+      if (supplierDto.supplierType === 'supplier_type_car_owner') {
+        isRequired.push('carNumber');
+      }
+      if (!!supplierDto.chargeRemark) {
+        isRequired.push('remark');
+        _extraProps['placeholder'] = supplierDto.chargeRemark;
+      }
+      item.carNumber = item.carNumber ? {value: item.carNumber, title: item.carNumber}: {value: itemData.carNumber, title: itemData.carNumber};
+      return {...item, isRequired, _extraProps};
+    });
+    value = {...extraCharge, payChargeList: payChargeItems, ...other, profit: receiveAmount - payAmount};
     // 如果是非待提交编辑页面且费用来源为空，才去判断后端给的是否只读的变量
     if (itemData['statusType'] !== 'status_submit_awaiting' && !itemData['chargeFrom'] && !extraCharge.directorIsTrueOrFalse) {
       config.tables = setReadonly(config.tables);

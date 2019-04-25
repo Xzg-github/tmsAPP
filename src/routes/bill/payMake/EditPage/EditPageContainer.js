@@ -52,7 +52,7 @@ const showDialogType = async (state, type=0, isDoubleClick=false, rowIndex=0) =>
   const {supplierId, payColsEdit, payItems, dialogBtnsPay, balanceCurrency, carNumber} = state;
   let items = type === 0 ? [] : payItems;
   isDoubleClick && (items[rowIndex]['checked'] = true);
-  const checkList = items.filter(o => o.checked).map(son => ({...son, checked: false, carNumber}));
+  const checkList = items.filter(o => o.checked).map(son => ({...son, checked: false}));
   if (type > 0 && !isDoubleClick && checkList.length === 0) return showError('请勾选一条数据！');
   const titleArr = ['批量新增', '批量新增', '批量编辑'];
   const configKey = 'payMake_payColsEdit';

@@ -214,6 +214,7 @@ export default async (params) => {
       isRequired.push('remark');
       _extraProps['placeholder'] = supplierDto.chargeRemark;
     }
+    it.carNumber = it.carNumber ? {value: it.carNumber, title: it.carNumber}: {value: params.carNumber, title: params.carNumber};
     return {...it, isRequired, _extraProps}
   });
   global.store.dispatch(action.create({...params, items: newItems}));

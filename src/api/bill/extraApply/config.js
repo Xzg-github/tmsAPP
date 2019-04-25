@@ -89,6 +89,7 @@ const payCols = [
   {key: 'checked', title: '', type: 'checkbox'},
   {key: 'index', title: '序号', type: 'index'},
   {key: 'balanceId', title: '结算单位', type: 'search', searchType: 'supplier', required: true},
+  {key: 'carNumber', title: '车牌号码', type: 'search'},
   {key: 'chargeItemId', title: '费用名称', type: 'search', required: true},
   {key: 'chargeUnit', title: '计量单位', type: 'select', dictionary: name.CHARGE_UNIT, required: true},
   {key: 'price', title: '单价', type: 'number', props: {real: true, precision: 2}, required: true},
@@ -100,7 +101,7 @@ const payCols = [
   {key: 'taxRateWay', title: '计税方式', type: 'readonly', dictionary: name.TAX_TYPE},
   {key: 'taxAmount', title: '税额', type: 'readonly'},
   {key: 'netAmount', title: '净价', type: 'readonly'},
-  {key: 'remark', title: '备注', type: 'text'}
+  {key: 'remark', title: '备注', type: 'text', width: 200}
 ];
 
 const receiveCols = [

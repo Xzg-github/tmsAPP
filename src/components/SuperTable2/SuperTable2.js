@@ -150,7 +150,7 @@ class SuperTable2 extends React.Component {
     };
     if(Array.isArray(isRequired) && isRequired.includes(key)){
       cellProps.error = this.validField(true, value);
-      cellProps.props = {...cellProps.props, ..._extraProps}
+      cellProps.props = {...cellProps.props, ..._extraProps};
       return (<div>
         <span style={{color: 'red', display: 'inline-block'}}>*</span>
         <span style={{marginLeft: '5px', display: 'inline-block'}}><SuperTableCell {...cellProps} /></span>
