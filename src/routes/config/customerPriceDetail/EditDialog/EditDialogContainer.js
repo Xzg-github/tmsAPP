@@ -133,11 +133,20 @@ const actionCreators = {
 const buildState = async (config={}) => {
   const {type=0, controls=[], value={}, DIALOG_API} = deepCopy(config);
   const titleArr = ['新增', '复制新增', '编辑', '批量修改'];
+  const arr = controls.map(con => {
+    if ((con.key === 'customerId' || con.key === 'contractNumber') && type !== 0) {
+      con.type = 'readonly';
+    }
+    return con;
+  });
+  if (type > 0) {
+    value['contractNumber'] = {value: value.customerPriceId, title: value.customerPriceCode};
+  }
   return {
     type,
     title: titleArr[type],
-    controls,
-    value,
+    controls: arr,
+    value: value,
     DIALOG_API,
     checkable: type === 3
   }
