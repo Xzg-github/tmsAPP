@@ -249,12 +249,13 @@ const initActionCreator = () => async (dispatch, getState) => {
     const list = getJsonResult(await search(URL_LIST, 0, pageSize, {}));
     const payload = {
       ...config,
+      pageSize,
       maxRecords: list.returnTotalItem,
       currentPage: 1,
       tableItems: toTableItems(list),
       searchData: {},
       status: 'page'
-    };
+    };debugger
     payload.buttons = dealActions(payload.buttons, 'customer_price_detail');
     dispatch(action.create(payload));
   } catch (e) {
