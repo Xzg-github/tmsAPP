@@ -42,7 +42,7 @@ const okActionCreator = () => async(dispatch,getState) => {
     if (json.returnCode) {
       helper.showError(json.returnMsg);
     } else {
-      dispatch(action.assign({visible: false, ok: true}));
+      dispatch(action.assign({visible: false, ok: json.result}));
     }
   } else {
     dispatch(action.assign({valid: true}));
@@ -106,18 +106,17 @@ const exitValidActionCreator = () => {
 const onAddActionCreator = (key) => async(dispatch,getState) => {
   const {edit}  = await helper.fetchJson(URL_CONFIG);
   const {value} = getSelfState(getState());
-
   if(key === 'driverId'){
     let obj = {};
     if(value.supplierId){
       obj.supplierId = value.supplierId
     }
-    await showAddDialog(obj, edit)
+    const info = await showAddDialog(obj, edit);
+    if (info) {
+      dispatch(action.assign({driverId: {value: info.id, title: info.driverName}}, 'value'));
+    }
   }
-
 };
-
-
 
 const mapStateToProps = (state) => {
   return getSelfState(state);

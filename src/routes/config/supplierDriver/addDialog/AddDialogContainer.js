@@ -46,7 +46,7 @@ const formSearchActionCreator = (key,keyValue,keyControls) => async (dispatch, g
     json = await helper.fuzzySearchEx(keyValue, keyControls);
   }
   if (!json.returnCode) {
-    const index = controls.findIndex(item => item.key == key);
+    const index = controls.findIndex(item => item.key === key);
     dispatch(action.update({options:json.result}, 'controls', index));
   }else {
     helper.showError(json.returnMsg)
@@ -61,13 +61,13 @@ const okActionCreator = () => async (dispatch, getState) => {
   }
   const newValue = {...value, isOwner: 0};
   const body = helper.convert(newValue);
-  const {returnCode, returnMsg} = await helper.fetchJson(URL_SAVE, helper.postOption(body));
+  const {returnCode, returnMsg, result} = await helper.fetchJson(URL_SAVE, helper.postOption(body));
   if (returnCode !== 0) {
     helper.showError(returnMsg);
     return;
   }
   helper.showSuccessMsg('保存成功');
-  dispatch(action.assign({visible: false, res: true}));
+  dispatch(action.assign({visible: false, res: result}));
 };
 
 
@@ -89,7 +89,7 @@ const actionCreators = {
 * 功能：新增/编辑监理档案对话框
 * 参数：item: 记录信息
 *       config: 界面配置
-* 返回值：成功返回true，取消返回false
+* 返回值：成功返回完整记录信息，取消返回false
 */
 export default async (item={}, config) => {
   if (!config) {

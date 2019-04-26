@@ -109,12 +109,19 @@ const exitValidActionCreator = () => (dispatch) => {
   dispatch(action.assign({valid: false}));
 };
 
-const addActionCreator = (key) => (dispatch, getState) => {
+const addActionCreator = (key) => async (dispatch, getState) => {
   const {info} = getSelfState(getState());
   if (key === 'carInfoId') {
-    return showAddCar({supplierId: info.supplierId});
+    const carInfo = await showAddCar({supplierId: info.supplierId});
+    if (carInfo) {
+      dispatch(action.assign({carInfoId: {value: carInfo.id, title: carInfo.carNumber}, driverId: carInfo.driverId}, 'value'));
+      return changeActionCreator('driverId', carInfo.driverId)(dispatch, getState);
+    }
   }else if (key === 'driverId') {
-    return showAddDriver({supplierId: info.supplierId});
+    const driverInfo = await showAddDriver({supplierId: info.supplierId});
+    if(driverInfo) {
+      dispatch(action.assign({driverId: {value: driverInfo.id, title: driverInfo.driverName}, driverMobilePhone: driverInfo.driverMobilePhone}, 'value'));
+    }
   }
 };
 
