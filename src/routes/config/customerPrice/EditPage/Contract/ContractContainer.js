@@ -187,12 +187,13 @@ const initActionCreator = () => async (dispatch, getState) => {
       });
       dispatch(action.assign({tabs: newTabs}));
     } else {
-      state = item;
+      const {fileList=[], ...other={}} = item;
+      state = {fileList, value: other};
     }
     if (state.fileList && state.fileList.length > 0) {
       state.fileList = await getFiles(state.fileList);
     }
-    const payload = {editType, ...state, value: {...state}, status: 'page'};
+    const payload = {editType, ...state, status: 'page'};
     dispatch(action.assign(payload, [PATH]));
   } catch (e) {
     helper.showError(e.message);
