@@ -83,7 +83,11 @@ const addActionCreator = async (dispatch, getState) => {
 };
 
 const copyActionCreator = async (dispatch, getState) => {
-  showEditPage(dispatch, getState, 1, 'copyAdd', '复制新增');
+  const {tableItems} = getSelfState(getState());
+  const index = helper.findOnlyCheckedIndex(tableItems);
+  if (index === -1) return showError('请勾选一条数据！');
+  const item = tableItems[index];
+  showEditPage(dispatch, getState, 1, 'copyAdd', '复制新增', item);
 };
 
 const isCanEdit = (item) => {
