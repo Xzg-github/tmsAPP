@@ -190,7 +190,12 @@ const sortActionCreator = async (dispatch, getState) => {
 const exportPageActionCreator = (subKey) => (dispatch, getState) => {
   const {tableCols=[]} = JSON.parse(subKey);
   const {tableItems} = getSelfState(getState());
-  return exportExcelFunc(tableCols, tableItems);
+  //税率保存时虽然是字典但是只保存title, 所以在前端导出时先去掉options
+  const exportTableCols = helper.deepCopy(tableCols).map(_item => {
+    if (_item.key === 'tax') delete _item.options;
+    return _item;
+  });
+  return exportExcelFunc(exportTableCols, tableItems);
 };
 
 // 查询导出
