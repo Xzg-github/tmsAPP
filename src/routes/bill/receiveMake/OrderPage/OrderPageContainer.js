@@ -181,9 +181,10 @@ const templateManagerActionCreator = async (dispatch, getState) => {
 
 // 配置字段
 const configActionCreator = async (dispatch, getState) => {
-  const {tableCols} = getSelfState(getState());
+  const {tableCols, btns} = getSelfState(getState());
   const okFunc = (newCols) => {
-    dispatch(action.assign({tableCols: newCols}));
+    const buttons = helper.setExportBtns('receive_make_export', btns, newCols);
+    dispatch(action.assign({tableCols: newCols, btns: buttons}));
   };
   showColsSetting(tableCols, okFunc, 'receiveMake');
 };
