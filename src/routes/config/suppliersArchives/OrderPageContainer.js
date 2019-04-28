@@ -202,7 +202,12 @@ const exportPageActionCreator = (subKey) => (dispatch, getState) => {
 const exportSearchActionCreator = (subKey) => (dispatch, getState) =>{
   const {tableCols=[]} = JSON.parse(subKey);
   const {searchData} = getSelfState(getState());
-  return commonExport(tableCols, '/archiver-service/supplier/list/search', searchData);
+  //税率保存时虽然是字典但是只保存title, 所以要去掉字典属性
+  const exportTableCols = helper.deepCopy(tableCols).map(_item => {
+    if (_item.key === 'tax') delete _item.dictionary;
+    return _item;
+  });
+  return commonExport(exportTableCols, '/archiver-service/supplier/list/search', searchData);
 };
 
 //模板管理
