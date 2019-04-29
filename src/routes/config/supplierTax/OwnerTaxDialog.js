@@ -24,7 +24,7 @@ const changeActionCreator = (key, keyValue) => (dispatch, getState) => {
   }else {
     if (keyValue >= 100) {
       keyValue = '';
-      helper.showError('税率为0至100的整数');
+      helper.showError('税率区间为0至100');
     }
   }
   dispatch(action.assign({[key]: keyValue}, 'value'));

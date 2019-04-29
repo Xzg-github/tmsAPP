@@ -64,7 +64,7 @@ const controls = [
 
 const ownerControls = [
   {key: 'taxRateWay', title: '计税方式', type: 'select', dictionary: name.TAX_RATE_WAY, required: true},
-  {key: 'taxRate', title: '税率', type: 'number', props: {zero: true}, placeholder: '0至100的整数',required:true},
+  {key: 'taxRate', title: '税率', type: 'number', props: {zero: true, real: true, precision: 2}, placeholder: '0至100的整数',required:true},
 ];
 
 const edit = {
