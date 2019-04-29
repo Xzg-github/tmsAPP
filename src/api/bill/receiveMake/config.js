@@ -117,6 +117,7 @@ const receiveButtons = [
 // 明细界面应付表格
 const payCols = [
   {key: 'isTransferReceivables', title: '是否转应收', dictionary: name.ZERO_ONE_TYPE},
+  {key: 'carNumber', title: '车牌号码'},
   {key: 'supplierId', title: '结算单位'},
   {key: 'chargeItemId', title: '费用名称'},
   {key: 'chargeUnit', title: '计量单位', dictionary: name.CHARGE_UNIT},
