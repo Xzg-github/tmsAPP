@@ -45,6 +45,10 @@ const tableCols = [
   {key: 'supplierType', title: '供应商类型', type: 'select', dictionary: name.SUPPLIER_TYPE},
   {key: 'companyLevel', title: '供应商级别', type: 'select',dictionary: name.COMPANY_LEVEL},
   {key: 'chargeRemark', title: '费用备注'},
+  {key: 'thirdPartyCode', title: '第三方系统编码'},
+  {key: 'institutionId', title: '归属法人'},
+  {key: 'taxType', title: '计税方式', type: 'select', dictionary: name.TAX_TYPE},
+  {key: 'tax', title: '税率', type: 'select', dictionary: 'supplier_tax_type'},
   {key: 'insertUser', title: '操作人'},
   {key: 'insertTime', title: '操作时间', type: 'date'}
 ];

@@ -43,6 +43,10 @@ const tableCols = [
   {key: 'contractEndTime', title: '合同结束日期', type: 'date'},
   {key: 'companyType', title: '客户类型', type: 'select', dictionary: name.COMPANY_TYPE},
   {key: 'companyLevel', title: '客户级别', type: 'select',dictionary: name.COMPANY_LEVEL},
+  {key: 'thirdPartyCode', title: '第三方系统编码'},
+  {key: 'institutionId', title: '归属法人'},
+  {key: 'taxType', title: '计税方式', type: 'select', dictionary: name.TAX_TYPE},
+  {key: 'tax', title: '税率', type: 'select', dictionary: 'customer_tax_type'},
   {key: 'insertUser', title: '操作人'},
   {key: 'insertTime', title: '操作时间', type: 'date'}
 ];

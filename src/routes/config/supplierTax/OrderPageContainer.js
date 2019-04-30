@@ -64,6 +64,10 @@ const editAction = async (dispatch, getState) => {
 // 车主税率
 const ownerAction = async (dispatch, getState) => {
   const {ownerControls} = getSelfState(getState());
+  const readOnlyOwnerControls = helper.deepCopy(ownerControls).map(item => {
+    if (item.key === 'taxRate' ) item.type = 'readonly';
+    return item;
+  });
   const {result, returnCode, returnMsg} = await fetchJson(URL_OWNER, postOption(['-1']));
   if (returnCode !== 0) return showError(returnMsg);
   if(result.length === 0) {
@@ -72,14 +76,11 @@ const ownerAction = async (dispatch, getState) => {
       title: '新增车主税率',
       config: {ok: '确定', cancel: '取消'},
       size: 'small',
-      value: {supplierId: '-1'}
+      value: {supplierId: '-1'},
+      readOnlyOwnerControls, ownerControls
     };
     await showOwnerDialog(addOwnerConfig) && updateTable(dispatch, getState);
   } else {
-   const readOnlyOwnerControls = helper.deepCopy(ownerControls).map(item => {
-     if (item.key === 'taxRate' ) item.type = 'readonly';
-     return item;
-   });
     //车主税率默认supplierId为-1
     const ownerConfig = {
       controls: result[0].taxRateWay === 'tax_rate_way_not_calculate' ?  readOnlyOwnerControls : ownerControls,

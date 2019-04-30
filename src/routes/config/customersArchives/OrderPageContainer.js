@@ -191,14 +191,24 @@ const sortActionCreator = async (dispatch, getState) => {
 const exportPageActionCreator = (subKey) => (dispatch, getState) => {
   const {tableCols=[]} = JSON.parse(subKey);
   const {tableItems} = getSelfState(getState());
-  return exportExcelFunc(tableCols, tableItems);
+  //税率保存时虽然是字典但是只保存title, 所以在前端导出时先去掉options
+  const exportTableCols = helper.deepCopy(tableCols).map(_item => {
+    if (_item.key === 'tax') delete _item.options;
+    return _item;
+  });
+  return exportExcelFunc(exportTableCols, tableItems);
 };
 
 // 查询导出
 const exportSearchActionCreator = (subKey) => (dispatch, getState) =>{
   const {tableCols=[]} = JSON.parse(subKey);
   const {searchData} = getSelfState(getState());
-  return commonExport(tableCols, '/archiver-service/customer/list/search', searchData);
+  //税率保存时虽然是字典但是只保存title, 所以要去掉字典属性
+  const exportTableCols = helper.deepCopy(tableCols).map(_item => {
+    if (_item.key === 'tax') delete _item.dictionary;
+    return _item;
+  });
+  return commonExport(exportTableCols, '/archiver-service/customer/list/search', searchData);
 };
 
 //模板管理
