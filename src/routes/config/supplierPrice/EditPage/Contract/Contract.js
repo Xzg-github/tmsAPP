@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Contract.less';
 import {Indent, SuperForm, SuperToolbar} from '../../../../../components';
-import PictureWall from './PictureWall/PictureWall';
+import PictureWall from '../../../customerPrice/EditPage/Contract/PictureWall/PictureWall';
 
 class Contract extends React.Component {
 

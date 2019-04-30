@@ -1,16 +1,26 @@
 @import '../../../../../../components/variables.less';
 
 .root {
-  margin: @padding-vertical @padding-horizontal;
+  margin: @padding-vertical 0;
   overflow: hidden;
-}
 
-:global(.pld-card) {
-  margin: 0;
+  :global(.ant-upload-list-item .anticon-cross) {
+    font-size: 15px;
+    color: #333;
+    top: 5px;
+    right: 5px;
+  }
+
+  :global(.upload-list-inline .ant-upload-list-item) {
+    display: inline-block;
+    width: 200px;
+    margin-right: 10px;
+  }
 }
 
 .text {
-  margin-bottom: 10px;
+  display: inline-block;
+  margin: 0 0 10px 20px;
 }
 
 .previewImage{
