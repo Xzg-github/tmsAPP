@@ -151,7 +151,7 @@ const convertResultToValue = (result, props={}) => {
       _extraProps['placeholder'] = supplierDto.chargeRemark;
     }
     const it = index < pos ? Object.assign(item, {readonly: true}) : item;
-    return {...it, isRequired, _extraProps, ...props};
+    return {...it, isRequired, _extraProps, ...props, carNumber: it.carNumber || props.carNumber};
   });
   return Object.assign({}, title, {['costInfo']: tableItems});
 };
