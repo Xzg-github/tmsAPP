@@ -61,6 +61,7 @@ const tableCols = [
   {key: 'chargeItemId', title: '费用项', required: true},
   {key: 'price', title: '价格', required: true},
   {key: 'priceType', title: '价格类别', options: priceTypeOptions, required: true},
+  {key: 'currency', title: '币种'},
   {key: 'chargeUnit', title: '计量单位', dictionary: name.CHARGE_UNIT},
   {key: 'numberSource', title: '数量源', dictionary: name.NUMBER_SOURCE},
   {key: 'remark', title: '备注'},

@@ -85,13 +85,20 @@ const okActionCreator = (afterClose) => async (dispatch, getState) => {
     dispatch(action.assign({valid: true}));
     return showError('请填写必填项！');
   }
+  let val = {};
   if (type === 3) {
     const checkList = controls.filter(o => o.checked).map(o => o.key);
     if (checkList.length < 1) return showError('请勾选一条数据！');
     if (checkList.some(o => helper.isEmpty2(value[o]))) return showError('勾选的数据为必填！');
+    val = checkList.reduce((res, it) => {
+      res[it] = value[it];
+      return res;
+    }, {idList: value.idList});
+  } else {
+    val = value;
   }
   const url = type < 2 ? DIALOG_API.newAdd : type === 2 ? DIALOG_API.editSave: DIALOG_API.batchEdit;
-  const params = {...value, supplierPriceId: value['supplierPriceId'] || value['contractNumber']};
+  const params = {...val, supplierPriceId: value['supplierPriceId'] || value['contractNumber']};
   const {returnCode, result, returnMsg} = await fetchJson(url, postOption(convert(params)));
   if (returnCode !== 0) return showError(returnMsg);
   helper.showSuccessMsg(returnMsg);
