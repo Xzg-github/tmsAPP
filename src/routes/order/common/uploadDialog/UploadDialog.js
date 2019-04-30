@@ -24,7 +24,7 @@ class UploadDialog extends React.Component {
       className: s.root,
       visible: true,
       maskClosable: false,
-      width: 610,
+      width: 450,
       footer: null
     };
   };
