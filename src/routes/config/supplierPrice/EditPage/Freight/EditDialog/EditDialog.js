@@ -24,7 +24,8 @@ class EditDialog extends React.Component {
       onSearch,
       onExitValid,
       checkable,
-      onCheckItem
+      onCheckItem,
+      container: false
     };
     return <SuperForm {...props}/>
   }
