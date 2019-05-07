@@ -138,7 +138,7 @@ const costInfoConfig = {
   buttons: [
     {key: 'join', title: '加入', bsStyle: 'primary'},
     {key: 'remove', title: '移除', confirm: '是否确认删除选中记录?'},
-    {key: 'changeExchangeRate', title: '变更开票税率'}
+    {key: 'changeExchangeRate', title: '变更开票汇率'}
   ],
   cols: [
     {key: 'billNumber', title: '账单号'},
@@ -166,12 +166,13 @@ const costInfoConfig = {
     searchConfig,
     filters: [
       { key: 'billNumber', title: '账单编号', type: 'text' },
-      { key: 'incomeCode', title: '结算单号', type: 'text' },
-      { key: 'logisticsOrderNumber', title: '物流订单号', type: 'text' }
+      { key: 'orderNumber', title: '运单号', type: 'text' }
     ],
     cols: [
       {key: 'checked', title: '', type: 'checkbox'},
+      {key: 'orderNumber', title: '运单号'},
       {key: 'customerId', title: '结算单位', type: 'text'},
+      {key: 'billNumber', title: '账单号'},
       {key: 'chargeItemId', title: '费用名称', type: 'text'},
       {key: 'chargeUnit', title: '计量单位', type: 'select', dictionary: name.CHARGE_UNIT},
       {key: 'currency', title: '币种', type: 'text'},
