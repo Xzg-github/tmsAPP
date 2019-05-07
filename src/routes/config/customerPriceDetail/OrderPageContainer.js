@@ -120,6 +120,9 @@ const batchActionCreator = async (dispatch, getState) => {
   const {batchEditControls, tableItems} = getSelfState(getState());
   const checkList = tableItems.filter(o => o.checked);
   if (checkList.length < 1) return showError('请勾选一条数据！');
+  if (checkList.find(o => o.enabledType === 'enabled_type_disabled')) {
+    return showError('禁用状态的数据不能进行批量修改！')
+  }
   const customerPriceIds = Array.from(new Set(checkList.map(o => o.customerPriceId)));
   if (customerPriceIds.length > 1) return showError('请勾选同一个报价合同下的数据！');
   const {customerPriceId, customerPriceCode, customerId} = checkList[0];
