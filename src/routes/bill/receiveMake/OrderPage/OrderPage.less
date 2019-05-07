@@ -3,7 +3,8 @@
 .root {
   position: relative;
   margin: @padding-vertical @padding-horizontal;
-  overflow: hidden !important;
+  // overflow: hidden !important;
+  max-height: calc(~'100% - 20px') !important;
 
   > :global(.pld-card) {
     margin: 0;
@@ -16,5 +17,8 @@
   }
   .marginBottom{
     margin-bottom: @padding-vertical;
+  }
+  .marginTop{
+    margin-top: @padding-vertical;
   }
 }
