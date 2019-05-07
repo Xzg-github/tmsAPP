@@ -82,7 +82,7 @@ class OrderPage extends React.Component {
         <div className={s.marginBottom}>{this.toTab()}</div>
         {this.props.buttons.length > 0 ? this.toToolbar() : null}
         {this.toTable()}
-        {this.toPagination()}
+        <div className={s.marginTop}>{this.toPagination()}</div>
       </Indent>
     );
   };
