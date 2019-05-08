@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import {fetchJson, showError} from '../../../common/common';
+import helper, {fetchJson, showError} from '../../../common/common';
 import {hasSign} from '../../../common/check';
 import {Action} from '../../../action-reducer/action';
 import {getPathValue} from '../../../action-reducer/helper';
@@ -16,7 +16,8 @@ export const buildDistrictState = (config, editConfig, tableItems=[]) => {
   return {
     ...config,
     editConfig,
-    tableItems
+    tableItems,
+    checkedRows: []
   };
 };
 
@@ -24,17 +25,8 @@ const getSelfState = (rootState) => {
   return getPathValue(rootState, STATE_PATH);
 };
 
-const checkedOne = (tableItems) => {
-  const index = tableItems.reduce((result, item, index) => {
-    item.checked && result.push(index);
-    return result;
-  }, []);
-  return index.length !== 1 ? -1 : index[0];
-};
-
-const checkActionCreator = (isAll, checked, rowIndex) => {
-  const index = isAll ? -1 : rowIndex;
-  return action.update({checked}, 'tableItems', index);
+const checkActionCreator = (checkedRows) => {
+  return action.assign({checkedRows});
 };
 
 const addAction = (dispatch, getState) => {
@@ -45,18 +37,16 @@ const addAction = (dispatch, getState) => {
 };
 
 const editAction = async (dispatch, getState) => {
-  const {tableItems, editConfig} = getSelfState(getState());
-  const index = checkedOne(tableItems);
-  if (index !== -1) {
-    const data = await fetchJson(`${URL_DISTRICT_INFO}/${tableItems[index].guid}`);
-    if(data.returnCode !== 0) {
-      showError(data.returnMsg);
-      return;
-    }
-    const payload = buildEditState(editConfig, data.result, true, index);
-    dispatch(action.assign(payload, 'edit'));
-    showPopup(DistrictEditContainer, {inset: false});
+  const {tableItems, editConfig, checkedRows} = getSelfState(getState());
+  if (checkedRows.length !== 1) return helper.showError('请勾选一条记录');
+  const data = await fetchJson(`${URL_DISTRICT_INFO}/${tableItems[checkedRows[0]].guid}`);
+  if(data.returnCode !== 0) {
+    showError(data.returnMsg);
+    return;
   }
+  const payload = buildEditState(editConfig, data.result, true, checkedRows[0]);
+  dispatch(action.assign(payload, 'edit'));
+  showPopup(DistrictEditContainer, {inset: false});
 };
 
 const doubleClickActionCreator = (rowIndex) => async (dispatch, getState) => {

@@ -1,7 +1,7 @@
 import express from 'express';
-import {fetchJsonByNode, postOption} from '../../../common/common';
 import {host} from '../../globalConfig';
-const service = `${host}/tenant_service`;
+import {fetchJsonByNode, postOption} from '../../../common/common';
+const service = `${host}/tenant-service`;
 let api = express.Router();
 
 // 获取UI标签
@@ -10,44 +10,33 @@ api.get('/config', async (req, res) => {
   res.send({returnCode: 0, result: module.default});
 });
 
-// 获取组户树
-api.get('/tree', async (req, res) => {
-  //const module = await require('./data');
-  //res.send(module.default);
-  const url = `${service}/tenant/tree`;
-  res.send(await fetchJsonByNode(req, url));
-});
-
-// 获取指定租户下的直接租户
-api.get('/children/:guid', async (req, res) => {
-  const url = `${service}/tenant/children/${req.params.guid}`;
-  res.send(await fetchJsonByNode(req, url));
+// 获取主列表数据
+api.post('/list', async (req, res) => {
+  const url = `${service}/tenant/listBySearch`;
+  const {filter, ...others} = req.body;
+  res.send(await fetchJsonByNode(req, url, postOption({...filter, ...others})));
 });
 
 // 激活
 api.put('/active/:guid', async (req, res) => {
-  // res.send({returnCode: 0, result: {active: '1'}});
   const url = `${service}/tenant/active/${req.params.guid}`;
   res.send(await fetchJsonByNode(req, url, 'put'));
 });
 
 // 删除(失效)
 api.delete('/:guid', async (req, res) => {
-  // res.send({returnCode: 0, result: {active: '2'}});
   const url = `${service}/tenant/invalid/${req.params.guid}`;
   res.send(await fetchJsonByNode(req, url, 'delete'));
 });
 
 // 新增租户
 api.post('/', async (req, res) => {
-  //res.send({returnCode: 0});
   const url = `${service}/tenant`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body)));
 });
 
 // 编辑租户
 api.put('/', async (req, res) => {
-  //res.send({returnCode: 0});
   const url = `${service}/tenant`;
   res.send(await fetchJsonByNode(req, url, postOption(req.body, 'put')));
 });

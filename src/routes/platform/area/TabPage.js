@@ -22,10 +22,13 @@ class TabPage extends React.Component {
   };
 
   toTable = () => {
-    const {tableCols, tableItems=[]} = this.props;
+    const {tableCols, tableItems=[], checkedRows} = this.props;
     const props = {
       cols: tableCols,
       items: tableItems,
+      isPaging: true,
+      isolation: true,
+      checkedRows,
       maxHeight: 'calc(100vh - 200px)',
       callback: getObject(this.props, ['onCheck', 'onDoubleClick'])
     };

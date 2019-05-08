@@ -1,21 +1,21 @@
-import {pageSize, pageSizeType, description, searchConfig} from '../../globalConfig';
+import {pageSize, pageSizeType, description, searchConfig, paginationConfig} from '../../globalConfig';
 import name from '../../dictionary/name';
-
-const companyOptions = [
-  {value: '0', title: '集团公司'},
-  {value: '1', title: '分公司'}
-];
 
 const tableCols = [
   {key: 'tenantName', title: '租户名称'},
-  {key: 'active', title: '状态', from: 'dictionary', position: name.ACTIVE},
-  {key: 'tenantType', title: '租户类别', from: 'dictionary', position: name.TENANT_TYPE},
-  {key: 'companyType', title: '公司级别', options: companyOptions},
+  {key: 'active', title: '状态', dictionary: name.ACTIVE},
+  {key: 'tenantCode', title: '编码'},
+  {key: 'tenantType', title: '租户类别', dictionary: name.TENANT_TYPE},
+  {key: 'currencyType', title: '核算币种', dictionary: name.BALANCE_CURRENCY},
+  {key: 'tenantEmail', title: '管理员邮箱'},
   {key: 'tenantContact', title: '联系人'},
   {key: 'tenantContactTellphone', title: '联系电话'},
   {key: 'cooperationStartDate', title: '开始合作时间'},
   {key: 'cooperationEndDate', title: '停止合作时间'},
-  {key: 'guid', title: '租户ID'}
+  {key: 'insertTime', title: '创建时间'},
+  {key: 'insertUser', title: '创建人'},
+  {key: 'updateTime', title: '更新时间'},
+  {key: 'updateUser', title: '更新人'}
 ];
 
 const buttons = [
@@ -26,34 +26,23 @@ const buttons = [
   {key: 'user', title: '用户管理'}
 ];
 
-const index = {
-  tabs: true,
-  indexTableCols: [
-    {key: 'id', title: '租户名称', link: true},
-    {key: 'pid', title: '上级租户'}
-  ],
-  tableCols,
-  buttons,
-  placeholder: '租户名称'
-};
+const filters = [
+  {key: 'tenantName', title: '租户名称', type: 'text'},
+  {key: 'active', title: '状态', type: 'select', dictionary: name.ACTIVE},
+];
 
 const controls = [
   {key: 'tenantName', title: '租户名称', type: 'text', required: true},
-  {key: 'parentTenantGuid', title: '上级租户', type: 'readonly'},
-  {key: 'companyType', title: '公司级别', type: 'radioGroup', options: companyOptions},
-  {key: 'tenantType', title: '租户类别', type: 'select', required: true, from: 'dictionary', position: name.TENANT_TYPE},
+  {key: 'tenantType', title: '租户类别', type: 'select', required: true, dictionary: name.TENANT_TYPE},
+  {key: 'tenantCode', title: '编码（大写字母，不超过5位）', type: 'text', required: true},
+  {key: 'currencyType', title: '核算币种',  type: 'select', dictionary: name.BALANCE_CURRENCY, required: true},
   {key: 'tenantContact', title: '联系人', type: 'text', required: true},
   {key: 'tenantContactTellphone', title: '联系电话', type: 'text', required: true},
-  {key: 'emailUserName', title: '发送邮箱', type: 'text', required: true},
-  {key: 'emailPassword', title: '邮箱密码', type: 'text'},
-  {key: 'emailService', title: '发件服务器', type: 'text'},
-  {key: 'weChatOpenid', title: '微信OPENID', type: 'text'},
-  {key: 'msgUserName', title: '短信发送账号', type: 'text'},
-  {key: 'msgPassword', title: '短信发送密码', type: 'text'},
+  {key: 'tenantAddress', title: '办公地址', type: 'text', required: true},
+  {key: 'tenantEmail', title: '管理员邮箱', type: 'text', required: true},
   {key: 'cooperationStartDate', title: '开始合作时间', type: 'date', rule: {type: '<', key: 'cooperationEndDate'}},
   {key: 'cooperationEndDate', title: '停止合作时间', type: 'date', rule: {type: '>', key: 'cooperationStartDate'}},
-  {key: 'active', title: '状态', type: 'readonly', from: 'dictionary', position: name.ACTIVE},
-  {key: 'tenantAddress', title: '办公地址', type: 'text', required: true}
+  {key: 'active', title: '状态', type: 'readonly', dictionary: name.ACTIVE},
 ];
 
 const userFilters = [
@@ -91,19 +80,27 @@ const userConfig = {
   title: '用户管理'
 };
 
-const edit = {
+const editConfig = {
   controls,
   edit: '编辑',
   add: '新增',
   config: {ok: '确定', cancel: '取消'}
 };
 
+const index = {
+  filters,
+  buttons,
+  tableCols,
+  pageSize,
+  pageSizeType,
+  paginationConfig,
+  searchConfig
+};
+
 const config = {
   index,
-  edit,
+  editConfig,
   userConfig,
-  keys: {parent: 'parentTenantGuid'},
-  root: '所有租户'
 };
 
 export default config;
