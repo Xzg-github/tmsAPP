@@ -81,8 +81,12 @@ const createFreightContainer = (config) => {
 
   const batchActionCreator = async (dispatch, getState) => {
     const {batchEditControls, tableItems, defaultValue} = getSelfState(getState());
-    const idList = tableItems.filter(o => o.checked).map(o => o.id);
-    if (idList.length < 1) return showError('请勾选一条数据！');
+    const checkList = tableItems.filter(o => o.checked);
+    if (checkList.length < 1) return showError('请勾选一条数据！');
+    if (checkList.find(o => o.enabledType === 'enabled_type_disabled')) {
+      return showError('禁用状态的数据不能进行批量修改！')
+    }
+    const idList = checkList.map(o => o.id);
     const value = {...defaultValue, idList};
     const result = await showEditDialog({type: 3, value, controls: batchEditControls, DIALOG_API});
     result && await afterEdit(dispatch, getState);

@@ -6,7 +6,7 @@ const filters = [
   {key: 'customerId', title: '客户', type: 'search'},
   {key: 'contractCode', title: '客户合同', type: 'text'},
   {key: 'balanceCompany', title: '结算单位', type: 'search'},
-  {key: 'enableType', title: '是否启用', type: 'select', dictionary: name.ZERO_ONE_TYPE},
+  {key: 'enabledType', title: '是否启用', type: 'select', dictionary: name.ZERO_ONE_TYPE},
   {key: 'statusType', title: '状态', type: 'select', dictionary: 'status_type'},
   {key: 'insertUser', title: '创建用户', type: 'search'},
   {key: 'startTimeFrom', title: '有效开始日期', type: 'date'},
