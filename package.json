@@ -62,7 +62,7 @@
     "babel-register": "^6.18.0",
     "babel-template": "^6.16.0",
     "babel-types": "^6.19.0",
-    "browser-sync": "^2.18.2",
+    "browser-sync": "^2.27.10",
     "chai": "^3.5.0",
     "chokidar": "^1.6.1",
     "css-loader": "^0.26.0",
